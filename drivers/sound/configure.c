@@ -1,6 +1,8 @@
+multiline_comment|/*&n; *&t; PnP support is not included in this driver version.&n; *       AEDSP16 will not work without significant changes.&n; */
 DECL|macro|DISABLED_OPTIONS
 mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_PNP)|B(OPT_AEDSP16))
-multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; *&n; * Copyright by Hannu Savolainen 1993-1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
@@ -2743,7 +2745,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;&bslash;nEnable Joystick port on ProAudioSpectrum (n/y) ? &quot;
+l_string|&quot;&bslash;nEnable Joystick port on ProAudioSpectrum (y/N) ? &quot;
 )paren
 suffix:semicolon
 r_if
@@ -2767,7 +2769,7 @@ l_string|&quot;PAS16 could be noisy with some mother boards&bslash;n&quot;
 l_string|&quot;There is a command line switch (was it :T?)&bslash;n&quot;
 l_string|&quot;in the DOS driver for PAS16 which solves this.&bslash;n&quot;
 l_string|&quot;Don&squot;t enable this feature unless you have problems!&bslash;n&quot;
-l_string|&quot;Do you have to use this switch with DOS (y/n) ?&quot;
+l_string|&quot;Do you have to use this switch with DOS (Y/n) ?&quot;
 )paren
 suffix:semicolon
 r_if
@@ -4310,7 +4312,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;Old configuration exists in %s. Use it (y/n) ? &quot;
+l_string|&quot;Old configuration exists in %s. Use it (Y/n) ? &quot;
 comma
 id|oldconf
 )paren
@@ -4462,9 +4464,9 @@ comma
 id|def_answ
 ques
 c_cond
-l_string|&quot;  %s (y/n) ? &quot;
+l_string|&quot;  %s (Y/n) ? &quot;
 suffix:colon
-l_string|&quot;  %s (n/y) ? &quot;
+l_string|&quot;  %s (y/N) ? &quot;
 comma
 id|questions
 (braket
@@ -4576,7 +4578,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;Do you have SoundMan Wave (n/y) ? &quot;
+l_string|&quot;Do you have SoundMan Wave (y/N) ? &quot;
 )paren
 suffix:semicolon
 r_if
@@ -4602,7 +4604,7 @@ comma
 l_string|&quot;Logitech SoundMan Wave has a microcontroller which must be initialized&bslash;n&quot;
 l_string|&quot;before MIDI emulation works. This is possible only if the microcode&bslash;n&quot;
 l_string|&quot;file is compiled into the driver.&bslash;n&quot;
-l_string|&quot;Do you have access to the MIDI0001.BIN file (y/n) ? &quot;
+l_string|&quot;Do you have access to the MIDI0001.BIN file (Y/n) ? &quot;
 )paren
 suffix:semicolon
 r_if
@@ -4734,7 +4736,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;Do you have a Logitech SoundMan Games (n/y) ? &quot;
+l_string|&quot;Do you have a Logitech SoundMan Games (y/N) ? &quot;
 )paren
 suffix:semicolon
 r_if
@@ -4930,7 +4932,7 @@ id|stderr
 comma
 l_string|&quot;if you wish to emulate the soundblaster and you have a DSPxxx.LD.&bslash;n&quot;
 l_string|&quot;then you must include the LD in the kernel.&bslash;n&quot;
-l_string|&quot;Do you wish to include a LD (y/n) ? &quot;
+l_string|&quot;Do you wish to include a LD (Y/n) ? &quot;
 )paren
 suffix:semicolon
 r_if
@@ -5089,7 +5091,7 @@ l_string|&quot;you may skip this step. However SB and MPU-401&bslash;n&quot;
 l_string|&quot;modes of AudioTriX Pro will not work without&bslash;n&quot;
 l_string|&quot;this file!&bslash;n&quot;
 l_string|&quot;&bslash;n&quot;
-l_string|&quot;Do you want to include TRXPRO.HEX in your kernel (y/n) ? &quot;
+l_string|&quot;Do you want to include TRXPRO.HEX in your kernel (Y/n) ? &quot;
 )paren
 suffix:semicolon
 r_if
@@ -5355,7 +5357,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;Save copy of this configuration to %s (y/n)&quot;
+l_string|&quot;Save copy of this configuration to %s (Y/n)&quot;
 comma
 id|oldconf
 )paren

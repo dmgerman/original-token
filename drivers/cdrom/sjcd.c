@@ -1,5 +1,11 @@
-multiline_comment|/* -- sjcd.c&n; *&n; *   Sanyo CD-ROM device driver implementation, Version 1.5&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.ru&n; *   vadim@ipsun.ras.ru&n; *&n; *   ISP16 detection and configuration.&n; *   Copyright (C) 1995  Eric van der Maarel (maarel@marin.nl)&n; *                   and Vadim Model (vadim@cecmow.enet.dec.com)&n; *&n; *&n; *  This driver is based on pre-works by Eberhard Moenkeberg (emoenke@gwdg.de);&n; *  it was developed under use of mcd.c from Martin Harriss, with help of&n; *  Eric van der Maarel (maarel@marin.nl).&n; *&n; *  ISP16 detection and configuration by Eric van der Maarel (maarel@marin.nl).&n; *  Sound configuration by Vadim V. Model (model@cecmow.enet.dec.com)&n; *&n; *  It is planned to include these routines into sbpcd.c later - to make&n; *  a &quot;mixed use&quot; on one cable possible for all kinds of drives which use&n; *  the SoundBlaster/Panasonic style CDROM interface. But today, the&n; *  ability to install directly from CDROM is more important than flexibility.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *  1.1 First public release with kernel version 1.3.7.&n; *      Written by Vadim Model.&n; *  1.2 Added detection and configuration of cdrom interface&n; *      on ISP16 soundcard.&n; *      Allow for command line options: sjcd=&lt;io_base&gt;,&lt;irq&gt;,&lt;dma&gt;&n; *  1.3 Some minor changes to README.sjcd.&n; *  1.4 MSS Sound support!! Listen to a CD through the speakers.&n; *  1.5 Module support and bugfixes.&n; *      Tray locking.&n; *&n; */
+multiline_comment|/* -- sjcd.c&n; *&n; *   Sanyo CD-ROM device driver implementation, Version 1.6&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.ru&n; *   vadim@ipsun.ras.ru&n; *&n; *&n; *  This driver is based on pre-works by Eberhard Moenkeberg (emoenke@gwdg.de);&n; *  it was developed under use of mcd.c from Martin Harriss, with help of&n; *  Eric van der Maarel (H.T.M.v.d.Maarel@marin.nl).&n; *&n; *  It is planned to include these routines into sbpcd.c later - to make&n; *  a &quot;mixed use&quot; on one cable possible for all kinds of drives which use&n; *  the SoundBlaster/Panasonic style CDROM interface. But today, the&n; *  ability to install directly from CDROM is more important than flexibility.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *  1.1 First public release with kernel version 1.3.7.&n; *      Written by Vadim Model.&n; *  1.2 Added detection and configuration of cdrom interface&n; *      on ISP16 soundcard.&n; *      Allow for command line options: sjcd=&lt;io_base&gt;,&lt;irq&gt;,&lt;dma&gt;&n; *  1.3 Some minor changes to README.sjcd.&n; *  1.4 MSS Sound support!! Listen to a CD through the speakers.&n; *  1.5 Module support and bugfixes.&n; *      Tray locking.&n; *  1.6 Removed ISP16 code from this driver.&n; *      Allow only to set io base address on comand line: sjcd=&lt;io_base&gt;&n; *      Changes to Documentation/cdrom/sjcd&n; *      Added cleanup after any error in the initialisation.&n; *&n; */
+DECL|macro|SJCD_VERSION_MAJOR
+mdefine_line|#define SJCD_VERSION_MAJOR 1
+DECL|macro|SJCD_VERSION_MINOR
+mdefine_line|#define SJCD_VERSION_MINOR 6
+macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif /* MODULE */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -17,203 +23,12 @@ DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SANYO_CDROM_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/sjcd.h&gt;
-multiline_comment|/* Some (Media)Magic */
-multiline_comment|/* define types of drive the interface on an ISP16 card may be looking at */
-DECL|macro|ISP16_DRIVE_X
-mdefine_line|#define ISP16_DRIVE_X 0x00
-DECL|macro|ISP16_SONY
-mdefine_line|#define ISP16_SONY  0x02
-DECL|macro|ISP16_PANASONIC0
-mdefine_line|#define ISP16_PANASONIC0 0x02
-DECL|macro|ISP16_SANYO0
-mdefine_line|#define ISP16_SANYO0 0x02
-DECL|macro|ISP16_MITSUMI
-mdefine_line|#define ISP16_MITSUMI  0x04
-DECL|macro|ISP16_PANASONIC1
-mdefine_line|#define ISP16_PANASONIC1 0x06
-DECL|macro|ISP16_SANYO1
-mdefine_line|#define ISP16_SANYO1 0x06
-DECL|macro|ISP16_DRIVE_NOT_USED
-mdefine_line|#define ISP16_DRIVE_NOT_USED 0x08  /* not used */
-DECL|macro|ISP16_DRIVE_SET_MASK
-mdefine_line|#define ISP16_DRIVE_SET_MASK 0xF1  /* don&squot;t change 0-bit or 4-7-bits*/
-multiline_comment|/* ...for port */
-DECL|macro|ISP16_DRIVE_SET_PORT
-mdefine_line|#define ISP16_DRIVE_SET_PORT 0xF8D
-multiline_comment|/* set io parameters */
-DECL|macro|ISP16_BASE_340
-mdefine_line|#define ISP16_BASE_340  0x00
-DECL|macro|ISP16_BASE_330
-mdefine_line|#define ISP16_BASE_330  0x40
-DECL|macro|ISP16_BASE_360
-mdefine_line|#define ISP16_BASE_360  0x80
-DECL|macro|ISP16_BASE_320
-mdefine_line|#define ISP16_BASE_320  0xC0
-DECL|macro|ISP16_IRQ_X
-mdefine_line|#define ISP16_IRQ_X  0x00
-DECL|macro|ISP16_IRQ_5
-mdefine_line|#define ISP16_IRQ_5  0x04  /* shouldn&squot;t be used due to soundcard conflicts */
-DECL|macro|ISP16_IRQ_7
-mdefine_line|#define ISP16_IRQ_7  0x08  /* shouldn&squot;t be used due to soundcard conflicts */
-DECL|macro|ISP16_IRQ_3
-mdefine_line|#define ISP16_IRQ_3  0x0C
-DECL|macro|ISP16_IRQ_9
-mdefine_line|#define ISP16_IRQ_9  0x10
-DECL|macro|ISP16_IRQ_10
-mdefine_line|#define ISP16_IRQ_10  0x14
-DECL|macro|ISP16_IRQ_11
-mdefine_line|#define ISP16_IRQ_11  0x18
-DECL|macro|ISP16_DMA_X
-mdefine_line|#define ISP16_DMA_X  0x03
-DECL|macro|ISP16_DMA_3
-mdefine_line|#define ISP16_DMA_3  0x00
-DECL|macro|ISP16_DMA_5
-mdefine_line|#define ISP16_DMA_5  0x00
-DECL|macro|ISP16_DMA_6
-mdefine_line|#define ISP16_DMA_6  0x01
-DECL|macro|ISP16_DMA_7
-mdefine_line|#define ISP16_DMA_7  0x02
-DECL|macro|ISP16_IO_SET_MASK
-mdefine_line|#define ISP16_IO_SET_MASK  0x20  /* don&squot;t change 5-bit */
-multiline_comment|/* ...for port */
-DECL|macro|ISP16_IO_SET_PORT
-mdefine_line|#define ISP16_IO_SET_PORT  0xF8E
-multiline_comment|/* enable the card */
-DECL|macro|ISP16_C928__ENABLE_PORT
-mdefine_line|#define ISP16_C928__ENABLE_PORT  0xF90  /* ISP16 with OPTi 82C928 chip */
-DECL|macro|ISP16_C929__ENABLE_PORT
-mdefine_line|#define ISP16_C929__ENABLE_PORT  0xF91  /* ISP16 with OPTi 82C929 chip */
-DECL|macro|ISP16_ENABLE_CDROM
-mdefine_line|#define ISP16_ENABLE_CDROM  0x80  /* seven bit */
-multiline_comment|/* the magic stuff */
-DECL|macro|ISP16_CTRL_PORT
-mdefine_line|#define ISP16_CTRL_PORT  0xF8F
-DECL|macro|ISP16_C928__CTRL
-mdefine_line|#define ISP16_C928__CTRL  0xE2  /* ISP16 with OPTi 82C928 chip */
-DECL|macro|ISP16_C929__CTRL
-mdefine_line|#define ISP16_C929__CTRL  0xE3  /* ISP16 with OPTi 82C929 chip */
-r_static
-r_int
-id|isp16_detect
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_static
-r_int
-id|isp16_c928__detect
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_static
-r_int
-id|isp16_c929__detect
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_static
-r_int
-id|isp16_cdi_config
-c_func
-(paren
-r_int
-id|base
-comma
-id|u_char
-id|drive_type
-comma
-r_int
-id|irq
-comma
-r_int
-id|dma
-)paren
-suffix:semicolon
-r_static
-r_void
-id|isp16_sound_config
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|variable|isp16_type
-r_static
-r_int
-id|isp16_type
-suffix:semicolon
-multiline_comment|/* dependent on type of interface card */
-DECL|variable|isp16_ctrl
-r_static
-id|u_char
-id|isp16_ctrl
-suffix:semicolon
-DECL|variable|isp16_enable_port
-r_static
-id|u_short
-id|isp16_enable_port
-suffix:semicolon
 DECL|variable|sjcd_present
 r_static
 r_int
 id|sjcd_present
 op_assign
 l_int|0
-suffix:semicolon
-DECL|variable|special_mask
-r_static
-id|u_char
-id|special_mask
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|defaults
-r_static
-r_int
-r_char
-id|defaults
-(braket
-l_int|16
-)braket
-op_assign
-(brace
-l_int|0xA8
-comma
-l_int|0xA8
-comma
-l_int|0x18
-comma
-l_int|0x18
-comma
-l_int|0x18
-comma
-l_int|0x18
-comma
-l_int|0x8E
-comma
-l_int|0x8E
-comma
-l_int|0x03
-comma
-l_int|0x00
-comma
-l_int|0x02
-comma
-l_int|0x00
-comma
-l_int|0x0A
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-)brace
 suffix:semicolon
 DECL|macro|SJCD_BUF_SIZ
 mdefine_line|#define SJCD_BUF_SIZ 32 /* cdr-h94a has internal 64K buffer */
@@ -349,26 +164,12 @@ r_struct
 id|sjcd_play_msf
 id|sjcd_playing
 suffix:semicolon
-DECL|variable|sjcd_port
+DECL|variable|sjcd_base
 r_static
 r_int
-id|sjcd_port
+id|sjcd_base
 op_assign
 id|SJCD_BASE_ADDR
-suffix:semicolon
-DECL|variable|sjcd_irq
-r_static
-r_int
-id|sjcd_irq
-op_assign
-id|SJCD_INTR_NR
-suffix:semicolon
-DECL|variable|sjcd_dma
-r_static
-r_int
-id|sjcd_dma
-op_assign
-id|SJCD_DMA_NR
 suffix:semicolon
 DECL|variable|sjcd_waitq
 r_static
@@ -493,7 +294,15 @@ DECL|macro|SJCD_SET_TIMER
 mdefine_line|#define SJCD_SET_TIMER( func, tmout )           &bslash;&n;    ( sjcd_delay_timer.expires = jiffies+tmout,         &bslash;&n;      sjcd_delay_timer.function = ( void * )func, &bslash;&n;      add_timer( &amp;sjcd_delay_timer ) )
 DECL|macro|CLEAR_TIMER
 mdefine_line|#define CLEAR_TIMER del_timer( &amp;sjcd_delay_timer )
-multiline_comment|/*&n; * Set up device, i.e., use command line data to set&n; * base address, irq and dma.&n; */
+r_static
+r_int
+id|sjcd_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Set up device, i.e., use command line data to set&n; * base address.&n; */
 DECL|function|sjcd_setup
 r_void
 id|sjcd_setup
@@ -518,45 +327,11 @@ l_int|0
 OG
 l_int|0
 )paren
-id|sjcd_port
+id|sjcd_base
 op_assign
 id|ints
 (braket
 l_int|1
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ints
-(braket
-l_int|0
-)braket
-OG
-l_int|1
-)paren
-id|sjcd_irq
-op_assign
-id|ints
-(braket
-l_int|2
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ints
-(braket
-l_int|0
-)braket
-OG
-l_int|2
-)paren
-id|sjcd_dma
-op_assign
-id|ints
-(braket
-l_int|3
 )braket
 suffix:semicolon
 )brace
@@ -756,7 +531,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: send_cmd( 0x%x )&bslash;n&quot;
+l_string|&quot;SJCD: send_cmd( 0x%x )&bslash;n&quot;
 comma
 id|cmd
 )paren
@@ -809,7 +584,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: send_1_cmd( 0x%x, 0x%x )&bslash;n&quot;
+l_string|&quot;SJCD: send_1_cmd( 0x%x, 0x%x )&bslash;n&quot;
 comma
 id|cmd
 comma
@@ -888,7 +663,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: send_4_cmd( 0x%x )&bslash;n&quot;
+l_string|&quot;SJCD: send_4_cmd( 0x%x )&bslash;n&quot;
 comma
 id|cmd
 )paren
@@ -990,7 +765,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: send_long_cmd( 0x%x )&bslash;n&quot;
+l_string|&quot;SJCD: send_long_cmd( 0x%x )&bslash;n&quot;
 comma
 id|cmd
 )paren
@@ -1372,7 +1147,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: status %02x.%02x loaded.&bslash;n&quot;
+l_string|&quot;SJCD: status %02x.%02x loaded.&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1549,7 +1324,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: Error Wait For Status.&bslash;n&quot;
+l_string|&quot;SJCD: Error Wait For Status.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1576,7 +1351,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: receive_status&bslash;n&quot;
+l_string|&quot;SJCD: receive_status&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1616,7 +1391,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: long wait for status&bslash;n&quot;
+l_string|&quot;SJCD: long wait for status&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1634,7 +1409,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: Timeout when read status.&bslash;n&quot;
+l_string|&quot;SJCD: Timeout when read status.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1664,7 +1439,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: get_status&bslash;n&quot;
+l_string|&quot;SJCD: get_status&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1697,7 +1472,7 @@ macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd_disk_change( 0x%x )&bslash;n&quot;
+l_string|&quot;SJCD: sjcd_disk_change( 0x%x )&bslash;n&quot;
 comma
 id|full_dev
 )paren
@@ -1718,7 +1493,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: request error: invalid device minor.&bslash;n&quot;
+l_string|&quot;SJCD: request error: invalid device minor.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1790,7 +1565,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: update toc:&bslash;n&quot;
+l_string|&quot;SJCD: update toc:&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1829,7 +1604,7 @@ id|sjcd_status_valid
 id|printk
 c_func
 (paren
-l_string|&quot;cannot load status.&bslash;n&quot;
+l_string|&quot;SJCD: cannot load status.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1847,7 +1622,7 @@ id|sjcd_media_is_available
 id|printk
 c_func
 (paren
-l_string|&quot;no disk in drive&bslash;n&quot;
+l_string|&quot;SJCD: no disk in drive&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1883,7 +1658,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;cannot load response about TOC start.&bslash;n&quot;
+l_string|&quot;SJCD: cannot load response about TOC start.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1905,7 +1680,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;get first failed&bslash;n&quot;
+l_string|&quot;SJCD: get first failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1917,7 +1692,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;TOC start 0x%02x &quot;
+l_string|&quot;SJCD: TOC start 0x%02x &quot;
 comma
 id|sjcd_first_track_no
 )paren
@@ -1947,7 +1722,7 @@ id|sjcd_status_valid
 id|printk
 c_func
 (paren
-l_string|&quot;cannot load status.&bslash;n&quot;
+l_string|&quot;SJCD: cannot load status.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1965,7 +1740,7 @@ id|sjcd_media_is_available
 id|printk
 c_func
 (paren
-l_string|&quot;no disk in drive&bslash;n&quot;
+l_string|&quot;SJCD: no disk in drive&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2001,7 +1776,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;cannot load response about TOC finish.&bslash;n&quot;
+l_string|&quot;SJCD: cannot load response about TOC finish.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2023,7 +1798,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;get last failed&bslash;n&quot;
+l_string|&quot;SJCD: get last failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2035,7 +1810,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;TOC finish 0x%02x &quot;
+l_string|&quot;SJCD: TOC finish 0x%02x &quot;
 comma
 id|sjcd_last_track_no
 )paren
@@ -2084,7 +1859,7 @@ id|sjcd_status_valid
 id|printk
 c_func
 (paren
-l_string|&quot;cannot load status.&bslash;n&quot;
+l_string|&quot;SJCD: cannot load status.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2102,7 +1877,7 @@ id|sjcd_media_is_available
 id|printk
 c_func
 (paren
-l_string|&quot;no disk in drive&bslash;n&quot;
+l_string|&quot;SJCD: no disk in drive&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2142,7 +1917,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;cannot load info for %d track&bslash;n&quot;
+l_string|&quot;SJCD: cannot load info for %d track&bslash;n&quot;
 comma
 id|i
 )paren
@@ -2158,7 +1933,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;get info %d failed&bslash;n&quot;
+l_string|&quot;SJCD: get info %d failed&bslash;n&quot;
 comma
 id|i
 )paren
@@ -2193,7 +1968,7 @@ id|sjcd_status_valid
 id|printk
 c_func
 (paren
-l_string|&quot;cannot load status.&bslash;n&quot;
+l_string|&quot;SJCD: cannot load status.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2211,7 +1986,7 @@ id|sjcd_media_is_available
 id|printk
 c_func
 (paren
-l_string|&quot;no disk in drive&bslash;n&quot;
+l_string|&quot;SJCD: no disk in drive&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2247,7 +2022,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;cannot load response about disk size.&bslash;n&quot;
+l_string|&quot;SJCD: cannot load response about disk size.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2273,7 +2048,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;get size failed&bslash;n&quot;
+l_string|&quot;SJCD: get size failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2284,7 +2059,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;(%02x:%02x.%02x)&bslash;n&quot;
+l_string|&quot;SJCD: (%02x:%02x.%02x)&bslash;n&quot;
 comma
 id|sjcd_disk_length.min
 comma
@@ -2320,7 +2095,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: load sub q&bslash;n&quot;
+l_string|&quot;SJCD: load sub q&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2559,7 +2334,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: tray_close&bslash;n&quot;
+l_string|&quot;SJCD: tray_close&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2591,7 +2366,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: tray_lock&bslash;n&quot;
+l_string|&quot;SJCD: tray_lock&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2623,7 +2398,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: tray_unlock&bslash;n&quot;
+l_string|&quot;SJCD: tray_unlock&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2655,7 +2430,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: tray_open&bslash;n&quot;
+l_string|&quot;SJCD: tray_open&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2704,7 +2479,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd:ioctl&bslash;n&quot;
+l_string|&quot;SJCD:ioctl&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2768,7 +2543,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: start&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: start&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2784,7 +2559,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: stop&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: stop&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2822,7 +2597,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: pause&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: pause&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2895,7 +2670,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: resume&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: resume&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2962,7 +2737,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: playtrkind&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: playtrkind&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3131,7 +2906,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: playmsf&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: playmsf&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3302,7 +3077,7 @@ macro_line|#if defined (SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: readtocheader&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: readtocheader&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3379,7 +3154,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: readtocentry&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: readtocentry&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3595,7 +3370,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: subchnl&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: subchnl&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3829,7 +3604,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: volctrl&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: volctrl&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3939,7 +3714,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: eject&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: eject&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3986,7 +3761,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: ioctl: statistic&bslash;n&quot;
+l_string|&quot;SJCD: ioctl: statistic&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4111,7 +3886,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: transfer:&bslash;n&quot;
+l_string|&quot;SJCD: transfer:&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4245,7 +4020,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;copy out&bslash;n&quot;
+l_string|&quot;SJCD: copy out&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4294,7 +4069,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: transfer: done&bslash;n&quot;
+l_string|&quot;SJCD: transfer: done&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4653,7 +4428,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;---reading msf-address %x:%x:%x  %x:%x:%x&bslash;n&quot;
+l_string|&quot;SJCD: ---reading msf-address %x:%x:%x  %x:%x:%x&bslash;n&quot;
 comma
 id|msf.start.min
 comma
@@ -4802,7 +4577,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: read block %d failed, maybe audio disk? Giving up&bslash;n&quot;
+l_string|&quot;SJCD: read block %d failed, maybe audio disk? Giving up&bslash;n&quot;
 comma
 id|sjcd_next_bn
 )paren
@@ -5284,7 +5059,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd_poll: invalid state %d&bslash;n&quot;
+l_string|&quot;SJCD: poll: invalid state %d&bslash;n&quot;
 comma
 id|sjcd_transfer_state
 )paren
@@ -5304,7 +5079,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: timeout in state %d&bslash;n&quot;
+l_string|&quot;SJCD: timeout in state %d&bslash;n&quot;
 comma
 id|sjcd_transfer_state
 )paren
@@ -5361,7 +5136,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: do_sjcd_request(%ld+%ld)&bslash;n&quot;
+l_string|&quot;SJCD: do_sjcd_request(%ld+%ld)&bslash;n&quot;
 comma
 id|CURRENT-&gt;sector
 comma
@@ -5458,7 +5233,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: transfer: discard&bslash;n&quot;
+l_string|&quot;SJCD: transfer: discard&bslash;n&quot;
 )paren
 suffix:semicolon
 r_while
@@ -5646,7 +5421,7 @@ macro_line|#if defined( SJCD_DIAGNOSTIC )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: open: timed out when check status.&bslash;n&quot;
+l_string|&quot;SJCD: open: timed out when check status.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5667,7 +5442,7 @@ macro_line|#if defined( SJCD_DIAGNOSTIC )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: open: no disk in drive&bslash;n&quot;
+l_string|&quot;SJCD: open: no disk in drive&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5686,7 +5461,7 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: open: close the tray&bslash;n&quot;
+l_string|&quot;SJCD: open: close the tray&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5714,7 +5489,7 @@ macro_line|#if defined( SJCD_DIAGNOSTIC )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: open: tray close attempt failed&bslash;n&quot;
+l_string|&quot;SJCD: open: tray close attempt failed&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5759,7 +5534,7 @@ macro_line|#if defined( SJCD_DIAGNOSTIC )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: open: tray lock attempt failed&bslash;n&quot;
+l_string|&quot;SJCD: open: tray lock attempt failed&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5772,13 +5547,15 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: open: done&bslash;n&quot;
+l_string|&quot;SJCD: open: done&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+macro_line|#endif
 op_increment
 id|sjcd_open_count
 suffix:semicolon
@@ -5813,12 +5590,14 @@ macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: release&bslash;n&quot;
+l_string|&quot;SJCD: release&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5869,7 +5648,7 @@ macro_line|#if defined( SJCD_DIAGNOSTIC )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: release: tray unlock attempt failed.&bslash;n&quot;
+l_string|&quot;SJCD: release: tray unlock attempt failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5904,7 +5683,7 @@ macro_line|#if defined( SJCD_DIAGNOSTIC )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: release: tray unload attempt failed.&bslash;n&quot;
+l_string|&quot;SJCD: release: tray unload attempt failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5990,109 +5769,23 @@ r_void
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|isp16_type
-op_assign
-id|isp16_detect
-c_func
-(paren
-)paren
-)paren
-OL
-l_int|0
-)paren
 id|printk
 c_func
 (paren
-l_string|&quot;No ISP16 cdrom interface found.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
-id|u_char
-id|expected_drive
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;ISP16 cdrom interface (with OPTi 82C92%s chip) detected.&bslash;n&quot;
+l_string|&quot;SJCD: Sanyo CDR-H94A cdrom driver version %d.%d.&bslash;n&quot;
 comma
-(paren
-id|isp16_type
-op_eq
-l_int|2
-)paren
-ques
-c_cond
-l_string|&quot;9&quot;
-suffix:colon
-l_string|&quot;8&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;ISP16 sound configuration.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|isp16_sound_config
-c_func
-(paren
-)paren
-suffix:semicolon
-id|expected_drive
-op_assign
-(paren
-id|isp16_type
-ques
-c_cond
-id|ISP16_SANYO1
-suffix:colon
-id|ISP16_SANYO0
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|isp16_cdi_config
-c_func
-(paren
-id|sjcd_port
+id|SJCD_VERSION_MAJOR
 comma
-id|expected_drive
-comma
-id|sjcd_irq
-comma
-id|sjcd_dma
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ISP16 cdrom interface has not been properly configured.&bslash;n&quot;
+id|SJCD_VERSION_MINOR
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-)brace
 macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd=0x%x,%d: &quot;
+l_string|&quot;SJCD: sjcd=0x%x: &quot;
 comma
-id|sjcd_port
-comma
-id|sjcd_irq
+id|sjcd_base
 )paren
 suffix:semicolon
 macro_line|#endif  
@@ -6116,7 +5809,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get major %d for Sanyo CD-ROM&bslash;n&quot;
+l_string|&quot;SJCD: Unable to get major %d for Sanyo CD-ROM&bslash;n&quot;
 comma
 id|MAJOR_NR
 )paren
@@ -6148,7 +5841,7 @@ c_cond
 id|check_region
 c_func
 (paren
-id|sjcd_port
+id|sjcd_base
 comma
 l_int|4
 )paren
@@ -6157,9 +5850,14 @@ l_int|4
 id|printk
 c_func
 (paren
-l_string|&quot;Init failed, I/O port (%X) is already in use&bslash;n&quot;
+l_string|&quot;SJCD: Init failed, I/O port (%X) is already in use&bslash;n&quot;
 comma
-id|sjcd_port
+id|sjcd_base
+)paren
+suffix:semicolon
+id|sjcd_cleanup
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -6171,7 +5869,7 @@ multiline_comment|/*&n;   * Check for card. Since we are booting now, we can&squ
 id|printk
 c_func
 (paren
-l_string|&quot;Sanyo: Resetting: &quot;
+l_string|&quot;SJCD: Resetting: &quot;
 )paren
 suffix:semicolon
 id|sjcd_send_cmd
@@ -6188,13 +5886,14 @@ op_assign
 l_int|1000
 suffix:semicolon
 id|i
-op_decrement
 OG
 l_int|0
 op_logical_and
 op_logical_neg
 id|sjcd_status_valid
 suffix:semicolon
+op_decrement
+id|i
 )paren
 (brace
 r_int
@@ -6259,6 +5958,11 @@ c_func
 l_string|&quot; reset failed, no drive found.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|sjcd_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -6275,7 +5979,7 @@ multiline_comment|/*&n;   * Get and print out cdrom version.&n;   */
 id|printk
 c_func
 (paren
-l_string|&quot;Sanyo: Getting version: &quot;
+l_string|&quot;SJCD: Getting version: &quot;
 )paren
 suffix:semicolon
 id|sjcd_send_cmd
@@ -6364,6 +6068,11 @@ c_func
 l_string|&quot; get version failed, no drive found.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|sjcd_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -6412,6 +6121,11 @@ c_func
 l_string|&quot; read version failed, no drive found.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|sjcd_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -6428,7 +6142,7 @@ id|sjcd_status_valid
 id|printk
 c_func
 (paren
-l_string|&quot;Sanyo: Getting status: &quot;
+l_string|&quot;SJCD: Getting status: &quot;
 )paren
 suffix:semicolon
 id|sjcd_send_cmd
@@ -6517,6 +6231,11 @@ c_func
 l_string|&quot; get status failed, no drive found.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|sjcd_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -6533,13 +6252,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;SANYO CDR-H94A: Status: port=0x%x, irq=%d, dma=%d.&bslash;n&quot;
+l_string|&quot;SJCD: Status: port=0x%x.&bslash;n&quot;
 comma
-id|sjcd_port
-comma
-id|sjcd_irq
-comma
-id|sjcd_dma
+id|sjcd_base
 )paren
 suffix:semicolon
 id|sjcd_present
@@ -6550,26 +6265,10 @@ l_int|0
 suffix:semicolon
 )brace
 )def_block
-macro_line|#ifdef MODULE
-DECL|function|init_module
+r_static
 r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|sjcd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-(def_block
-id|cleanup_module
+DECL|function|sjcd_cleanup
+id|sjcd_cleanup
 c_func
 (paren
 r_void
@@ -6595,1117 +6294,68 @@ id|EINVAL
 id|printk
 c_func
 (paren
-l_string|&quot;sjcd: module: can not unregister device.&bslash;n&quot;
+l_string|&quot;SJCD: cannot unregister device.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 r_else
-(brace
 id|release_region
 c_func
 (paren
-id|sjcd_port
+id|sjcd_base
 comma
 l_int|4
 )paren
 suffix:semicolon
-id|printk
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
 c_func
 (paren
-l_string|&quot;sjcd: module: removed.&bslash;n&quot;
+r_void
+)paren
+(brace
+r_return
+id|sjcd_init
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sjcd_cleanup
+c_func
+(paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;SJCD: module: cannot be removed.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;SJCD: module: removed.&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
-)def_block
 macro_line|#endif
-multiline_comment|/*&n; * -- ISP16 detection and configuration&n; *&n; *    Copyright (c) 1995, Eric van der Maarel &lt;maarel@marin.nl&gt;&n; *&n; *    Version 0.5&n; *&n; *    Detect cdrom interface on ISP16 soundcard.&n; *    Configure cdrom interface.&n; *    Configure sound interface.&n; *&n; *    Algorithm for the card with OPTi 82C928 taken&n; *    from the CDSETUP.SYS driver for MSDOS,&n; *    by OPTi Computers, version 2.03.&n; *    Algorithm for the card with OPTi 82C929 as communicated&n; *    to me by Vadim Model and Leo Spiekman.&n; *&n; *    Use, modifification or redistribution of this software is&n; *    allowed under the terms of the GPL.&n; *&n; */
-DECL|macro|ISP16_IN
-mdefine_line|#define ISP16_IN(p) (outb(isp16_ctrl,ISP16_CTRL_PORT), inb(p))
-DECL|macro|ISP16_OUT
-mdefine_line|#define ISP16_OUT(p,b) (outb(isp16_ctrl,ISP16_CTRL_PORT), outb(b,p))
-r_static
-r_int
-DECL|function|isp16_detect
-id|isp16_detect
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|isp16_c929__detect
-c_func
-(paren
-)paren
-OL
-l_int|0
-)paren
-)paren
-r_return
-l_int|2
-suffix:semicolon
-r_else
-r_return
-id|isp16_c928__detect
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|isp16_c928__detect
-id|isp16_c928__detect
-c_func
-(paren
-r_void
-)paren
-(brace
-id|u_char
-id|ctrl
-suffix:semicolon
-id|u_char
-id|enable_cdrom
-suffix:semicolon
-id|u_char
-id|io
-suffix:semicolon
-r_int
-id|i
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|isp16_ctrl
-op_assign
-id|ISP16_C928__CTRL
-suffix:semicolon
-id|isp16_enable_port
-op_assign
-id|ISP16_C928__ENABLE_PORT
-suffix:semicolon
-multiline_comment|/* read&squot; and write&squot; are a special read and write, respectively */
-multiline_comment|/* read&squot; ISP16_CTRL_PORT, clear last two bits and write&squot; back the result */
-id|ctrl
-op_assign
-id|ISP16_IN
-c_func
-(paren
-id|ISP16_CTRL_PORT
-)paren
-op_amp
-l_int|0xFC
-suffix:semicolon
-id|ISP16_OUT
-c_func
-(paren
-id|ISP16_CTRL_PORT
-comma
-id|ctrl
-)paren
-suffix:semicolon
-multiline_comment|/* read&squot; 3,4 and 5-bit from the cdrom enable port */
-id|enable_cdrom
-op_assign
-id|ISP16_IN
-c_func
-(paren
-id|ISP16_C928__ENABLE_PORT
-)paren
-op_amp
-l_int|0x38
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|enable_cdrom
-op_amp
-l_int|0x20
-)paren
-)paren
-(brace
-multiline_comment|/* 5-bit not set */
-multiline_comment|/* read&squot; last 2 bits of ISP16_IO_SET_PORT */
-id|io
-op_assign
-id|ISP16_IN
-c_func
-(paren
-id|ISP16_IO_SET_PORT
-)paren
-op_amp
-l_int|0x03
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|io
-op_amp
-l_int|0x01
-)paren
-op_lshift
-l_int|1
-)paren
-op_eq
-(paren
-id|io
-op_amp
-l_int|0x02
-)paren
-)paren
-(brace
-multiline_comment|/* bits are the same */
-r_if
-c_cond
-(paren
-id|io
-op_eq
-l_int|0
-)paren
-(brace
-multiline_comment|/* ...the same and 0 */
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|enable_cdrom
-op_or_assign
-l_int|0x20
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* ...the same and 1 */
-multiline_comment|/* my card, first time &squot;round */
-id|i
-op_assign
-l_int|1
-suffix:semicolon
-id|enable_cdrom
-op_or_assign
-l_int|0x28
-suffix:semicolon
-)brace
-id|ISP16_OUT
-c_func
-(paren
-id|ISP16_C928__ENABLE_PORT
-comma
-id|enable_cdrom
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* bits are not the same */
-id|ISP16_OUT
-c_func
-(paren
-id|ISP16_CTRL_PORT
-comma
-id|ctrl
-)paren
-suffix:semicolon
-r_return
-id|i
-suffix:semicolon
-multiline_comment|/* -&gt; not detected: possibly incorrect conclusion */
-)brace
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|enable_cdrom
-op_eq
-l_int|0x20
-)paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|enable_cdrom
-op_eq
-l_int|0x28
-)paren
-multiline_comment|/* my card, already initialised */
-id|i
-op_assign
-l_int|1
-suffix:semicolon
-id|ISP16_OUT
-c_func
-(paren
-id|ISP16_CTRL_PORT
-comma
-id|ctrl
-)paren
-suffix:semicolon
-r_return
-id|i
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|isp16_c929__detect
-id|isp16_c929__detect
-c_func
-(paren
-r_void
-)paren
-(brace
-id|u_char
-id|ctrl
-suffix:semicolon
-id|u_char
-id|tmp
-suffix:semicolon
-id|isp16_ctrl
-op_assign
-id|ISP16_C929__CTRL
-suffix:semicolon
-id|isp16_enable_port
-op_assign
-id|ISP16_C929__ENABLE_PORT
-suffix:semicolon
-multiline_comment|/* read&squot; and write&squot; are a special read and write, respectively */
-multiline_comment|/* read&squot; ISP16_CTRL_PORT and save */
-id|ctrl
-op_assign
-id|ISP16_IN
-c_func
-(paren
-id|ISP16_CTRL_PORT
-)paren
-suffix:semicolon
-multiline_comment|/* write&squot; zero to the ctrl port and get response */
-id|ISP16_OUT
-c_func
-(paren
-id|ISP16_CTRL_PORT
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|tmp
-op_assign
-id|ISP16_IN
-c_func
-(paren
-id|ISP16_CTRL_PORT
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tmp
-op_ne
-l_int|2
-)paren
-multiline_comment|/* isp16 with 82C929 not detected */
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* restore ctrl port value */
-id|ISP16_OUT
-c_func
-(paren
-id|ISP16_CTRL_PORT
-comma
-id|ctrl
-)paren
-suffix:semicolon
-r_return
-l_int|2
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|isp16_cdi_config
-id|isp16_cdi_config
-c_func
-(paren
-r_int
-id|base
-comma
-id|u_char
-id|drive_type
-comma
-r_int
-id|irq
-comma
-r_int
-id|dma
-)paren
-(brace
-id|u_char
-id|base_code
-suffix:semicolon
-id|u_char
-id|irq_code
-suffix:semicolon
-id|u_char
-id|dma_code
-suffix:semicolon
-id|u_char
-id|i
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|drive_type
-op_eq
-id|ISP16_MITSUMI
-)paren
-op_logical_and
-(paren
-id|dma
-op_ne
-l_int|0
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Mitsumi cdrom drive has no dma support.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|base
-)paren
-(brace
-r_case
-l_int|0x340
-suffix:colon
-id|base_code
-op_assign
-id|ISP16_BASE_340
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x330
-suffix:colon
-id|base_code
-op_assign
-id|ISP16_BASE_330
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x360
-suffix:colon
-id|base_code
-op_assign
-id|ISP16_BASE_360
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x320
-suffix:colon
-id|base_code
-op_assign
-id|ISP16_BASE_320
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;Base address 0x%03X not supported by cdrom interface on ISP16.&bslash;n&quot;
-comma
-id|base
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_switch
-c_cond
-(paren
-id|irq
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
-id|irq_code
-op_assign
-id|ISP16_IRQ_X
-suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/* disable irq */
-r_case
-l_int|5
-suffix:colon
-id|irq_code
-op_assign
-id|ISP16_IRQ_5
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Irq 5 shouldn&squot;t be used by cdrom interface on ISP16,&quot;
-l_string|&quot; due to possible conflicts with the soundcard.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|7
-suffix:colon
-id|irq_code
-op_assign
-id|ISP16_IRQ_7
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Irq 7 shouldn&squot;t be used by cdrom interface on ISP16,&quot;
-l_string|&quot; due to possible conflicts with the soundcard.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|3
-suffix:colon
-id|irq_code
-op_assign
-id|ISP16_IRQ_3
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|9
-suffix:colon
-id|irq_code
-op_assign
-id|ISP16_IRQ_9
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|10
-suffix:colon
-id|irq_code
-op_assign
-id|ISP16_IRQ_10
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|11
-suffix:colon
-id|irq_code
-op_assign
-id|ISP16_IRQ_11
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;Irq %d not supported by cdrom interface on ISP16.&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_switch
-c_cond
-(paren
-id|dma
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
-id|dma_code
-op_assign
-id|ISP16_DMA_X
-suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/* disable dma */
-r_case
-l_int|1
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;Dma 1 cannot be used by cdrom interface on ISP16,&quot;
-l_string|&quot; due to conflict with the soundcard.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|3
-suffix:colon
-id|dma_code
-op_assign
-id|ISP16_DMA_3
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|5
-suffix:colon
-id|dma_code
-op_assign
-id|ISP16_DMA_5
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|6
-suffix:colon
-id|dma_code
-op_assign
-id|ISP16_DMA_6
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|7
-suffix:colon
-id|dma_code
-op_assign
-id|ISP16_DMA_7
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;Dma %d not supported by cdrom interface on ISP16.&bslash;n&quot;
-comma
-id|dma
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|drive_type
-op_ne
-id|ISP16_SONY
-op_logical_and
-id|drive_type
-op_ne
-id|ISP16_PANASONIC0
-op_logical_and
-id|drive_type
-op_ne
-id|ISP16_PANASONIC1
-op_logical_and
-id|drive_type
-op_ne
-id|ISP16_SANYO0
-op_logical_and
-id|drive_type
-op_ne
-id|ISP16_SANYO1
-op_logical_and
-id|drive_type
-op_ne
-id|ISP16_MITSUMI
-op_logical_and
-id|drive_type
-op_ne
-id|ISP16_DRIVE_X
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Drive type (code 0x%02X) not supported by cdrom&quot;
-l_string|&quot; interface on ISP16.&bslash;n&quot;
-comma
-id|drive_type
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* set type of interface */
-id|i
-op_assign
-id|ISP16_IN
-c_func
-(paren
-id|ISP16_DRIVE_SET_PORT
-)paren
-op_amp
-id|ISP16_DRIVE_SET_MASK
-suffix:semicolon
-multiline_comment|/* clear some bits */
-id|ISP16_OUT
-c_func
-(paren
-id|ISP16_DRIVE_SET_PORT
-comma
-id|i
-op_or
-id|drive_type
-)paren
-suffix:semicolon
-multiline_comment|/* enable cdrom on interface with 82C929 chip */
-r_if
-c_cond
-(paren
-id|isp16_type
-OG
-l_int|1
-)paren
-id|ISP16_OUT
-c_func
-(paren
-id|isp16_enable_port
-comma
-id|ISP16_ENABLE_CDROM
-)paren
-suffix:semicolon
-multiline_comment|/* set base address, irq and dma */
-id|i
-op_assign
-id|ISP16_IN
-c_func
-(paren
-id|ISP16_IO_SET_PORT
-)paren
-op_amp
-id|ISP16_IO_SET_MASK
-suffix:semicolon
-multiline_comment|/* keep some bits */
-id|ISP16_OUT
-c_func
-(paren
-id|ISP16_IO_SET_PORT
-comma
-id|i
-op_or
-id|base_code
-op_or
-id|irq_code
-op_or
-id|dma_code
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|isp16_sound_config
-r_static
-r_void
-id|isp16_sound_config
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-id|u_char
-id|saved
-suffix:semicolon
-id|saved
-op_assign
-id|ISP16_IN
-c_func
-(paren
-l_int|0xF8D
-)paren
-op_amp
-l_int|0x8F
-suffix:semicolon
-id|ISP16_OUT
-c_func
-(paren
-l_int|0xF8D
-comma
-l_int|0x40
-)paren
-suffix:semicolon
-multiline_comment|/*&n;   * Now we should wait for a while...&n;   */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|16
-op_star
-l_int|1024
-suffix:semicolon
-id|i
-op_decrement
-suffix:semicolon
-)paren
-(brace
-suffix:semicolon
-)brace
-id|ISP16_OUT
-c_func
-(paren
-l_int|0xF8D
-comma
-id|saved
-)paren
-suffix:semicolon
-id|ISP16_OUT
-c_func
-(paren
-l_int|0xF91
-comma
-l_int|0x1B
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|5
-op_star
-l_int|64
-op_star
-l_int|1024
-suffix:semicolon
-id|i
-op_ne
-l_int|0
-suffix:semicolon
-id|i
-op_decrement
-)paren
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|inb
-c_func
-(paren
-l_int|0x534
-)paren
-op_amp
-l_int|0x80
-)paren
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|i
-OG
-l_int|0
-)paren
-(brace
-id|saved
-op_assign
-(paren
-id|inb
-c_func
-(paren
-l_int|0x534
-)paren
-op_amp
-l_int|0xE0
-)paren
-op_or
-l_int|0x0A
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|saved
-comma
-l_int|0x534
-)paren
-suffix:semicolon
-id|special_mask
-op_assign
-(paren
-id|inb
-c_func
-(paren
-l_int|0x535
-)paren
-op_rshift
-l_int|4
-)paren
-op_amp
-l_int|0x08
-suffix:semicolon
-id|saved
-op_assign
-(paren
-id|inb
-c_func
-(paren
-l_int|0x534
-)paren
-op_amp
-l_int|0xE0
-)paren
-op_or
-l_int|0x0C
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|saved
-comma
-l_int|0x534
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|inb
-c_func
-(paren
-l_int|0x535
-)paren
-)paren
-(brace
-r_case
-l_int|0x09
-suffix:colon
-r_case
-l_int|0x0A
-suffix:colon
-id|special_mask
-op_or_assign
-l_int|0x05
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x8A
-suffix:colon
-id|special_mask
-op_assign
-l_int|0x0F
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|i
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Strange MediaMagic, but&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Conf:&quot;
-)paren
-suffix:semicolon
-id|saved
-op_assign
-id|inb
-c_func
-(paren
-l_int|0x534
-)paren
-op_amp
-l_int|0xE0
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|16
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|outb
-c_func
-(paren
-l_int|0x20
-op_or
-(paren
-id|u_char
-)paren
-id|i
-comma
-l_int|0x534
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|defaults
-(braket
-id|i
-)braket
-comma
-l_int|0x535
-)paren
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|16
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|outb
-c_func
-(paren
-l_int|0x20
-op_or
-(paren
-id|u_char
-)paren
-id|i
-comma
-l_int|0x534
-)paren
-suffix:semicolon
-id|saved
-op_assign
-id|inb
-c_func
-(paren
-l_int|0x535
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot; %02X&quot;
-comma
-id|saved
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|ISP16_OUT
-c_func
-(paren
-l_int|0xF91
-comma
-l_int|0xA0
-op_or
-id|special_mask
-)paren
-suffix:semicolon
-multiline_comment|/*&n;   * The following have no explaination yet.&n;   */
-id|ISP16_OUT
-c_func
-(paren
-l_int|0xF90
-comma
-l_int|0xA2
-)paren
-suffix:semicolon
-id|ISP16_OUT
-c_func
-(paren
-l_int|0xF92
-comma
-l_int|0x03
-)paren
-suffix:semicolon
-multiline_comment|/*&n;   * Turn general sound on and set total volume.&n;   */
-id|ISP16_OUT
-c_func
-(paren
-l_int|0xF93
-comma
-l_int|0x0A
-)paren
-suffix:semicolon
-multiline_comment|/*&n;  outb( 0x04, 0x224 );&n;  saved = inb( 0x225 );&n;  outb( 0x04, 0x224 );&n;  outb( saved, 0x225 );&n;*/
-)brace
 eof

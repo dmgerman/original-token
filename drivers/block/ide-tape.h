@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-tape.h&t;Version 1.2 - ALPHA&t;Jan   1, 1996&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;tgud@tochnapc2.technion.ac.il&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-tape.h&t;Version 1.3 - ALPHA&t;Feb   9, 1996&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;tgud@tochnapc2.technion.ac.il&gt;&n; */
 multiline_comment|/*&n; * Include file for the IDE ATAPI streaming tape driver.&n; *&n; * This file contains various ide-tape related structures and function&n; * prototypes which are already used in ide.h.&n; *&n; * The various compile time options are described below.&n; */
 macro_line|#ifndef IDETAPE_H
 DECL|macro|IDETAPE_H
@@ -28,6 +28,9 @@ macro_line|#else /* ??? Not defined by linux/mm/kmalloc.c */
 DECL|macro|IDETAPE_ALLOCATION_BLOCK
 mdefine_line|#define IDETAPE_ALLOCATION_BLOCK&t;&t;512
 macro_line|#endif
+multiline_comment|/*&n; *&t;ide-tape currently uses two continous buffers, each of the size of&n; *&t;one stage. By default, those buffers are allocated at initialization&n; *&t;time and never released, since dynamic allocation of pages bigger&n; *&t;than PAGE_SIZE may fail as memory becomes fragmented.&n; *&n; *&t;This results in about 100 KB memory usage when the tape is idle.&n; *&t;Setting IDETAPE_MINIMIZE_IDLE_MEMORY_USAGE to 1 will let ide-tape&n; *&t;to dynamically allocate those buffers, resulting in about 20 KB idle&n; *&t;memory usage.&n; */
+DECL|macro|IDETAPE_MINIMIZE_IDLE_MEMORY_USAGE
+mdefine_line|#define&t;IDETAPE_MINIMIZE_IDLE_MEMORY_USAGE&t;0
 multiline_comment|/*&n; *&t;The following are used to debug the driver:&n; *&n; *&t;Setting IDETAPE_DEBUG_LOG to 1 will log driver flow control.&n; *&t;Setting IDETAPE_DEBUG_BUGS to 1 will enable self-sanity checks in&n; *&t;some places.&n; *&n; *&t;Setting them to 0 will restore normal operation mode:&n; *&n; *&t;&t;1.&t;Disable logging normal successful operations.&n; *&t;&t;2.&t;Disable self-sanity checks.&n; *&t;&t;3.&t;Errors will still be logged, of course.&n; *&n; *&t;All the #if DEBUG code will be removed some day, when the driver&n; *&t;is verified to be stable enough. This will make it much more&n; *&t;esthetic.&n; */
 DECL|macro|IDETAPE_DEBUG_LOG
 mdefine_line|#define&t;IDETAPE_DEBUG_LOG&t;&t;0
@@ -35,7 +38,7 @@ DECL|macro|IDETAPE_DEBUG_BUGS
 mdefine_line|#define&t;IDETAPE_DEBUG_BUGS&t;&t;1
 multiline_comment|/*&n; *&t;After each failed packet command we issue a request sense command&n; *&t;and retry the packet command IDETAPE_MAX_PC_RETRIES times.&n; *&n; *&t;Setting IDETAPE_MAX_PC_RETRIES to 0 will disable retries.&n; */
 DECL|macro|IDETAPE_MAX_PC_RETRIES
-mdefine_line|#define&t;IDETAPE_MAX_PC_RETRIES&t;2
+mdefine_line|#define&t;IDETAPE_MAX_PC_RETRIES&t;3
 multiline_comment|/*&n; *&t;With each packet command, we allocate a buffer of&n; *&t;IDETAPE_TEMP_BUFFER_SIZE bytes. This is used for several packet&n; *&t;commands (Not for READ/WRITE commands).&n; *&n; *&t;The default below is too high - We should be using around 100 bytes&n; *&t;typically, but I didn&squot;t check all the cases, so I rather be on the&n; *&t;safe size.&n; */
 DECL|macro|IDETAPE_TEMP_BUFFER_SIZE
 mdefine_line|#define&t;IDETAPE_TEMP_BUFFER_SIZE 256
@@ -127,6 +130,21 @@ id|byte
 id|wait_for_dsc
 suffix:semicolon
 multiline_comment|/* 1 When polling for DSC on a media access command */
+DECL|member|dma_recommended
+id|byte
+id|dma_recommended
+suffix:semicolon
+multiline_comment|/* 1 when we prefer to use DMA if possible */
+DECL|member|dma_in_progress
+id|byte
+id|dma_in_progress
+suffix:semicolon
+multiline_comment|/* 1 while DMA in progress */
+DECL|member|dma_error
+id|byte
+id|dma_error
+suffix:semicolon
+multiline_comment|/* 1 when encountered problem during DMA */
 DECL|member|request_transfer
 r_int
 r_int
@@ -554,6 +572,11 @@ suffix:semicolon
 multiline_comment|/* Contents of the tape status register */
 multiline_comment|/* before the current request (saved for us */
 multiline_comment|/* by ide.c) */
+multiline_comment|/*&n;&t; *&t;After an ATAPI software reset, the status register will be&n;&t; *&t;locked, and thus we need to ignore it when checking DSC for&n;&t; *&t;the first time.&n;&t; */
+DECL|member|reset_issued
+id|byte
+id|reset_issued
+suffix:semicolon
 multiline_comment|/* Position information */
 DECL|member|partition_num
 id|byte
@@ -625,12 +648,20 @@ r_int
 id|data_buffer_size
 suffix:semicolon
 multiline_comment|/* Data buffer size (chosen based on the tape&squot;s recommendation */
-DECL|member|temp_data_buffer
+DECL|member|merge_buffer
 r_char
 op_star
-id|temp_data_buffer
+id|merge_buffer
 suffix:semicolon
 multiline_comment|/* Temporary buffer for user &lt;-&gt; kernel space data transfer */
+DECL|member|merge_buffer_offset
+r_int
+id|merge_buffer_offset
+suffix:semicolon
+DECL|member|merge_buffer_size
+r_int
+id|merge_buffer_size
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Pipeline parameters.&n;&t; *&n;&t; *&t;To accomplish non-pipelined mode, we simply set the following&n;&t; *&t;variables to zero (or NULL, where appropriate).&n;&t; */
 DECL|member|current_number_of_stages
 r_int

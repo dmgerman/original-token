@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/umc8672.c&t;Version 0.02  Feb 06, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; author (see below)&n; */
-multiline_comment|/*&n; *  Principal Author/Maintainer:  PODIEN@hml2.atlas.de (Wolfram Podien)&n; *&n; *  This file provides support for the advanced features&n; *  of the UMC 8672 IDE interface.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;now configs/compiles separate from ide.c  -ml&n; */
+multiline_comment|/*&n; *  linux/drivers/block/umc8672.c&t;Version 0.03  Feb 09, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *  Principal Author/Maintainer:  PODIEN@hml2.atlas.de (Wolfram Podien)&n; *&n; *  This file provides support for the advanced features&n; *  of the UMC 8672 IDE interface.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;now configs/compiles separate from ide.c  -ml&n; *  Version 0.03&t;enhanced auto-tune, fix display bug&n; */
 multiline_comment|/*&n; * VLB Controller Support from &n; * Wolfram Podien&n; * Rohoefe 3&n; * D28832 Achim&n; * Germany&n; *&n; * To enable UMC8672 support there must a lilo line like&n; * append=&quot;hd=umc8672&quot;...&n; * To set the speed according to the abilities of the hardware there must be a&n; * line like&n; * #define UMC_DRIVE0 11&n; * in the beginning of the driver, which sets the speed of drive 0 to 11 (there&n; * are some lines present). 0 - 11 are allowed speed values. These values are&n; * the results from the DOS speed test programm supplied from UMC. 11 is the &n; * highest speed (about PIO mode 3)&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
@@ -13,7 +13,8 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
-multiline_comment|/*&n; * The speeds will eventually become selectable using hdparm via ioctl&squot;s,&n; * but for now they are coded here:&n; */
+macro_line|#include &quot;ide_modes.h&quot;
+multiline_comment|/*&n; * Default speeds.  These can be changed with &quot;auto-tune&quot; and/or hdparm.&n; */
 DECL|macro|UMC_DRIVE0
 mdefine_line|#define UMC_DRIVE0      1              /* DOS measured drive speeds */
 DECL|macro|UMC_DRIVE1
@@ -54,7 +55,7 @@ l_int|0
 comma
 l_int|3
 comma
-l_int|6
+l_int|7
 comma
 l_int|10
 comma
@@ -442,7 +443,7 @@ l_int|2
 comma
 id|speeds
 (braket
-l_int|4
+l_int|3
 )braket
 )paren
 suffix:semicolon
@@ -467,51 +468,14 @@ id|pio
 op_eq
 l_int|255
 )paren
-(brace
-multiline_comment|/* auto-tune */
-r_struct
-id|hd_driveid
-op_star
-id|id
-op_assign
-id|drive-&gt;id
-suffix:semicolon
 id|pio
 op_assign
-id|id-&gt;tPIO
-suffix:semicolon
-r_if
-c_cond
+id|ide_get_best_pio_mode
+c_func
 (paren
-id|id-&gt;field_valid
-op_amp
-l_int|0x02
+id|drive
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|id-&gt;eide_pio_modes
-op_amp
-l_int|0x01
-)paren
-id|pio
-op_assign
-l_int|3
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|id-&gt;eide_pio_modes
-op_amp
-l_int|0x02
-)paren
-id|pio
-op_assign
-l_int|4
-suffix:semicolon
-)brace
-)brace
 r_if
 c_cond
 (paren

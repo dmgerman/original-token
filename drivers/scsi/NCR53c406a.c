@@ -1,4 +1,4 @@
-multiline_comment|/* &n; *  NCR53c406.c&n; *  Low-level SCSI driver for NCR53c406a chip.&n; *  Copyright (C) 1994, 1995 Normunds Saumanis (normunds@tech.swh.lv)&n; * &n; *  LILO command line usage: ncr53c406a=&lt;PORTBASE&gt;[,&lt;IRQ&gt;[,&lt;FASTPIO&gt;]]&n; *  Specify IRQ = 0 for non-interrupt driven mode.&n; *  FASTPIO = 1 for fast pio mode, 0 for slow mode.&n; *&n; *  This program is free software; you can redistribute it and/or modify it&n; *  under the terms of the GNU General Public License as published by the&n; *  Free Software Foundation; either version 2, or (at your option) any&n; *  later version.&n; *&n; *  This program is distributed in the hope that it will be useful, but&n; *  WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; *  General Public License for more details.&n; *&n; */
+multiline_comment|/* &n; *  NCR53c406.c&n; *  Low-level SCSI driver for NCR53c406a chip.&n; *  Copyright (C) 1994, 1995, 1996 Normunds Saumanis (normunds@fi.ibm.com)&n; * &n; *  LILO command line usage: ncr53c406a=&lt;PORTBASE&gt;[,&lt;IRQ&gt;[,&lt;FASTPIO&gt;]]&n; *  Specify IRQ = 0 for non-interrupt driven mode.&n; *  FASTPIO = 1 for fast pio mode, 0 for slow mode.&n; *&n; *  This program is free software; you can redistribute it and/or modify it&n; *  under the terms of the GNU General Public License as published by the&n; *  Free Software Foundation; either version 2, or (at your option) any&n; *  later version.&n; *&n; *  This program is distributed in the hope that it will be useful, but&n; *  WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; *  General Public License for more details.&n; *&n; */
 DECL|macro|NCR53C406A_DEBUG
 mdefine_line|#define NCR53C406A_DEBUG 0
 DECL|macro|VERBOSE_NCR53C406A_DEBUG
@@ -25,6 +25,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -344,6 +346,27 @@ id|info_msg
 (braket
 l_int|256
 )braket
+suffix:semicolon
+DECL|variable|proc_scsi_NCR53c406a
+r_struct
+id|proc_dir_entry
+id|proc_scsi_NCR53c406a
+op_assign
+(brace
+id|PROC_SCSI_NCR53C406A
+comma
+l_int|7
+comma
+l_string|&quot;NCR53c406a&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+l_int|2
+)brace
 suffix:semicolon
 multiline_comment|/* ================================================================= */
 multiline_comment|/* possible BIOS locations */
@@ -2053,6 +2076,11 @@ id|tpnt-&gt;present
 op_assign
 l_int|1
 suffix:semicolon
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_NCR53c406a
+suffix:semicolon
 id|shpnt
 op_assign
 id|scsi_register
@@ -3748,73 +3776,6 @@ l_string|&quot;NCR53c406a: Status phase&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-macro_line|#if VERBOSE_NCR53C406A_DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;request_buffer=&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|current_SC-&gt;request_bufflen
-op_logical_and
-id|i
-OL
-l_int|256
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%02x &quot;
-comma
-op_star
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|current_SC-&gt;request_buffer
-op_plus
-id|i
-)paren
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#if USE_DMA
-id|printk
-c_func
-(paren
-l_string|&quot;dma residue = %d&bslash;n&quot;
-comma
-id|NCR53c406a_dma_residual
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif USE_DMA
-macro_line|#endif VERBOSE_NCR53C406A_DEBUG
-macro_line|#endif
 id|outb
 c_func
 (paren
@@ -4400,7 +4361,7 @@ suffix:semicolon
 multiline_comment|/* FIFO_BOTTOM&t;= (port_base+0x0F); */
 multiline_comment|/* Control Register Set 1 */
 multiline_comment|/* JUMPER_SENSE&t;= (port_base+0x00);*/
-multiline_comment|/* SRAM_PTR&t;= (port_base+0x01);*/
+multiline_comment|/* SRAM_PTR&t;&t;= (port_base+0x01);*/
 multiline_comment|/* SRAM_DATA&t;= (port_base+0x02);*/
 id|PIO_FIFO
 op_assign
@@ -4452,4 +4413,5 @@ id|NCR53c406a
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
 macro_line|#endif
+multiline_comment|/*&n; * Overrides for Emacs so that we get a uniform tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

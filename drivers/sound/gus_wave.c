@@ -1,4 +1,6 @@
-multiline_comment|/*&n; * sound/gus_wave.c&n; *&n; * Driver for the Gravis UltraSound wave table synth.&n; *&n; * Copyright by Hannu Savolainen 1993, 1994&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/gus_wave.c&n; *&n; * Driver for the Gravis UltraSound wave table synth.&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus_hw.h&quot;
@@ -7,6 +9,8 @@ DECL|macro|MAX_SAMPLE
 mdefine_line|#define MAX_SAMPLE&t;150
 DECL|macro|MAX_PATCH
 mdefine_line|#define MAX_PATCH&t;256
+DECL|macro|NOT_SAMPLE
+mdefine_line|#define NOT_SAMPLE&t;0xffff
 DECL|struct|voice_info
 r_struct
 id|voice_info
@@ -418,7 +422,7 @@ r_int
 id|pcm_current_intrflag
 suffix:semicolon
 r_extern
-id|sound_os_info
+r_int
 op_star
 id|gus_osp
 suffix:semicolon
@@ -786,8 +790,7 @@ id|patch_table
 id|i
 )braket
 op_assign
-op_minus
-l_int|1
+id|NOT_SAMPLE
 suffix:semicolon
 )brace
 r_void
@@ -3763,7 +3766,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 (brace
@@ -5117,8 +5120,7 @@ id|patch
 )braket
 )paren
 op_eq
-op_minus
-l_int|1
+id|NOT_SAMPLE
 )paren
 (brace
 r_return
@@ -5151,8 +5153,12 @@ r_while
 c_loop
 (paren
 id|samplep
-op_ge
+op_ne
 l_int|0
+op_logical_and
+id|samplep
+op_ne
+id|NOT_SAMPLE
 op_logical_and
 id|sample
 op_eq
@@ -5235,7 +5241,7 @@ id|samplep
 dot
 id|key
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * Follow link&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Link to next sample */
 )brace
 r_if
 c_cond
@@ -6418,7 +6424,7 @@ r_int
 id|format
 comma
 r_const
-id|snd_rw_buf
+r_char
 op_star
 id|addr
 comma
@@ -6444,7 +6450,7 @@ id|sizeof_patch
 suffix:semicolon
 r_int
 r_int
-id|blk_size
+id|blk_sz
 comma
 id|blk_end
 comma
@@ -6886,8 +6892,8 @@ id|left
 )paren
 multiline_comment|/* Not completely transferred yet */
 (brace
-multiline_comment|/* blk_size = audio_devs[gus_devnum]-&gt;buffsize; */
-id|blk_size
+multiline_comment|/* blk_sz = audio_devs[gus_devnum]-&gt;buffsize; */
+id|blk_sz
 op_assign
 id|audio_devs
 (braket
@@ -6899,11 +6905,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|blk_size
+id|blk_sz
 OG
 id|left
 )paren
-id|blk_size
+id|blk_sz
 op_assign
 id|left
 suffix:semicolon
@@ -6912,7 +6918,7 @@ id|blk_end
 op_assign
 id|target
 op_plus
-id|blk_size
+id|blk_sz
 suffix:semicolon
 r_if
 c_cond
@@ -6942,7 +6948,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|blk_size
+id|blk_sz
 op_assign
 id|blk_end
 op_minus
@@ -6972,7 +6978,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|blk_size
+id|blk_sz
 suffix:semicolon
 id|i
 op_increment
@@ -7072,7 +7078,7 @@ id|src_offs
 )braket
 )paren
 comma
-id|blk_size
+id|blk_sz
 )paren
 suffix:semicolon
 id|save_flags
@@ -7104,7 +7110,7 @@ id|gus_devnum
 op_member_access_from_pointer
 id|dmap_out-&gt;raw_buf_phys
 comma
-id|blk_size
+id|blk_sz
 comma
 id|DMA_MODE_WRITE
 )paren
@@ -7248,7 +7254,12 @@ suffix:semicolon
 r_else
 id|tl
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|dram_sleep_flag.mode
 op_assign
@@ -7313,15 +7324,15 @@ suffix:semicolon
 multiline_comment|/*&n;       * Now the next part&n;       */
 id|left
 op_sub_assign
-id|blk_size
+id|blk_sz
 suffix:semicolon
 id|src_offs
 op_add_assign
-id|blk_size
+id|blk_sz
 suffix:semicolon
 id|target
 op_add_assign
-id|blk_size
+id|blk_sz
 suffix:semicolon
 id|gus_write8
 (paren
@@ -7375,7 +7386,7 @@ comma
 r_int
 r_char
 op_star
-id|event
+id|event_rec
 )paren
 (brace
 r_int
@@ -7392,19 +7403,20 @@ suffix:semicolon
 r_int
 r_int
 id|plong
-comma
+suffix:semicolon
+r_int
 id|flags
 suffix:semicolon
 id|cmd
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|2
 )braket
 suffix:semicolon
 id|voice
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|3
 )braket
@@ -7418,7 +7430,7 @@ r_int
 op_star
 )paren
 op_amp
-id|event
+id|event_rec
 (braket
 l_int|4
 )braket
@@ -7432,7 +7444,7 @@ r_int
 op_star
 )paren
 op_amp
-id|event
+id|event_rec
 (braket
 l_int|6
 )braket
@@ -7446,7 +7458,7 @@ r_int
 op_star
 )paren
 op_amp
-id|event
+id|event_rec
 (braket
 l_int|4
 )braket
@@ -8228,7 +8240,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 comma
 r_int
@@ -10015,7 +10027,7 @@ r_int
 id|localoffs
 comma
 r_const
-id|snd_rw_buf
+r_char
 op_star
 id|userbuf
 comma
@@ -11547,7 +11559,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 (brace
@@ -12575,6 +12587,38 @@ r_else
 (brace
 multiline_comment|/*&n;         * ASIC not detected so the card must be 2.2 or 2.4.&n;         * There could still be the 16-bit/mixer daughter card.&n;       */
 )brace
+r_if
+c_cond
+(paren
+id|hw_config-&gt;name
+)paren
+(brace
+id|strncpy
+(paren
+id|gus_info.name
+comma
+id|hw_config-&gt;name
+comma
+r_sizeof
+(paren
+id|gus_info.name
+)paren
+)paren
+suffix:semicolon
+id|gus_info.name
+(braket
+r_sizeof
+(paren
+id|gus_info.name
+)paren
+op_minus
+l_int|1
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
 id|sprintf
 (paren
 id|gus_info.name
@@ -12591,6 +12635,65 @@ op_div
 l_int|1024
 )paren
 suffix:semicolon
+id|samples
+op_assign
+(paren
+r_struct
+id|patch_info
+op_star
+)paren
+(paren
+id|sound_mem_blocks
+(braket
+id|sound_num_blocks
+)braket
+op_assign
+id|kmalloc
+(paren
+(paren
+id|MAX_SAMPLE
+op_plus
+l_int|1
+)paren
+op_star
+r_sizeof
+(paren
+op_star
+id|samples
+)paren
+comma
+id|GFP_KERNEL
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sound_num_blocks
+OL
+l_int|1024
+)paren
+id|sound_num_blocks
+op_increment
+suffix:semicolon
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|samples
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;GUS Error: Cant allocate memory for instrument tables&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
 id|conf_printf
 (paren
 id|gus_info.name
@@ -12636,48 +12739,6 @@ l_int|8
 suffix:semicolon
 macro_line|#endif
 )brace
-id|samples
-op_assign
-(paren
-r_struct
-id|patch_info
-op_star
-)paren
-(paren
-id|sound_mem_blocks
-(braket
-id|sound_num_blocks
-)braket
-op_assign
-id|kmalloc
-(paren
-(paren
-id|MAX_SAMPLE
-op_plus
-l_int|1
-)paren
-op_star
-r_sizeof
-(paren
-op_star
-id|samples
-)paren
-comma
-id|GFP_KERNEL
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sound_num_blocks
-OL
-l_int|1024
-)paren
-id|sound_num_blocks
-op_increment
-suffix:semicolon
-suffix:semicolon
 id|reset_sample_memory
 (paren
 )paren

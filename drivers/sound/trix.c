@@ -1,8 +1,27 @@
-multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTriX AudioTriX Pro&n; * (MT-0002-PC Control Chip)&n; *&n; * Copyright by Hannu Savolainen 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTriX AudioTriX Pro&n; * (MT-0002-PC Control Chip)&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_TRIX)
 macro_line|#ifdef INCLUDE_TRIX_BOOT
 macro_line|#include &quot;trix_boot.h&quot;
+macro_line|#else
+DECL|variable|trix_boot
+r_static
+r_int
+r_char
+op_star
+id|trix_boot
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|variable|trix_boot_len
+r_static
+r_int
+id|trix_boot_len
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
 DECL|variable|kilroy_was_here
 r_static
@@ -28,7 +47,7 @@ l_int|0
 suffix:semicolon
 DECL|variable|trix_osp
 r_static
-id|sound_os_info
+r_int
 op_star
 id|trix_osp
 op_assign
@@ -110,7 +129,6 @@ r_int
 id|base
 )paren
 (brace
-macro_line|#ifdef INCLUDE_TRIX_BOOT
 r_int
 id|i
 op_assign
@@ -118,10 +136,16 @@ l_int|0
 comma
 id|n
 op_assign
-r_sizeof
+id|trix_boot_len
+suffix:semicolon
+r_if
+c_cond
 (paren
-id|trix_boot
+id|trix_boot_len
+op_eq
+l_int|0
 )paren
+r_return
 suffix:semicolon
 id|trix_write
 (paren
@@ -234,7 +258,6 @@ l_int|0x390
 )paren
 suffix:semicolon
 multiline_comment|/* ?????? */
-macro_line|#endif
 )brace
 r_static
 r_int
@@ -304,15 +327,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|request_region
-(paren
-l_int|0x390
-comma
-l_int|2
-comma
-l_string|&quot;AudioTriX&quot;
-)paren
-suffix:semicolon
 id|kilroy_was_here
 op_assign
 l_int|1
@@ -412,6 +426,9 @@ op_star
 id|hw_config
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
 multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (AudioTriX Pro for example)&n;     * return 0x00.&n;   */
 r_if
 c_cond
@@ -426,7 +443,9 @@ l_int|8
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: MSS I/O port conflict&bslash;n&quot;
+l_string|&quot;AudioTriX: MSS I/O port conflict (%x)&bslash;n&quot;
+comma
+id|hw_config-&gt;io_base
 )paren
 suffix:semicolon
 r_return
@@ -620,7 +639,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_return
+id|ret
+op_assign
 id|ad1848_detect
 (paren
 id|hw_config-&gt;io_base
@@ -631,6 +651,23 @@ l_int|NULL
 comma
 id|hw_config-&gt;osp
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+id|request_region
+(paren
+l_int|0x390
+comma
+l_int|2
+comma
+l_string|&quot;AudioTriX&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 r_int
@@ -974,12 +1011,17 @@ comma
 l_int|3
 )brace
 suffix:semicolon
-macro_line|#ifndef INCLUDE_TRIX_BOOT
+r_if
+c_cond
+(paren
+id|trix_boot_len
+op_eq
+l_int|0
+)paren
 r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* No boot code -&gt; no fun */
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1011,7 +1053,9 @@ l_int|16
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: SB I/O port conflict&bslash;n&quot;
+l_string|&quot;AudioTriX: SB I/O port conflict (%x)&bslash;n&quot;
+comma
+id|hw_config-&gt;io_base
 )paren
 suffix:semicolon
 r_return
@@ -1310,7 +1354,9 @@ l_int|4
 (brace
 id|printk
 (paren
-l_string|&quot;AudioTriX: MPU I/O port conflict&bslash;n&quot;
+l_string|&quot;AudioTriX: MPU I/O port conflict (%x)&bslash;n&quot;
+comma
+id|hw_config-&gt;io_base
 )paren
 suffix:semicolon
 r_return

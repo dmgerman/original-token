@@ -151,18 +151,22 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* ??? */
 DECL|struct|files_struct
 r_struct
 id|files_struct
 (brace
+multiline_comment|/* ??? */
 DECL|member|count
 r_int
 id|count
 suffix:semicolon
+multiline_comment|/* bit mask to close fds on exec */
 DECL|member|close_on_exec
 id|fd_set
 id|close_on_exec
 suffix:semicolon
+multiline_comment|/* do we have at most NR_OPEN available fds? I assume fd i maps into&n; &t; * each open file */
 DECL|member|fd
 r_struct
 id|file
@@ -413,6 +417,7 @@ id|exit_code
 comma
 id|exit_signal
 suffix:semicolon
+multiline_comment|/* ??? */
 DECL|member|personality
 r_int
 r_int
@@ -430,20 +435,26 @@ id|did_exec
 suffix:colon
 l_int|1
 suffix:semicolon
+multiline_comment|/* shouldn&squot;t this be pid_t? */
 DECL|member|pid
-DECL|member|pgrp
-DECL|member|tty_old_pgrp
-DECL|member|session
-DECL|member|leader
 r_int
 id|pid
-comma
+suffix:semicolon
+DECL|member|pgrp
+r_int
 id|pgrp
-comma
+suffix:semicolon
+DECL|member|tty_old_pgrp
+r_int
 id|tty_old_pgrp
-comma
+suffix:semicolon
+DECL|member|session
+r_int
 id|session
-comma
+suffix:semicolon
+multiline_comment|/* boolean value for session group leader */
+DECL|member|leader
+r_int
 id|leader
 suffix:semicolon
 DECL|member|groups
@@ -1090,6 +1101,40 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* See if we have a valid user level fd.&n; * If it makes sense, return the file structure it references.&n; * Otherwise return NULL.&n; */
+DECL|function|file_from_fd
+r_extern
+r_inline
+r_struct
+id|file
+op_star
+id|file_from_fd
+c_func
+(paren
+r_const
+r_int
+r_int
+id|fd
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fd
+op_ge
+id|NR_OPEN
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* either valid or null */
+r_return
+id|current-&gt;files-&gt;fd
+(braket
+id|fd
+)braket
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The wait-queues are circular lists, and you have to be *very* sure&n; * to keep them correct. Use only these two functions to add/remove&n; * entries in the queues.&n; */
 DECL|function|add_wait_queue
 r_extern

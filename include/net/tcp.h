@@ -112,11 +112,11 @@ r_return
 id|__s32
 )paren
 (paren
-id|seq1
-op_minus
 id|seq2
+op_minus
+id|seq1
 )paren
-OG
+OL
 l_int|0
 suffix:semicolon
 )brace
@@ -381,9 +381,9 @@ r_int
 id|len
 comma
 r_struct
-id|sock
+id|sk_buff
 op_star
-id|sk
+id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* tcp_output.c */

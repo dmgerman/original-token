@@ -1877,9 +1877,6 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-id|inode-&gt;i_count
-op_decrement
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1897,6 +1894,12 @@ id|inode-&gt;i_sb
 op_logical_and
 id|inode-&gt;i_sb-&gt;dq_op
 )paren
+(brace
+multiline_comment|/* Here we can sleep also. Let&squot;s do it again&n;&t;&t;&t; * Dmitry Gorodchanin 02/11/96 &n;&t;&t;&t; */
+id|inode-&gt;i_lock
+op_assign
+l_int|1
+suffix:semicolon
 id|inode-&gt;i_sb-&gt;dq_op
 op_member_access_from_pointer
 id|drop
@@ -1905,7 +1908,20 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+id|unlock_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_goto
+id|repeat
+suffix:semicolon
 )brace
+)brace
+id|inode-&gt;i_count
+op_decrement
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -4358,11 +4358,11 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|t.ts_sec
+id|t.tv_sec
 op_assign
 l_int|0
 suffix:semicolon
-id|t.ts_nsec
+id|t.tv_nsec
 op_assign
 l_int|0
 suffix:semicolon

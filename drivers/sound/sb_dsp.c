@@ -1,4 +1,7 @@
-multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the SoundBlaster DSP chip (SB1.0 to 2.1, SB Pro).&n; *&n; * Copyright by Hannu Savolainen 1994&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *      Hunyue Yau      Jan 6 1994&n; *      Added code to support Sound Galaxy NX Pro&n; *&n; *      JRA Gibson      April 1995&n; *      Code added for MV ProSonic/Jazz 16 in 16 bit mode&n; */
+multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the SoundBlaster DSP chip (SB1.0 to 2.1, SB Pro).&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * Modified:&n; *      Hunyue Yau      Jan 6 1994&n; *      Added code to support Sound Galaxy NX Pro&n; *&n; *      JRA Gibson      April 1995&n; *      Code added for MV ProSonic/Jazz 16 in 16 bit mode&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SB)
 macro_line|#include &quot;sb.h&quot;
@@ -253,19 +256,22 @@ r_int
 id|dev
 )paren
 suffix:semicolon
+r_static
+r_void
+id|dsp_get_vers
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+suffix:semicolon
 DECL|variable|sb_osp
-id|sound_os_info
+r_int
 op_star
 id|sb_osp
 op_assign
 l_int|NULL
-suffix:semicolon
-r_static
-r_void
-id|ess_init
-(paren
-r_void
-)paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_MIDI) || defined(CONFIG_AUDIO)
 multiline_comment|/*&n; * Common code for the midi and pcm functions&n; */
@@ -1487,9 +1493,9 @@ id|AudioDrive
 r_int
 id|c
 op_assign
-l_int|0x10000
+l_int|0xffff
 op_minus
-id|count
+id|nr_bytes
 suffix:semicolon
 multiline_comment|/* ES1688 increments the count */
 id|ess_write
@@ -1706,6 +1712,15 @@ r_int
 id|restart_dma
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sb_no_recording
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 id|trg_buf
 op_assign
 id|buf
@@ -1740,7 +1755,7 @@ r_int
 id|buf
 comma
 r_int
-id|count
+id|nr_bytes
 comma
 r_int
 id|intrflag
@@ -1753,17 +1768,17 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+id|count
+op_assign
+id|nr_bytes
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|sb_no_recording
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;SB Error: This device doesn&squot;t support recording&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1830,9 +1845,9 @@ id|AudioDrive
 r_int
 id|c
 op_assign
-l_int|0x10000
+l_int|0xffff
 op_minus
-id|count
+id|nr_bytes
 suffix:semicolon
 multiline_comment|/* ES1688 increments the count */
 id|ess_write
@@ -2137,6 +2152,21 @@ r_int
 id|bcount
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sb_no_recording
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;SB Error: This device doesn&squot;t support recording&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|dsp_cleanup
 (paren
 )paren
@@ -2161,7 +2191,6 @@ c_cond
 id|AudioDrive
 )paren
 (brace
-multiline_comment|/* ess_init(); */
 id|ess_write
 (paren
 l_int|0xb8
@@ -2339,6 +2368,13 @@ id|my_dev
 op_member_access_from_pointer
 id|dmachan1
 op_assign
+id|audio_devs
+(braket
+id|my_dev
+)braket
+op_member_access_from_pointer
+id|dmachan2
+op_assign
 id|dsp_16bit
 ques
 c_cond
@@ -2427,7 +2463,6 @@ c_cond
 id|AudioDrive
 )paren
 (brace
-multiline_comment|/* ess_init(); */
 id|ess_write
 (paren
 l_int|0xb8
@@ -2627,6 +2662,13 @@ id|my_dev
 )braket
 op_member_access_from_pointer
 id|dmachan1
+op_assign
+id|audio_devs
+(braket
+id|my_dev
+)braket
+op_member_access_from_pointer
+id|dmachan2
 op_assign
 id|dsp_16bit
 ques
@@ -2840,6 +2882,13 @@ id|my_dev
 op_member_access_from_pointer
 id|dmachan1
 op_assign
+id|audio_devs
+(braket
+id|my_dev
+)braket
+op_member_access_from_pointer
+id|dmachan2
+op_assign
 id|dma8
 suffix:semicolon
 multiline_comment|/* Allocate 16 bit dma (jazz16)&n;   */
@@ -2918,6 +2967,13 @@ id|my_dev
 )braket
 op_member_access_from_pointer
 id|dmachan1
+op_assign
+id|audio_devs
+(braket
+id|my_dev
+)braket
+op_member_access_from_pointer
+id|dmachan2
 op_assign
 id|dma8
 suffix:semicolon
@@ -3044,7 +3100,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 comma
 r_int
@@ -3903,7 +3959,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef SMW_OPL4_ENABLE
-multiline_comment|/*&n;     *  Make the OPL4 chip visible on the PC bus at 0x380.&n;     *&n;     *  There is no need to enable this feature since VoxWare&n;     *  doesn&squot;t support OPL4 yet. Also there is no RAM in SM Wave so&n;     *  enabling OPL4 is pretty useless.&n;   */
+multiline_comment|/*&n;     *  Make the OPL4 chip visible on the PC bus at 0x380.&n;     *&n;     *  There is no need to enable this feature since this driver&n;     *  doesn&squot;t support OPL4 yet. Also there is no RAM in SM Wave so&n;     *  enabling OPL4 is pretty useless.&n;   */
 id|control
 op_or_assign
 l_int|0x10
@@ -4219,8 +4275,46 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|sb_reset_dsp
+(paren
+)paren
+)paren
+id|dsp_get_vers
+(paren
+id|hw_config
+)paren
+suffix:semicolon
+r_else
+id|sbc_major
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sbc_major
+op_eq
+l_int|3
+op_logical_or
+id|sbc_major
+op_eq
+l_int|0
+)paren
+r_if
+c_cond
+(paren
 id|initialize_ProSonic16
+(paren
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sb_reset_dsp
 (paren
 )paren
 )paren
@@ -4286,7 +4380,8 @@ r_void
 DECL|function|ess_init
 id|ess_init
 (paren
-r_void
+r_int
+id|ess_minor
 )paren
 multiline_comment|/* ESS1688 Initialization */
 (brace
@@ -4306,6 +4401,19 @@ id|AudioDrive
 op_assign
 l_int|1
 suffix:semicolon
+id|sb_no_recording
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Temporary kludge */
+r_if
+c_cond
+(paren
+id|ess_minor
+op_ge
+l_int|8
+)paren
+multiline_comment|/* ESS1688 doesn&squot;t support SB MIDI */
 id|midi_disabled
 op_assign
 l_int|1
@@ -4677,6 +4785,20 @@ op_star
 id|hw_config
 )paren
 (brace
+r_extern
+r_void
+id|smw_mixer_init
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sb_mixer_reset
+(paren
+r_void
+)paren
+suffix:semicolon
 id|mpu_base
 op_assign
 id|hw_config-&gt;io_base
@@ -4686,6 +4808,14 @@ op_assign
 id|hw_config-&gt;irq
 suffix:semicolon
 id|initialize_ProSonic16
+(paren
+)paren
+suffix:semicolon
+id|smw_mixer_init
+(paren
+)paren
+suffix:semicolon
+id|sb_mixer_reset
 (paren
 )paren
 suffix:semicolon
@@ -4702,6 +4832,39 @@ id|dma16
 op_assign
 id|dma
 suffix:semicolon
+multiline_comment|/* Allocate 16 bit dma (Jazz16)&n; */
+r_if
+c_cond
+(paren
+id|dma16
+op_ne
+id|dma8
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sound_alloc_dma
+(paren
+id|dma16
+comma
+l_string|&quot;Jazz16 16 bit&quot;
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;Jazz16: Can&squot;t allocate 16 bit DMA channel&bslash;n&quot;
+)paren
+suffix:semicolon
+id|Jazz16_detected
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
 id|initialize_ProSonic16
 (paren
 )paren
@@ -5169,6 +5332,7 @@ id|AFMT_S16_LE
 suffix:semicolon
 id|ess_init
 (paren
+id|ess_minor
 )paren
 suffix:semicolon
 )brace
@@ -5282,6 +5446,8 @@ id|dmachan1
 op_assign
 id|hw_config-&gt;dma
 suffix:semicolon
+id|dma16
+op_assign
 id|audio_devs
 (braket
 id|my_dev
@@ -5289,8 +5455,7 @@ id|my_dev
 op_member_access_from_pointer
 id|dmachan2
 op_assign
-op_minus
-l_int|1
+id|hw_config-&gt;dma
 suffix:semicolon
 r_if
 c_cond
@@ -5307,40 +5472,6 @@ id|printk
 l_string|&quot;sb_dsp.c: Can&squot;t allocate DMA channel&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Allocate 16 bit dma (Jazz16)&n;&t; */
-r_if
-c_cond
-(paren
-id|Jazz16_detected
-op_ne
-l_int|0
-)paren
-r_if
-c_cond
-(paren
-id|dma16
-op_ne
-id|dma8
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sound_alloc_dma
-(paren
-id|dma16
-comma
-l_string|&quot;Jazz16 16 bit&quot;
-)paren
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;Jazz16: Can&squot;t allocate 16 bit DMA channel&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
 )brace
 r_else
 id|printk
@@ -5377,6 +5508,10 @@ macro_line|#endif
 id|sb_dsp_ok
 op_assign
 l_int|1
+suffix:semicolon
+id|sb_reset_dsp
+(paren
+)paren
 suffix:semicolon
 r_return
 id|mem_start

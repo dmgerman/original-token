@@ -1,4 +1,6 @@
-multiline_comment|/*&n; * sound/mpu401.c&n; *&n; * The low level driver for Roland MPU-401 compatible Midi cards.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *  Riccardo Facchetti  24 Mar 1995&n; *  - Added the Audio Excel DSP 16 initialization routine.&n; */
+multiline_comment|/*&n; * sound/mpu401.c&n; *&n; * The low level driver for Roland MPU-401 compatible Midi cards.&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS
@@ -153,7 +155,7 @@ r_int
 id|shared_irq
 suffix:semicolon
 DECL|member|osp
-id|sound_os_info
+r_int
 op_star
 id|osp
 suffix:semicolon
@@ -165,18 +167,104 @@ DECL|macro|COMDPORT
 mdefine_line|#define&t;COMDPORT(base)   (base+1)
 DECL|macro|STATPORT
 mdefine_line|#define&t;STATPORT(base)   (base+1)
-DECL|macro|mpu401_status
-mdefine_line|#define mpu401_status(devc)&t;&t;inb( STATPORT(devc-&gt;base))
+r_static
+r_int
+DECL|function|mpu401_status
+id|mpu401_status
+(paren
+r_struct
+id|mpu_config
+op_star
+id|devc
+)paren
+(brace
+r_return
+id|inb
+(paren
+id|STATPORT
+(paren
+id|devc-&gt;base
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|macro|input_avail
 mdefine_line|#define input_avail(devc)&t;&t;(!(mpu401_status(devc)&amp;INPUT_AVAIL))
 DECL|macro|output_ready
 mdefine_line|#define output_ready(devc)&t;&t;(!(mpu401_status(devc)&amp;OUTPUT_READY))
-DECL|macro|write_command
-mdefine_line|#define write_command(devc, cmd)&t;outb( cmd,  COMDPORT(devc-&gt;base))
-DECL|macro|read_data
-mdefine_line|#define read_data(devc)&t;&t;inb( DATAPORT(devc-&gt;base))
-DECL|macro|write_data
-mdefine_line|#define write_data(devc, byte)&t;outb( byte,  DATAPORT(devc-&gt;base))
+r_static
+r_void
+DECL|function|write_command
+id|write_command
+(paren
+r_struct
+id|mpu_config
+op_star
+id|devc
+comma
+r_int
+r_char
+id|cmd
+)paren
+(brace
+id|outb
+(paren
+id|cmd
+comma
+id|COMDPORT
+(paren
+id|devc-&gt;base
+)paren
+)paren
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|read_data
+id|read_data
+(paren
+r_struct
+id|mpu_config
+op_star
+id|devc
+)paren
+(brace
+r_return
+id|inb
+(paren
+id|DATAPORT
+(paren
+id|devc-&gt;base
+)paren
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|write_data
+id|write_data
+(paren
+r_struct
+id|mpu_config
+op_star
+id|devc
+comma
+r_int
+r_char
+id|byte
+)paren
+(brace
+id|outb
+(paren
+id|byte
+comma
+id|DATAPORT
+(paren
+id|devc-&gt;base
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|macro|OUTPUT_READY
 mdefine_line|#define&t;OUTPUT_READY&t;0x40
 DECL|macro|INPUT_AVAIL
@@ -1891,10 +1979,10 @@ id|mpu401_input_loop
 id|devc
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Sometimes it takes about 30000 loops before the output becomes ready&n;   * (After reset). Normally it takes just about 10 loops.&n;   */
+multiline_comment|/*&n;   * Sometimes it takes about 50000 loops before the output becomes ready&n;   * (After reset). Normally it takes just about 10 loops.&n;   */
 id|timeout
 op_assign
-l_int|30000
+l_int|50000
 suffix:semicolon
 id|retry
 suffix:colon
@@ -1986,6 +2074,7 @@ id|input_avail
 id|devc
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2033,6 +2122,7 @@ id|ok
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -2467,7 +2557,7 @@ comma
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 (brace
@@ -2711,7 +2801,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 (brace
@@ -3262,11 +3352,24 @@ id|devc
 r_int
 id|tmp
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|devc-&gt;version
 op_assign
 id|devc-&gt;revision
 op_assign
 l_int|0
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3286,8 +3389,15 @@ l_int|0
 OL
 l_int|0
 )paren
+(brace
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3300,8 +3410,15 @@ OG
 l_int|0x20
 )paren
 multiline_comment|/* Why it&squot;s larger than 2.x ??? */
+(brace
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 id|devc-&gt;version
 op_assign
 id|tmp
@@ -3329,12 +3446,22 @@ id|devc-&gt;version
 op_assign
 l_int|0
 suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|devc-&gt;revision
 op_assign
 id|tmp
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 r_int
@@ -3511,6 +3638,13 @@ OL
 l_int|0
 )paren
 (brace
+id|printk
+(paren
+l_string|&quot;MPU401: Failed to allocate IRQ%d&bslash;n&quot;
+comma
+id|devc-&gt;irq
+)paren
+suffix:semicolon
 r_return
 id|mem_start
 suffix:semicolon
@@ -4354,14 +4488,6 @@ id|tmp_devc.osp
 op_assign
 id|hw_config-&gt;osp
 suffix:semicolon
-macro_line|#if defined(CONFIG_AEDSP16) &amp;&amp; defined(AEDSP16_MPU401)
-multiline_comment|/*&n;     * Initialize Audio Excel DSP 16 to MPU-401, before any operation.&n;   */
-id|InitAEDSP16_MPU401
-(paren
-id|hw_config
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4689,7 +4815,12 @@ id|cli
 suffix:semicolon
 id|next_event_time
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|prev_event_time
 op_assign
@@ -5547,7 +5678,7 @@ r_int
 r_int
 id|command
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 (brace
@@ -6073,7 +6204,12 @@ id|next_event_time
 (brace
 id|next_event_time
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|sequencer_timer
 (paren

@@ -1,4 +1,6 @@
-multiline_comment|/*&n; * sound/sb16_midi.c&n; *&n; * The low level driver for the MPU-401 UART emulation of the SB16.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/sb16_midi.c&n; *&n; * The low level driver for the MPU-401 UART emulation of the SB16.&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SB) &amp;&amp; defined(CONFIG_MIDI)
 macro_line|#include &quot;sb.h&quot;
@@ -9,22 +11,87 @@ mdefine_line|#define&t;COMDPORT   (sb16midi_base+1)
 DECL|macro|STATPORT
 mdefine_line|#define&t;STATPORT   (sb16midi_base+1)
 r_extern
-id|sound_os_info
+r_int
 op_star
 id|sb_osp
 suffix:semicolon
-DECL|macro|sb16midi_status
-mdefine_line|#define sb16midi_status()&t;&t;inb( STATPORT)
+DECL|variable|sb16midi_base
+r_static
+r_int
+id|sb16midi_base
+op_assign
+l_int|0x330
+suffix:semicolon
+r_static
+r_int
+DECL|function|sb16midi_status
+id|sb16midi_status
+(paren
+r_void
+)paren
+(brace
+r_return
+id|inb
+(paren
+id|STATPORT
+)paren
+suffix:semicolon
+)brace
 DECL|macro|input_avail
 mdefine_line|#define input_avail()&t;&t;(!(sb16midi_status()&amp;INPUT_AVAIL))
 DECL|macro|output_ready
 mdefine_line|#define output_ready()&t;&t;(!(sb16midi_status()&amp;OUTPUT_READY))
-DECL|macro|sb16midi_cmd
-mdefine_line|#define sb16midi_cmd(cmd)&t;&t;outb( cmd,  COMDPORT)
-DECL|macro|sb16midi_read
-mdefine_line|#define sb16midi_read()&t;&t;inb( DATAPORT)
-DECL|macro|sb16midi_write
-mdefine_line|#define sb16midi_write(byte)&t;outb( byte,  DATAPORT)
+r_static
+r_void
+DECL|function|sb16midi_cmd
+id|sb16midi_cmd
+(paren
+r_int
+r_char
+id|cmd
+)paren
+(brace
+id|outb
+(paren
+id|cmd
+comma
+id|COMDPORT
+)paren
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|sb16midi_read
+id|sb16midi_read
+(paren
+r_void
+)paren
+(brace
+r_return
+id|inb
+(paren
+id|DATAPORT
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|sb16midi_write
+id|sb16midi_write
+(paren
+r_int
+r_char
+id|byte
+)paren
+(brace
+id|outb
+(paren
+id|byte
+comma
+id|DATAPORT
+)paren
+suffix:semicolon
+)brace
 DECL|macro|OUTPUT_READY
 mdefine_line|#define&t;OUTPUT_READY&t;0x40
 DECL|macro|INPUT_AVAIL
@@ -41,13 +108,6 @@ r_int
 id|sb16midi_opened
 op_assign
 l_int|0
-suffix:semicolon
-DECL|variable|sb16midi_base
-r_static
-r_int
-id|sb16midi_base
-op_assign
-l_int|0x330
 suffix:semicolon
 DECL|variable|sb16midi_detected
 r_static
@@ -411,7 +471,7 @@ comma
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 (brace

@@ -1,4 +1,6 @@
-multiline_comment|/*&n; * sound/dmabuf.c&n; *&n; * The DMA buffer manager for digitized voice applications&n; *&n; * Copyright by Hannu Savolainen 1993, 1994, 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/dmabuf.c&n; *&n; * The DMA buffer manager for digitized voice applications&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_AUDIO) || defined(CONFIG_GUS)
 DECL|variable|in_sleeper
@@ -294,6 +296,7 @@ op_div_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* Needs at least 2 buffers */
+multiline_comment|/*&n; *    Split the computed fragment to smaller parts. After 3.5a9&n; *      the default subdivision is 4 which should give better&n; *      results when recording.&n; */
 r_if
 c_cond
 (paren
@@ -302,12 +305,19 @@ op_eq
 l_int|0
 )paren
 multiline_comment|/* Not already set */
+macro_line|#ifdef V35A9_COMPATIBLE
 id|dmap-&gt;subdivision
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Init to default value */
-r_else
+multiline_comment|/* Init to the default value */
+macro_line|#else
+id|dmap-&gt;subdivision
+op_assign
+l_int|4
+suffix:semicolon
+multiline_comment|/* Init to the default value */
+macro_line|#endif
 id|bsz
 op_div_assign
 id|dmap-&gt;subdivision
@@ -530,7 +540,7 @@ l_int|0
 suffix:semicolon
 id|dmap-&gt;neutral_byte
 op_assign
-l_int|0x00
+l_int|0x80
 suffix:semicolon
 id|dmap-&gt;cfrag
 op_assign
@@ -1043,7 +1053,7 @@ comma
 id|SOUND_PCM_WRITE_BITS
 comma
 (paren
-id|ioctl_arg
+id|caddr_t
 )paren
 l_int|8
 comma
@@ -1062,7 +1072,7 @@ comma
 id|SOUND_PCM_WRITE_CHANNELS
 comma
 (paren
-id|ioctl_arg
+id|caddr_t
 )paren
 l_int|1
 comma
@@ -1081,7 +1091,7 @@ comma
 id|SOUND_PCM_WRITE_RATE
 comma
 (paren
-id|ioctl_arg
+id|caddr_t
 )paren
 id|DSP_DEFAULT_SPEED
 comma
@@ -1419,8 +1429,6 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|dmap_out-&gt;qlen
-OG
-l_int|1
 )paren
 (brace
 (brace
@@ -1447,7 +1455,12 @@ suffix:semicolon
 r_else
 id|tl
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|out_sleep_flag
 (braket
@@ -1614,7 +1627,12 @@ suffix:semicolon
 r_else
 id|tl
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|out_sleep_flag
 (braket
@@ -1754,6 +1772,30 @@ id|DMODE_OUTPUT
 id|dma_sync
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|memset
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_out-&gt;raw_buf
+comma
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_out-&gt;neutral_byte
+comma
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_out-&gt;bytes_in_use
 )paren
 suffix:semicolon
 )brace
@@ -2124,7 +2166,6 @@ id|cli
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -2149,7 +2190,6 @@ id|EINVAL
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2282,7 +2322,12 @@ suffix:semicolon
 r_else
 id|tl
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|in_sleep_flag
 (braket
@@ -2470,7 +2515,6 @@ id|dmap-&gt;qhead
 op_plus
 id|c
 suffix:semicolon
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -2495,7 +2539,6 @@ id|EINVAL
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2573,7 +2616,7 @@ id|dma_buffparms
 op_star
 id|dmap
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 comma
 r_int
@@ -2698,7 +2741,7 @@ id|dma_buffparms
 op_star
 id|dmap
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 comma
 r_int
@@ -3010,7 +3053,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 comma
 r_int
@@ -3313,7 +3356,6 @@ id|dmap
 op_assign
 id|dmap_in
 suffix:semicolon
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -3325,7 +3367,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3627,7 +3668,6 @@ id|dmap_in
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -3685,7 +3725,6 @@ id|dmap_out-&gt;fragment_size
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|audio_devs
 (braket
 id|dev
@@ -3890,7 +3929,6 @@ id|info
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -3913,7 +3951,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Acknowledge interrupts */
-macro_line|#endif
 id|restore_flags
 (paren
 id|flags
@@ -4017,7 +4054,6 @@ id|info
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -4040,7 +4076,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Acknowledge interrupts */
-macro_line|#endif
 id|restore_flags
 (paren
 id|flags
@@ -4325,7 +4360,6 @@ id|dev
 op_member_access_from_pointer
 id|dmap_out
 suffix:semicolon
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -4349,7 +4383,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4578,7 +4611,12 @@ suffix:semicolon
 r_else
 id|tl
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|out_sleep_flag
 (braket
@@ -4737,6 +4775,19 @@ id|size
 op_assign
 id|dmap-&gt;fragment_size
 suffix:semicolon
+macro_line|#if 1
+id|memset
+(paren
+op_star
+id|buf
+comma
+id|dmap-&gt;neutral_byte
+comma
+op_star
+id|size
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dmap-&gt;counts
 (braket
 id|dmap-&gt;qtail
@@ -4913,7 +4964,6 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n; * Bypass buffering if using mmaped access&n; */
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -4955,15 +5005,6 @@ id|dmap-&gt;nbufs
 suffix:semicolon
 )brace
 r_else
-macro_line|#else
-r_if
-c_cond
-(paren
-id|dmap
-op_ne
-l_int|NULL
-)paren
-macro_line|#endif
 (brace
 id|dmap-&gt;qlen
 op_increment
@@ -5471,9 +5512,6 @@ id|dev
 op_member_access_from_pointer
 id|dmap_out
 suffix:semicolon
-r_int
-id|p
-suffix:semicolon
 id|dmap-&gt;byte_counter
 op_add_assign
 id|dmap-&gt;counts
@@ -5502,7 +5540,6 @@ id|dmachan1
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -5512,6 +5549,9 @@ id|DMA_MAP_MAPPED
 )paren
 (brace
 multiline_comment|/* mmapped access */
+r_int
+id|p
+suffix:semicolon
 id|p
 op_assign
 id|dmap-&gt;fragment_size
@@ -5647,7 +5687,6 @@ id|DMA_ACTIVE
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5753,21 +5792,28 @@ l_int|1
 op_mod
 id|dmap-&gt;nbufs
 suffix:semicolon
-id|p
-op_assign
-id|dmap-&gt;fragment_size
-op_star
-id|dmap-&gt;qhead
-suffix:semicolon
 id|memset
 (paren
-id|dmap-&gt;raw_buf
-op_plus
-id|p
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_out-&gt;raw_buf
 comma
-id|dmap-&gt;neutral_byte
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_out-&gt;neutral_byte
 comma
-id|dmap-&gt;fragment_size
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_out-&gt;bytes_in_use
 )paren
 suffix:semicolon
 )brace
@@ -5972,7 +6018,6 @@ id|dmachan2
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -6083,7 +6128,6 @@ id|DMA_ACTIVE
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6759,7 +6803,6 @@ id|dev
 op_member_access_from_pointer
 id|dmap_in
 suffix:semicolon
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -6814,7 +6857,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6949,7 +6991,6 @@ id|dev
 op_member_access_from_pointer
 id|dmap_out
 suffix:semicolon
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -7004,7 +7045,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7225,7 +7265,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 comma
 r_int

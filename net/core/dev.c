@@ -670,12 +670,12 @@ r_int
 id|flags
 suffix:semicolon
 r_struct
-id|packet_type
+id|sk_buff_head
 op_star
-id|ptype
+id|list
 suffix:semicolon
 r_int
-id|where
+id|retransmission
 op_assign
 l_int|0
 suffix:semicolon
@@ -733,7 +733,7 @@ id|pri
 op_minus
 l_int|1
 suffix:semicolon
-id|where
+id|retransmission
 op_assign
 l_int|1
 suffix:semicolon
@@ -806,35 +806,44 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
+id|list
+op_assign
+id|dev-&gt;buffs
+op_plus
+id|pri
+suffix:semicolon
 id|save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* if this isn&squot;t a retransmission, use the first packet instead... */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|where
+id|retransmission
 )paren
-multiline_comment|/* Always keep order. It helps other hosts&n;&t;&t;&t;&t;&t;   far more than it costs us */
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Check we are not overruning the device queue length.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|skb_queue_len
 c_func
 (paren
-id|dev-&gt;buffs
-op_plus
-id|pri
+id|list
+)paren
+)paren
+(brace
+multiline_comment|/* avoid overrunning the device queue.. */
+r_if
+c_cond
+(paren
+id|skb_queue_len
+c_func
+(paren
+id|list
 )paren
 OG
 id|dev-&gt;tx_queue_len
@@ -851,14 +860,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|skb_queue_tail
+id|cli
 c_func
 (paren
-id|dev-&gt;buffs
-op_plus
-id|pri
-comma
-id|skb
 )paren
 suffix:semicolon
 id|skb_device_unlock
@@ -868,14 +872,20 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* Buffer is on the device queue and can be freed safely */
-id|skb
-op_assign
-id|skb_dequeue
+id|__skb_queue_tail
 c_func
 (paren
-id|dev-&gt;buffs
-op_plus
-id|pri
+id|list
+comma
+id|skb
+)paren
+suffix:semicolon
+id|skb
+op_assign
+id|__skb_dequeue
+c_func
+(paren
+id|list
 )paren
 suffix:semicolon
 id|skb_device_lock
@@ -885,23 +895,25 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* New buffer needs locking down */
-)brace
 id|restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* copy outgoing packets to any sniffer packet handlers */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|where
-op_logical_and
 id|dev_nit
 )paren
 (brace
+r_struct
+id|packet_type
+op_star
+id|ptype
+suffix:semicolon
 id|skb-&gt;stamp
 op_assign
 id|xtime
@@ -922,7 +934,7 @@ op_assign
 id|ptype-&gt;next
 )paren
 (brace
-multiline_comment|/* Never send packets back to the socket&n;&t;&t;&t; * they originated from - MvS (miquels@drinkel.ow.org)&n;&t;&t;&t; */
+multiline_comment|/* Never send packets back to the socket&n;&t;&t;&t;&t; * they originated from - MvS (miquels@drinkel.ow.org)&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -996,6 +1008,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+)brace
 id|start_bh_atomic
 c_func
 (paren
@@ -1043,12 +1056,10 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|skb_queue_head
+id|__skb_queue_head
 c_func
 (paren
-id|dev-&gt;buffs
-op_plus
-id|pri
+id|list
 comma
 id|skb
 )paren
@@ -1328,7 +1339,7 @@ c_loop
 (paren
 id|skb
 op_assign
-id|skb_dequeue
+id|__skb_dequeue
 c_func
 (paren
 op_amp
@@ -1547,7 +1558,7 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Again, see if we can transmit anything now. &n;&t;&t; *&t;[Ought to take this out judging by tests it slows&n;&t;&t; *&t; us down not speeds us up]&n;&t;&t; */
-macro_line|#ifdef CONFIG_XMIT_EVERY
+macro_line|#ifdef XMIT_EVERY
 id|dev_transmit
 c_func
 (paren
@@ -1572,11 +1583,13 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;One last output flush.&n;&t; */
+macro_line|#ifdef XMIT_AFTER&t; 
 id|dev_transmit
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;This routine is called when an device driver (i.e. an&n; *&t;interface) is ready to transmit a packet.&n; */
 DECL|function|dev_tint
@@ -1593,14 +1606,14 @@ id|dev
 r_int
 id|i
 suffix:semicolon
-r_struct
-id|sk_buff
-op_star
-id|skb
-suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+r_struct
+id|sk_buff_head
+op_star
+id|head
 suffix:semicolon
 multiline_comment|/*&n;&t; * aliases do not transmit (for now :) )&n;&t; */
 macro_line|#ifdef CONFIG_NET_ALIAS
@@ -1616,10 +1629,19 @@ id|dev
 r_return
 suffix:semicolon
 macro_line|#endif
+id|head
+op_assign
+id|dev-&gt;buffs
+suffix:semicolon
 id|save_flags
 c_func
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Work the queues in priority order&n;&t; */
@@ -1636,34 +1658,36 @@ id|DEV_NUMBUFFS
 suffix:semicolon
 id|i
 op_increment
+comma
+id|head
+op_increment
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Pull packets from the queue&n;&t;&t; */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
+r_struct
+id|sk_buff
+op_star
 id|skb
 op_assign
-id|skb_dequeue
+id|skb_peek
 c_func
 (paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
+id|head
 )paren
-)paren
-op_ne
-l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
 )paren
 (brace
+id|__skb_unlink
+c_func
+(paren
+id|skb
+comma
+id|head
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Stop anyone freeing the buffer while we retransmit it&n;&t;&t;&t; */
 id|skb_device_lock
 c_func

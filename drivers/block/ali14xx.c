@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/ali14xx.c       Version 0.01  Feb 06, 1996&n; *&n; *  Copyright (C) 1996  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ali14xx.c       Version 0.03  Feb 09, 1996&n; *&n; *  Copyright (C) 1996  Linus Torvalds &amp; author (see below)&n; */
 multiline_comment|/*&n; * ALI M14xx chipset EIDE controller&n; *&n; * Adapted from code developed by derekn@vw.ece.cmu.edu.  -ml&n; * Derek&squot;s notes follow:&n; *&n; * I think the code should be pretty understandable,&n; * but I&squot;ll be happy to (try to) answer questions.&n; *&n; * The critical part is in the setupDrive function.  The initRegisters&n; * function doesn&squot;t seem to be necessary, but the DOS driver does it, so&n; * I threw it in.&n; *&n; * I&squot;ve only tested this on my system, which only has one disk.  I posted&n; * it to comp.sys.linux.hardware, so maybe some other people will try it&n; * out.&n; *&n; * Derek Noonburg  (derekn@ece.cmu.edu)&n; * 95-sep-26&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO           /* most systems can safely undef this */
@@ -12,8 +12,10 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
+macro_line|#include &quot;ide_modes.h&quot;
+multiline_comment|/*&n; * This should be set to the system&squot;s local bus (PCI or VLB) speed,&n; * e.g., 33 for a 486DX33 or 486DX2/66.  Legal values are anything&n; * from 25 to 50.  Setting this too *low* will make the EIDE&n; * controller unable to communicate with the disks.&n; *&n; * I suggest using a default of 50, since it should work ok with any&n; * system.  (Low values cause problems because it multiplies by bus speed&n; * to get cycles, and thus gets a too-small cycle count and tries to&n; * access the disks too fast.  I tried this once under DOS and it locked&n; * up the system.)&t;-- derekn@vw.ece.cmu.edu&n; */
 DECL|macro|ALI_14xx_BUS_SPEED
-mdefine_line|#define ALI_14xx_BUS_SPEED&t;40&t;/* PCI / VLB bus speed */
+mdefine_line|#define ALI_14xx_BUS_SPEED&t;50&t;/* PCI / VLB bus speed */
 multiline_comment|/* port addresses for auto-detection */
 DECL|macro|ALI_NUM_PORTS
 mdefine_line|#define ALI_NUM_PORTS 4
@@ -479,32 +481,25 @@ id|pio
 op_eq
 l_int|255
 )paren
-(brace
-multiline_comment|/* auto-tune */
 id|pio
 op_assign
-id|id-&gt;tPIO
+id|ide_get_best_pio_mode
+c_func
+(paren
+id|drive
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|id-&gt;field_valid
-op_amp
-l_int|0x02
-)paren
-op_logical_and
-(paren
-id|id-&gt;eide_pio_modes
-op_amp
-l_int|0x01
-)paren
+id|pio
+OG
+l_int|3
 )paren
 id|pio
 op_assign
 l_int|3
 suffix:semicolon
-)brace
 multiline_comment|/* calculate timing, according to PIO mode */
 id|time1
 op_assign

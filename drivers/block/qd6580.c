@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/qd6580.c       Version 0.01  Feb 06, 1996&n; *&n; *  Copyright (C) 1996  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *  linux/drivers/block/qd6580.c       Version 0.02  Feb 09, 1996&n; *&n; *  Copyright (C) 1996  Linus Torvalds &amp; author (see below)&n; */
 multiline_comment|/*&n; * QDI QD6580 EIDE controller fast support by Colten Edwards.&n; * No net access, but (maybe) can be reached at pje120@cs.usask.ca&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO           /* most systems can safely undef this */
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
+macro_line|#include &quot;ide_modes.h&quot;
 multiline_comment|/*&n; * Register 0xb3 looks like:&n; *&t;0x4f is fast&t;&t;mode3 ?&n; *&t;0x3f is medium&t;&t;mode2 ?&n; *&t;0x2f is slower&t;&t;mode1 ?&n; *&t;0x1f is slower yet&t;mode0 ?&n; *&t;0x0f ???&t;&t;???&n; *&n; * Don&squot;t know whether this sets BOTH drives, or just the first drive.&n; * Don&squot;t know if there is a separate setting for the second drive.&n; *&n; * Feel free to patch this if you have one of these beasts&n; * and can work out the answers!&n; *&n; * I/O ports are 0xb0 0xb2 and 0xb3&n; */
 DECL|function|tune_qd6580
 r_static
@@ -37,43 +38,24 @@ id|pio
 op_eq
 l_int|255
 )paren
-(brace
-multiline_comment|/* auto-tune */
-r_struct
-id|hd_driveid
-op_star
-id|id
-op_assign
-id|drive-&gt;id
-suffix:semicolon
 id|pio
 op_assign
-id|id-&gt;tPIO
+id|ide_get_best_pio_mode
+(paren
+id|drive
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|id-&gt;field_valid
-op_amp
-l_int|0x02
-)paren
-op_logical_and
-(paren
-id|id-&gt;eide_pio_modes
-op_amp
-l_int|0x03
-)paren
+id|pio
+OG
+l_int|3
 )paren
 id|pio
 op_assign
 l_int|3
 suffix:semicolon
-)brace
-id|pio
-op_increment
-suffix:semicolon
-multiline_comment|/* is this correct? */
 id|save_flags
 c_func
 (paren
@@ -105,7 +87,11 @@ id|outb_p
 c_func
 (paren
 (paren
+(paren
 id|pio
+op_plus
+l_int|1
+)paren
 op_lshift
 l_int|4
 )paren

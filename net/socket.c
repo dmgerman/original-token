@@ -4519,6 +4519,19 @@ r_return
 op_minus
 id|ENOTSOCK
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sock-&gt;ops-&gt;sendmsg
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|EOPNOTSUPP
+suffix:semicolon
+)brace
 id|err
 op_assign
 id|verify_area
@@ -4560,6 +4573,7 @@ id|msghdr
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* do not move before msg_sys is valid */
 r_if
 c_cond
 (paren
@@ -4604,19 +4618,6 @@ id|total_len
 op_assign
 id|err
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sock-&gt;ops-&gt;sendmsg
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-op_minus
-id|EOPNOTSUPP
-suffix:semicolon
-)brace
 r_return
 id|sock-&gt;ops
 op_member_access_from_pointer

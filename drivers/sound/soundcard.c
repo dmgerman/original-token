@@ -1,10 +1,8 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/sound/soundcard.c&n; *&n; * Soundcard driver for Linux&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
-multiline_comment|/*&n; * Created modular version by Peter Trattler (peter@sbox.tu-graz.ac.at)&n; */
+multiline_comment|/*&n; * linux/kernel/chr_drv/sound/soundcard.c&n; *&n; * Soundcard driver for Linux&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#ifdef CONFIG_PNP
-macro_line|#include &lt;linux/pnp.h&gt;
-macro_line|#endif
 DECL|variable|chrdev_registered
 r_static
 r_int
@@ -850,7 +848,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_static
 r_int
 DECL|function|sound_mmap
@@ -877,8 +874,6 @@ suffix:semicolon
 r_int
 r_int
 id|size
-comma
-id|i
 suffix:semicolon
 r_struct
 id|dma_buffparms
@@ -1201,7 +1196,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|variable|sound_fops
 r_static
 r_struct
@@ -1222,13 +1216,8 @@ id|sound_select
 comma
 id|sound_ioctl
 comma
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 id|sound_mmap
 comma
-macro_line|#else
-l_int|NULL
-comma
-macro_line|#endif
 id|sound_open
 comma
 id|sound_release
@@ -1267,12 +1256,6 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize call tables and&n;&t;&t;&t;&t;   * detect cards */
-macro_line|#ifdef CONFIG_PNP
-id|sound_pnp_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1675,12 +1658,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PNP
-id|sound_pnp_disconnect
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 macro_line|#endif
@@ -1688,7 +1665,7 @@ r_void
 DECL|function|tenmicrosec
 id|tenmicrosec
 (paren
-id|sound_os_info
+r_int
 op_star
 id|osp
 )paren
@@ -1740,7 +1717,7 @@ r_char
 op_star
 id|name
 comma
-id|sound_os_info
+r_int
 op_star
 id|osp
 )paren
@@ -2155,13 +2132,11 @@ id|i
 comma
 id|dma_pagesize
 suffix:semicolon
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 id|dmap-&gt;mapping_flags
 op_and_assign
 op_complement
 id|DMA_MAP_MAPPED
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2557,7 +2532,6 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef ALLOW_BUFFER_MAPPING
 r_if
 c_cond
 (paren
@@ -2568,7 +2542,6 @@ id|DMA_MAP_MAPPED
 r_return
 suffix:semicolon
 multiline_comment|/* Don&squot;t free mmapped buffer. Will use it next time */
-macro_line|#endif
 (brace
 r_int
 id|sz

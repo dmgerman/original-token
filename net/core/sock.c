@@ -1640,10 +1640,6 @@ op_star
 id|sk
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 macro_line|#ifdef CONFIG_INET
 r_struct
 id|sk_buff
@@ -1651,6 +1647,12 @@ op_star
 id|skb
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; * First, mark it not in use: this ensures that we will not&n;&t; * get any new backlog packets..&n;&t; */
+id|sk-&gt;inuse
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 r_if
 c_cond
 (paren
@@ -1659,48 +1661,7 @@ id|sk-&gt;prot
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Make the backlog atomic. If we don&squot;t do this there is a tiny&n;&t; *&t;window where a packet may arrive between the sk-&gt;blog being &n;&t; *&t;tested and then set with sk-&gt;inuse still 0 causing an extra &n;&t; *&t;unwanted re-entry into release_sock().&n;&t; */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;blog
-)paren
-(brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|sk-&gt;blog
-op_assign
-l_int|1
-suffix:semicolon
-id|sk-&gt;inuse
-op_assign
-l_int|1
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_INET
+multiline_comment|/*&n;&t; *&t;This is only ever called from a user process context, hence&n;&t; *&t;(until fine grained SMP) its safe. sk-&gt;inuse must be volatile&n;&t; *&t;so the compiler doesn&squot;t do anything unfortunate with it.&n;&t; */
 multiline_comment|/* See if we have any packets built up. */
 r_while
 c_loop
@@ -1708,7 +1669,7 @@ c_loop
 (paren
 id|skb
 op_assign
-id|skb_dequeue
+id|__skb_dequeue
 c_func
 (paren
 op_amp
@@ -1719,10 +1680,11 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|sk-&gt;blog
+id|sk-&gt;inuse
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* Very important.. */
 r_if
 c_cond
 (paren
@@ -1761,17 +1723,11 @@ op_star
 id|sk-&gt;pair
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif  
-id|sk-&gt;blog
-op_assign
-l_int|0
-suffix:semicolon
 id|sk-&gt;inuse
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET  
+)brace
 r_if
 c_cond
 (paren

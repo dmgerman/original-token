@@ -54,6 +54,12 @@ mdefine_line|#define FEATUREMAP1&t;&t;(WDC_SR_TGOOD|WDC_SR_FANGOOD)
 DECL|macro|FEATUREMAP2
 mdefine_line|#define FEATUREMAP2&t;&t;(WDC_SR_PSUOVER|WDC_SR_PSUUNDR)
 macro_line|#endif
+macro_line|#ifdef CONFIG_SOFT_WATCHDOG
+DECL|macro|FEATUREMAP1
+mdefine_line|#define FEATUREMAP1            0
+DECL|macro|FEATUREMAP2
+mdefine_line|#define FEATUREMAP2            0
+macro_line|#endif
 macro_line|#ifndef FEATUREMAP1
 macro_line|#error &quot;Config option not set&quot;
 macro_line|#endif

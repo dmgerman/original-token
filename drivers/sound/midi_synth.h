@@ -8,7 +8,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 suffix:semicolon
@@ -103,7 +103,7 @@ r_int
 id|format
 comma
 r_const
-id|snd_rw_buf
+r_char
 op_star
 id|addr
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Implementation of the diskquota system for the LINUX operating&n; * system. QUOTA is implemented using the BSD systemcall interface as&n; * the means of communication with the user level. Currently only the&n; * ext2-filesystem has support for diskquotas. Other filesystems may&n; * be added in future time. This file contains the generic routines&n; * called by the different filesystems on allocation of an inode or&n; * block. These routines take care of the administration needed to&n; * have a consistent diskquota tracking system. The ideas of both&n; * user and group quotas are based on the Melbourne quota system as&n; * used on BSD derivated systems. The internal implementation is &n; * based on the LINUX inode-subsystem with added complexity of the&n; * diskquota system. This implementation is not based on any BSD&n; * kernel sourcecode.&n; * &n; * Version: $Id: dquot.c,v 5.6 1995/11/15 20:30:27 mvw Exp mvw $&n; * &n; * Author:  Marco van Wieringen &lt;mvw@mcs.ow.nl&gt; &lt;mvw@tnix.net&gt;&n; *&n; * (C) Copyright 1994, 1995 Marco van Wieringen &n; *&n; */
+multiline_comment|/*&n; * Implementation of the diskquota system for the LINUX operating&n; * system. QUOTA is implemented using the BSD systemcall interface as&n; * the means of communication with the user level. Currently only the&n; * ext2-filesystem has support for diskquotas. Other filesystems may&n; * be added in future time. This file contains the generic routines&n; * called by the different filesystems on allocation of an inode or&n; * block. These routines take care of the administration needed to&n; * have a consistent diskquota tracking system. The ideas of both&n; * user and group quotas are based on the Melbourne quota system as&n; * used on BSD derivated systems. The internal implementation is &n; * based on the LINUX inode-subsystem with added complexity of the&n; * diskquota system. This implementation is not based on any BSD&n; * kernel sourcecode.&n; * &n; * Version: $Id: dquot.c,v 5.6 1995/11/15 20:30:27 mvw Exp mvw $&n; * &n; * Author:  Marco van Wieringen &lt;mvw@mcs.ow.nl&gt; &lt;mvw@tnix.net&gt;&n; * &n; * Fixes:   Dmitry Gorodchanin &lt;begemot@bgm.rosprint.net&gt;, 11 Feb 96&n; *&t;    removed race conditions in dqput(), dqget() and iput(). &n; *&n; * (C) Copyright 1994, 1995 Marco van Wieringen &n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3394,6 +3394,11 @@ suffix:semicolon
 r_int
 id|cnt
 suffix:semicolon
+r_struct
+id|dquot
+op_star
+id|tmp
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3495,10 +3500,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|inode-&gt;i_dquot
-(braket
-id|cnt
-)braket
+id|tmp
 op_assign
 id|dqget
 c_func
@@ -3509,6 +3511,34 @@ id|id
 comma
 id|cnt
 )paren
+suffix:semicolon
+multiline_comment|/* We may sleep in dqget(), so check it again.&n;&t;&t;&t;&t; * &t;Dmitry Gorodchanin 02/11/96&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|inode-&gt;i_dquot
+(braket
+id|cnt
+)braket
+op_ne
+id|NODQUOT
+)paren
+(brace
+id|dqput
+c_func
+(paren
+id|tmp
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+id|inode-&gt;i_dquot
+(braket
+id|cnt
+)braket
+op_assign
+id|tmp
 suffix:semicolon
 id|inode-&gt;i_flags
 op_or_assign
@@ -3531,6 +3561,11 @@ id|inode
 (brace
 r_int
 id|cnt
+suffix:semicolon
+r_struct
+id|dquot
+op_star
+id|tmp
 suffix:semicolon
 r_for
 c_loop
@@ -3559,14 +3594,13 @@ id|NODQUOT
 )paren
 r_continue
 suffix:semicolon
-id|dqput
-c_func
-(paren
+multiline_comment|/* We can sleep at dqput(). So we must do it this way.&n;&t;&t; * &t;Dmitry Gorodchanin 02/11/96&n;&t;&t; */
+id|tmp
+op_assign
 id|inode-&gt;i_dquot
 (braket
 id|cnt
 )braket
-)paren
 suffix:semicolon
 id|inode-&gt;i_dquot
 (braket
@@ -3574,6 +3608,12 @@ id|cnt
 )braket
 op_assign
 id|NODQUOT
+suffix:semicolon
+id|dqput
+c_func
+(paren
+id|tmp
+)paren
 suffix:semicolon
 )brace
 id|inode-&gt;i_flags

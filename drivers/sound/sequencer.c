@@ -1,4 +1,6 @@
-multiline_comment|/*&n; * sound/sequencer.c&n; *&n; * The sequencer personality manager.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/sequencer.c&n; *&n; * The sequencer personality manager.&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
@@ -294,7 +296,7 @@ id|fileinfo
 op_star
 id|file
 comma
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -422,7 +424,12 @@ suffix:semicolon
 r_else
 id|tl
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|midi_sleep_flag.mode
 op_assign
@@ -569,7 +576,7 @@ id|seq_copy_to_input
 r_int
 r_char
 op_star
-id|event
+id|event_rec
 comma
 r_int
 id|len
@@ -643,7 +650,7 @@ op_star
 id|IEV_SZ
 )braket
 comma
-id|event
+id|event_rec
 comma
 id|len
 )paren
@@ -710,7 +717,7 @@ id|tstamp
 suffix:semicolon
 r_int
 r_char
-id|event
+id|event_rec
 (braket
 l_int|4
 )braket
@@ -767,28 +774,28 @@ op_assign
 id|tstamp
 suffix:semicolon
 )brace
-id|event
+id|event_rec
 (braket
 l_int|0
 )braket
 op_assign
 id|SEQ_MIDIPUTC
 suffix:semicolon
-id|event
+id|event_rec
 (braket
 l_int|1
 )braket
 op_assign
 id|data
 suffix:semicolon
-id|event
+id|event_rec
 (braket
 l_int|2
 )braket
 op_assign
 id|dev
 suffix:semicolon
-id|event
+id|event_rec
 (braket
 l_int|3
 )braket
@@ -797,7 +804,7 @@ l_int|0
 suffix:semicolon
 id|seq_copy_to_input
 (paren
-id|event
+id|event_rec
 comma
 l_int|4
 )paren
@@ -810,7 +817,7 @@ id|seq_input_event
 r_int
 r_char
 op_star
-id|event
+id|event_rec
 comma
 r_int
 id|len
@@ -912,7 +919,7 @@ suffix:semicolon
 )brace
 id|seq_copy_to_input
 (paren
-id|event
+id|event_rec
 comma
 id|len
 )paren
@@ -931,7 +938,7 @@ op_star
 id|file
 comma
 r_const
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -941,7 +948,7 @@ id|count
 (brace
 r_int
 r_char
-id|event
+id|event_rec
 (braket
 id|EV_SZ
 )braket
@@ -1033,7 +1040,7 @@ id|memcpy_fromfs
 r_char
 op_star
 )paren
-id|event
+id|event_rec
 comma
 op_amp
 (paren
@@ -1050,7 +1057,7 @@ l_int|4
 suffix:semicolon
 id|ev_code
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|0
 )braket
@@ -1075,7 +1082,7 @@ r_int
 op_star
 )paren
 op_amp
-id|event
+id|event_rec
 (braket
 l_int|2
 )braket
@@ -1130,7 +1137,7 @@ r_int
 op_star
 )paren
 op_amp
-id|event
+id|event_rec
 (braket
 l_int|0
 )braket
@@ -1227,7 +1234,7 @@ r_char
 op_star
 )paren
 op_amp
-id|event
+id|event_rec
 (braket
 l_int|4
 )braket
@@ -1276,7 +1283,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|event
+id|event_rec
 (braket
 l_int|0
 )braket
@@ -1290,7 +1297,7 @@ c_cond
 op_logical_neg
 id|midi_opened
 (braket
-id|event
+id|event_rec
 (braket
 l_int|2
 )braket
@@ -1303,7 +1310,7 @@ suffix:semicolon
 r_int
 id|dev
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|2
 )braket
@@ -1390,7 +1397,7 @@ c_cond
 op_logical_neg
 id|seq_queue
 (paren
-id|event
+id|event_rec
 comma
 (paren
 id|file-&gt;flags
@@ -1831,16 +1838,24 @@ id|q
 l_int|4
 )braket
 comma
-op_star
 (paren
 r_int
-op_star
 )paren
-op_amp
+(paren
 id|q
 (braket
 l_int|5
 )braket
+op_or
+(paren
+id|q
+(braket
+l_int|6
+)braket
+op_lshift
+l_int|8
+)paren
+)paren
 )paren
 suffix:semicolon
 r_break
@@ -2068,14 +2083,14 @@ id|seq_chn_voice_event
 r_int
 r_char
 op_star
-id|event
+id|event_rec
 )paren
 (brace
 r_int
 r_char
 id|dev
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|1
 )braket
@@ -2084,7 +2099,7 @@ r_int
 r_char
 id|cmd
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|2
 )braket
@@ -2093,7 +2108,7 @@ r_int
 r_char
 id|chn
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|3
 )braket
@@ -2102,7 +2117,7 @@ r_int
 r_char
 id|note
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|4
 )braket
@@ -2111,7 +2126,7 @@ r_int
 r_char
 id|parm
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|5
 )braket
@@ -2445,14 +2460,14 @@ id|seq_chn_common_event
 r_int
 r_char
 op_star
-id|event
+id|event_rec
 )paren
 (brace
 r_int
 r_char
 id|dev
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|1
 )braket
@@ -2461,7 +2476,7 @@ r_int
 r_char
 id|cmd
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|2
 )braket
@@ -2470,7 +2485,7 @@ r_int
 r_char
 id|chn
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|3
 )braket
@@ -2479,12 +2494,12 @@ r_int
 r_char
 id|p1
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|4
 )braket
 suffix:semicolon
-multiline_comment|/* unsigned char   p2 = event[5]; */
+multiline_comment|/* unsigned char   p2 = event_rec[5]; */
 r_int
 r_int
 id|w14
@@ -2495,7 +2510,7 @@ r_int
 op_star
 )paren
 op_amp
-id|event
+id|event_rec
 (braket
 l_int|6
 )braket
@@ -3024,14 +3039,14 @@ id|seq_timing_event
 r_int
 r_char
 op_star
-id|event
+id|event_rec
 )paren
 (brace
 r_int
 r_char
 id|cmd
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|1
 )braket
@@ -3046,7 +3061,7 @@ r_int
 op_star
 )paren
 op_amp
-id|event
+id|event_rec
 (braket
 l_int|4
 )braket
@@ -3072,7 +3087,7 @@ id|tmr-&gt;event
 (paren
 id|tmr_no
 comma
-id|event
+id|event_rec
 )paren
 )paren
 op_eq
@@ -3289,7 +3304,7 @@ id|SEQ_2
 )paren
 id|seq_copy_to_input
 (paren
-id|event
+id|event_rec
 comma
 l_int|8
 )paren
@@ -3338,14 +3353,14 @@ id|seq_local_event
 r_int
 r_char
 op_star
-id|event
+id|event_rec
 )paren
 (brace
 r_int
 r_char
 id|cmd
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|1
 )braket
@@ -3362,7 +3377,7 @@ r_int
 op_star
 )paren
 op_amp
-id|event
+id|event_rec
 (braket
 l_int|4
 )braket
@@ -3399,13 +3414,13 @@ id|seq_sysex_message
 r_int
 r_char
 op_star
-id|event
+id|event_rec
 )paren
 (brace
 r_int
 id|dev
 op_assign
-id|event
+id|event_rec
 (braket
 l_int|1
 )braket
@@ -3423,7 +3438,7 @@ op_star
 id|buf
 op_assign
 op_amp
-id|event
+id|event_rec
 (braket
 l_int|2
 )braket
@@ -5226,7 +5241,12 @@ suffix:semicolon
 r_else
 id|tl
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|seq_sleep_flag.mode
 op_assign
@@ -5630,7 +5650,12 @@ suffix:semicolon
 r_else
 id|tl
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|seq_sleep_flag.mode
 op_assign
@@ -5763,7 +5788,12 @@ suffix:semicolon
 r_else
 id|tl
 op_assign
-l_int|0xffffffff
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 id|seq_sleep_flag.mode
 op_assign
@@ -6207,7 +6237,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 (brace
@@ -7063,7 +7093,7 @@ suffix:colon
 (brace
 r_struct
 id|seq_event_rec
-id|event
+id|event_rec
 suffix:semicolon
 r_int
 r_int
@@ -7076,7 +7106,7 @@ r_char
 op_star
 )paren
 op_amp
-id|event
+id|event_rec
 comma
 op_amp
 (paren
@@ -7094,7 +7124,7 @@ l_int|0
 comma
 r_sizeof
 (paren
-id|event
+id|event_rec
 )paren
 )paren
 suffix:semicolon
@@ -7109,7 +7139,7 @@ id|cli
 suffix:semicolon
 id|play_event
 (paren
-id|event.arr
+id|event_rec.arr
 )paren
 suffix:semicolon
 id|restore_flags
@@ -8295,10 +8325,6 @@ r_int
 id|mem_start
 )paren
 (brace
-id|sequencer_ok
-op_assign
-l_int|1
-suffix:semicolon
 id|queue
 op_assign
 (paren
@@ -8333,6 +8359,23 @@ id|sound_num_blocks
 op_increment
 suffix:semicolon
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|queue
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;Sound: Can&squot;t allocate memory for sequencer output queue&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
 id|iqueue
 op_assign
 (paren
@@ -8366,6 +8409,27 @@ l_int|1024
 id|sound_num_blocks
 op_increment
 suffix:semicolon
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|queue
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;Sound: Can&squot;t allocate memory for sequencer input queue&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
+id|sequencer_ok
+op_assign
+l_int|1
 suffix:semicolon
 r_return
 id|mem_start

@@ -1,4 +1,6 @@
-multiline_comment|/*&n; * sound/ad1848.c&n; *&n; * The low level driver for the AD1848/CS4248 codec chip which&n; * is used for example in the MS Sound System.&n; *&n; * The CS4231 which is used in the GUS MAX and some other cards is&n; * upwards compatible with AD1848 and this driver is able to drive it.&n; *&n; * CS4231A and AD1845 are upward compatible with CS4231. However&n; * the new features of these chips are different.&n; *&n; * CS4232 is a PnP audio chip which contains a CS4231A (and SB, MPU).&n; * CS4232A is an improved version of CS4232.&n; *&n; * Copyright by Hannu Savolainen 1994, 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *  Riccardo Facchetti  24 Mar 1995&n; *  - Added the Audio Excel DSP 16 initialization routine.&n; */
+multiline_comment|/*&n; * sound/ad1848.c&n; *&n; * The low level driver for the AD1848/CS4248 codec chip which&n; * is used for example in the MS Sound System.&n; *&n; * The CS4231 which is used in the GUS MAX and some other cards is&n; * upwards compatible with AD1848 and this driver is able to drive it.&n; *&n; * CS4231A and AD1845 are upward compatible with CS4231. However&n; * the new features of these chips are different.&n; *&n; * CS4232 is a PnP audio chip which contains a CS4231A (and SB, MPU).&n; * CS4232A is an improved version of CS4232.&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|DEB
 mdefine_line|#define DEB(x)
 DECL|macro|DEB1
@@ -132,7 +134,7 @@ r_int
 id|irq_ok
 suffix:semicolon
 DECL|member|osp
-id|sound_os_info
+r_int
 op_star
 id|osp
 suffix:semicolon
@@ -234,7 +236,7 @@ r_static
 r_int
 id|ad_format_mask
 (braket
-l_int|5
+l_int|6
 multiline_comment|/*devc-&gt;mode */
 )braket
 op_assign
@@ -280,7 +282,19 @@ op_or
 id|AFMT_MU_LAW
 op_or
 id|AFMT_A_LAW
+comma
 multiline_comment|/* AD1845 */
+id|AFMT_U8
+op_or
+id|AFMT_S16_LE
+op_or
+id|AFMT_MU_LAW
+op_or
+id|AFMT_A_LAW
+op_or
+id|AFMT_U16_LE
+op_or
+id|AFMT_IMA_ADPCM
 )brace
 suffix:semicolon
 DECL|variable|dev_info
@@ -329,7 +343,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 comma
 r_int
@@ -1906,7 +1920,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 (brace
@@ -3143,7 +3157,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 comma
 r_int
@@ -4724,7 +4738,7 @@ r_int
 op_star
 id|ad_flags
 comma
-id|sound_os_info
+r_int
 op_star
 id|osp
 )paren
@@ -5630,7 +5644,7 @@ comma
 r_int
 id|share_dma
 comma
-id|sound_os_info
+r_int
 op_star
 id|osp
 )paren
@@ -6994,6 +7008,7 @@ op_star
 id|hw_config
 )paren
 (brace
+macro_line|#ifdef CONFIG_YM3812
 r_if
 c_cond
 (paren
@@ -7046,6 +7061,7 @@ comma
 l_string|&quot;OPL3/OPL2&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_int
 DECL|function|probe_ms_sound
@@ -7116,14 +7132,6 @@ id|hw_config-&gt;osp
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_AEDSP16) &amp;&amp; defined(AEDSP16_MSS)
-multiline_comment|/*&n;     * Initialize Audio Excel DSP 16 to MSS: before any operation&n;     * we must enable MSS I/O ports.&n;   */
-id|InitAEDSP16_MSS
-(paren
-id|hw_config
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (AudioTriX Pro for example)&n;     * return 0x00 or 0x0f.&n;   */
 r_if
 c_cond

@@ -23,6 +23,7 @@ macro_line|#endif
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/if_slip.h&gt;
 macro_line|#include &quot;slip.h&quot;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;

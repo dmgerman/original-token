@@ -1,6 +1,8 @@
 DECL|macro|_PAS2_PCM_C_
 mdefine_line|#define _PAS2_PCM_C_
-multiline_comment|/*&n; * sound/pas2_pcm.c&n; *&n; * The low level driver for the Pro Audio Spectrum ADC/DAC.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/pas2_pcm.c&n; *&n; * The low level driver for the Pro Audio Spectrum ADC/DAC.&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;pas.h&quot;
 macro_line|#if defined(CONFIG_PAS) &amp;&amp; defined(CONFIG_AUDIO)
@@ -76,6 +78,13 @@ op_assign
 l_int|8
 suffix:semicolon
 multiline_comment|/* mask of OK bits */
+DECL|variable|pcm_busy
+r_static
+r_int
+id|pcm_busy
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|my_devnum
 r_static
 r_int
@@ -122,6 +131,37 @@ id|arg
 op_assign
 l_int|5000
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pcm_channels
+op_amp
+l_int|2
+)paren
+(brace
+id|foo
+op_assign
+(paren
+l_int|596590
+op_plus
+(paren
+id|arg
+op_div
+l_int|2
+)paren
+)paren
+op_div
+id|arg
+suffix:semicolon
+id|arg
+op_assign
+l_int|596590
+op_div
+id|foo
+suffix:semicolon
+)brace
+r_else
+(brace
 id|foo
 op_assign
 (paren
@@ -142,19 +182,7 @@ l_int|1193180
 op_div
 id|foo
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcm_channels
-op_amp
-l_int|2
-)paren
-id|foo
-op_assign
-id|foo
-op_rshift
-l_int|1
-suffix:semicolon
+)brace
 id|pcm_speed
 op_assign
 id|arg
@@ -456,7 +484,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 comma
 r_int
@@ -836,6 +864,10 @@ id|mode
 r_int
 id|err
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|TRACE
 (paren
 id|printk
@@ -844,6 +876,40 @@ l_string|&quot;pas2_pcm.c: static int pas_pcm_open(int mode = %X)&bslash;n&quot;
 comma
 id|mode
 )paren
+)paren
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pcm_busy
+)paren
+(brace
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|pcm_busy
+op_assign
+l_int|1
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -914,6 +980,10 @@ suffix:semicolon
 id|pcm_mode
 op_assign
 id|PCM_NON
+suffix:semicolon
+id|pcm_busy
+op_assign
+l_int|0
 suffix:semicolon
 id|restore_flags
 (paren

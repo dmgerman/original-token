@@ -139,7 +139,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 comma
 r_int
@@ -252,7 +252,7 @@ id|fileinfo
 op_star
 id|file
 comma
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -272,7 +272,7 @@ op_star
 id|file
 comma
 r_const
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -319,7 +319,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 suffix:semicolon
@@ -380,7 +380,7 @@ id|fileinfo
 op_star
 id|file
 comma
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -400,7 +400,7 @@ op_star
 id|file
 comma
 r_const
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -447,7 +447,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 suffix:semicolon
@@ -566,7 +566,7 @@ id|fileinfo
 op_star
 id|file
 comma
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -586,7 +586,7 @@ op_star
 id|file
 comma
 r_const
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -633,7 +633,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 suffix:semicolon
@@ -712,7 +712,7 @@ r_void
 id|tenmicrosec
 c_func
 (paren
-id|sound_os_info
+r_int
 op_star
 id|osp
 )paren
@@ -766,7 +766,7 @@ r_char
 op_star
 id|name
 comma
-id|sound_os_info
+r_int
 op_star
 id|osp
 )paren
@@ -842,7 +842,7 @@ id|fileinfo
 op_star
 id|file
 comma
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -862,7 +862,7 @@ op_star
 id|file
 comma
 r_const
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -909,7 +909,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 suffix:semicolon
@@ -1113,7 +1113,7 @@ id|opl3_detect
 r_int
 id|ioaddr
 comma
-id|sound_os_info
+r_int
 op_star
 id|osp
 )paren
@@ -1128,7 +1128,7 @@ comma
 r_int
 id|ioaddr
 comma
-id|sound_os_info
+r_int
 op_star
 id|osp
 )paren
@@ -1439,7 +1439,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 suffix:semicolon
@@ -1576,7 +1576,7 @@ id|fileinfo
 op_star
 id|file
 comma
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -1596,7 +1596,7 @@ op_star
 id|file
 comma
 r_const
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -1693,7 +1693,7 @@ comma
 r_int
 id|share_dma
 comma
-id|sound_os_info
+r_int
 op_star
 id|osp
 )paren
@@ -1727,7 +1727,7 @@ r_int
 op_star
 id|flags
 comma
-id|sound_os_info
+r_int
 op_star
 id|osp
 )paren
@@ -1923,7 +1923,7 @@ id|fileinfo
 op_star
 id|file
 comma
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -1942,7 +1942,7 @@ id|fileinfo
 op_star
 id|file
 comma
-id|snd_rw_buf
+r_char
 op_star
 id|buf
 comma
@@ -1989,7 +1989,7 @@ r_int
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 suffix:semicolon

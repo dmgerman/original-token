@@ -5,7 +5,6 @@ macro_line|#endif
 multiline_comment|/* &n; * NCR 5380 generic driver routines.  These should make it *trivial*&n; * &t;to implement 5380 SCSI drivers under Linux with a non-trantor&n; *&t;architecture.&n; *&n; *&t;Note that these routines also work with NR53c400 family chips.&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing &n; *&t;(Unix and Linux consulting and custom programming)&n; * &t;drew@colorado.edu&n; *&t;+1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 6. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
 multiline_comment|/*&n; * $Log: NCR5380.c,v $&n; * Revision 1.5  1994/01/19  09:14:57  drew&n; * Fixed udelay() hack that was being used on DATAOUT phases&n; * instead of a proper wait for the final handshake.&n; *&n; * Revision 1.4  1994/01/19  06:44:25  drew&n; * *** empty log message ***&n; *&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.2  1994/01/15  06:14:11  drew&n; * REAL DMA support, bug fixes.&n; *&n; * Revision 1.1  1994/01/15  06:00:54  drew&n; * Initial revision&n; *&n; */
 multiline_comment|/*&n; * Further development / testing that should be done : &n; * 1.  Cleanup the NCR5380_transfer_dma function and DMA operation complete&n; *     code so that everything does the same thing that&squot;s done at the &n; *     end of a pseudo-DMA read operation.&n; *&n; * 2.  Fix REAL_DMA (interrupt driven, polled works fine) -&n; *     basically, transfer size needs to be reduced by one &n; *     and the last byte read as is done with PSEUDO_DMA.&n; * &n; * 3.  Test USLEEP code &n; *&n; * 4.  Test SCSI-II tagged queueing (I have no devices which support &n; *&t;tagged queueing)&n; *&n; * 5.  Test linked command handling code after Eric is ready with &n; *      the high level code.&n; */
-macro_line|#include &quot;g_NCR5380.h&quot;
 macro_line|#if (NDEBUG &amp; NDEBUG_LISTS)
 DECL|macro|LIST
 mdefine_line|#define LIST(x,y) {printk(&quot;LINE:%d   Adding %p to %p&bslash;n&quot;, __LINE__, (void*)(x), (void*)(y)); if ((x)==(y)) udelay(5); }
@@ -1830,6 +1829,7 @@ op_star
 id|instance-&gt;hostdata
 suffix:semicolon
 multiline_comment|/* &n;     * On NCR53C400 boards, NCR5380 registers are mapped 8 past &n;     * the base address.&n;     */
+macro_line|#ifdef NCR53C400
 r_if
 c_cond
 (paren
@@ -1841,6 +1841,7 @@ id|instance-&gt;NCR5380_instance_name
 op_add_assign
 id|NCR53C400_address_adjust
 suffix:semicolon
+macro_line|#endif
 id|NCR5380_setup
 c_func
 (paren
@@ -2036,6 +2037,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#ifdef NCR53C400
 r_if
 c_cond
 (paren
@@ -2053,6 +2055,7 @@ id|CSR_BASE
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* &n;     * Detect and correct bus wedge problems.&n;     *&n;     * If the system crashed, it may have crashed in a state &n;     * where a SCSI command was still executing, and the &n;     * SCSI bus is not in a BUS FREE STATE.&n;     *&n;     * If this is the case, we&squot;ll try to abort the currently&n;     * established nexus which we know nothing about, and that&n;     * failing, do a hard reset of the SCSI bus &n;     */
 r_for
 c_loop

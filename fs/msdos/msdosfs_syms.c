@@ -58,6 +58,18 @@ c_func
 id|msdos_unlink_umsdos
 )paren
 comma
+id|X
+c_func
+(paren
+id|msdos_read_super
+)paren
+comma
+id|X
+c_func
+(paren
+id|msdos_put_super
+)paren
+comma
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon

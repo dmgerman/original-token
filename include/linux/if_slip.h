@@ -16,7 +16,7 @@ multiline_comment|/*&n; *&t;VSV = ioctl for keepalive &amp; outfill in SLIP driv
 DECL|macro|SIOCSKEEPALIVE
 mdefine_line|#define SIOCSKEEPALIVE&t;(SIOCDEVPRIVATE)&t;&t;/* Set keepalive timeout in sec */
 DECL|macro|SIOCGKEEPALIVE
-mdefine_line|#define SIOCGKEEPALIVE&t;(SICODEVPRIVATE+1)&t;&t;/* Get keepalive timeout */
+mdefine_line|#define SIOCGKEEPALIVE&t;(SIOCDEVPRIVATE+1)&t;&t;/* Get keepalive timeout */
 DECL|macro|SIOCSOUTFILL
 mdefine_line|#define SIOCSOUTFILL&t;(SIOCDEVPRIVATE+2)&t;&t;/* Set outfill timeout */
 DECL|macro|SIOCGOUTFILL

@@ -6,10 +6,10 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c59x.c:v0.11 1/21/96 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
+l_string|&quot;3c59x.c:v0.13 2/13/96 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* &quot;Knobs&quot; that turn on special features. */
-multiline_comment|/* Use bus master transfers instead of programmed-I/O for the Tx process.&n;   This is disabled by default! */
+multiline_comment|/* Allow the use of bus master transfers instead of programmed-I/O for the&n;   Tx process.  Bus master transfers are always disabled by default, but&n;   iff this is set they may be turned on using &squot;options&squot;. */
 DECL|macro|VORTEX_BUS_MASTER
 mdefine_line|#define VORTEX_BUS_MASTER
 multiline_comment|/* Put out somewhat more debugging messages. (0 - no msg, 1 minimal msgs). */
@@ -33,6 +33,11 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#ifdef HAVE_SHARED_IRQ
+DECL|macro|USE_SHARED_IRQ
+mdefine_line|#define USE_SHARED_IRQ
+macro_line|#include &lt;linux/shared_irq.h&gt;
+macro_line|#endif
 multiline_comment|/* The total size is twice that of the original EtherLinkIII series: the&n;   runtime register window, window 1, is now always mapped in. */
 DECL|macro|VORTEX_TOTAL_SIZE
 mdefine_line|#define VORTEX_TOTAL_SIZE 0x20
@@ -1138,15 +1143,15 @@ c_func
 )paren
 )paren
 (brace
+r_static
 r_int
 id|pci_index
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop
 (paren
-id|pci_index
-op_assign
-l_int|0
 suffix:semicolon
 id|pci_index
 OL
@@ -1365,6 +1370,13 @@ id|pci_irq_line
 comma
 id|index
 comma
+id|dev
+op_logical_and
+id|dev-&gt;mem_start
+ques
+c_cond
+id|dev-&gt;mem_start
+suffix:colon
 id|options
 (braket
 id|cards_found
@@ -1478,6 +1490,13 @@ l_int|12
 comma
 id|DEMON_INDEX
 comma
+id|dev
+op_logical_and
+id|dev-&gt;mem_start
+ques
+c_cond
+id|dev-&gt;mem_start
+suffix:colon
 id|options
 (braket
 id|cards_found
@@ -1631,6 +1650,19 @@ l_int|0
 (brace
 id|vp-&gt;media_override
 op_assign
+(paren
+(paren
+id|options
+op_amp
+l_int|7
+)paren
+op_eq
+l_int|2
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
 id|options
 op_amp
 l_int|7
@@ -1794,6 +1826,19 @@ l_int|0
 (brace
 id|vp-&gt;media_override
 op_assign
+(paren
+(paren
+id|options
+op_amp
+l_int|7
+)paren
+op_eq
+l_int|2
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
 id|options
 op_amp
 l_int|7
@@ -2448,31 +2493,60 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
+macro_line|#ifdef USE_SHARED_IRQ
+id|i
+op_assign
+id|request_shared_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+op_amp
+id|vortex_interrupt
+comma
+id|dev
+comma
+id|vp-&gt;product_name
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
+id|i
+)paren
+multiline_comment|/* Error */
+r_return
+id|i
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|dev-&gt;irq
+op_eq
+l_int|0
+op_logical_or
 id|irq2dev_map
 (braket
 id|dev-&gt;irq
 )braket
 op_ne
 l_int|NULL
-op_logical_or
-(paren
+)paren
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
 id|irq2dev_map
 (braket
 id|dev-&gt;irq
 )braket
 op_assign
 id|dev
-)paren
-op_eq
-l_int|NULL
-op_logical_or
-id|dev-&gt;irq
-op_eq
-l_int|0
-op_logical_or
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|request_irq
 c_func
 (paren
@@ -2487,11 +2561,19 @@ id|vp-&gt;product_name
 )paren
 )paren
 (brace
+id|irq2dev_map
+(braket
+id|dev-&gt;irq
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2693,7 +2775,7 @@ multiline_comment|/* New: On the Vortex we must also clear the BadSSD counter. *
 id|EL3WINDOW
 c_func
 (paren
-l_int|3
+l_int|4
 )paren
 suffix:semicolon
 id|inb
@@ -3500,6 +3582,32 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#ifdef USE_SHARED_IRQ
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+(paren
+r_struct
+id|device
+op_star
+)paren
+(paren
+id|irq
+op_eq
+l_int|0
+ques
+c_cond
+id|regs
+suffix:colon
+id|irq2dev_map
+(braket
+id|irq
+)braket
+)paren
+suffix:semicolon
+macro_line|#else
 r_struct
 id|device
 op_star
@@ -3517,6 +3625,7 @@ id|irq
 )braket
 )paren
 suffix:semicolon
+macro_line|#endif
 r_struct
 id|vortex_private
 op_star
@@ -4716,6 +4825,16 @@ id|Wn4_Media
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef USE_SHARED_IRQ
+id|free_shared_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|dev
+)paren
+suffix:semicolon
+macro_line|#else
 id|free_irq
 c_func
 (paren
@@ -4730,6 +4849,7 @@ id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|update_stats
 c_func
 (paren
@@ -4922,10 +5042,10 @@ op_plus
 l_int|9
 )paren
 op_amp
-l_int|15
+l_int|0x30
 )paren
 op_lshift
-l_int|8
+l_int|4
 suffix:semicolon
 multiline_comment|/* Rx packets&t;*/
 id|inb
@@ -4968,7 +5088,7 @@ multiline_comment|/* New: On the Vortex we must also clear the BadSSD counter. *
 id|EL3WINDOW
 c_func
 (paren
-l_int|3
+l_int|4
 )paren
 suffix:semicolon
 id|inb

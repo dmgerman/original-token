@@ -66,7 +66,7 @@ id|sk-&gt;retransmit_timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &t;This is the normal code called for timeouts.  It does the retransmission&n; * &t;and then does backoff.  tcp_do_retransmit is separated out because&n; * &t;tcp_ack needs to send stuff from the retransmit queue without&n; * &t;initiating a backoff.&n; */
+multiline_comment|/*&n; *&t;POLICY:&n; *&n; * &t;This is the normal code called for timeouts.  It does the retransmission&n; * &t;and then does backoff.  tcp_do_retransmit is separated out because&n; * &t;tcp_ack needs to send stuff from the retransmit queue without&n; * &t;initiating a backoff.&n; */
 DECL|function|tcp_retransmit_time
 r_static
 r_void
@@ -125,7 +125,7 @@ id|sk-&gt;rto
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;A timer event has trigger a tcp retransmit timeout. The&n; *&t;socket xmit queue is ready and set up to send. Because&n; *&t;the ack receive code keeps the queue straight we do&n; *&t;nothing clever here.&n; */
+multiline_comment|/*&n; *&t;POLICY:&n; *&t;&t;Congestion control.&n; *&n; *&t;A timer event has trigger a tcp retransmit timeout. The&n; *&t;socket xmit queue is ready and set up to send. Because&n; *&t;the ack receive code keeps the queue straight we do&n; *&t;nothing clever here.&n; */
 DECL|function|tcp_retransmit
 r_void
 id|tcp_retransmit
@@ -183,7 +183,7 @@ id|all
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;A write timeout has occurred. Process the after effects.&n; */
+multiline_comment|/*&n; *&t;A write timeout has occurred. Process the after effects. BROKEN (badly)&n; */
 DECL|function|tcp_write_timeout
 r_static
 r_int

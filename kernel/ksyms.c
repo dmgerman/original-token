@@ -636,12 +636,6 @@ c_func
 id|generic_readpage
 )paren
 comma
-id|X
-c_func
-(paren
-id|mark_buffer_uptodate
-)paren
-comma
 multiline_comment|/* device registration */
 id|X
 c_func

@@ -4,9 +4,6 @@ mdefine_line|#define _BLK_H
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; */
-DECL|macro|NR_REQUEST
-mdefine_line|#define NR_REQUEST&t;64
 multiline_comment|/*&n; * This is used in the elevator algorithm.  We don&squot;t prioritise reads&n; * over writes any more --- although reads are more time-critical than&n; * writes, by treating them equally we increase filesystem throughput.&n; * This turns out to give better overall performance.  -- sct&n; */
 DECL|macro|IN_ORDER
 mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;rq_dev &lt; (s2)-&gt;rq_dev || (((s1)-&gt;rq_dev == (s2)-&gt;rq_dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))
@@ -120,6 +117,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_SJCD
+macro_line|#ifdef CONFIG_CDI_INIT
+r_extern
+r_int
+id|cdi_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_CDI_INIT
 macro_line|#ifdef CONFIG_BLK_DEV_HD
 r_extern
 r_int

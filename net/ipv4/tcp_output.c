@@ -202,7 +202,6 @@ comma
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;If we don&squot;t fit we have to start the zero window&n;&t;&t; *&t;probes. This is broken - we really need to do a partial&n;&t;&t; *&t;send _first_ (This is what causes the Cisco and PC/TCP&n;&t;&t; *&t;grief).&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -267,7 +266,7 @@ id|sk-&gt;daddr
 comma
 id|size
 comma
-id|sk
+id|skb
 )paren
 suffix:semicolon
 id|sk-&gt;sent_seq
@@ -803,7 +802,7 @@ id|sk-&gt;daddr
 comma
 id|size
 comma
-id|sk
+id|skb
 )paren
 suffix:semicolon
 id|sk-&gt;sent_seq
@@ -936,9 +935,9 @@ multiline_comment|/*&t;&t;   if the buffer is locked we should not retransmit */
 multiline_comment|/*&t;&t;   anyway, so we don&squot;t need all the fuss to prepare */
 multiline_comment|/*&t;&t;   the buffer in this case. &t;&t;&t;    */
 multiline_comment|/*&t;&t;   (the skb_pull() changes skb-&gt;data while we may   */
-multiline_comment|/*&t;&t;   actually try to send the data. Ough. A side&t;    */
+multiline_comment|/*&t;&t;   actually try to send the data. Ouch. A side&t;    */
 multiline_comment|/*&t;&t;   effect is that we&squot;ll send some unnecessary data, */
-multiline_comment|/*&t;&t;   but the alternative is desastrous...&t;&t;    */
+multiline_comment|/*&t;&t;   but the alternative is disasterous...&t;    */
 r_if
 c_cond
 (paren
@@ -1260,7 +1259,7 @@ id|sk-&gt;daddr
 comma
 id|size
 comma
-id|sk
+id|skb
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;If the interface is (still) up and running, kick it.&n;&t;&t;&t; */
@@ -1452,6 +1451,10 @@ id|buff-&gt;localroute
 op_assign
 l_int|0
 suffix:semicolon
+id|buff-&gt;csum
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Put in the IP header and routing stuff. &n;&t; */
 id|tmp
 op_assign
@@ -1551,11 +1554,23 @@ id|t1-&gt;source
 op_assign
 id|th-&gt;dest
 suffix:semicolon
+id|t1-&gt;syn
+op_assign
+l_int|0
+suffix:semicolon
+id|t1-&gt;fin
+op_assign
+l_int|0
+suffix:semicolon
+id|t1-&gt;urg
+op_assign
+l_int|0
+suffix:semicolon
 id|t1-&gt;rst
 op_assign
 l_int|1
 suffix:semicolon
-id|t1-&gt;window
+id|t1-&gt;psh
 op_assign
 l_int|0
 suffix:semicolon
@@ -1573,17 +1588,9 @@ id|t1-&gt;seq
 op_assign
 id|th-&gt;ack_seq
 suffix:semicolon
-id|t1-&gt;ack_seq
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_else
 (brace
-id|t1-&gt;ack
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1611,37 +1618,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|t1-&gt;seq
-op_assign
-l_int|0
-suffix:semicolon
 )brace
-id|t1-&gt;syn
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;urg
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;fin
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;psh
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;doff
-op_assign
-r_sizeof
-(paren
-op_star
-id|t1
-)paren
-op_div
-l_int|4
-suffix:semicolon
 id|tcp_send_check
 c_func
 (paren
@@ -1657,7 +1634,7 @@ op_star
 id|t1
 )paren
 comma
-l_int|NULL
+id|buff
 )paren
 suffix:semicolon
 id|prot
@@ -1786,6 +1763,10 @@ suffix:semicolon
 id|buff-&gt;localroute
 op_assign
 id|sk-&gt;localroute
+suffix:semicolon
+id|buff-&gt;csum
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Put in the IP header and routing stuff. &n;&t; */
 id|tmp
@@ -1943,10 +1924,6 @@ c_func
 id|buff-&gt;seq
 )paren
 suffix:semicolon
-id|t1-&gt;ack
-op_assign
-l_int|1
-suffix:semicolon
 id|t1-&gt;ack_seq
 op_assign
 id|htonl
@@ -1973,20 +1950,6 @@ id|t1-&gt;fin
 op_assign
 l_int|1
 suffix:semicolon
-id|t1-&gt;rst
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;doff
-op_assign
-r_sizeof
-(paren
-op_star
-id|t1
-)paren
-op_div
-l_int|4
-suffix:semicolon
 id|tcp_send_check
 c_func
 (paren
@@ -2002,7 +1965,7 @@ op_star
 id|t1
 )paren
 comma
-id|sk
+id|buff
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If there is data in the write queue, the fin must be appended to&n;&t; * the write queue.&n; &t; */
@@ -2342,10 +2305,6 @@ c_func
 id|buff-&gt;seq
 )paren
 suffix:semicolon
-id|t1-&gt;ack
-op_assign
-l_int|1
-suffix:semicolon
 id|newsk-&gt;sent_seq
 op_assign
 id|newsk-&gt;write_seq
@@ -2362,11 +2321,15 @@ id|newsk
 )paren
 )paren
 suffix:semicolon
-id|t1-&gt;res1
+id|t1-&gt;syn
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
-id|t1-&gt;res2
+id|t1-&gt;ack
+op_assign
+l_int|1
+suffix:semicolon
+id|t1-&gt;urg
 op_assign
 l_int|0
 suffix:semicolon
@@ -2374,17 +2337,9 @@ id|t1-&gt;rst
 op_assign
 l_int|0
 suffix:semicolon
-id|t1-&gt;urg
-op_assign
-l_int|0
-suffix:semicolon
 id|t1-&gt;psh
 op_assign
 l_int|0
-suffix:semicolon
-id|t1-&gt;syn
-op_assign
-l_int|1
 suffix:semicolon
 id|t1-&gt;ack_seq
 op_assign
@@ -2456,6 +2411,18 @@ id|newsk-&gt;mtu
 op_amp
 l_int|0xff
 suffix:semicolon
+id|buff-&gt;csum
+op_assign
+id|csum_partial
+c_func
+(paren
+id|ptr
+comma
+l_int|4
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|tcp_send_check
 c_func
 (paren
@@ -2473,7 +2440,7 @@ id|t1
 op_plus
 l_int|4
 comma
-id|newsk
+id|buff
 )paren
 suffix:semicolon
 id|newsk-&gt;prot
@@ -2655,6 +2622,10 @@ id|buff-&gt;localroute
 op_assign
 id|sk-&gt;localroute
 suffix:semicolon
+id|buff-&gt;csum
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* &n;&t; *&t;Put in the IP header and routing stuff. &n;&t; */
 id|tmp
 op_assign
@@ -2733,7 +2704,8 @@ c_func
 (paren
 id|t1
 comma
-id|th
+op_amp
+id|sk-&gt;dummy_th
 comma
 r_sizeof
 (paren
@@ -2759,10 +2731,6 @@ c_func
 id|sequence
 )paren
 suffix:semicolon
-id|t1-&gt;ack
-op_assign
-l_int|1
-suffix:semicolon
 id|sk-&gt;window
 op_assign
 id|tcp_select_window
@@ -2778,34 +2746,6 @@ c_func
 (paren
 id|sk-&gt;window
 )paren
-suffix:semicolon
-id|t1-&gt;res1
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;res2
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;rst
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;urg
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;syn
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;psh
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;fin
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;If we have nothing queued for transmit and the transmit timer&n;&t; *&t;is on we are just doing an ACK timeout and need to switch&n;&t; *&t;to a keepalive.&n;&t; */
 r_if
@@ -2882,16 +2822,6 @@ c_func
 id|ack
 )paren
 suffix:semicolon
-id|t1-&gt;doff
-op_assign
-r_sizeof
-(paren
-op_star
-id|t1
-)paren
-op_div
-l_int|4
-suffix:semicolon
 id|tcp_send_check
 c_func
 (paren
@@ -2907,7 +2837,7 @@ op_star
 id|t1
 )paren
 comma
-id|sk
+id|buff
 )paren
 suffix:semicolon
 r_if
@@ -3063,10 +2993,6 @@ r_int
 id|ow_size
 suffix:semicolon
 macro_line|#endif
-r_void
-op_star
-id|tcp_data_start
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;How many bytes can we send ?&n;&t;&t; */
 id|win_size
 op_assign
@@ -3226,9 +3152,11 @@ c_func
 (paren
 id|buff
 comma
-id|th-&gt;doff
+r_sizeof
+(paren
 op_star
-l_int|4
+id|th
+)paren
 )paren
 suffix:semicolon
 id|memcpy
@@ -3238,9 +3166,11 @@ id|nth
 comma
 id|th
 comma
-id|th-&gt;doff
+r_sizeof
+(paren
 op_star
-l_int|4
+id|th
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Correct the new header&n;&t;&t; */
@@ -3272,25 +3202,22 @@ id|nth-&gt;check
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Find the first data byte.&n;&t;&t; */
-id|tcp_data_start
+multiline_comment|/*&n;&t;&t; *&t;Copy TCP options and data start to our new buffer&n;&t;&t; */
+id|buff-&gt;csum
 op_assign
-(paren
-r_char
-op_star
-)paren
-id|th
-op_plus
-(paren
-id|th-&gt;doff
-op_lshift
-l_int|2
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Add it to our new buffer&n;&t;&t; */
-id|memcpy
+id|csum_partial_copy
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
+(paren
+id|th
+op_plus
+l_int|1
+)paren
+comma
 id|skb_put
 c_func
 (paren
@@ -3299,9 +3226,19 @@ comma
 id|win_size
 )paren
 comma
-id|tcp_data_start
-comma
 id|win_size
+op_plus
+id|th-&gt;doff
+op_star
+l_int|4
+op_minus
+r_sizeof
+(paren
+op_star
+id|th
+)paren
+comma
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Remember our right edge sequence number.&n;&t;&t; */
@@ -3351,7 +3288,7 @@ l_int|4
 op_plus
 id|win_size
 comma
-id|sk
+id|buff
 )paren
 suffix:semicolon
 )brace
@@ -3391,6 +3328,10 @@ suffix:semicolon
 id|buff-&gt;localroute
 op_assign
 id|sk-&gt;localroute
+suffix:semicolon
+id|buff-&gt;csum
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Put in the IP header and routing stuff. &n;&t;&t; */
 id|tmp
@@ -3491,39 +3432,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|t1-&gt;ack
-op_assign
-l_int|1
-suffix:semicolon
-id|t1-&gt;res1
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;res2
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;rst
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;urg
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;psh
-op_assign
-l_int|0
-suffix:semicolon
-id|t1-&gt;fin
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* We are sending a &squot;previous&squot; sequence, and 0 bytes of data - thus no FIN bit */
-id|t1-&gt;syn
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/*&t;&t;t1-&gt;fin = 0;&t;-- We are sending a &squot;previous&squot; sequence, and 0 bytes of data - thus no FIN bit */
 id|t1-&gt;ack_seq
 op_assign
 id|htonl
@@ -3544,16 +3453,6 @@ id|sk
 )paren
 )paren
 suffix:semicolon
-id|t1-&gt;doff
-op_assign
-r_sizeof
-(paren
-op_star
-id|t1
-)paren
-op_div
-l_int|4
-suffix:semicolon
 id|tcp_send_check
 c_func
 (paren
@@ -3569,7 +3468,7 @@ op_star
 id|t1
 )paren
 comma
-id|sk
+id|buff
 )paren
 suffix:semicolon
 )brace

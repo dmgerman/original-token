@@ -8,7 +8,12 @@ mdefine_line|#define NULL 0
 macro_line|#endif
 multiline_comment|/* NOTE:  scatter-gather support only works in PIO mode.&n; * Use SG_NONE if DMA mode is enabled!&n; */
 DECL|macro|NCR53c406a
-mdefine_line|#define NCR53c406a { &bslash;&n;     NULL&t;&t;&t;/* next */, &bslash;&n;     NULL&t;&t;&t;/* usage count */, &bslash;&n;     NULL&t;&t;&t;/* proc_dir */, &bslash;&n;     NULL&t;&t;&t;/* proc_info */, &bslash;&n;     &quot;NCR53c406a&quot;&t;&t;/* name */, &bslash;&n;     NCR53c406a_detect&t;&t;/* detect */, &bslash;&n;     NULL&t;&t;&t;/* release */, &bslash;&n;     NCR53c406a_info&t;&t;/* info */, &bslash;&n;     NCR53c406a_command&t;&t;/* command */, &bslash;&n;     NCR53c406a_queue&t;&t;/* queuecommand */, &bslash;&n;     NCR53c406a_abort&t;&t;/* abort */, &bslash;&n;     NCR53c406a_reset&t;&t;/* reset */, &bslash;&n;     NULL&t;&t;&t;/* slave_attach */, &bslash;&n;     NCR53c406a_biosparm&t;/* biosparm */, &bslash;&n;     1&t;&t;&t;&t;/* can_queue */, &bslash;&n;     7&t;&t;&t;&t;/* SCSI ID of the chip */, &bslash;&n;     32&t;&t;&t;&t;/*SG_ALL*/ /*SG_NONE*/, &bslash;&n;     1&t;&t;&t;&t;/* commands per lun */, &bslash;&n;     0&t;&t;&t;&t;/* number of boards in system */, &bslash;&n;     1&t;&t;&t;&t;/* unchecked_isa_dma */, &bslash;&n;     ENABLE_CLUSTERING &bslash;&n;}
+mdefine_line|#define NCR53c406a { &bslash;&n;     NULL&t;&t;&t;/* next */, &bslash;&n;     NULL&t;&t;&t;/* usage count */, &bslash;&n;     &amp;proc_scsi_NCR53c406a      /* proc_dir */, &bslash;&n;     NULL&t;&t;&t;/* proc_info */, &bslash;&n;     &quot;NCR53c406a&quot;&t;&t;/* name */, &bslash;&n;     NCR53c406a_detect&t;&t;/* detect */, &bslash;&n;     NULL&t;&t;&t;/* release */, &bslash;&n;     NCR53c406a_info&t;&t;/* info */, &bslash;&n;     NCR53c406a_command&t;&t;/* command */, &bslash;&n;     NCR53c406a_queue&t;&t;/* queuecommand */, &bslash;&n;     NCR53c406a_abort&t;&t;/* abort */, &bslash;&n;     NCR53c406a_reset&t;&t;/* reset */, &bslash;&n;     NULL&t;&t;&t;/* slave_attach */, &bslash;&n;     NCR53c406a_biosparm&t;/* biosparm */, &bslash;&n;     1&t;&t;&t;&t;/* can_queue */, &bslash;&n;     7&t;&t;&t;&t;/* SCSI ID of the chip */, &bslash;&n;     32&t;&t;&t;&t;/*SG_ALL*/ /*SG_NONE*/, &bslash;&n;     1&t;&t;&t;&t;/* commands per lun */, &bslash;&n;     0&t;&t;&t;&t;/* number of boards in system */, &bslash;&n;     1&t;&t;&t;&t;/* unchecked_isa_dma */, &bslash;&n;     ENABLE_CLUSTERING &bslash;&n;}
+r_extern
+r_struct
+id|proc_dir_entry
+id|proc_scsi_NCR53c406a
+suffix:semicolon
 r_int
 id|NCR53c406a_detect
 c_func
@@ -85,4 +90,5 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif /* _NCR53C406A_H */
+multiline_comment|/*&n; * Overrides for Emacs so that we get a uniform tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

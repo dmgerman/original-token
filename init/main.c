@@ -167,6 +167,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|panic_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|bmouse_setup
 c_func
 (paren
@@ -619,6 +633,22 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_SJCD
+macro_line|#ifdef CONFIG_ISP16_CDI
+r_extern
+r_void
+id|isp16_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_ISP16_CDI
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 r_static
 r_void
@@ -1084,6 +1114,12 @@ comma
 id|buff_setup
 )brace
 comma
+(brace
+l_string|&quot;panic=&quot;
+comma
+id|panic_setup
+)brace
+comma
 macro_line|#ifdef CONFIG_BUGi386
 (brace
 l_string|&quot;no-hlt&quot;
@@ -1342,6 +1378,14 @@ id|sjcd_setup
 )brace
 comma
 macro_line|#endif CONFIG_SJCD
+macro_line|#ifdef CONFIG_ISP16_CDI
+(brace
+l_string|&quot;isp16=&quot;
+comma
+id|isp16_setup
+)brace
+comma
+macro_line|#endif CONFIG_ISP16_CDI
 macro_line|#ifdef CONFIG_SOUND
 (brace
 l_string|&quot;sound=&quot;

@@ -1,45 +1,106 @@
-multiline_comment|/*&n; * sound/uart6850.c&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/uart6850.c&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI)
-DECL|macro|DATAPORT
-mdefine_line|#define&t;DATAPORT   (uart6850_base)&t;/*&n;&t;&t;&t;&t;&t;   * * * Midi6850 Data I/O Port on IBM&n;&t;&t;&t;&t;&t;   *  */
-DECL|macro|COMDPORT
-mdefine_line|#define&t;COMDPORT   (uart6850_base+1)&t;/*&n;&t;&t;&t;&t;&t;   * * * Midi6850 Command Port on IBM   */
-DECL|macro|STATPORT
-mdefine_line|#define&t;STATPORT   (uart6850_base+1)&t;/*&n;&t;&t;&t;&t;&t;   * * * Midi6850 Status Port on IBM   */
-DECL|macro|uart6850_status
-mdefine_line|#define uart6850_status()&t;&t;inb( STATPORT)
-DECL|macro|input_avail
-mdefine_line|#define input_avail()&t;&t;(uart6850_status()&amp;INPUT_AVAIL)
-DECL|macro|output_ready
-mdefine_line|#define output_ready()&t;&t;(uart6850_status()&amp;OUTPUT_READY)
-DECL|macro|uart6850_cmd
-mdefine_line|#define uart6850_cmd(cmd)&t;outb( cmd,  COMDPORT)
-DECL|macro|uart6850_read
-mdefine_line|#define uart6850_read()&t;&t;inb( DATAPORT)
-DECL|macro|uart6850_write
-mdefine_line|#define uart6850_write(byte)&t;outb( byte,  DATAPORT)
-DECL|macro|OUTPUT_READY
-mdefine_line|#define&t;OUTPUT_READY&t;0x02&t;/*&n;&t;&t;&t;&t;   * * * Mask for Data Read Ready Bit   */
-DECL|macro|INPUT_AVAIL
-mdefine_line|#define&t;INPUT_AVAIL&t;0x01&t;/*&n;&t;&t;&t;&t;   * * * Mask for Data Send Ready Bit   */
-DECL|macro|UART_RESET
-mdefine_line|#define&t;UART_RESET&t;0x95&t;/*&n;&t;&t;&t;&t;   * * * 6850 Total Reset Command   */
-DECL|macro|UART_MODE_ON
-mdefine_line|#define&t;UART_MODE_ON&t;0x03&t;/*&n;&t;&t;&t;&t;   * * * 6850 Send/Receive UART Mode   */
-DECL|variable|uart6850_opened
-r_static
-r_int
-id|uart6850_opened
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|uart6850_base
 r_static
 r_int
 id|uart6850_base
 op_assign
 l_int|0x330
+suffix:semicolon
+DECL|macro|DATAPORT
+mdefine_line|#define&t;DATAPORT   (uart6850_base)
+DECL|macro|COMDPORT
+mdefine_line|#define&t;COMDPORT   (uart6850_base+1)
+DECL|macro|STATPORT
+mdefine_line|#define&t;STATPORT   (uart6850_base+1)
+r_static
+r_int
+DECL|function|uart6850_status
+id|uart6850_status
+(paren
+r_void
+)paren
+(brace
+r_return
+id|inb
+(paren
+id|STATPORT
+)paren
+suffix:semicolon
+)brace
+DECL|macro|input_avail
+mdefine_line|#define input_avail()&t;&t;(uart6850_status()&amp;INPUT_AVAIL)
+DECL|macro|output_ready
+mdefine_line|#define output_ready()&t;&t;(uart6850_status()&amp;OUTPUT_READY)
+r_static
+r_void
+DECL|function|uart6850_cmd
+id|uart6850_cmd
+(paren
+r_int
+r_char
+id|cmd
+)paren
+(brace
+id|outb
+(paren
+id|cmd
+comma
+id|COMDPORT
+)paren
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|uart6850_read
+id|uart6850_read
+(paren
+r_void
+)paren
+(brace
+r_return
+id|inb
+(paren
+id|DATAPORT
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|uart6850_write
+id|uart6850_write
+(paren
+r_int
+r_char
+id|byte
+)paren
+(brace
+id|outb
+(paren
+id|byte
+comma
+id|DATAPORT
+)paren
+suffix:semicolon
+)brace
+DECL|macro|OUTPUT_READY
+mdefine_line|#define&t;OUTPUT_READY&t;0x02&t;/* Mask for data ready Bit */
+DECL|macro|INPUT_AVAIL
+mdefine_line|#define&t;INPUT_AVAIL&t;0x01&t;/* Mask for Data Send Ready Bit */
+DECL|macro|UART_RESET
+mdefine_line|#define&t;UART_RESET&t;0x95
+DECL|macro|UART_MODE_ON
+mdefine_line|#define&t;UART_MODE_ON&t;0x03
+DECL|variable|uart6850_opened
+r_static
+r_int
+id|uart6850_opened
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|uart6850_irq
 r_static
@@ -92,7 +153,7 @@ id|dummy
 suffix:semicolon
 DECL|variable|uart6850_osp
 r_static
-id|sound_os_info
+r_int
 op_star
 id|uart6850_osp
 suffix:semicolon
@@ -538,7 +599,7 @@ comma
 r_int
 id|cmd
 comma
-id|ioctl_arg
+id|caddr_t
 id|arg
 )paren
 (brace

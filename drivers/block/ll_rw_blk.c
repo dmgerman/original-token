@@ -11,7 +11,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
-multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; */
+multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; *&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; */
+DECL|macro|NR_REQUEST
+mdefine_line|#define NR_REQUEST&t;16
 DECL|variable|all_requests
 r_static
 r_struct
@@ -43,7 +45,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-multiline_comment|/* blk_dev_struct is:&n; *&t;do_request-address&n; *&t;next-request&n; */
+multiline_comment|/* blk_dev_struct is:&n; *&t;*request_fn&n; *&t;*current_request&n; */
 DECL|variable|blk_dev
 r_struct
 id|blk_dev_struct
@@ -51,170 +53,8 @@ id|blk_dev
 (braket
 id|MAX_BLKDEV
 )braket
-op_assign
-(brace
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 0 no_dev */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 1 dev mem */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 2 dev fd */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 3 dev ide0 or hd */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 4 dev ttyx */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 5 dev tty */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 6 dev lp */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 7 dev pipes */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 8 dev sd */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 9 dev st */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 10 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 11 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 12 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 13 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 14 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 15 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 16 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 17 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 18 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 19 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 20 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-multiline_comment|/* 21 */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-multiline_comment|/* 22 dev ide1 */
-)brace
 suffix:semicolon
+multiline_comment|/* initialized by blk_dev_init() */
 multiline_comment|/*&n; * blk_size contains the size of all block-devices in units of 1024 byte&n; * sectors:&n; *&n; * blk_size[MAJOR][MINOR]&n; *&n; * if (!blk_size[MAJOR]) then no minor size checking is done.&n; */
 DECL|variable|blk_size
 r_int
@@ -2729,6 +2569,36 @@ id|request
 op_star
 id|req
 suffix:semicolon
+r_struct
+id|blk_dev_struct
+op_star
+id|dev
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|dev
+op_assign
+id|blk_dev
+op_plus
+id|MAX_BLKDEV
+suffix:semicolon
+id|dev
+op_decrement
+op_ne
+id|blk_dev
+suffix:semicolon
+)paren
+(brace
+id|dev-&gt;request_fn
+op_assign
+l_int|NULL
+suffix:semicolon
+id|dev-&gt;current_request
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 id|req
 op_assign
 id|all_requests
@@ -2811,6 +2681,13 @@ l_int|0x3f2
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_CDI_INIT
+id|cdi_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_CDI_INIT
 macro_line|#ifdef CONFIG_CDU31A
 id|cdu31a_init
 c_func

@@ -1832,7 +1832,7 @@ id|sk
 )paren
 suffix:semicolon
 multiline_comment|/* Efficient way to set most fields to zero */
-multiline_comment|/*&t;sk-&gt;num = 0;&n; *&t;sk-&gt;reuse = 0;*/
+multiline_comment|/*&n;&t; *&t;Note for tcp that also wiped the dummy_th block for us.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -2126,8 +2126,6 @@ id|sk-&gt;nonagle
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#else    
-multiline_comment|/*&t;sk-&gt;nonagle = 0;*/
 macro_line|#endif  
 id|sk-&gt;type
 op_assign
@@ -2303,6 +2301,21 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; *&t;Speed up by setting some standard state for the dummy_th&n;&t; *&t;if TCP uses it (maybe move to tcp_init later)&n;&t; */
+id|sk-&gt;dummy_th.ack
+op_assign
+l_int|1
+suffix:semicolon
+id|sk-&gt;dummy_th.doff
+op_assign
+r_sizeof
+(paren
+r_struct
+id|tcphdr
+)paren
+op_rshift
+l_int|2
+suffix:semicolon
 id|sk-&gt;state_change
 op_assign
 id|def_callback1

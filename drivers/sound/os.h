@@ -4,7 +4,6 @@ DECL|macro|NO_INLINE_ASM
 macro_line|#undef NO_INLINE_ASM
 DECL|macro|SHORT_BANNERS
 mdefine_line|#define SHORT_BANNERS
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -34,16 +33,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
-DECL|typedef|snd_rw_buf
-r_typedef
-r_char
-id|snd_rw_buf
-suffix:semicolon
-DECL|typedef|ioctl_arg
-r_typedef
-id|caddr_t
-id|ioctl_arg
-suffix:semicolon
 DECL|macro|FALSE
 mdefine_line|#define FALSE&t;0
 DECL|macro|TRUE
@@ -115,11 +104,8 @@ r_extern
 r_int
 id|sound_num_blocks
 suffix:semicolon
-DECL|typedef|sound_os_info
-r_typedef
-r_int
-id|sound_os_info
-suffix:semicolon
 DECL|macro|PSEUDO_DMA_AUTOINIT
 macro_line|#undef PSEUDO_DMA_AUTOINIT
+DECL|macro|ALLOW_BUFFER_MAPPING
+mdefine_line|#define ALLOW_BUFFER_MAPPING
 eof

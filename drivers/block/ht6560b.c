@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ht6580.c       Version 0.01  Feb 06, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ht6580.c       Version 0.03  Feb 09, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *&n; *  Version 0.01        Initial version hacked out of ide.c&n; *&n; *  Version 0.02        Added support for PIO modes, auto-tune&n; *&n; *  Version 0.03        Some cleanups&n; *&n; * I reviewed some assembler sourcer listings of htide drivers and found&n; * out how they setup those cycle time interfacing values, as they at Holtek&n; * call them. IDESETUP.COM that is supplied with the drivers figures out&n; * optimal values and fetches those values to drivers. I found out that&n; * they use IDE_SELECT_REG to fetch timings to the ide board right after&n; * interface switching. After that it was quite easy to add code to&n; * ht6560b.c.&n; *&n; * IDESETUP.COM gave me values 0x24, 0x45, 0xaa, 0xff that worked fine&n; * for hda and hdc. But hdb needed higher values to work, so I guess&n; * that sometimes it is necessary to give higher value than IDESETUP&n; * gives.   [see cmd640.c for an extreme example of this. -ml]&n; *&n; * Perhaps I should explain something about these timing values:&n; * The higher nibble of value is the Recovery Time  (rt) and the lower nibble&n; * of the value is the Active Time  (at). Minimum value 2 is the fastest and&n; * the maximum value 15 is the slowest. Default values should be 15 for both.&n; * So 0x24 means 2 for rt and 4 for at. Each of the drives should have&n; * both values, and IDESETUP gives automatically rt=15 st=15 for cdroms or&n; * similar. If value is too small there will be all sorts of failures.&n; *&n; * Port 0x3e6 bit 0x20 sets these timings on/off. If 0x20 bit is set&n; * these timings are disabled.&n; *&n; * Mikko Ala-Fossi&n; *&n; * More notes:&n; *&n; * There&squot;s something still missing from the initialization code, though.&n; * If I have booted to dos sometime after power on, I can get smaller&n; * timing values working. Perhaps I could soft-ice the initialization.&n; *&n; * OS/2 driver seems to use some kind of DMA. But that code is really&n; * messy to me to found out how.&n; *&n; * -=- malafoss@snakemail.hut.fi -=- searching the marvels of universe -=-&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO           /* most systems can safely undef this */
 macro_line|#include &lt;linux/types.h&gt;
@@ -11,12 +12,16 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
+macro_line|#include &quot;ide_modes.h&quot;
 multiline_comment|/*&n; * This routine handles interface switching for the peculiar hardware design&n; * on the F.G.I./Holtek HT-6560B VLB IDE interface.&n; * The HT-6560B can only enable one IDE port at a time, and requires a&n; * silly sequence (below) whenever we switch between primary and secondary.&n; *&n; * This stuff is courtesy of malafoss@snakemail.hut.fi&n; *&n; * At least one user has reported that this code can confuse the floppy&n; * controller and/or driver -- perhaps this should be changed to use&n; * a read-modify-write sequence, so as not to disturb other bits in the reg?&n; */
-multiline_comment|/*&n; * We don&squot;t know what all of the bits are for, but we *do* know about these:&n; *&t;bit5 (0x20): &quot;1&quot; selects slower speed (?)&n; *&t;bit0 (0x01): &quot;1&quot; selects second interface&n; */
-DECL|variable|qd6560b_selects
+multiline_comment|/*&n; * The special i/o-port that HT-6560B uses to select interfaces:&n; */
+DECL|macro|HT_SELECT_PORT
+mdefine_line|#define HT_SELECT_PORT     0x3e6
+multiline_comment|/*&n; * We don&squot;t know what all of the bits are for, but we *do* know about these:&n; *&t;bit5 (0x20): &quot;1&quot; selects slower speed by disabling use of timing values&n; *&t;bit0 (0x01): &quot;1&quot; selects second interface&n; */
+DECL|variable|ht6560b_selects
 r_static
 id|byte
-id|qd6560b_selects
+id|ht6560b_selects
 (braket
 l_int|2
 )braket
@@ -38,27 +43,105 @@ l_int|0x3d
 )brace
 )brace
 suffix:semicolon
-DECL|function|qd6560b_selectproc
+multiline_comment|/*&n; * VLB ht6560b Timing values:&n; *&n; * Timing byte consists of&n; *      High nibble:  Recovery Time  (rt)&n; *           The valid values range from 2 to 15. The default is 15.&n; *&n; *      Low nibble:   Active Time    (at)&n; *           The valid values range from 2 to 15. The default is 15.&n; *&n; * You can obtain optimized timing values by running Holtek IDESETUP.COM&n; * for DOS. DOS drivers get their timing values from command line, where&n; * the first value is the Recovery Time and the second value is the&n; * Active Time for each drive. Smaller value gives higher speed.&n; * In case of failures you should probably fall back to a higher value.&n; *&n; * Hopefully this example will make it clearer:&n; *&n; * DOS:    DEVICE=C:&bslash;bin&bslash;HTIDE&bslash;HTIDE.SYS /D0=2,4 /D1=4,5 /D2=10,10 /D3=15,15&n; * Linux:  byte ht6560b_timings [][] = {{0x24, 0x45}, {0xaa, 0xff}};&n; *&n; * Note: There are no ioctls to change these values directly,&n; * but settings can be approximated as PIO modes, using &quot;hdparm&quot;:&n; *&n; * rc.local:  hdparm -p3 /dev/hda -p2 /dev/hdb -p1 /dev/hdc -p0 /dev/hdd&n; */
+DECL|variable|ht6560b_timings
+r_static
+id|byte
+id|ht6560b_timings
+(braket
+l_int|2
+)braket
+(braket
+id|MAX_DRIVES
+)braket
+op_assign
+(brace
+(brace
+l_int|0xff
+comma
+l_int|0xff
+)brace
+comma
+(brace
+l_int|0xff
+comma
+l_int|0xff
+)brace
+)brace
+suffix:semicolon
+DECL|variable|pio_to_timings
+r_static
+id|byte
+id|pio_to_timings
+(braket
+l_int|6
+)braket
+op_assign
+(brace
+l_int|0xff
+comma
+l_int|0xaa
+comma
+l_int|0x45
+comma
+l_int|0x24
+comma
+l_int|0x13
+comma
+l_int|0x12
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * This routine is invoked from ide.c to prepare for access to a given drive.&n; */
+DECL|function|ht6560b_selectproc
 r_static
 r_void
-id|qd6560b_selectproc
+id|ht6560b_selectproc
 (paren
 id|ide_drive_t
 op_star
 id|drive
 )paren
-multiline_comment|/* called from ide.c */
 (brace
+id|byte
+id|t
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_static
 id|byte
 id|current_select
 op_assign
 l_int|0
 suffix:semicolon
+r_static
 id|byte
-id|drive_select
+id|current_timing
 op_assign
-id|qd6560b_selects
+l_int|0
+suffix:semicolon
+id|byte
+id|select
+op_assign
+id|ht6560b_selects
+(braket
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|index
+)braket
+(braket
+id|drive-&gt;select.b.unit
+)braket
+suffix:semicolon
+id|byte
+id|timing
+op_assign
+id|ht6560b_timings
 (braket
 id|HWIF
 c_func
@@ -75,17 +158,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|drive_select
+id|select
 op_ne
 id|current_select
+op_logical_or
+id|timing
+op_ne
+id|current_timing
 )paren
 (brace
-id|byte
-id|t
+id|current_select
+op_assign
+id|select
 suffix:semicolon
-r_int
-r_int
-id|flags
+id|current_timing
+op_assign
+id|timing
 suffix:semicolon
 id|save_flags
 (paren
@@ -97,26 +185,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current_select
-op_assign
-id|drive_select
-suffix:semicolon
 (paren
 r_void
 )paren
 id|inb
 c_func
 (paren
-l_int|0x3e6
-)paren
-suffix:semicolon
-(paren
-r_void
-)paren
-id|inb
-c_func
-(paren
-l_int|0x3e6
+id|HT_SELECT_PORT
 )paren
 suffix:semicolon
 (paren
@@ -125,7 +200,16 @@ r_void
 id|inb
 c_func
 (paren
-l_int|0x3e6
+id|HT_SELECT_PORT
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|inb
+c_func
+(paren
+id|HT_SELECT_PORT
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Note: input bits are reversed to output bits!!&n;&t;&t; */
@@ -134,7 +218,7 @@ op_assign
 id|inb
 c_func
 (paren
-l_int|0x3e6
+id|HT_SELECT_PORT
 )paren
 op_xor
 l_int|0x3f
@@ -159,7 +243,23 @@ c_func
 (paren
 id|t
 comma
-l_int|0x3e6
+id|HT_SELECT_PORT
+)paren
+suffix:semicolon
+multiline_comment|/*&n;                 * Set timing for this drive:&n;                 */
+id|outb
+(paren
+id|timing
+comma
+id|IDE_SELECT_REG
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|inb
+(paren
+id|IDE_STATUS_REG
 )paren
 suffix:semicolon
 id|restore_flags
@@ -194,7 +294,7 @@ op_assign
 id|inb
 c_func
 (paren
-l_int|0x3e6
+id|HT_SELECT_PORT
 )paren
 )paren
 op_eq
@@ -223,7 +323,7 @@ c_func
 (paren
 l_int|0x00
 comma
-l_int|0x3e6
+id|HT_SELECT_PORT
 )paren
 suffix:semicolon
 r_if
@@ -236,7 +336,7 @@ op_complement
 id|inb
 c_func
 (paren
-l_int|0x3e6
+id|HT_SELECT_PORT
 )paren
 )paren
 op_amp
@@ -249,7 +349,7 @@ c_func
 (paren
 id|orig_value
 comma
-l_int|0x3e6
+id|HT_SELECT_PORT
 )paren
 suffix:semicolon
 r_return
@@ -262,7 +362,7 @@ c_func
 (paren
 l_int|0x00
 comma
-l_int|0x3e6
+id|HT_SELECT_PORT
 )paren
 suffix:semicolon
 r_if
@@ -273,7 +373,7 @@ op_complement
 id|inb
 c_func
 (paren
-l_int|0x3e6
+id|HT_SELECT_PORT
 )paren
 )paren
 op_amp
@@ -285,14 +385,14 @@ c_func
 (paren
 id|orig_value
 comma
-l_int|0x3e6
+id|HT_SELECT_PORT
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; * Ht6560b autodetected:&n;&t; *     reverse input bits to output bits&n;&t; *     initialize bit1 to 0&n;&t; */
+multiline_comment|/*&n;&t; * Ht6560b autodetected:&n;&t; *     reverse input bits to output bits&n;&t; *     initialize bit1 to 0&n;&t; */
 id|outb
 c_func
 (paren
@@ -304,13 +404,13 @@ l_int|0x3f
 op_amp
 l_int|0xfd
 comma
-l_int|0x3e6
+id|HT_SELECT_PORT
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ht6560b: detected and initialized&bslash;n&quot;
+l_string|&quot;&bslash;nht6560b: detected and initialized&quot;
 )paren
 suffix:semicolon
 r_return
@@ -352,47 +452,35 @@ id|drive-&gt;media
 op_ne
 id|ide_disk
 )paren
-(brace
 id|pio
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* cdroms don&squot;t like our fast mode */
-)brace
+multiline_comment|/* some cdroms don&squot;t like fast modes (?) */
 r_else
-(brace
-r_struct
-id|hd_driveid
-op_star
-id|id
-op_assign
-id|drive-&gt;id
-suffix:semicolon
 id|pio
 op_assign
-id|id-&gt;tPIO
+id|ide_get_best_pio_mode
+(paren
+id|drive
+)paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
-(paren
-id|id-&gt;field_valid
-op_amp
-l_int|0x02
-)paren
-op_logical_and
-(paren
-id|id-&gt;eide_pio_modes
-op_amp
-l_int|0x01
-)paren
+id|pio
+OG
+l_int|5
 )paren
 id|pio
 op_assign
-l_int|3
+l_int|5
 suffix:semicolon
-)brace
-)brace
+id|unit
+op_assign
+id|drive-&gt;select.b.unit
+suffix:semicolon
 id|hwif
 op_assign
 id|HWIF
@@ -403,18 +491,27 @@ id|drive
 op_member_access_from_pointer
 id|index
 suffix:semicolon
+id|ht6560b_timings
+(braket
+id|hwif
+)braket
+(braket
 id|unit
+)braket
 op_assign
-id|drive-&gt;select.b.unit
+id|pio_to_timings
+(braket
+id|pio
+)braket
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|pio
-OL
-l_int|3
+op_eq
+l_int|0
 )paren
-id|qd6560b_selects
+id|ht6560b_selects
 (braket
 id|hwif
 )braket
@@ -425,7 +522,7 @@ op_or_assign
 l_int|0x20
 suffix:semicolon
 r_else
-id|qd6560b_selects
+id|ht6560b_selects
 (braket
 id|hwif
 )braket
@@ -450,7 +547,7 @@ c_cond
 id|check_region
 c_func
 (paren
-l_int|0x3e6
+id|HT_SELECT_PORT
 comma
 l_int|1
 )paren
@@ -477,11 +574,16 @@ c_func
 id|request_region
 c_func
 (paren
-l_int|0x3e6
+id|HT_SELECT_PORT
 comma
 l_int|1
 comma
-l_string|&quot;ht6560b&quot;
+id|ide_hwifs
+(braket
+l_int|0
+)braket
+dot
+id|name
 )paren
 suffix:semicolon
 id|ide_hwifs
@@ -510,7 +612,7 @@ dot
 id|selectproc
 op_assign
 op_amp
-id|qd6560b_selectproc
+id|ht6560b_selectproc
 suffix:semicolon
 id|ide_hwifs
 (braket
@@ -520,7 +622,7 @@ dot
 id|selectproc
 op_assign
 op_amp
-id|qd6560b_selectproc
+id|ht6560b_selectproc
 suffix:semicolon
 id|ide_hwifs
 (braket
@@ -552,6 +654,13 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;ht6560b: not found&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 )brace
 eof

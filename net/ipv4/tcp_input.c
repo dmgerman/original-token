@@ -1,6 +1,239 @@
 multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
+multiline_comment|/*&n; *&t;Policy code extracted so its now seperate&n; */
+multiline_comment|/*&n; *&t;Called each time to estimate the delayed ack timeout. This is&n; *&t;how it should be done so a fast link isnt impacted by ack delay.&n; */
+DECL|function|tcp_delack_estimator
+r_extern
+id|__inline__
+r_void
+id|tcp_delack_estimator
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+multiline_comment|/*&n;&t; *&t;Delayed ACK time estimator.&n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;lrcvtime
+op_eq
+l_int|0
+)paren
+(brace
+id|sk-&gt;lrcvtime
+op_assign
+id|jiffies
+suffix:semicolon
+id|sk-&gt;ato
+op_assign
+id|HZ
+op_div
+l_int|3
+suffix:semicolon
+)brace
+r_else
+(brace
+r_int
+id|m
+suffix:semicolon
+id|m
+op_assign
+id|jiffies
+op_minus
+id|sk-&gt;lrcvtime
+suffix:semicolon
+id|sk-&gt;lrcvtime
+op_assign
+id|jiffies
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|m
+op_le
+l_int|0
+)paren
+id|m
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|m
+OG
+(paren
+id|sk-&gt;rtt
+op_rshift
+l_int|3
+)paren
+)paren
+(brace
+id|sk-&gt;ato
+op_assign
+id|sk-&gt;rtt
+op_rshift
+l_int|3
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * printk(KERN_DEBUG &quot;ato: rtt %lu&bslash;n&quot;, sk-&gt;ato);&n;&t;&t;&t; */
+)brace
+r_else
+(brace
+id|sk-&gt;ato
+op_assign
+(paren
+id|sk-&gt;ato
+op_rshift
+l_int|1
+)paren
+op_plus
+id|m
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * printk(KERN_DEBUG &quot;ato: m %lu&bslash;n&quot;, sk-&gt;ato);&n;&t;&t;&t; */
+)brace
+)brace
+)brace
+multiline_comment|/*&n; *&t;Called on frames that were known _not_ to have been&n; *&t;retransmitted [see Karn/Partridge Proceedings SIGCOMM 87]. &n; *&t;The algorithm is from the SIGCOMM 88 piece by Van Jacobson.&n; */
+DECL|function|tcp_rtt_estimator
+r_extern
+id|__inline__
+r_void
+id|tcp_rtt_estimator
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|sk_buff
+op_star
+id|oskb
+)paren
+(brace
+r_int
+id|m
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;The following amusing code comes from Jacobson&squot;s&n;&t; *&t;article in SIGCOMM &squot;88.  Note that rtt and mdev&n;&t; *&t;are scaled versions of rtt and mean deviation.&n;&t; *&t;This is designed to be as fast as possible &n;&t; *&t;m stands for &quot;measurement&quot;.&n;&t; */
+id|m
+op_assign
+id|jiffies
+op_minus
+id|oskb-&gt;when
+suffix:semicolon
+multiline_comment|/* RTT */
+r_if
+c_cond
+(paren
+id|m
+op_le
+l_int|0
+)paren
+(brace
+id|m
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* IS THIS RIGHT FOR &lt;0 ??? */
+id|m
+op_sub_assign
+(paren
+id|sk-&gt;rtt
+op_rshift
+l_int|3
+)paren
+suffix:semicolon
+multiline_comment|/* m is now error in rtt est */
+id|sk-&gt;rtt
+op_add_assign
+id|m
+suffix:semicolon
+multiline_comment|/* rtt = 7/8 rtt + 1/8 new */
+r_if
+c_cond
+(paren
+id|m
+OL
+l_int|0
+)paren
+id|m
+op_assign
+op_minus
+id|m
+suffix:semicolon
+multiline_comment|/* m is now abs(error) */
+id|m
+op_sub_assign
+(paren
+id|sk-&gt;mdev
+op_rshift
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* similar update on mdev */
+id|sk-&gt;mdev
+op_add_assign
+id|m
+suffix:semicolon
+multiline_comment|/* mdev = 3/4 mdev + 1/4 new */
+multiline_comment|/*&n;&t; *&t;Now update timeout.  Note that this removes any backoff.&n;&t; */
+id|sk-&gt;rto
+op_assign
+(paren
+(paren
+id|sk-&gt;rtt
+op_rshift
+l_int|2
+)paren
+op_plus
+id|sk-&gt;mdev
+)paren
+op_rshift
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;rto
+OG
+l_int|120
+op_star
+id|HZ
+)paren
+id|sk-&gt;rto
+op_assign
+l_int|120
+op_star
+id|HZ
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;rto
+OL
+id|HZ
+op_div
+l_int|5
+)paren
+multiline_comment|/* Was 1*HZ - keep .2 as minimum cos of the BSD delayed acks */
+id|sk-&gt;rto
+op_assign
+id|HZ
+op_div
+l_int|5
+suffix:semicolon
+id|sk-&gt;backoff
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Cached last hit socket&n; */
 DECL|variable|th_cache_saddr
 DECL|variable|th_cache_daddr
@@ -43,7 +276,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Find the socket, using the last hit cache if applicable.&n; */
+multiline_comment|/*&n; *&t;Find the socket, using the last hit cache if applicable. The cache is not quite&n; *&t;right...&n; */
 DECL|function|get_tcp_sock
 r_static
 r_inline
@@ -230,7 +463,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Try to resync things. */
+multiline_comment|/*&n;&t; *&t;4.3reno machines look for these kind of acks so they can do fast&n;&t; *&t;recovery. Three identical &squot;old&squot; acks lets it know that one frame has&n;&t; *&t;been lost and should be resent. Because this is before the whole window&n;&t; *&t;of data has timed out it can take one lost frame per window without&n;&t; *&t;stalling. [See Jacobson RFC1323, Stevens TCP/IP illus vol2]&n;&t; *&n;&t; *&t;We also should be spotting triple bad sequences.&n;&t; */
 id|tcp_send_ack
 c_func
 (paren
@@ -308,7 +541,7 @@ id|sk-&gt;acked_seq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;When we get a reset we do this.&n; */
+multiline_comment|/*&n; *&t;When we get a reset we do this. This probably is a tcp_output routine&n; *&t;really.&n; */
 DECL|function|tcp_reset
 r_static
 r_int
@@ -330,6 +563,7 @@ id|sk-&gt;zapped
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;We want the right error as BSD sees it (and indeed as we do).&n;&t; */
 id|sk-&gt;err
 op_assign
 id|ECONNRESET
@@ -356,8 +590,8 @@ id|sk-&gt;err
 op_assign
 id|EPIPE
 suffix:semicolon
-macro_line|#ifdef TCP_DO_RFC1337&t;&t;
-multiline_comment|/*&n;&t; *&t;Time wait assassination protection [RFC1337]&n;&t; */
+macro_line|#ifdef CONFIG_TCP_RFC1337
+multiline_comment|/*&n;&t; *&t;Time wait assassination protection [RFC1337]&n;&t; *&n;&t; *&t;This is a good idea, but causes more sockets to take time to close.&n;&t; *&n;&t; *&t;Ian Heavens has since shown this is an inadequate fix for the protocol&n;&t; *&t;bug in question.&n;&t; */
 r_if
 c_cond
 (paren
@@ -785,7 +1019,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Make sure we can accept more.  This will prevent a&n;&t; * flurry of syns from eating up all our memory.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Make sure we can accept more.  This will prevent a&n;&t; *&t;flurry of syns from eating up all our memory.&n;&t; *&n;&t; *&t;BSD does some funnies here and allows 3/2 times the&n;&t; *&t;set backlog as a fudge factor. Thats just too gross.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1245,42 +1479,6 @@ comma
 id|newsk
 )paren
 suffix:semicolon
-id|newsk-&gt;dummy_th.res1
-op_assign
-l_int|0
-suffix:semicolon
-id|newsk-&gt;dummy_th.doff
-op_assign
-l_int|6
-suffix:semicolon
-id|newsk-&gt;dummy_th.fin
-op_assign
-l_int|0
-suffix:semicolon
-id|newsk-&gt;dummy_th.syn
-op_assign
-l_int|0
-suffix:semicolon
-id|newsk-&gt;dummy_th.rst
-op_assign
-l_int|0
-suffix:semicolon
-id|newsk-&gt;dummy_th.psh
-op_assign
-l_int|0
-suffix:semicolon
-id|newsk-&gt;dummy_th.ack
-op_assign
-l_int|0
-suffix:semicolon
-id|newsk-&gt;dummy_th.urg
-op_assign
-l_int|0
-suffix:semicolon
-id|newsk-&gt;dummy_th.res2
-op_assign
-l_int|0
-suffix:semicolon
 id|newsk-&gt;acked_seq
 op_assign
 id|skb-&gt;seq
@@ -1472,11 +1670,10 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This routine deals with incoming acks, but not outgoing ones.&n; */
-DECL|function|tcp_ack
-r_static
-r_int
-id|tcp_ack
+multiline_comment|/*&n; * Handle a TCP window that shrunk on us. It shouldn&squot;t happen,&n; * but..&n; *&n; * We may need to move packets from the send queue&n; * to the write queue, if the window has been shrunk on us.&n; * The RFC says you are not allowed to shrink your window&n; * like this, but if the other end does, you must be able&n; * to deal with it.&n; */
+DECL|function|tcp_window_shrunk
+r_void
+id|tcp_window_shrunk
 c_func
 (paren
 r_struct
@@ -1484,216 +1681,10 @@ id|sock
 op_star
 id|sk
 comma
-r_struct
-id|tcphdr
-op_star
-id|th
-comma
 id|u32
-id|ack
-comma
-r_int
-id|len
+id|window_seq
 )paren
 (brace
-r_int
-id|flag
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|window
-suffix:semicolon
-multiline_comment|/* &n;&t; * 1 - there was data in packet as well as ack or new data is sent or &n;&t; *     in shutdown state&n;&t; * 2 - data from retransmit queue was acked and removed&n;&t; * 4 - window shrunk or data from retransmit queue was acked and removed&n;&t; */
-r_if
-c_cond
-(paren
-id|sk-&gt;zapped
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* Dead, cant ack any more so why bother */
-multiline_comment|/*&n;&t; *&t;Have we discovered a larger window&n;&t; */
-id|window
-op_assign
-id|ntohs
-c_func
-(paren
-id|th-&gt;window
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|window
-OG
-id|sk-&gt;max_window
-)paren
-(brace
-id|sk-&gt;max_window
-op_assign
-id|window
-suffix:semicolon
-macro_line|#ifdef CONFIG_INET_PCTCP
-multiline_comment|/* Hack because we don&squot;t send partial packets to non SWS&n;&t;&t;   handling hosts */
-id|sk-&gt;mss
-op_assign
-id|min
-c_func
-(paren
-id|window
-op_rshift
-l_int|1
-comma
-id|sk-&gt;mtu
-)paren
-suffix:semicolon
-macro_line|#else
-id|sk-&gt;mss
-op_assign
-id|min
-c_func
-(paren
-id|window
-comma
-id|sk-&gt;mtu
-)paren
-suffix:semicolon
-macro_line|#endif&t;
-)brace
-multiline_comment|/*&n;&t; *&t;We have dropped back to keepalive timeouts. Thus we have&n;&t; *&t;no retransmits pending.&n;&t; */
-r_if
-c_cond
-(paren
-id|sk-&gt;retransmits
-op_logical_and
-id|sk-&gt;ip_xmit_timeout
-op_eq
-id|TIME_KEEPOPEN
-)paren
-id|sk-&gt;retransmits
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;If the ack is newer than sent or older than previous acks&n;&t; *&t;then we can probably ignore it.&n;&t; */
-r_if
-c_cond
-(paren
-id|after
-c_func
-(paren
-id|ack
-comma
-id|sk-&gt;sent_seq
-)paren
-op_logical_or
-id|before
-c_func
-(paren
-id|ack
-comma
-id|sk-&gt;rcv_ack_seq
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sk-&gt;debug
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Ack ignored %u %u&bslash;n&quot;
-comma
-id|ack
-comma
-id|sk-&gt;sent_seq
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; *&t;Keepalive processing.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|after
-c_func
-(paren
-id|ack
-comma
-id|sk-&gt;sent_seq
-)paren
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; *&t;Restart the keepalive timer.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|sk-&gt;keepopen
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sk-&gt;ip_xmit_timeout
-op_eq
-id|TIME_KEEPOPEN
-)paren
-(brace
-id|tcp_reset_xmit_timer
-c_func
-(paren
-id|sk
-comma
-id|TIME_KEEPOPEN
-comma
-id|TCP_TIMEOUT_LEN
-)paren
-suffix:semicolon
-)brace
-)brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *&t;If there is data set flag 1&n;&t; */
-r_if
-c_cond
-(paren
-id|len
-op_ne
-id|th-&gt;doff
-op_star
-l_int|4
-)paren
-id|flag
-op_or_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;See if our window has been shrunk. &n;&t; */
-r_if
-c_cond
-(paren
-id|after
-c_func
-(paren
-id|sk-&gt;window_seq
-comma
-id|ack
-op_plus
-id|window
-)paren
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * We may need to move packets from the send queue&n;&t;&t; * to the write queue, if the window has been shrunk on us.&n;&t;&t; * The RFC says you are not allowed to shrink your window&n;&t;&t; * like this, but if the other end does, you must be able&n;&t;&t; * to deal with it.&n;&t;&t; */
 r_struct
 id|sk_buff
 op_star
@@ -1723,18 +1714,7 @@ id|sk-&gt;send_tail
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;This is an artifact of a flawed concept. We want one&n;&t;&t; *&t;queue and a smarter send routine when we send all.&n;&t;&t; */
-id|flag
-op_or_assign
-l_int|4
-suffix:semicolon
-multiline_comment|/* Window changed */
-id|sk-&gt;window_seq
-op_assign
-id|ack
-op_plus
-id|window
-suffix:semicolon
+multiline_comment|/*&n;&t; *&t;This is an artifact of a flawed concept. We want one&n;&t; *&t;queue and a smarter send routine when we send all.&n;&t; */
 id|cli
 c_func
 (paren
@@ -1768,7 +1748,7 @@ c_func
 (paren
 id|skb-&gt;end_seq
 comma
-id|sk-&gt;window_seq
+id|window_seq
 )paren
 )paren
 (brace
@@ -1871,6 +1851,182 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;This routine deals with incoming acks, but not outgoing ones.&n; *&n; *&t;This routine is totally _WRONG_. The list structuring is wrong,&n; *&t;the algorithm is wrong, the code is wrong.&n; */
+DECL|function|tcp_ack
+r_static
+r_int
+id|tcp_ack
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|tcphdr
+op_star
+id|th
+comma
+id|u32
+id|ack
+comma
+r_int
+id|len
+)paren
+(brace
+r_int
+id|flag
+op_assign
+l_int|0
+suffix:semicolon
+id|u32
+id|window_seq
+suffix:semicolon
+multiline_comment|/* &n;&t; * 1 - there was data in packet as well as ack or new data is sent or &n;&t; *     in shutdown state&n;&t; * 2 - data from retransmit queue was acked and removed&n;&t; * 4 - window shrunk or data from retransmit queue was acked and removed&n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;zapped
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Dead, cant ack any more so why bother */
+multiline_comment|/*&n;&t; *&t;We have dropped back to keepalive timeouts. Thus we have&n;&t; *&t;no retransmits pending.&n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;ip_xmit_timeout
+op_eq
+id|TIME_KEEPOPEN
+)paren
+id|sk-&gt;retransmits
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If the ack is newer than sent or older than previous acks&n;&t; *&t;then we can probably ignore it.&n;&t; */
+r_if
+c_cond
+(paren
+id|after
+c_func
+(paren
+id|ack
+comma
+id|sk-&gt;sent_seq
+)paren
+op_logical_or
+id|before
+c_func
+(paren
+id|ack
+comma
+id|sk-&gt;rcv_ack_seq
+)paren
+)paren
+r_goto
+id|uninteresting_ack
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If there is data set flag 1&n;&t; */
+r_if
+c_cond
+(paren
+id|len
+op_ne
+id|th-&gt;doff
+op_star
+l_int|4
+)paren
+id|flag
+op_or_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Have we discovered a larger window&n;&t; */
+id|window_seq
+op_assign
+id|ntohs
+c_func
+(paren
+id|th-&gt;window
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|window_seq
+OG
+id|sk-&gt;max_window
+)paren
+(brace
+id|sk-&gt;max_window
+op_assign
+id|window_seq
+suffix:semicolon
+macro_line|#ifdef CONFIG_INET_PCTCP
+multiline_comment|/* Hack because we don&squot;t send partial packets to non SWS&n;&t;&t;   handling hosts */
+id|sk-&gt;mss
+op_assign
+id|min
+c_func
+(paren
+id|window_seq
+op_rshift
+l_int|1
+comma
+id|sk-&gt;mtu
+)paren
+suffix:semicolon
+macro_line|#else
+id|sk-&gt;mss
+op_assign
+id|min
+c_func
+(paren
+id|window_seq
+comma
+id|sk-&gt;mtu
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+)brace
+id|window_seq
+op_add_assign
+id|ack
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;See if our window has been shrunk. &n;&t; */
+r_if
+c_cond
+(paren
+id|after
+c_func
+(paren
+id|sk-&gt;window_seq
+comma
+id|window_seq
+)paren
+)paren
+(brace
+id|flag
+op_or_assign
+l_int|4
+suffix:semicolon
+id|tcp_window_shrunk
+c_func
+(paren
+id|sk
+comma
+id|window_seq
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Update the right hand window edge of the host&n;&t; */
+id|sk-&gt;window_seq
+op_assign
+id|window_seq
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Pipe has emptied&n;&t; */
 r_if
 c_cond
@@ -1897,13 +2053,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Update the right hand window edge of the host&n;&t; */
-id|sk-&gt;window_seq
-op_assign
-id|ack
-op_plus
-id|window
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We don&squot;t want too many packets out there. &n;&t; */
 r_if
 c_cond
@@ -2165,124 +2314,14 @@ l_int|2
 )paren
 )paren
 multiline_comment|/* Not retransmitting */
-(brace
-r_int
-id|m
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;The following amusing code comes from Jacobson&squot;s&n;&t;&t;&t;&t; *&t;article in SIGCOMM &squot;88.  Note that rtt and mdev&n;&t;&t;&t;&t; *&t;are scaled versions of rtt and mean deviation.&n;&t;&t;&t;&t; *&t;This is designed to be as fast as possible &n;&t;&t;&t;&t; *&t;m stands for &quot;measurement&quot;.&n;&t;&t;&t;&t; */
-id|m
-op_assign
-id|jiffies
-op_minus
-id|oskb-&gt;when
-suffix:semicolon
-multiline_comment|/* RTT */
-r_if
-c_cond
+id|tcp_rtt_estimator
+c_func
 (paren
-id|m
-op_le
-l_int|0
-)paren
-(brace
-id|m
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* IS THIS RIGHT FOR &lt;0 ??? */
-id|m
-op_sub_assign
-(paren
-id|sk-&gt;rtt
-op_rshift
-l_int|3
+id|sk
+comma
+id|oskb
 )paren
 suffix:semicolon
-multiline_comment|/* m is now error in rtt est */
-id|sk-&gt;rtt
-op_add_assign
-id|m
-suffix:semicolon
-multiline_comment|/* rtt = 7/8 rtt + 1/8 new */
-r_if
-c_cond
-(paren
-id|m
-OL
-l_int|0
-)paren
-id|m
-op_assign
-op_minus
-id|m
-suffix:semicolon
-multiline_comment|/* m is now abs(error) */
-id|m
-op_sub_assign
-(paren
-id|sk-&gt;mdev
-op_rshift
-l_int|2
-)paren
-suffix:semicolon
-multiline_comment|/* similar update on mdev */
-id|sk-&gt;mdev
-op_add_assign
-id|m
-suffix:semicolon
-multiline_comment|/* mdev = 3/4 mdev + 1/4 new */
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;Now update timeout.  Note that this removes any backoff.&n;&t;&t;&t;&t; */
-id|sk-&gt;rto
-op_assign
-(paren
-(paren
-id|sk-&gt;rtt
-op_rshift
-l_int|2
-)paren
-op_plus
-id|sk-&gt;mdev
-)paren
-op_rshift
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;rto
-OG
-l_int|120
-op_star
-id|HZ
-)paren
-id|sk-&gt;rto
-op_assign
-l_int|120
-op_star
-id|HZ
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;rto
-OL
-id|HZ
-op_div
-l_int|5
-)paren
-multiline_comment|/* Was 1*HZ - keep .2 as minimum cos of the BSD delayed acks */
-id|sk-&gt;rto
-op_assign
-id|HZ
-op_div
-l_int|5
-suffix:semicolon
-id|sk-&gt;backoff
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 id|flag
 op_or_assign
 (paren
@@ -2929,6 +2968,72 @@ comma
 id|TIME_WRITE
 comma
 id|sk-&gt;rto
+)paren
+suffix:semicolon
+)brace
+)brace
+r_return
+l_int|1
+suffix:semicolon
+id|uninteresting_ack
+suffix:colon
+r_if
+c_cond
+(paren
+id|sk-&gt;debug
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Ack ignored %u %u&bslash;n&quot;
+comma
+id|ack
+comma
+id|sk-&gt;sent_seq
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Keepalive processing.&n;&t; */
+r_if
+c_cond
+(paren
+id|after
+c_func
+(paren
+id|ack
+comma
+id|sk-&gt;sent_seq
+)paren
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Restart the keepalive timer.&n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;keepopen
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;ip_xmit_timeout
+op_eq
+id|TIME_KEEPOPEN
+)paren
+(brace
+id|tcp_reset_xmit_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_KEEPOPEN
+comma
+id|TCP_TIMEOUT_LEN
 )paren
 suffix:semicolon
 )brace
@@ -4462,7 +4567,7 @@ l_int|0
 suffix:semicolon
 id|skb-&gt;free
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|skb-&gt;saddr
 op_assign
@@ -4551,6 +4656,7 @@ id|sk-&gt;rmem_alloc
 op_add_assign
 id|skb-&gt;truesize
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;We should now do header prediction.&n;&t; */
 multiline_comment|/*&n;&t; *&t;This basically follows the flow suggested by RFC793, with the corrections in RFC1122. We&n;&t; *&t;don&squot;t implement precedence and we process URG incorrectly (deliberately so) for BSD bug&n;&t; *&t;compatibility. We also set up variables more thoroughly [Karn notes in the&n;&t; *&t;KA9Q code the RFC793 incoming segment rules don&squot;t initialise the variables for all paths].&n;&t; */
 r_if
 c_cond
@@ -4658,7 +4764,7 @@ c_func
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;Now we have several options: In theory there is nothing else&n;&t;&t;&t; *&t;in the frame. KA9Q has an option to send data with the syn,&n;&t;&t;&t; *&t;BSD accepts data with the syn up to the [to be] advertised window&n;&t;&t;&t; *&t;and Solaris 2.1 gives you a protocol error. For now we just ignore&n;&t;&t;&t; *&t;it, that fits the spec precisely and avoids incompatibilities. It&n;&t;&t;&t; *&t;would be nice in future to drop through and process the data.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Now we have several options: In theory there is nothing else&n;&t;&t;&t; *&t;in the frame. KA9Q has an option to send data with the syn,&n;&t;&t;&t; *&t;BSD accepts data with the syn up to the [to be] advertised window&n;&t;&t;&t; *&t;and Solaris 2.1 gives you a protocol error. For now we just ignore&n;&t;&t;&t; *&t;it, that fits the spec precisely and avoids incompatibilities. It&n;&t;&t;&t; *&t;would be nice in future to drop through and process the data.&n;&t;&t;&t; *&n;&t;&t;&t; *&t;Now TTCP is starting to use we ought to queue this data.&n;&t;&t;&t; */
 id|release_sock
 c_func
 (paren
@@ -4669,7 +4775,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* retransmitted SYN? */
+multiline_comment|/* &n;&t;&t; *&t;Retransmitted SYN for our socket. This is uninteresting. If sk-&gt;state==TCP_LISTEN&n;&t;&t; *&t;then its a new connection&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4704,7 +4810,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *&t;SYN sent means we have to look for a suitable ack and either reset&n;&t;&t; *&t;for bad matches or go to connected &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;SYN sent means we have to look for a suitable ack and either reset&n;&t;&t; *&t;for bad matches or go to connected. The SYN_SENT case is unusual and should&n;&t;&t; *&t;not be in line code. [AC]&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5301,87 +5407,12 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Delayed ACK time estimator.&n;&t; */
-r_if
-c_cond
+id|tcp_delack_estimator
+c_func
 (paren
-id|sk-&gt;lrcvtime
-op_eq
-l_int|0
+id|sk
 )paren
-(brace
-id|sk-&gt;lrcvtime
-op_assign
-id|jiffies
 suffix:semicolon
-id|sk-&gt;ato
-op_assign
-id|HZ
-op_div
-l_int|3
-suffix:semicolon
-)brace
-r_else
-(brace
-r_int
-id|m
-suffix:semicolon
-id|m
-op_assign
-id|jiffies
-op_minus
-id|sk-&gt;lrcvtime
-suffix:semicolon
-id|sk-&gt;lrcvtime
-op_assign
-id|jiffies
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|m
-op_le
-l_int|0
-)paren
-id|m
-op_assign
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|m
-OG
-(paren
-id|sk-&gt;rtt
-op_rshift
-l_int|3
-)paren
-)paren
-(brace
-id|sk-&gt;ato
-op_assign
-id|sk-&gt;rtt
-op_rshift
-l_int|3
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * printk(KERN_DEBUG &quot;ato: rtt %lu&bslash;n&quot;, sk-&gt;ato);&n;&t;&t;&t; */
-)brace
-r_else
-(brace
-id|sk-&gt;ato
-op_assign
-(paren
-id|sk-&gt;ato
-op_rshift
-l_int|1
-)paren
-op_plus
-id|m
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * printk(KERN_DEBUG &quot;ato: m %lu&bslash;n&quot;, sk-&gt;ato);&n;&t;&t;&t; */
-)brace
-)brace
 multiline_comment|/*&n;&t; *&t;Process the ACK&n;&t; */
 r_if
 c_cond
@@ -5515,15 +5546,6 @@ id|skb
 comma
 id|FREE_READ
 )paren
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;And done&n;&t; */

@@ -6,6 +6,10 @@ DECL|macro|REALLY_FAST_IO
 macro_line|#undef REALLY_FAST_IO&t;&t;&t;/* define if ide ports are perfect */
 DECL|macro|INITIAL_MULT_COUNT
 mdefine_line|#define INITIAL_MULT_COUNT&t;0&t;/* off=0; on=2,4,8,16,32, etc.. */
+macro_line|#ifndef SUPPORT_VLB_SYNC&t;&t;/* 1 to support weird 32-bit chips */
+DECL|macro|SUPPORT_VLB_SYNC
+mdefine_line|#define SUPPORT_VLB_SYNC&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
 macro_line|#ifndef DISK_RECOVERY_TIME&t;&t;/* off=0; on=access_delay_time */
 DECL|macro|DISK_RECOVERY_TIME
 mdefine_line|#define DISK_RECOVERY_TIME&t;0&t;/*  for hardware that needs it */
@@ -881,9 +885,6 @@ suffix:semicolon
 multiline_comment|/*&n; * An ide_dmaproc_t() initiates/aborts DMA read/write operations on a drive.&n; *&n; * The caller is assumed to have selected the drive and programmed the drive&squot;s&n; * sector address using CHS or LBA.  All that remains is to prepare for DMA&n; * and then issue the actual read/write DMA/PIO command to the drive.&n; *&n; * Returns 0 if all went well.&n; * Returns 1 if DMA read/write could not be started, in which case the caller&n; * should either try again later, or revert to PIO for the current request.&n; */
 DECL|enumerator|ide_dma_read
 DECL|enumerator|ide_dma_write
-DECL|enumerator|ide_dma_abort
-DECL|enumerator|ide_dma_check
-DECL|typedef|ide_dma_action_t
 r_typedef
 r_enum
 (brace
@@ -895,6 +896,8 @@ id|ide_dma_write
 op_assign
 l_int|1
 comma
+DECL|enumerator|ide_dma_abort
+DECL|enumerator|ide_dma_check
 id|ide_dma_abort
 op_assign
 l_int|2
@@ -902,7 +905,23 @@ comma
 id|ide_dma_check
 op_assign
 l_int|3
+comma
+DECL|enumerator|ide_dma_status_bad
+DECL|enumerator|ide_dma_transferred
+id|ide_dma_status_bad
+op_assign
+l_int|4
+comma
+id|ide_dma_transferred
+op_assign
+l_int|5
+comma
+DECL|enumerator|ide_dma_begin
+id|ide_dma_begin
+op_assign
+l_int|6
 )brace
+DECL|typedef|ide_dma_action_t
 id|ide_dma_action_t
 suffix:semicolon
 DECL|typedef|ide_dmaproc_t
@@ -1105,6 +1124,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* valid only for ide_hwifs[0] */
+DECL|member|no_unmask
+r_int
+id|no_unmask
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* disallow setting unmask bits */
 macro_line|#if (DISK_RECOVERY_TIME &gt; 0)
 DECL|member|last_time
 r_int
@@ -1565,6 +1591,18 @@ comma
 r_int
 r_int
 id|block
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;idetape_end_request is used to finish servicing a request, and to&n; *&t;insert a pending pipeline request into the main device queue.&n; */
+r_void
+id|idetape_end_request
+(paren
+id|byte
+id|uptodate
+comma
+id|ide_hwgroup_t
+op_star
+id|hwgroup
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Block device interface functions.&n; */
