@@ -866,7 +866,7 @@ l_int|0
 suffix:semicolon
 id|pty_driver.init_termios.c_cflag
 op_assign
-id|B9600
+id|B38400
 op_or
 id|CS8
 op_or
@@ -947,6 +947,14 @@ suffix:semicolon
 id|pty_slave_driver.init_termios
 op_assign
 id|tty_std_termios
+suffix:semicolon
+id|pty_slave_driver.init_termios.c_cflag
+op_assign
+id|B38400
+op_or
+id|CS8
+op_or
+id|CREAD
 suffix:semicolon
 id|pty_slave_driver.table
 op_assign

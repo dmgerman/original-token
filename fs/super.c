@@ -2157,6 +2157,29 @@ id|data
 r_int
 id|retval
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|MS_RDONLY
+)paren
+op_logical_and
+id|sb-&gt;s_dev
+op_logical_and
+id|is_read_only
+c_func
+(paren
+id|sb-&gt;s_dev
+)paren
+)paren
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
+multiline_comment|/*flags |= MS_RDONLY;*/
 multiline_comment|/* If we are remounting RDONLY, make sure there are no rw files open */
 r_if
 c_cond

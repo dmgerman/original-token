@@ -165,18 +165,6 @@ id|hd_error
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if (HD_DELAY &gt; 0)
-DECL|variable|last_req
-r_int
-r_int
-id|last_req
-comma
-id|read_timer
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *  This struct defines the HD&squot;s and their types.&n; */
 DECL|struct|hd_i_struct
 r_struct
@@ -388,6 +376,11 @@ comma
 )brace
 suffix:semicolon
 macro_line|#if (HD_DELAY &gt; 0)
+DECL|variable|last_req
+r_int
+r_int
+id|last_req
+suffix:semicolon
 DECL|function|read_timer
 r_int
 r_int
@@ -400,9 +393,17 @@ r_void
 r_int
 r_int
 id|t
+comma
+id|flags
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -441,9 +442,10 @@ l_int|0x40
 op_lshift
 l_int|8
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1679,6 +1681,15 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
+macro_line|#if (HD_DELAY &gt; 0)
+id|last_req
+op_assign
+id|read_timer
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|hd_request
 c_func
 (paren
@@ -1803,6 +1814,15 @@ l_char|&squot;a&squot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#if (HD_DELAY &gt; 0)
+id|last_req
+op_assign
+id|read_timer
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|hd_request
 c_func
 (paren
@@ -2412,8 +2432,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* permit other IRQs during xfer */
-id|read_next
-suffix:colon
 r_do
 (brace
 id|i
@@ -2519,11 +2537,6 @@ id|hd_error
 suffix:semicolon
 )brace
 id|bad_rw_intr
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cli
 c_func
 (paren
 )paren
@@ -2664,7 +2677,7 @@ c_cond
 id|msect
 )paren
 r_goto
-id|read_next
+id|ok_to_read
 suffix:semicolon
 id|SET_INTR
 c_func
@@ -2993,11 +3006,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|hd_request
 c_func
 (paren
@@ -3020,6 +3028,23 @@ r_int
 id|retries
 op_assign
 l_int|100000
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|unmask_intr
+(braket
+id|DEVICE_NR
+c_func
+(paren
+id|WCURRENT.dev
+)paren
+)braket
+)paren
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -3126,11 +3151,6 @@ id|hd_error
 suffix:semicolon
 )brace
 id|bad_rw_intr
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cli
 c_func
 (paren
 )paren
@@ -3255,6 +3275,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if (HD_DELAY &gt; 0)
+id|last_req
+op_assign
+id|read_timer
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|hd_request
 c_func
 (paren
@@ -5834,6 +5863,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+id|flags
+suffix:semicolon
 id|target
 op_assign
 id|DEVICE_NR
@@ -5851,6 +5883,12 @@ op_assign
 op_amp
 id|GENDISK_STRUCT
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -5866,9 +5904,10 @@ OG
 id|maxusage
 )paren
 (brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -5881,9 +5920,10 @@ id|DEVICE_BUSY
 op_assign
 l_int|1
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|max_p

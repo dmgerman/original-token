@@ -334,7 +334,7 @@ mdefine_line|#define DEVICE_INTR do_floppy
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_fd_request
 DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) ((device) &amp; 3)
+mdefine_line|#define DEVICE_NR(device) ( ((device) &amp; 3) | (((device) &amp; 0x80 ) &gt;&gt; 5 ))
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device) floppy_on(DEVICE_NR(device))
 DECL|macro|DEVICE_OFF
