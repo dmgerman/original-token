@@ -1,3 +1,6 @@
+macro_line|#ifndef _ALPHA_HW_IRQ_H
+DECL|macro|_ALPHA_HW_IRQ_H
+mdefine_line|#define _ALPHA_HW_IRQ_H
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/irq.h&n; *&n; *&t;Copyright (C) 1995 Linus Torvalds&n; *&t;Copyright (C) 1998 Richard Henderson&n; *&n; * This file contains declarations and inline functions for interfacing&n; * with the IRQ handling routines in irq.c.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|STANDARD_INIT_IRQ_PROLOG
@@ -182,4 +185,5 @@ id|pc
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 eof

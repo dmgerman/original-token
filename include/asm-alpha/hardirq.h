@@ -22,10 +22,10 @@ DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count(cpu) == 0)
 DECL|macro|hardirq_endlock
 mdefine_line|#define hardirq_endlock(cpu)&t;((void) 0)
-DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu, irq)&t;(local_irq_count(cpu)++)
-DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu, irq)&t;(local_irq_count(cpu)--)
+DECL|macro|irq_enter
+mdefine_line|#define irq_enter(cpu, irq)&t;(local_irq_count(cpu)++)
+DECL|macro|irq_exit
+mdefine_line|#define irq_exit(cpu, irq)&t;(local_irq_count(cpu)--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else
@@ -77,11 +77,11 @@ id|global_irq_lock
 suffix:semicolon
 )brace
 )brace
-DECL|function|hardirq_enter
+DECL|function|irq_enter
 r_static
 r_inline
 r_void
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 r_int
@@ -105,12 +105,27 @@ op_amp
 id|global_irq_count
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+id|spin_is_locked
+c_func
+(paren
+op_amp
+id|global_irq_lock
+)paren
+)paren
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
-DECL|function|hardirq_exit
+DECL|function|irq_exit
 r_static
 r_inline
 r_void
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 r_int
@@ -147,13 +162,11 @@ id|cpu
 )paren
 (brace
 r_return
-(paren
 op_logical_neg
-id|atomic_read
+id|local_irq_count
 c_func
 (paren
-op_amp
-id|global_irq_count
+id|cpu
 )paren
 op_logical_and
 op_logical_neg
@@ -163,11 +176,10 @@ c_func
 op_amp
 id|global_irq_lock
 )paren
-)paren
 suffix:semicolon
 )brace
 DECL|macro|hardirq_endlock
-mdefine_line|#define hardirq_endlock(cpu)  ((void)0)
+mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
 r_extern
 r_void
 id|synchronize_irq

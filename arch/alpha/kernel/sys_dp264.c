@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_tsunami.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#include &quot;pci_impl.h&quot;
 macro_line|#include &quot;machvec_impl.h&quot;
 multiline_comment|/*&n; * HACK ALERT! only the boot cpu is used for interrupts.&n; */
@@ -38,14 +38,6 @@ r_int
 id|unmask_p
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|irq
-op_ge
-l_int|16
-)paren
-(brace
 r_volatile
 r_int
 r_int
@@ -59,6 +51,7 @@ id|TSUNAMI_bootcpu
 OL
 l_int|2
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -76,7 +69,9 @@ op_assign
 op_amp
 id|TSUNAMI_cchip-&gt;dim1.csr
 suffix:semicolon
+)brace
 r_else
+(brace
 r_if
 c_cond
 (paren
@@ -95,6 +90,7 @@ op_assign
 op_amp
 id|TSUNAMI_cchip-&gt;dim3.csr
 suffix:semicolon
+)brace
 op_star
 id|csr
 op_assign
@@ -109,8 +105,14 @@ suffix:semicolon
 op_star
 id|csr
 suffix:semicolon
-)brace
-r_else
+r_if
+c_cond
+(paren
+id|irq
+OL
+l_int|16
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -139,6 +141,7 @@ l_int|0x21
 )paren
 suffix:semicolon
 multiline_comment|/* ISA PIC1 */
+)brace
 )brace
 r_static
 r_void
@@ -836,12 +839,36 @@ id|irq
 OG
 l_int|0
 )paren
+(brace
 id|irq
 op_add_assign
 l_int|16
 op_star
 id|hose-&gt;index
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* ??? The Contaq IDE controler on the ISA bridge uses&n;&t;&t;   &quot;legacy&quot; interrupts 14 and 15.  I don&squot;t know if anything&n;&t;&t;   can wind up at the same slot+pin on hose1, so we&squot;ll&n;&t;&t;   just have to trust whatever value the console might&n;&t;&t;   have assigned.  */
+id|u8
+id|irq8
+suffix:semicolon
+id|pci_read_config_byte
+c_func
+(paren
+id|dev
+comma
+id|PCI_INTERRUPT_LINE
+comma
+op_amp
+id|irq8
+)paren
+suffix:semicolon
+id|irq
+op_assign
+id|irq8
+suffix:semicolon
+)brace
 r_return
 id|irq
 suffix:semicolon

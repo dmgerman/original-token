@@ -14,9 +14,9 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/cache.h&gt;
 r_struct
 id|poll_table_struct
 suffix:semicolon
@@ -2441,8 +2441,6 @@ comma
 r_int
 r_int
 comma
-id|uid_t
-comma
 r_char
 )paren
 suffix:semicolon
@@ -2460,8 +2458,6 @@ op_star
 comma
 r_int
 r_int
-comma
-id|uid_t
 )paren
 suffix:semicolon
 DECL|member|free_block
@@ -2510,8 +2506,6 @@ comma
 r_struct
 id|iattr
 op_star
-comma
-id|uid_t
 )paren
 suffix:semicolon
 )brace

@@ -19,7 +19,7 @@ macro_line|#include &lt;asm/core_cia.h&gt;
 macro_line|#include &lt;asm/core_lca.h&gt;
 macro_line|#include &lt;asm/core_pyxis.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#include &quot;pci_impl.h&quot;
 macro_line|#include &quot;machvec_impl.h&quot;
 r_static
@@ -1083,10 +1083,6 @@ id|init_pci
 suffix:colon
 id|cabriolet_init_pci
 comma
-id|kill_arch
-suffix:colon
-id|common_kill_arch
-comma
 id|pci_map_irq
 suffix:colon
 id|cabriolet_map_irq
@@ -1177,10 +1173,6 @@ comma
 id|init_pci
 suffix:colon
 id|cabriolet_init_pci
-comma
-id|kill_arch
-suffix:colon
-id|common_kill_arch
 comma
 id|pci_map_irq
 suffix:colon
@@ -1273,10 +1265,6 @@ id|init_pci
 suffix:colon
 id|alphapc164_init_pci
 comma
-id|kill_arch
-suffix:colon
-id|common_kill_arch
-comma
 id|pci_map_irq
 suffix:colon
 id|alphapc164_map_irq
@@ -1367,10 +1355,6 @@ comma
 id|init_pci
 suffix:colon
 id|alphapc164_init_pci
-comma
-id|kill_arch
-suffix:colon
-id|common_kill_arch
 comma
 id|pci_map_irq
 suffix:colon

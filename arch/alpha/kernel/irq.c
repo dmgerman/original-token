@@ -11,13 +11,13 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq_impl.h&quot;
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
 DECL|macro|vuip
@@ -401,15 +401,36 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|variable|irq_action
-r_static
-r_struct
-id|irqaction
-op_star
-id|irq_action
+DECL|variable|irq_controller_lock
+id|spinlock_t
+id|irq_controller_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
+DECL|variable|__cacheline_aligned
+id|irq_desc_t
+id|irq_desc
 (braket
 id|NR_IRQS
 )braket
+id|__cacheline_aligned
+op_assign
+(brace
+(braket
+l_int|0
+dot
+dot
+dot
+id|NR_IRQS
+op_minus
+l_int|1
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+)brace
 suffix:semicolon
 r_static
 r_inline
@@ -571,32 +592,19 @@ r_int
 id|irq
 )paren
 (brace
-r_struct
-id|irqaction
-op_star
-op_star
-id|p
-suffix:semicolon
-id|p
-op_assign
-id|irq_action
-op_plus
+r_return
+id|irq_desc
+(braket
 id|irq
-suffix:semicolon
-r_if
+)braket
+dot
+id|action
+ques
 c_cond
-(paren
-op_star
-id|p
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
 op_minus
 id|EBUSY
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 r_int
@@ -692,9 +700,13 @@ id|EINVAL
 suffix:semicolon
 id|p
 op_assign
-id|irq_action
-op_plus
+op_amp
+id|irq_desc
+(braket
 id|irq
+)braket
+dot
+id|action
 suffix:semicolon
 id|action
 op_assign
@@ -950,9 +962,13 @@ c_loop
 (paren
 id|p
 op_assign
+op_amp
+id|irq_desc
+(braket
 id|irq
-op_plus
-id|irq_action
+)braket
+dot
+id|action
 suffix:semicolon
 (paren
 id|action
@@ -994,10 +1010,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|irq
+id|irq_desc
 (braket
-id|irq_action
+id|irq
 )braket
+dot
+id|action
 )paren
 id|mask_irq
 c_func
@@ -1114,10 +1132,12 @@ op_increment
 (brace
 id|action
 op_assign
-id|irq_action
+id|irq_desc
 (braket
 id|i
 )braket
+dot
+id|action
 suffix:semicolon
 r_if
 c_cond
@@ -1845,175 +1865,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK (1&lt;&lt;26)
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  if (!--stuck) {&t;&t;&t;&t;&t;&t;&bslash;&n;    printk(&quot;irq_enter stuck (irq=%d, cpu=%d, global=%d)&bslash;n&quot;,&t;&bslash;&n;&t;   irq, cpu, global_irq_holder);&t;&t;&t;&bslash;&n;    stuck = INIT_STUCK;&t;&t;&t;&t;&t;&t;&bslash;&n;  }
-DECL|macro|VERBOSE_IRQLOCK_DEBUGGING
-macro_line|#undef VERBOSE_IRQLOCK_DEBUGGING
-r_void
-DECL|function|irq_enter
-id|irq_enter
-c_func
-(paren
-r_int
-id|cpu
-comma
-r_int
-id|irq
-)paren
-(brace
-macro_line|#ifdef VERBOSE_IRQLOCK_DEBUGGING
-r_extern
-r_void
-id|smp_show_backtrace_all_cpus
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-r_int
-id|stuck
-op_assign
-id|INIT_STUCK
-suffix:semicolon
-id|hardirq_enter
-c_func
-(paren
-id|cpu
-comma
-id|irq
-)paren
-suffix:semicolon
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|spin_is_locked
-c_func
-(paren
-op_amp
-id|global_irq_lock
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|cpu
-op_eq
-id|global_irq_holder
-)paren
-(brace
-r_int
-id|globl_locked
-op_assign
-id|spin_is_locked
-c_func
-(paren
-op_amp
-id|global_irq_lock
-)paren
-suffix:semicolon
-r_int
-id|globl_icount
-op_assign
-id|atomic_read
-c_func
-(paren
-op_amp
-id|global_irq_count
-)paren
-suffix:semicolon
-r_int
-id|local_count
-op_assign
-id|local_irq_count
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-multiline_comment|/* It is very important that we load the state&n;&t;&t;&t;   variables before we do the first call to&n;&t;&t;&t;   printk() as printk() could end up changing&n;&t;&t;&t;   them...  */
-id|printk
-c_func
-(paren
-l_string|&quot;CPU[%d]: where [%p] glocked[%d] gicnt[%d]&quot;
-l_string|&quot; licnt[%d]&bslash;n&quot;
-comma
-id|cpu
-comma
-id|previous_irqholder
-comma
-id|globl_locked
-comma
-id|globl_icount
-comma
-id|local_count
-)paren
-suffix:semicolon
-macro_line|#ifdef VERBOSE_IRQLOCK_DEBUGGING
-id|printk
-c_func
-(paren
-l_string|&quot;Performing backtrace on all CPUs,&quot;
-l_string|&quot; write this down!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|smp_show_backtrace_all_cpus
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-r_break
-suffix:semicolon
-)brace
-id|STUCK
-suffix:semicolon
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-)brace
-r_void
-DECL|function|irq_exit
-id|irq_exit
-c_func
-(paren
-r_int
-id|cpu
-comma
-r_int
-id|irq
-)paren
-(brace
-id|hardirq_exit
-c_func
-(paren
-id|cpu
-comma
-id|irq
-)paren
-suffix:semicolon
-id|release_irqlock
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-)brace
 r_static
 r_void
 DECL|function|show
@@ -2409,11 +2260,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-macro_line|#else /* !__SMP__ */
-DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count(cpu))
-DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(--local_irq_count(cpu))
 macro_line|#endif /* __SMP__ */
 r_static
 r_void
@@ -2493,10 +2339,12 @@ c_cond
 (paren
 id|action
 op_assign
-id|irq_action
+id|irq_desc
 (braket
 id|i
 )braket
+dot
+id|action
 )paren
 )paren
 r_while
@@ -2750,10 +2598,12 @@ l_int|1
 suffix:semicolon
 id|action
 op_assign
-id|irq_action
+id|irq_desc
 (braket
 id|irq
 )braket
+dot
+id|action
 suffix:semicolon
 multiline_comment|/*&n;&t; * For normal interrupts, we mask it out, and then ACK it.&n;&t; * This way another (more timing-critical) interrupt can&n;&t; * come through while we&squot;re doing this one.&n;&t; *&n;&t; * Note! An irq without a handler gets masked and acked, but&n;&t; * never unmasked. The autoirq stuff depends on this (it looks&n;&t; * at the masks before and after doing the probing).&n;&t; */
 r_if
@@ -2928,10 +2778,12 @@ suffix:semicolon
 )brace
 id|action
 op_assign
-id|irq_action
+id|irq_desc
 (braket
 id|i
 )braket
+dot
+id|action
 suffix:semicolon
 r_if
 c_cond

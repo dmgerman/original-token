@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;asm/cache.h&gt;
+macro_line|#include &lt;linux/cache.h&gt;
 DECL|macro|DEBUG_CONFIG
 mdefine_line|#define DEBUG_CONFIG 0
 macro_line|#if DEBUG_CONFIG
@@ -1089,6 +1089,7 @@ suffix:semicolon
 )brace
 r_static
 r_void
+id|__init
 DECL|function|pdev_fixup_irq
 id|pdev_fixup_irq
 c_func

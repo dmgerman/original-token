@@ -959,11 +959,6 @@ c_cond
 id|page-&gt;mapping
 )paren
 (brace
-id|dispose
-op_assign
-op_amp
-id|old
-suffix:semicolon
 r_if
 c_cond
 (paren

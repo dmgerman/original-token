@@ -1629,9 +1629,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|invalidate_inode_pages
+id|vmtruncate
 (paren
 id|inode
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|set_device_ro

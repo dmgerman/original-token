@@ -138,6 +138,7 @@ suffix:semicolon
 multiline_comment|/* Disable depth for nested irq disables */
 DECL|typedef|irq_desc_t
 )brace
+id|____cacheline_aligned
 id|irq_desc_t
 suffix:semicolon
 macro_line|#include &lt;asm/hw_irq.h&gt; /* the arch dependent stuff */
@@ -182,74 +183,6 @@ id|irqaction
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
-macro_line|#include &lt;asm/atomic.h&gt;
-DECL|function|irq_enter
-r_static
-r_inline
-r_void
-id|irq_enter
-c_func
-(paren
-r_int
-id|cpu
-comma
-r_int
-r_int
-id|irq
-)paren
-(brace
-id|hardirq_enter
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|test_bit
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|global_irq_lock
-)paren
-)paren
-(brace
-multiline_comment|/* nothing */
-suffix:semicolon
-)brace
-)brace
-DECL|function|irq_exit
-r_static
-r_inline
-r_void
-id|irq_exit
-c_func
-(paren
-r_int
-id|cpu
-comma
-r_int
-r_int
-id|irq
-)paren
-(brace
-id|hardirq_exit
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
-DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count[cpu])
-DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(--local_irq_count[cpu])
-macro_line|#endif
 r_extern
 id|hw_irq_controller
 id|no_irq_type

@@ -15,7 +15,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_t2.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#include &quot;pci_impl.h&quot;
 macro_line|#include &quot;machvec_impl.h&quot;
 multiline_comment|/*&n; *   For SABLE, which is really baroque, we manage 40 IRQ&squot;s, but the&n; *   hardware really only supports 24, not via normal ISA PIC,&n; *   but cascaded custom 8259&squot;s, etc.&n; *&t; 0-7  (char at 536)&n; *&t; 8-15 (char at 53a)&n; *&t;16-23 (char at 53c)&n; */
@@ -1028,10 +1028,6 @@ comma
 id|init_pci
 suffix:colon
 id|common_init_pci
-comma
-id|kill_arch
-suffix:colon
-id|common_kill_arch
 comma
 id|pci_map_irq
 suffix:colon

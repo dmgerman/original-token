@@ -10,7 +10,7 @@ id|kmem_cache_s
 id|kmem_cache_t
 suffix:semicolon
 macro_line|#include&t;&lt;linux/mm.h&gt;
-macro_line|#include&t;&lt;asm/cache.h&gt;
+macro_line|#include&t;&lt;linux/cache.h&gt;
 multiline_comment|/* flags for kmem_cache_alloc() */
 DECL|macro|SLAB_BUFFER
 mdefine_line|#define&t;SLAB_BUFFER&t;&t;GFP_BUFFER

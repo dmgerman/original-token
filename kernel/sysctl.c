@@ -1968,7 +1968,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* Like in_group_p, but testing against egid, not fsgid */
 DECL|function|in_egroup_p
-r_static
 r_int
 id|in_egroup_p
 c_func

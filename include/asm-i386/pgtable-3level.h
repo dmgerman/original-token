@@ -22,8 +22,10 @@ mdefine_line|#define pmd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pmd %p(%
 DECL|macro|pgd_ERROR
 mdefine_line|#define pgd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pgd %p(%016Lx).&bslash;n&quot;, __FILE__, __LINE__, &amp;(e), pgd_val(e))
 multiline_comment|/*&n; * Subtle, in PAE mode we cannot have zeroes in the top level&n; * page directory, the CPU enforces this. (ie. the PGD entry&n; * always has to have the present bit set.) The CPU caches&n; * the 4 pgd entries internally, so there is no extra memory&n; * load on TLB miss, despite one more level of indirection.&n; */
+DECL|macro|EMPTY_PGD
+mdefine_line|#define EMPTY_PGD (__pa(empty_zero_page) + 1)
 DECL|macro|pgd_none
-mdefine_line|#define pgd_none(x)&t;(pgd_val(x) == 1ULL)
+mdefine_line|#define pgd_none(x)&t;(pgd_val(x) == EMPTY_PGD)
 DECL|function|pgd_bad
 r_extern
 r_inline
@@ -85,7 +87,7 @@ comma
 id|__pgd
 c_func
 (paren
-l_int|1ULL
+id|EMPTY_PGD
 )paren
 )paren
 suffix:semicolon

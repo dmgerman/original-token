@@ -36,6 +36,17 @@ macro_line|#else
 DECL|macro|__flush_tlb_one
 mdefine_line|#define __flush_tlb_one(addr) &bslash;&n;__asm__ __volatile__(&quot;invlpg %0&quot;: :&quot;m&quot; (*(char *) addr))
 macro_line|#endif
+multiline_comment|/*&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
+r_extern
+r_int
+r_int
+id|empty_zero_page
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+DECL|macro|ZERO_PAGE
+mdefine_line|#define ZERO_PAGE(vaddr) (mem_map + MAP_NR(empty_zero_page))
 macro_line|#endif /* !__ASSEMBLY__ */
 multiline_comment|/*&n; * The Linux x86 paging architecture is &squot;compile-time dual-mode&squot;, it&n; * implements both the traditional 2-level x86 page tables and the&n; * newer 3-level PAE-mode page tables.&n; */
 macro_line|#ifndef __ASSEMBLY__
@@ -161,17 +172,6 @@ id|pg0
 l_int|1024
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
-r_extern
-r_int
-r_int
-id|empty_zero_page
-(braket
-l_int|1024
-)braket
-suffix:semicolon
-DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr) (mem_map + MAP_NR(empty_zero_page))
 multiline_comment|/*&n; * Handling allocation failures during page table setup.&n; */
 r_extern
 r_void

@@ -4,7 +4,7 @@ DECL|macro|_LINUX_BOOTMEM_H
 mdefine_line|#define _LINUX_BOOTMEM_H
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;asm/cache.h&gt;
+macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/*&n; *  simple boot-time physical memory area allocator.&n; */
 r_extern

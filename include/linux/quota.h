@@ -5,9 +5,9 @@ mdefine_line|#define _LINUX_QUOTA_
 macro_line|#include &lt;linux/errno.h&gt;
 multiline_comment|/*&n; * Convert diskblocks to blocks and the other way around.&n; */
 DECL|macro|dbtob
-mdefine_line|#define dbtob(num) (num &lt;&lt; 10)
+mdefine_line|#define dbtob(num) (num &lt;&lt; BLOCK_SIZE_BITS)
 DECL|macro|btodb
-mdefine_line|#define btodb(num) (num &gt;&gt; 10)
+mdefine_line|#define btodb(num) (num &gt;&gt; BLOCK_SIZE_BITS)
 multiline_comment|/*&n; * Convert count of filesystem blocks to diskquota blocks, meant&n; * for filesystems where i_blksize != BLOCK_SIZE&n; */
 DECL|macro|fs_to_dq_blocks
 mdefine_line|#define fs_to_dq_blocks(num, blksize) (((num) * (blksize)) / BLOCK_SIZE)

@@ -1,5 +1,12 @@
 multiline_comment|/*&n;&n;kHTTPd -- the next generation&n;&n;Main program&n;&n;&n;kHTTPd TNG consists of 1 thread, this main-thread handles ALL connections&n;simultanious. It does this by keeping queues with the requests in different&n;stages.&n;&n;The stages are&n;&n;&lt;not accepted&gt; &t;&t;-&t;TCP/IP connection is not accepted yet&n;WaitForHeaders&t;&t;-&t;Connection is accepted, waiting for headers&n;DataSending&t;&t;-&t;Headers decoded, sending file-data&n;Userspace&t;&t;-&t;Requires userspace daemon &n;Logging&t;&t;&t;-&t;The request is finished, cleanup and logging&n;&n;A typical flow for a request would be:&n;&n;&lt;not accepted&gt;&n;WaitForHeaders&n;DataSending&n;Logging&n;&n;or&n;&n;&lt;not accepted&gt;&n;WaitForHeaders&n;Userspace&n;&n;&n;&n;*/
 multiline_comment|/****************************************************************&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2, or (at your option)&n; *&t;any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; ****************************************************************/
+DECL|variable|errno
+r_static
+r_int
+id|errno
+suffix:semicolon
+DECL|macro|__KERNEL_SYSCALLS__
+mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -531,33 +538,6 @@ id|CountBuf
 (braket
 id|CONFIG_KHTTPD_NUMCPU
 )braket
-suffix:semicolon
-DECL|variable|errno
-r_static
-r_int
-id|errno
-suffix:semicolon
-r_inline
-id|_syscall3
-c_func
-(paren
-id|pid_t
-comma
-id|waitpid
-comma
-id|pid_t
-comma
-id|pid
-comma
-r_int
-op_star
-comma
-id|wait_stat
-comma
-r_int
-comma
-id|options
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&n;The ManagementDaemon has a very simple task: Start the real daemons when the user wants us&n;to, and cleanup when the users wants to unload the module.&n;&n;Initially, kHTTPd didn&squot;t have this thread, but it is the only way to have &quot;delayed activation&quot;,&n;a feature required to prevent accidental activations resulting in unexpected backdoors.&n;&n;*/
 DECL|function|ManagementDaemon

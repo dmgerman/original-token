@@ -1420,6 +1420,14 @@ id|gid_t
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|in_egroup_p
+c_func
+(paren
+id|gid_t
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|flush_signals
 c_func

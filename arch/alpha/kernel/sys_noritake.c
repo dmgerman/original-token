@@ -17,7 +17,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_apecs.h&gt;
 macro_line|#include &lt;asm/core_cia.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#include &quot;pci_impl.h&quot;
 macro_line|#include &quot;machvec_impl.h&quot;
 r_static
@@ -1051,10 +1051,6 @@ comma
 id|init_pci
 suffix:colon
 id|common_init_pci
-comma
-id|kill_arch
-suffix:colon
-id|common_kill_arch
 comma
 id|pci_map_irq
 suffix:colon

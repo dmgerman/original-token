@@ -236,8 +236,6 @@ op_mod
 op_mod
 id|edx
 suffix:semicolon
-id|lock
-suffix:semicolon
 id|cmpxchg8b
 (paren
 op_mod

@@ -18,10 +18,10 @@ DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)
 DECL|macro|hardirq_endlock
 mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
-DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count[cpu]++)
-DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count[cpu]--)
+DECL|macro|irq_enter
+mdefine_line|#define irq_enter(cpu, irq)&t;(local_irq_count[cpu]++)
+DECL|macro|irq_exit
+mdefine_line|#define irq_exit(cpu, irq)&t;(local_irq_count[cpu]--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else
@@ -80,15 +80,18 @@ id|global_irq_lock
 suffix:semicolon
 )brace
 )brace
-DECL|function|hardirq_enter
+DECL|function|irq_enter
 r_static
 r_inline
 r_void
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 r_int
 id|cpu
+comma
+r_int
+id|irq
 )paren
 (brace
 op_increment
@@ -104,16 +107,35 @@ op_amp
 id|global_irq_count
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+id|test_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|global_irq_lock
+)paren
+)paren
+(brace
+multiline_comment|/* nothing */
+suffix:semicolon
 )brace
-DECL|function|hardirq_exit
+)brace
+DECL|function|irq_exit
 r_static
 r_inline
 r_void
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 r_int
 id|cpu
+comma
+r_int
+id|irq
 )paren
 (brace
 id|atomic_dec

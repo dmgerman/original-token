@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
@@ -26,7 +27,6 @@ DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq_impl.h&quot;
 DECL|macro|DEBUG_SMP
 mdefine_line|#define DEBUG_SMP 0
 macro_line|#if DEBUG_SMP
@@ -49,18 +49,19 @@ multiline_comment|/* A collection of single bit ipi messages.  */
 r_static
 r_struct
 (brace
-DECL|member|__cacheline_aligned
+DECL|member|____cacheline_aligned
 r_int
 r_int
 id|bits
-id|__cacheline_aligned
+id|____cacheline_aligned
 suffix:semicolon
-DECL|variable|ipi_data
+DECL|variable|__cacheline_aligned
 )brace
 id|ipi_data
 (braket
 id|NR_CPUS
 )braket
+id|__cacheline_aligned
 suffix:semicolon
 DECL|enum|ipi_message_type
 r_enum
@@ -77,10 +78,9 @@ id|IPI_CPU_STOP
 comma
 )brace
 suffix:semicolon
-DECL|variable|__cacheline_aligned
+DECL|variable|kernel_flag
 id|spinlock_t
 id|kernel_flag
-id|__cacheline_aligned
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon

@@ -81,11 +81,8 @@ r_int
 r_int
 id|number
 comma
-id|uid_t
-id|initiator
-comma
 r_char
-id|warn
+id|prealloc
 )paren
 suffix:semicolon
 r_extern
@@ -102,9 +99,6 @@ comma
 r_int
 r_int
 id|number
-comma
-id|uid_t
-id|initiator
 )paren
 suffix:semicolon
 r_extern
@@ -153,9 +147,6 @@ r_struct
 id|iattr
 op_star
 id|iattr
-comma
-id|uid_t
-id|initiator
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Operations supported for diskquotas.&n; */
@@ -277,9 +268,7 @@ comma
 id|sb-&gt;s_blocksize
 )paren
 comma
-id|current-&gt;fsuid
-comma
-l_int|0
+l_int|1
 )paren
 op_eq
 id|NO_QUOTA
@@ -338,9 +327,7 @@ comma
 id|sb-&gt;s_blocksize
 )paren
 comma
-id|current-&gt;fsuid
-comma
-l_int|1
+l_int|0
 )paren
 op_eq
 id|NO_QUOTA
@@ -393,8 +380,6 @@ id|sb-&gt;dq_op-&gt;alloc_inode
 id|inode
 comma
 l_int|1
-comma
-id|current-&gt;fsuid
 )paren
 )paren
 r_return
@@ -538,8 +523,6 @@ c_func
 id|dentry
 comma
 id|iattr
-comma
-id|current-&gt;fsuid
 )paren
 suffix:semicolon
 )brace
