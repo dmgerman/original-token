@@ -43,10 +43,10 @@ comma
 suffix:semicolon
 DECL|macro|ISA_NRPORTS
 mdefine_line|#define ISA_NRPORTS (sizeof(isa_ports)/sizeof(unsigned short))
-DECL|variable|cards
+DECL|variable|actcards
 id|act2000_card
 op_star
-id|cards
+id|actcards
 op_assign
 (paren
 id|act2000_card
@@ -2688,7 +2688,7 @@ id|act2000_card
 op_star
 id|p
 op_assign
-id|cards
+id|actcards
 suffix:semicolon
 r_while
 c_loop
@@ -3289,9 +3289,9 @@ id|irq
 suffix:semicolon
 id|card-&gt;next
 op_assign
-id|cards
+id|actcards
 suffix:semicolon
-id|cards
+id|actcards
 op_assign
 id|card
 suffix:semicolon
@@ -3625,14 +3625,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|cards
+id|actcards
 )paren
 r_return
 l_int|1
 suffix:semicolon
 id|p
 op_assign
-id|cards
+id|actcards
 suffix:semicolon
 r_while
 c_loop
@@ -3858,7 +3858,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|cards
+id|actcards
 op_assign
 id|p-&gt;next
 suffix:semicolon
@@ -3870,7 +3870,7 @@ id|p
 suffix:semicolon
 id|p
 op_assign
-id|cards
+id|actcards
 suffix:semicolon
 )brace
 id|failed
@@ -3913,7 +3913,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|cards
+id|actcards
 )paren
 id|act2000_addcard
 c_func
@@ -3931,7 +3931,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|cards
+id|actcards
 )paren
 id|printk
 c_func
@@ -3960,7 +3960,7 @@ id|act2000_card
 op_star
 id|card
 op_assign
-id|cards
+id|actcards
 suffix:semicolon
 id|act2000_card
 op_star
@@ -3992,7 +3992,7 @@ suffix:semicolon
 )brace
 id|card
 op_assign
-id|cards
+id|actcards
 suffix:semicolon
 r_while
 c_loop

@@ -1,4 +1,4 @@
-multiline_comment|/* zoltrix radio plus driver for Linux radio support&n; * (c) 1998 C. van Schaik &lt;carl@leg.uct.ac.za&gt;&n; *&n; * BUGS  &n; *  Due to the inconsistancy in reading from the signal flags&n; *  it is difficult to get an accurate tuned signal.&n; *&n; *  There seems to be a problem with the volume setting that I must still&n; *  figure out. &n; *  It seems that the card has is not linear to 0 volume. It cuts off&n; *  at a low frequency, and it is not possible (at least I have not found)&n; *  to get fine volume control over the low volume range.&n; *&n; *  Some code derived from code by Romolo Manfredini&n; *&t;&t;&t;&t;   romolo@bicnet.it&n; *&n; * 1999-01-05 - (C. van Schaik)&n; *&t;      - Changed tuning to 1/160Mhz accuracy&n; *&t;      - Added stereo support&n; *&t;&t;(card defaults to stereo)&n; *&t;&t;(can explicitly force mono on the card)&n; *&t;&t;(can detect if station is in stereo)&n; *&t;      - Added unmute function&n; *&t;      - Reworked ioctl functions&n; */
+multiline_comment|/* zoltrix radio plus driver for Linux radio support&n; * (c) 1998 C. van Schaik &lt;carl@leg.uct.ac.za&gt;&n; *&n; * BUGS  &n; *  Due to the inconsistancy in reading from the signal flags&n; *  it is difficult to get an accurate tuned signal.&n; *&n; *  It seems that the card is not linear to 0 volume. It cuts off&n; *  at a low volume, and it is not possible (at least I have not found)&n; *  to get fine volume control over the low volume range.&n; *&n; *  Some code derived from code by Romolo Manfredini&n; *&t;&t;&t;&t;   romolo@bicnet.it&n; *&n; * 1999-05-06 - (C. van Schaik)&n; *&t;      - Make signal strength and stereo scans&n; *&t;        kinder to cpu while in delay&n; * 1999-01-05 - (C. van Schaik)&n; *&t;      - Changed tuning to 1/160Mhz accuracy&n; *&t;      - Added stereo support&n; *&t;&t;(card defaults to stereo)&n; *&t;&t;(can explicitly force mono on the card)&n; *&t;&t;(can detect if station is in stereo)&n; *&t;      - Added unmute function&n; *&t;      - Reworked ioctl functions&n; */
 macro_line|#include &lt;linux/module.h&gt;&t;/* Modules                        */
 macro_line|#include &lt;linux/init.h&gt;&t;&t;/* Initdata                       */
 macro_line|#include &lt;linux/ioport.h&gt;&t;/* check_region, request_region   */
@@ -60,60 +60,15 @@ r_void
 id|sleep_delay
 c_func
 (paren
-r_int
-id|n
+r_void
 )paren
 (brace
-multiline_comment|/* Sleep nicely for &squot;n&squot; uS */
-r_int
-id|d
-op_assign
-id|n
-op_div
-(paren
-l_int|1000000
-op_div
-id|HZ
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|d
-)paren
-id|udelay
-c_func
-(paren
-id|n
-)paren
-suffix:semicolon
-r_else
-(brace
-multiline_comment|/* Yield CPU time */
-r_int
-r_int
-id|x
-op_assign
-id|jiffies
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|jiffies
-op_minus
-id|x
-)paren
-op_le
-id|d
-)paren
+multiline_comment|/* Sleep nicely for +/- 10 mS */
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|zol_setvol
 r_static
@@ -192,7 +147,6 @@ suffix:semicolon
 id|sleep_delay
 c_func
 (paren
-l_int|10000
 )paren
 suffix:semicolon
 id|inb
@@ -450,7 +404,7 @@ comma
 id|io
 )paren
 suffix:semicolon
-id|sleep_delay
+id|udelay
 c_func
 (paren
 l_int|50
@@ -464,7 +418,7 @@ comma
 id|io
 )paren
 suffix:semicolon
-id|sleep_delay
+id|udelay
 c_func
 (paren
 l_int|50
@@ -478,7 +432,7 @@ comma
 id|io
 )paren
 suffix:semicolon
-id|sleep_delay
+id|udelay
 c_func
 (paren
 l_int|50
@@ -495,7 +449,7 @@ comma
 id|io
 )paren
 suffix:semicolon
-id|sleep_delay
+id|udelay
 c_func
 (paren
 l_int|50
@@ -509,7 +463,7 @@ comma
 id|io
 )paren
 suffix:semicolon
-id|sleep_delay
+id|udelay
 c_func
 (paren
 l_int|50
@@ -523,7 +477,7 @@ comma
 id|io
 )paren
 suffix:semicolon
-id|sleep_delay
+id|udelay
 c_func
 (paren
 l_int|50
@@ -560,7 +514,7 @@ comma
 id|io
 )paren
 suffix:semicolon
-id|sleep_delay
+id|udelay
 c_func
 (paren
 l_int|1000
@@ -574,7 +528,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-id|sleep_delay
+id|udelay
 c_func
 (paren
 l_int|1000
@@ -610,7 +564,7 @@ op_plus
 l_int|3
 )paren
 suffix:semicolon
-id|sleep_delay
+id|udelay
 c_func
 (paren
 l_int|1000
@@ -667,7 +621,11 @@ suffix:semicolon
 id|sleep_delay
 c_func
 (paren
-l_int|20000
+)paren
+suffix:semicolon
+id|sleep_delay
+c_func
+(paren
 )paren
 suffix:semicolon
 id|a
@@ -681,7 +639,6 @@ suffix:semicolon
 id|sleep_delay
 c_func
 (paren
-l_int|1000
 )paren
 suffix:semicolon
 id|b
@@ -772,7 +729,11 @@ suffix:semicolon
 id|sleep_delay
 c_func
 (paren
-l_int|20000
+)paren
+suffix:semicolon
+id|sleep_delay
+c_func
+(paren
 )paren
 suffix:semicolon
 id|x1
@@ -786,7 +747,6 @@ suffix:semicolon
 id|sleep_delay
 c_func
 (paren
-l_int|1000
 )paren
 suffix:semicolon
 id|x2
@@ -1583,7 +1543,11 @@ suffix:semicolon
 id|sleep_delay
 c_func
 (paren
-l_int|20000
+)paren
+suffix:semicolon
+id|sleep_delay
+c_func
+(paren
 )paren
 suffix:semicolon
 id|inb

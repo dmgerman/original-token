@@ -217,6 +217,7 @@ id|proc_irda
 suffix:semicolon
 DECL|variable|dir
 r_static
+r_struct
 id|irda_entry
 id|dir
 (braket

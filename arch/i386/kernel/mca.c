@@ -127,7 +127,7 @@ id|MCA_info
 op_star
 id|mca_info
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* MCA registers */
 DECL|macro|MCA_MOTHERBOARD_SETUP_REG
@@ -349,7 +349,7 @@ OL
 id|MCA_MAX_SLOT_NR
 )paren
 (brace
-multiline_comment|/* id = 0x0000 usually indicates hardware failure,&n;&t;&t; * however, ZP Gu (zpg@castle.net&gt; reports that his 9556&n;&t;&t; * has 0x0000 as id and everything still works.&n;&t;&t; */
+multiline_comment|/* id = 0x0000 usually indicates hardware failure,&n;&t;&t; * however, ZP Gu (zpg@castle.net&gt; reports that his 9556&n;&t;&t; * has 0x0000 as id and everything still works. There&n;&t;&t; * also seem to be an adapter with id = 0x0000; the&n;&t;&t; * NCR Parallel Bus Memory Card. Until this is confirmed,&n;&t;&t; * however, this code will stay.&n;&t;&t; */
 id|mca_info-&gt;slot
 (braket
 id|slot
@@ -559,9 +559,32 @@ r_struct
 id|MCA_info
 )paren
 comma
-id|GFP_ATOMIC
+id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mca_info
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Failed to allocate memory for mca_info!&quot;
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Make sure adapter setup is off */
 id|outb_p
 c_func
@@ -1194,11 +1217,7 @@ c_cond
 (paren
 id|mca_info
 op_eq
-l_int|0
-op_logical_or
-id|id
-op_eq
-l_int|0
+l_int|NULL
 op_logical_or
 id|id
 op_eq
@@ -1283,11 +1302,7 @@ c_cond
 (paren
 id|mca_info
 op_eq
-l_int|0
-op_logical_or
-id|id
-op_eq
-l_int|0
+l_int|NULL
 op_logical_or
 id|id
 op_eq
@@ -1388,7 +1403,7 @@ id|MCA_NUMADAPTERS
 op_logical_or
 id|mca_info
 op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
 r_return
@@ -1461,7 +1476,7 @@ id|MCA_NUMADAPTERS
 op_logical_or
 id|mca_info
 op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
 r_return
@@ -1735,7 +1750,7 @@ c_cond
 (paren
 id|mca_info
 op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
 r_return
@@ -1836,7 +1851,7 @@ c_cond
 (paren
 id|mca_info
 op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
 r_return
@@ -1948,7 +1963,7 @@ c_cond
 (paren
 id|mca_info
 op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
 r_return
@@ -2075,7 +2090,7 @@ c_cond
 (paren
 id|mca_info
 op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
 r_return
@@ -2121,7 +2136,7 @@ c_cond
 (paren
 id|mca_info
 op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
 r_return
@@ -2184,7 +2199,7 @@ c_cond
 (paren
 id|mca_info
 op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
 r_return
@@ -2248,7 +2263,7 @@ id|MCA_bus
 op_logical_and
 id|mca_info
 op_ne
-l_int|0
+l_int|NULL
 )paren
 (brace
 multiline_comment|/* Format POS registers of eight MCA slots */
@@ -2505,22 +2520,20 @@ r_void
 (brace
 r_int
 id|i
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|proc_dir_entry
 op_star
 id|node
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|mca_info
 op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
 r_return
@@ -2658,9 +2671,26 @@ r_struct
 id|proc_dir_entry
 )paren
 comma
-id|GFP_ATOMIC
+id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|node
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Failed to allocate memory for MCA proc-entries!&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2812,7 +2842,7 @@ c_cond
 (paren
 id|mca_info
 op_eq
-l_int|0
+l_int|NULL
 )paren
 (brace
 op_star

@@ -295,6 +295,12 @@ id|device-&gt;changed
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|quiet
+)paren
 id|printk
 c_func
 (paren
@@ -403,7 +409,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* 20 secs are enouth? */
+multiline_comment|/* 20 secs are enough? */
 id|err
 op_assign
 op_minus
@@ -413,6 +419,12 @@ r_break
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|quiet
+)paren
 id|printk
 c_func
 (paren
@@ -461,12 +473,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|SCpnt-&gt;sense_buffer
 (braket
 l_int|12
 )braket
 op_eq
 l_int|0x20
+op_logical_or
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|12
+)braket
+op_eq
+l_int|0x24
+)paren
 op_logical_and
 id|SCpnt-&gt;sense_buffer
 (braket
@@ -477,6 +498,7 @@ l_int|0x00
 )paren
 (brace
 multiline_comment|/* sense: Invalid command operation code */
+multiline_comment|/* or Invalid field in cdb */
 id|err
 op_assign
 op_minus
@@ -2181,7 +2203,7 @@ id|buffer
 comma
 l_int|12
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 id|tochdr-&gt;cdth_trk0

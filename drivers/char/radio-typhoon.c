@@ -17,6 +17,10 @@ macro_line|#ifndef CONFIG_RADIO_TYPHOON_MUTEFREQ
 DECL|macro|CONFIG_RADIO_TYPHOON_MUTEFREQ
 mdefine_line|#define CONFIG_RADIO_TYPHOON_MUTEFREQ 0
 macro_line|#endif
+macro_line|#ifndef CONFIG_PROC_FS
+DECL|macro|CONFIG_RADIO_TYPHOON_PROC_FS
+macro_line|#undef CONFIG_RADIO_TYPHOON_PROC_FS
+macro_line|#endif
 DECL|struct|typhoon_device
 r_struct
 id|typhoon_device

@@ -625,7 +625,7 @@ id|buffer
 comma
 l_int|12
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -795,7 +795,7 @@ id|buffer
 comma
 l_int|0x16
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -953,7 +953,7 @@ id|buffer
 comma
 l_int|4
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1121,7 +1121,7 @@ id|buffer
 comma
 l_int|0x04
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -1222,7 +1222,7 @@ id|buffer
 comma
 l_int|12
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 r_if

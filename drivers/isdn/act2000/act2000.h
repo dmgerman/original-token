@@ -504,7 +504,7 @@ suffix:semicolon
 r_extern
 id|act2000_card
 op_star
-id|cards
+id|actcards
 suffix:semicolon
 DECL|function|act2000_schedule_tx
 r_extern
