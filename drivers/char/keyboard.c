@@ -19,8 +19,9 @@ DECL|macro|KBD_DEFMODE
 mdefine_line|#define KBD_DEFMODE ((1 &lt;&lt; VC_REPEAT) | (1 &lt;&lt; VC_META))
 macro_line|#endif
 macro_line|#ifndef KBD_DEFLEDS
+multiline_comment|/*&n; * Some laptops take the 789uiojklm,. keys as number pad when NumLock&n; * is on. This seems a good reason to start with NumLock off.&n; */
 DECL|macro|KBD_DEFLEDS
-mdefine_line|#define KBD_DEFLEDS (1 &lt;&lt; VC_NUMLOCK)
+mdefine_line|#define KBD_DEFLEDS 0
 macro_line|#endif
 macro_line|#ifndef KBD_DEFLOCK
 DECL|macro|KBD_DEFLOCK

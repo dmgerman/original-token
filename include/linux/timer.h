@@ -74,6 +74,12 @@ id|timer_list
 op_star
 id|next
 suffix:semicolon
+DECL|member|prev
+r_struct
+id|timer_list
+op_star
+id|prev
+suffix:semicolon
 DECL|member|expires
 r_int
 r_int

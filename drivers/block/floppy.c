@@ -913,6 +913,8 @@ op_assign
 (brace
 l_int|NULL
 comma
+l_int|NULL
+comma
 l_int|0
 comma
 l_int|0
@@ -1020,6 +1022,8 @@ op_assign
 (brace
 l_int|NULL
 comma
+l_int|NULL
+comma
 l_int|0
 comma
 l_int|0
@@ -1028,6 +1032,8 @@ id|motor_on_callback
 )brace
 comma
 (brace
+l_int|NULL
+comma
 l_int|NULL
 comma
 l_int|0
@@ -1040,6 +1046,8 @@ comma
 (brace
 l_int|NULL
 comma
+l_int|NULL
+comma
 l_int|0
 comma
 l_int|2
@@ -1048,6 +1056,8 @@ id|motor_on_callback
 )brace
 comma
 (brace
+l_int|NULL
+comma
 l_int|NULL
 comma
 l_int|0
@@ -1120,6 +1130,8 @@ op_assign
 (brace
 l_int|NULL
 comma
+l_int|NULL
+comma
 l_int|0
 comma
 l_int|0
@@ -1128,6 +1140,8 @@ id|motor_off_callback
 )brace
 comma
 (brace
+l_int|NULL
+comma
 l_int|NULL
 comma
 l_int|0
@@ -1140,6 +1154,8 @@ comma
 (brace
 l_int|NULL
 comma
+l_int|NULL
+comma
 l_int|0
 comma
 l_int|2
@@ -1148,6 +1164,8 @@ id|motor_off_callback
 )brace
 comma
 (brace
+l_int|NULL
+comma
 l_int|NULL
 comma
 l_int|0

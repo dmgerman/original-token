@@ -1661,7 +1661,7 @@ l_int|4
 id|printk
 c_func
 (paren
-l_string|&quot;%s: el3_start_xmit(lenght = %d) called, status %4.4x.&bslash;n&quot;
+l_string|&quot;%s: el3_start_xmit(lenght = %ld) called, status %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

@@ -536,6 +536,8 @@ r_if
 c_cond
 (paren
 id|sk-&gt;prot
+op_logical_and
+id|sk-&gt;prot
 op_member_access_from_pointer
 id|wspace
 c_func

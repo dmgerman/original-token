@@ -277,7 +277,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;esi: %08lx   edi: %08lx   ebp: %08lx   esp: %08x&bslash;n&quot;
+l_string|&quot;esi: %08lx   edi: %08lx   ebp: %08lx   esp: %08lx&bslash;n&quot;
 comma
 id|regs-&gt;esi
 comma
@@ -368,6 +368,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_for
 c_loop
 (paren
@@ -386,7 +387,7 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;%08x &quot;
+l_string|&quot;%08lx &quot;
 comma
 id|get_seg_long
 c_func
@@ -413,6 +414,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|do_exit
 c_func
 (paren

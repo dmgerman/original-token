@@ -347,6 +347,11 @@ r_int
 r_int
 id|i_blocks
 suffix:semicolon
+DECL|member|i_sem
+r_struct
+id|semaphore
+id|i_sem
+suffix:semicolon
 DECL|member|i_op
 r_struct
 id|inode_operations

@@ -1649,6 +1649,10 @@ id|inode-&gt;i_nlink
 op_assign
 l_int|1
 suffix:semicolon
+id|inode-&gt;i_sem.count
+op_assign
+l_int|1
+suffix:semicolon
 id|nr_free_inodes
 op_decrement
 suffix:semicolon

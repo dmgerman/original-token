@@ -2353,7 +2353,7 @@ r_return
 id|sz
 suffix:semicolon
 )brace
-id|asmlinkage
+r_extern
 r_int
 id|get_module_list
 c_func

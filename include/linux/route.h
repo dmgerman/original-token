@@ -3,19 +3,16 @@ macro_line|#ifndef _LINUX_ROUTE_H
 DECL|macro|_LINUX_ROUTE_H
 mdefine_line|#define _LINUX_ROUTE_H
 macro_line|#include &lt;linux/if.h&gt;
-multiline_comment|/* This structure gets passed by the SIOCADDRT and SIOCDELRT calls. */
-DECL|struct|rtentry
+multiline_comment|/* This structure gets passed by the SIOCADDRTOLD and SIOCDELRTOLD calls. */
+DECL|struct|old_rtentry
 r_struct
-id|rtentry
+id|old_rtentry
 (brace
-DECL|member|rt_hash
+DECL|member|rt_genmask
 r_int
 r_int
-id|rt_hash
+id|rt_genmask
 suffix:semicolon
-multiline_comment|/* hash key for lookups&t;&t;*/
-DECL|macro|rt_genmask
-mdefine_line|#define rt_genmask rt_hash
 DECL|member|rt_dst
 r_struct
 id|sockaddr
@@ -39,20 +36,72 @@ r_int
 r_int
 id|rt_use
 suffix:semicolon
-macro_line|#ifdef BSD_COMPATIBLE
+DECL|member|rt_dev
+r_char
+op_star
+id|rt_dev
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* This structure gets passed by the SIOCADDRT and SIOCDELRT calls. */
+DECL|struct|rtentry
+r_struct
+id|rtentry
+(brace
+DECL|member|rt_hash
+r_int
+r_int
+id|rt_hash
+suffix:semicolon
+multiline_comment|/* hash key for lookups&t;&t;*/
+DECL|member|rt_dst
+r_struct
+id|sockaddr
+id|rt_dst
+suffix:semicolon
+multiline_comment|/* target address&t;&t;*/
+DECL|member|rt_gateway
+r_struct
+id|sockaddr
+id|rt_gateway
+suffix:semicolon
+multiline_comment|/* gateway addr (RTF_GATEWAY)&t;*/
+DECL|member|rt_genmask
+r_struct
+id|sockaddr
+id|rt_genmask
+suffix:semicolon
+multiline_comment|/* target network mask (IP)&t;*/
+DECL|member|rt_flags
+r_int
+id|rt_flags
+suffix:semicolon
+DECL|member|rt_refcnt
+r_int
+id|rt_refcnt
+suffix:semicolon
+DECL|member|rt_use
+r_int
+r_int
+id|rt_use
+suffix:semicolon
 DECL|member|rt_ifp
 r_struct
 id|ifnet
 op_star
 id|rt_ifp
 suffix:semicolon
-macro_line|#else
+DECL|member|rt_metric
+r_int
+id|rt_metric
+suffix:semicolon
+multiline_comment|/* +1 for binary compatibility!&t;*/
 DECL|member|rt_dev
-r_void
+r_char
 op_star
 id|rt_dev
 suffix:semicolon
-macro_line|#endif
+multiline_comment|/* forcing the device at add&t;*/
 )brace
 suffix:semicolon
 DECL|macro|RTF_UP

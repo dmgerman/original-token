@@ -104,7 +104,7 @@ DECL|macro|PERMANENT_MALLOC
 mdefine_line|#define PERMANENT_MALLOC(typecast, mem_ptr, size, linux_ptr) &bslash;&n;  {mem_ptr = (typecast)linux_ptr; &bslash;&n;   linux_ptr += (size);}
 multiline_comment|/*&n; * The macro DEFINE_TIMER defines variables for the ACTIVATE_TIMER if&n; * required. The name is the variable/name to be used and the proc is&n; * the procedure to be called when the timer expires.&n; */
 DECL|macro|DEFINE_TIMER
-mdefine_line|#define DEFINE_TIMER(name, proc) &bslash;&n;  static struct timer_list name = &bslash;&n;  {NULL, 0, 0, proc}
+mdefine_line|#define DEFINE_TIMER(name, proc) &bslash;&n;  static struct timer_list name = &bslash;&n;  {NULL, NULL, 0, 0, proc}
 multiline_comment|/*&n; * The ACTIVATE_TIMER requests system to call &squot;proc&squot; after &squot;time&squot; ticks.&n; */
 DECL|macro|ACTIVATE_TIMER
 mdefine_line|#define ACTIVATE_TIMER(name, proc, time) &bslash;&n;  {name.expires = time; &bslash;&n;  add_timer (&amp;name);}

@@ -60,6 +60,11 @@ DECL|macro|SIOCGPGRP
 mdefine_line|#define SIOCGPGRP&t;0x8904
 DECL|macro|SIOCATMARK
 mdefine_line|#define SIOCATMARK&t;0x8905
+multiline_comment|/* Routing table calls. */
+DECL|macro|SIOCADDRT
+mdefine_line|#define SIOCADDRT&t;0x890B&t;&t;/* add routing table entry&t;*/
+DECL|macro|SIOCDELRT
+mdefine_line|#define SIOCDELRT&t;0x890C&t;&t;/* delete routing table entry&t;*/
 multiline_comment|/* Socket configuration controls. */
 DECL|macro|SIOCGIFNAME
 mdefine_line|#define SIOCGIFNAME&t;0x8910&t;&t;/* get iface name&t;&t;*/
@@ -107,11 +112,11 @@ DECL|macro|SIOCGIFENCAP
 mdefine_line|#define SIOCGIFENCAP&t;0x8925&t;&t;/* get/set slip encapsulation   */
 DECL|macro|SIOCSIFENCAP
 mdefine_line|#define SIOCSIFENCAP&t;0x8926&t;&t;
-multiline_comment|/* Routing table calls. */
-DECL|macro|SIOCADDRT
-mdefine_line|#define SIOCADDRT&t;0x8940&t;&t;/* add routing table entry&t;*/
-DECL|macro|SIOCDELRT
-mdefine_line|#define SIOCDELRT&t;0x8941&t;&t;/* delete routing table entry&t;*/
+multiline_comment|/* Routing table calls (oldrtent - don&squot;t use) */
+DECL|macro|SIOCADDRTOLD
+mdefine_line|#define SIOCADDRTOLD&t;0x8940&t;&t;/* add routing table entry&t;*/
+DECL|macro|SIOCDELRTOLD
+mdefine_line|#define SIOCDELRTOLD&t;0x8941&t;&t;/* delete routing table entry&t;*/
 multiline_comment|/* ARP cache control calls. */
 DECL|macro|SIOCDARP
 mdefine_line|#define SIOCDARP&t;0x8950&t;&t;/* delete ARP table entry&t;*/

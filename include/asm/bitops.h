@@ -271,7 +271,7 @@ op_amp
 op_star
 id|addr
 )paren
-op_eq
+op_ne
 l_int|0
 suffix:semicolon
 op_star

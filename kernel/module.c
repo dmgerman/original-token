@@ -1116,8 +1116,8 @@ id|did_deletion
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called by the /proc file system to return a current list of modules.&n; */
-r_int
 DECL|function|get_module_list
+r_int
 id|get_module_list
 c_func
 (paren

@@ -6450,7 +6450,13 @@ r_case
 id|SIOCADDRT
 suffix:colon
 r_case
+id|SIOCADDRTOLD
+suffix:colon
+r_case
 id|SIOCDELRT
+suffix:colon
+r_case
+id|SIOCDELRTOLD
 suffix:colon
 r_return
 id|rt_ioctl
@@ -6734,7 +6740,8 @@ op_logical_or
 id|force
 )paren
 (brace
-r_void
+r_struct
+id|sk_buff
 op_star
 id|c
 op_assign

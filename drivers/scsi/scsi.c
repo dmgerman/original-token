@@ -248,6 +248,15 @@ multiline_comment|/* A cdrom that locks up when probed at lun != 0 */
 (brace
 l_string|&quot;MAXTOR&quot;
 comma
+l_string|&quot;XT-3280&quot;
+comma
+l_string|&quot;PR02&quot;
+)brace
+comma
+multiline_comment|/* Locks-up when LUN&gt;0 polled. */
+(brace
+l_string|&quot;MAXTOR&quot;
+comma
 l_string|&quot;XT-4380S&quot;
 comma
 l_string|&quot;B3C&quot;
@@ -281,6 +290,15 @@ l_string|&quot;1.0&quot;
 )brace
 comma
 multiline_comment|/* Locks-up when LUN&gt;0 polled. */
+(brace
+l_string|&quot;RODIME&quot;
+comma
+l_string|&quot;RO3000S&quot;
+comma
+l_string|&quot;2.33&quot;
+)brace
+comma
+multiline_comment|/* Locks up if polled for lun != 0 */
 (brace
 l_string|&quot;SEAGATE&quot;
 comma
@@ -1472,7 +1490,7 @@ id|NR_SCSI_DEVICES
 )braket
 dot
 id|scsi_level
-op_eq
+op_ge
 id|SCSI_2
 )paren
 op_logical_and
@@ -1767,6 +1785,23 @@ id|scsi_result
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* Old drives like the MAXTOR XT-3280 say vers=0 */
+r_if
+c_cond
+(paren
+(paren
+id|scsi_result
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x07
+)paren
+op_eq
+l_int|0
+)paren
+r_break
+suffix:semicolon
 multiline_comment|/* Some scsi-1 peripherals do not handle lun != 0.&n;&t;&t;&t;   I am assuming that scsi-2 peripherals do better */
 r_if
 c_cond

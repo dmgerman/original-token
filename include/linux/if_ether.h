@@ -8,7 +8,7 @@ mdefine_line|#define ETH_ALEN&t;6&t;&t;/* #bytes in eth addr&t;&t;*/
 DECL|macro|ETH_HLEN
 mdefine_line|#define ETH_HLEN&t;14&t;&t;/* #bytes in eth header&t;&t;*/
 DECL|macro|ETH_ZLEN
-mdefine_line|#define ETH_ZLEN&t;64&t;&t;/* min #bytes in frame&t;&t;*/
+mdefine_line|#define ETH_ZLEN&t;60&t;&t;/* min #bytes in frame&t;&t;*/
 DECL|macro|ETH_FLEN
 mdefine_line|#define ETH_FLEN&t;1536&t;&t;/* max #bytes in frame&t;&t;*/
 DECL|macro|ETH_DLEN

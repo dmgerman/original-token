@@ -66,6 +66,9 @@ op_star
 comma
 r_int
 op_star
+comma
+r_char
+op_star
 )paren
 suffix:semicolon
 DECL|variable|hpfs_sops
@@ -2618,6 +2621,10 @@ comma
 r_int
 op_star
 id|flags
+comma
+r_char
+op_star
+id|data
 )paren
 (brace
 r_if
