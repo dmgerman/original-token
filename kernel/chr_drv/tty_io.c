@@ -1,9 +1,18 @@
+multiline_comment|/*&n; *  linux/kernel/tty_io.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc (well,&n; * not currently, but ...)&n; */
 macro_line|#include &lt;ctype.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;signal.h&gt;
 DECL|macro|ALRMMASK
 mdefine_line|#define ALRMMASK (1&lt;&lt;(SIGALRM-1))
+DECL|macro|KILLMASK
+mdefine_line|#define KILLMASK (1&lt;&lt;(SIGKILL-1))
+DECL|macro|INTMASK
+mdefine_line|#define INTMASK (1&lt;&lt;(SIGINT-1))
+DECL|macro|QUITMASK
+mdefine_line|#define QUITMASK (1&lt;&lt;(SIGQUIT-1))
+DECL|macro|TSTPMASK
+mdefine_line|#define TSTPMASK (1&lt;&lt;(SIGTSTP-1))
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -56,7 +65,7 @@ op_assign
 (brace
 (brace
 (brace
-l_int|0
+id|ICRNL
 comma
 id|OPOST
 op_or
@@ -299,7 +308,7 @@ op_star
 id|tty
 comma
 r_int
-id|signal
+id|mask
 )paren
 (brace
 r_int
@@ -352,13 +361,7 @@ id|i
 op_member_access_from_pointer
 id|signal
 op_or_assign
-l_int|1
-op_lshift
-(paren
-id|signal
-op_minus
-l_int|1
-)paren
+id|mask
 suffix:semicolon
 )brace
 DECL|function|sleep_if_empty
@@ -459,6 +462,27 @@ suffix:semicolon
 id|sti
 c_func
 (paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|wait_for_keypress
+r_void
+id|wait_for_keypress
+c_func
+(paren
+r_void
+)paren
+(brace
+id|sleep_if_empty
+c_func
+(paren
+op_amp
+id|tty_table
+(braket
+l_int|0
+)braket
+dot
+id|secondary
 )paren
 suffix:semicolon
 )brace
@@ -743,7 +767,30 @@ c_func
 (paren
 id|tty
 comma
-id|SIGINT
+id|INTMASK
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|c
+op_eq
+id|KILL_CHAR
+c_func
+(paren
+id|tty
+)paren
+)paren
+(brace
+id|tty_intr
+c_func
+(paren
+id|tty
+comma
+id|KILLMASK
 )paren
 suffix:semicolon
 r_continue
@@ -1520,7 +1567,7 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Jeh, sometimes I really like the 386.&n; * This routine is called from an interrupt,&n; * and there should be absolutely no problem&n; * with sleeping even in an interrupt (I hope).&n; * Of course, if somebody proves me wrong, I&squot;ll&n; * hate intel for all time :-). We&squot;ll have to&n; * be careful and see to reinstating the interrupt&n; * chips before calling this, though.&n; */
+multiline_comment|/*&n; * Jeh, sometimes I really like the 386.&n; * This routine is called from an interrupt,&n; * and there should be absolutely no problem&n; * with sleeping even in an interrupt (I hope).&n; * Of course, if somebody proves me wrong, I&squot;ll&n; * hate intel for all time :-). We&squot;ll have to&n; * be careful and see to reinstating the interrupt&n; * chips before calling this, though.&n; *&n; * I don&squot;t think we sleep here under normal circumstances&n; * anyway, which is good, as the task sleeping might be&n; * totally innocent.&n; */
 DECL|function|do_tty_interrupt
 r_void
 id|do_tty_interrupt
@@ -1538,5 +1585,14 @@ op_plus
 id|tty
 )paren
 suffix:semicolon
+)brace
+DECL|function|chr_dev_init
+r_void
+id|chr_dev_init
+c_func
+(paren
+r_void
+)paren
+(brace
 )brace
 eof

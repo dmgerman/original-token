@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/fs/bitmap.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/* bitmap.c contains the code that handles the inode and block bitmaps */
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

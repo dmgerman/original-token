@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/lib/string.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#ifndef __GNUC__
 macro_line|#error I want gcc!
 macro_line|#endif

@@ -4,17 +4,20 @@ DECL|macro|_FS_H
 mdefine_line|#define _FS_H
 macro_line|#include &lt;sys/types.h&gt;
 multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; * 0 - unused (nodev)&n; * 1 - /dev/mem&n; * 2 - /dev/fd&n; * 3 - /dev/hd&n; * 4 - /dev/ttyx&n; * 5 - /dev/tty&n; * 6 - /dev/lp&n; * 7 - unnamed pipes&n; */
-DECL|macro|IS_BLOCKDEV
-mdefine_line|#define IS_BLOCKDEV(x) ((x)==2 || (x)==3)
+DECL|macro|IS_SEEKABLE
+mdefine_line|#define IS_SEEKABLE(x) ((x)&gt;=1 &amp;&amp; (x)&lt;=3)
 DECL|macro|READ
 mdefine_line|#define READ 0
 DECL|macro|WRITE
 mdefine_line|#define WRITE 1
+DECL|macro|READA
+mdefine_line|#define READA 2&t;&t;/* read-ahead - don&squot;t pause */
 r_void
 id|buffer_init
 c_func
 (paren
-r_void
+r_int
+id|buffer_end
 )paren
 suffix:semicolon
 DECL|macro|MAJOR
@@ -23,6 +26,8 @@ DECL|macro|MINOR
 mdefine_line|#define MINOR(a) ((a)&amp;0xff)
 DECL|macro|NAME_LEN
 mdefine_line|#define NAME_LEN 14
+DECL|macro|ROOT_INO
+mdefine_line|#define ROOT_INO 1
 DECL|macro|I_MAP_SLOTS
 mdefine_line|#define I_MAP_SLOTS 8
 DECL|macro|Z_MAP_SLOTS
@@ -43,6 +48,8 @@ DECL|macro|NR_BUFFERS
 mdefine_line|#define NR_BUFFERS nr_buffers
 DECL|macro|BLOCK_SIZE
 mdefine_line|#define BLOCK_SIZE 1024
+DECL|macro|BLOCK_SIZE_BITS
+mdefine_line|#define BLOCK_SIZE_BITS 10
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
@@ -51,6 +58,18 @@ DECL|macro|INODES_PER_BLOCK
 mdefine_line|#define INODES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct d_inode)))
 DECL|macro|DIR_ENTRIES_PER_BLOCK
 mdefine_line|#define DIR_ENTRIES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct dir_entry)))
+DECL|macro|PIPE_HEAD
+mdefine_line|#define PIPE_HEAD(inode) ((inode).i_zone[0])
+DECL|macro|PIPE_TAIL
+mdefine_line|#define PIPE_TAIL(inode) ((inode).i_zone[1])
+DECL|macro|PIPE_SIZE
+mdefine_line|#define PIPE_SIZE(inode) ((PIPE_HEAD(inode)-PIPE_TAIL(inode))&amp;(PAGE_SIZE-1))
+DECL|macro|PIPE_EMPTY
+mdefine_line|#define PIPE_EMPTY(inode) (PIPE_HEAD(inode)==PIPE_TAIL(inode))
+DECL|macro|PIPE_FULL
+mdefine_line|#define PIPE_FULL(inode) (PIPE_SIZE(inode)==(PAGE_SIZE-1))
+DECL|macro|INC_PIPE
+mdefine_line|#define INC_PIPE(head) &bslash;&n;__asm__(&quot;incl %0&bslash;n&bslash;tandl $4095,%0&quot;::&quot;m&quot; (head))
 DECL|typedef|buffer_block
 r_typedef
 r_char
@@ -286,18 +305,6 @@ id|i_update
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|PIPE_HEAD
-mdefine_line|#define PIPE_HEAD(inode) (((long *)((inode).i_zone))[0])
-DECL|macro|PIPE_TAIL
-mdefine_line|#define PIPE_TAIL(inode) (((long *)((inode).i_zone))[1])
-DECL|macro|PIPE_SIZE
-mdefine_line|#define PIPE_SIZE(inode) ((PIPE_HEAD(inode)-PIPE_TAIL(inode))&amp;(PAGE_SIZE-1))
-DECL|macro|PIPE_EMPTY
-mdefine_line|#define PIPE_EMPTY(inode) (PIPE_HEAD(inode)==PIPE_TAIL(inode))
-DECL|macro|PIPE_FULL
-mdefine_line|#define PIPE_FULL(inode) (PIPE_SIZE(inode)==(PAGE_SIZE-1))
-DECL|macro|INC_PIPE
-mdefine_line|#define INC_PIPE(head) &bslash;&n;__asm__(&quot;incl %0&bslash;n&bslash;tandl $4095,%0&quot;::&quot;m&quot; (head))
 DECL|struct|file
 r_struct
 id|file
@@ -414,6 +421,17 @@ r_int
 r_int
 id|s_time
 suffix:semicolon
+DECL|member|s_wait
+r_struct
+id|task_struct
+op_star
+id|s_wait
+suffix:semicolon
+DECL|member|s_lock
+r_int
+r_char
+id|s_lock
+suffix:semicolon
 DECL|member|s_rd_only
 r_int
 r_char
@@ -423,6 +441,52 @@ DECL|member|s_dirt
 r_int
 r_char
 id|s_dirt
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|d_super_block
+r_struct
+id|d_super_block
+(brace
+DECL|member|s_ninodes
+r_int
+r_int
+id|s_ninodes
+suffix:semicolon
+DECL|member|s_nzones
+r_int
+r_int
+id|s_nzones
+suffix:semicolon
+DECL|member|s_imap_blocks
+r_int
+r_int
+id|s_imap_blocks
+suffix:semicolon
+DECL|member|s_zmap_blocks
+r_int
+r_int
+id|s_zmap_blocks
+suffix:semicolon
+DECL|member|s_firstdatazone
+r_int
+r_int
+id|s_firstdatazone
+suffix:semicolon
+DECL|member|s_log_zone_size
+r_int
+r_int
+id|s_log_zone_size
+suffix:semicolon
+DECL|member|s_max_size
+r_int
+r_int
+id|s_max_size
+suffix:semicolon
+DECL|member|s_magic
+r_int
+r_int
+id|s_magic
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -477,6 +541,55 @@ suffix:semicolon
 r_extern
 r_int
 id|nr_buffers
+suffix:semicolon
+r_extern
+r_void
+id|check_disk_change
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|floppy_change
+c_func
+(paren
+r_int
+r_int
+id|nr
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ticks_to_floppy_on
+c_func
+(paren
+r_int
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|floppy_on
+c_func
+(paren
+r_int
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|floppy_off
+c_func
+(paren
+r_int
+r_int
+id|dev
+)paren
 suffix:semicolon
 r_extern
 r_void
@@ -685,6 +798,24 @@ id|block
 )paren
 suffix:semicolon
 r_extern
+r_struct
+id|buffer_head
+op_star
+id|breada
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|block
+comma
+dot
+dot
+dot
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|new_block
 c_func
@@ -728,16 +859,15 @@ id|inode
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|mount_root
+r_int
+id|sync_dev
 c_func
 (paren
-r_void
+r_int
+id|dev
 )paren
 suffix:semicolon
-DECL|function|get_super
 r_extern
-r_inline
 r_struct
 id|super_block
 op_star
@@ -747,43 +877,18 @@ c_func
 r_int
 id|dev
 )paren
-(brace
-r_struct
-id|super_block
-op_star
-id|s
 suffix:semicolon
-r_for
-c_loop
+r_extern
+r_int
+id|ROOT_DEV
+suffix:semicolon
+r_extern
+r_void
+id|mount_root
+c_func
 (paren
-id|s
-op_assign
-l_int|0
-op_plus
-id|super_block
-suffix:semicolon
-id|s
-OL
-id|NR_SUPER
-op_plus
-id|super_block
-suffix:semicolon
-id|s
-op_increment
+r_void
 )paren
-r_if
-c_cond
-(paren
-id|s-&gt;s_dev
-op_eq
-id|dev
-)paren
-r_return
-id|s
 suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 macro_line|#endif
 eof

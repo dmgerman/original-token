@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/kernel/traps.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * &squot;Traps.c&squot; handles hardware traps and faults after we have saved some&n; * state in &squot;asm.s&squot;. Currently mostly a debugging-aid, will be extended&n; * to mainly kill the offending process (probably by giving it a signal,&n; * but possibly by killing it outright if necessary).&n; */
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -5,6 +6,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|get_seg_byte
 mdefine_line|#define get_seg_byte(seg,addr) ({ &bslash;&n;register char __res; &bslash;&n;__asm__(&quot;push %%fs;mov %%ax,%%fs;movb %%fs:%2,%%al;pop %%fs&quot; &bslash;&n;&t;:&quot;=a&quot; (__res):&quot;0&quot; (seg),&quot;m&quot; (*(addr))); &bslash;&n;__res;})
 DECL|macro|get_seg_long
@@ -140,6 +142,20 @@ r_void
 suffix:semicolon
 r_void
 id|reserved
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|parallel_interrupt
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|irq13
 c_func
 (paren
 r_void
@@ -829,6 +845,15 @@ r_int
 id|error_code
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_ne
+id|current
+)paren
+r_return
+suffix:semicolon
 id|die
 c_func
 (paren
@@ -855,7 +880,7 @@ id|error_code
 id|die
 c_func
 (paren
-l_string|&quot;reserved (15,17-31) error&quot;
+l_string|&quot;reserved (15,17-47) error&quot;
 comma
 id|esp
 comma
@@ -1037,7 +1062,7 @@ l_int|17
 suffix:semicolon
 id|i
 OL
-l_int|32
+l_int|48
 suffix:semicolon
 id|i
 op_increment
@@ -1051,6 +1076,51 @@ op_amp
 id|reserved
 )paren
 suffix:semicolon
-multiline_comment|/*&t;__asm__(&quot;movl $0x3ff000,%%eax&bslash;n&bslash;t&quot;&n;&t;&t;&quot;movl %%eax,%%db0&bslash;n&bslash;t&quot;&n;&t;&t;&quot;movl $0x000d0303,%%eax&bslash;n&bslash;t&quot;&n;&t;&t;&quot;movl %%eax,%%db7&quot;&n;&t;&t;:::&quot;ax&quot;);*/
+id|set_trap_gate
+c_func
+(paren
+l_int|45
+comma
+op_amp
+id|irq13
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|inb_p
+c_func
+(paren
+l_int|0x21
+)paren
+op_amp
+l_int|0xfb
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|inb_p
+c_func
+(paren
+l_int|0xA1
+)paren
+op_amp
+l_int|0xdf
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+id|set_trap_gate
+c_func
+(paren
+l_int|39
+comma
+op_amp
+id|parallel_interrupt
+)paren
+suffix:semicolon
 )brace
 eof

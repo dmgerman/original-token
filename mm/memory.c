@@ -1,5 +1,5 @@
+multiline_comment|/*&n; *  linux/mm/memory.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;signal.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -13,29 +13,30 @@ id|code
 suffix:semicolon
 DECL|macro|invalidate
 mdefine_line|#define invalidate() &bslash;&n;__asm__(&quot;movl %%eax,%%cr3&quot;::&quot;a&quot; (0))
-macro_line|#if (BUFFER_END &lt; 0x100000)
+multiline_comment|/* these are not to be changed without changing head.s etc */
 DECL|macro|LOW_MEM
 mdefine_line|#define LOW_MEM 0x100000
-macro_line|#else
-DECL|macro|LOW_MEM
-mdefine_line|#define LOW_MEM BUFFER_END
-macro_line|#endif
-multiline_comment|/* these are not to be changed - thay are calculated from the above */
 DECL|macro|PAGING_MEMORY
-mdefine_line|#define PAGING_MEMORY (HIGH_MEMORY - LOW_MEM)
+mdefine_line|#define PAGING_MEMORY (15*1024*1024)
 DECL|macro|PAGING_PAGES
-mdefine_line|#define PAGING_PAGES (PAGING_MEMORY/4096)
+mdefine_line|#define PAGING_PAGES (PAGING_MEMORY&gt;&gt;12)
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr) (((addr)-LOW_MEM)&gt;&gt;12)
-macro_line|#if (PAGING_PAGES &lt; 10)
-macro_line|#error &quot;Won&squot;t work&quot;
-macro_line|#endif
+DECL|macro|USED
+mdefine_line|#define USED 100
+DECL|variable|HIGH_MEMORY
+r_static
+r_int
+id|HIGH_MEMORY
+op_assign
+l_int|0
+suffix:semicolon
 DECL|macro|copy_page
 mdefine_line|#define copy_page(from,to) &bslash;&n;__asm__(&quot;cld ; rep ; movsl&quot;::&quot;S&quot; (from),&quot;D&quot; (to),&quot;c&quot; (1024):&quot;cx&quot;,&quot;di&quot;,&quot;si&quot;)
 DECL|variable|mem_map
 r_static
 r_int
-r_int
+r_char
 id|mem_map
 (braket
 id|PAGING_PAGES
@@ -69,12 +70,12 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;std ; repne ; scasw&bslash;n&bslash;t&quot;
+l_string|&quot;std ; repne ; scasb&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
-l_string|&quot;movw $1,2(%%edi)&bslash;n&bslash;t&quot;
+l_string|&quot;movb $1,1(%%edi)&bslash;n&bslash;t&quot;
 l_string|&quot;sall $12,%%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;addl %2,%%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;movl %%ecx,%%edx&bslash;n&bslash;t&quot;
-l_string|&quot;addl %2,%%edx&bslash;n&bslash;t&quot;
 l_string|&quot;movl $1024,%%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;leal 4092(%%edx),%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;rep ; stosl&bslash;n&bslash;t&quot;
@@ -1139,6 +1140,79 @@ c_func
 (paren
 id|SIGSEGV
 )paren
+suffix:semicolon
+)brace
+DECL|function|mem_init
+r_void
+id|mem_init
+c_func
+(paren
+r_int
+id|start_mem
+comma
+r_int
+id|end_mem
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|HIGH_MEMORY
+op_assign
+id|end_mem
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|PAGING_PAGES
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|mem_map
+(braket
+id|i
+)braket
+op_assign
+id|USED
+suffix:semicolon
+id|i
+op_assign
+id|MAP_NR
+c_func
+(paren
+id|start_mem
+)paren
+suffix:semicolon
+id|end_mem
+op_sub_assign
+id|start_mem
+suffix:semicolon
+id|end_mem
+op_rshift_assign
+l_int|12
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|end_mem
+op_decrement
+OG
+l_int|0
+)paren
+id|mem_map
+(braket
+id|i
+op_increment
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|calc_mem

@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/kernel/printk.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * When in kernel-mode, we cannot use printf, as fs is liable to&n; * point to &squot;interesting&squot; things. Make a printf with fs-saving, and&n; * all is well.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;stddef.h&gt;
@@ -9,6 +10,24 @@ id|buf
 (braket
 l_int|1024
 )braket
+suffix:semicolon
+r_extern
+r_int
+id|vsprintf
+c_func
+(paren
+r_char
+op_star
+id|buf
+comma
+r_const
+r_char
+op_star
+id|fmt
+comma
+id|va_list
+id|args
+)paren
 suffix:semicolon
 DECL|function|printk
 r_int

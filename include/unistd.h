@@ -215,6 +215,8 @@ DECL|macro|__NR_getpgrp
 mdefine_line|#define __NR_getpgrp&t;65
 DECL|macro|__NR_setsid
 mdefine_line|#define __NR_setsid&t;66
+DECL|macro|__NR_sigaction
+mdefine_line|#define __NR_sigaction&t;67
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;type __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name)); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall1

@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/kernel/serial.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; *&t;serial.c&n; *&n; * This module implements the rs232 io functions&n; *&t;void rs_write(struct tty_struct * queue);&n; *&t;void rs_init(void);&n; * and all interrupts pertaining to serial IO.&n; */
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

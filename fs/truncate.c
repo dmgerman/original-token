@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/fs/truncate.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
 DECL|function|free_ind

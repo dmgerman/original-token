@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/fs/read_write.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
@@ -21,6 +22,10 @@ id|buf
 comma
 r_int
 id|count
+comma
+id|off_t
+op_star
+id|pos
 )paren
 suffix:semicolon
 r_extern
@@ -192,7 +197,7 @@ id|file-&gt;f_inode
 )paren
 op_logical_or
 op_logical_neg
-id|IS_BLOCKDEV
+id|IS_SEEKABLE
 c_func
 (paren
 id|MAJOR
@@ -422,6 +427,9 @@ comma
 id|buf
 comma
 id|count
+comma
+op_amp
+id|file-&gt;f_pos
 )paren
 suffix:semicolon
 r_if
@@ -632,6 +640,9 @@ comma
 id|buf
 comma
 id|count
+comma
+op_amp
+id|file-&gt;f_pos
 )paren
 suffix:semicolon
 r_if

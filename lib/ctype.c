@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/lib/ctype.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;ctype.h&gt;
 DECL|variable|_ctmp
 r_char

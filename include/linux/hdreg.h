@@ -2,47 +2,6 @@ multiline_comment|/*&n; * This file contains some defines for the AT-hd-controll
 macro_line|#ifndef _HDREG_H
 DECL|macro|_HDREG_H
 mdefine_line|#define _HDREG_H
-multiline_comment|/* currently supports only 1 hd, put type here */
-DECL|macro|HARD_DISK_TYPE
-mdefine_line|#define HARD_DISK_TYPE 17
-multiline_comment|/*&n; * Ok, hard-disk-type is currently hardcoded. Not beatiful,&n; * but easier. We don&squot;t use BIOS for anything else, why should&n; * we get HD-type from it? Get these values from Reference Guide.&n; */
-macro_line|#if HARD_DISK_TYPE == 17
-DECL|macro|_CYL
-mdefine_line|#define _CYL&t;977
-DECL|macro|_HEAD
-mdefine_line|#define _HEAD&t;5
-DECL|macro|__WPCOM
-mdefine_line|#define __WPCOM&t;300
-DECL|macro|_LZONE
-mdefine_line|#define _LZONE&t;977
-DECL|macro|_SECT
-mdefine_line|#define _SECT&t;17
-DECL|macro|_CTL
-mdefine_line|#define _CTL&t;0
-macro_line|#elif HARD_DISK_TYPE == 18
-DECL|macro|_CYL
-mdefine_line|#define _CYL&t;977
-DECL|macro|_HEAD
-mdefine_line|#define _HEAD&t;7
-DECL|macro|__WPCOM
-mdefine_line|#define __WPCOM&t;(-1)
-DECL|macro|_LZONE
-mdefine_line|#define _LZONE&t;977
-DECL|macro|_SECT
-mdefine_line|#define _SECT&t;17
-DECL|macro|_CTL
-mdefine_line|#define _CTL&t;0
-macro_line|#else
-macro_line|#error Define HARD_DISK_TYPE and parameters, add your own entries as well
-macro_line|#endif
-multiline_comment|/* Controller wants just wp-com/4 */
-macro_line|#if __WPCOM &gt;= 0
-DECL|macro|_WPCOM
-mdefine_line|#define _WPCOM ((__WPCOM)&gt;&gt;2)
-macro_line|#else
-DECL|macro|_WPCOM
-mdefine_line|#define _WPCOM __WPCOM
-macro_line|#endif
 multiline_comment|/* Hd controller regs. Ref: IBM AT Bios-listing */
 DECL|macro|HD_DATA
 mdefine_line|#define HD_DATA&t;&t;0x1f0&t;/* _CTL when writing */

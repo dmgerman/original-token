@@ -57,16 +57,22 @@ DECL|macro|GETCH
 mdefine_line|#define GETCH(queue,c) &bslash;&n;(void)({c=(queue).buf[(queue).tail];INC((queue).tail);})
 DECL|macro|PUTCH
 mdefine_line|#define PUTCH(c,queue) &bslash;&n;(void)({(queue).buf[(queue).head]=(c);INC((queue).head);})
-DECL|macro|EOF_CHAR
-mdefine_line|#define EOF_CHAR(tty) ((tty)-&gt;termios.c_cc[VEOF])
 DECL|macro|INTR_CHAR
 mdefine_line|#define INTR_CHAR(tty) ((tty)-&gt;termios.c_cc[VINTR])
-DECL|macro|STOP_CHAR
-mdefine_line|#define STOP_CHAR(tty) ((tty)-&gt;termios.c_cc[VSTOP])
-DECL|macro|START_CHAR
-mdefine_line|#define START_CHAR(tty) ((tty)-&gt;termios.c_cc[VSTART])
+DECL|macro|QUIT_CHAR
+mdefine_line|#define QUIT_CHAR(tty) ((tty)-&gt;termios.c_cc[VQUIT])
 DECL|macro|ERASE_CHAR
 mdefine_line|#define ERASE_CHAR(tty) ((tty)-&gt;termios.c_cc[VERASE])
+DECL|macro|KILL_CHAR
+mdefine_line|#define KILL_CHAR(tty) ((tty)-&gt;termios.c_cc[VKILL])
+DECL|macro|EOF_CHAR
+mdefine_line|#define EOF_CHAR(tty) ((tty)-&gt;termios.c_cc[VEOF])
+DECL|macro|START_CHAR
+mdefine_line|#define START_CHAR(tty) ((tty)-&gt;termios.c_cc[VSTART])
+DECL|macro|STOP_CHAR
+mdefine_line|#define STOP_CHAR(tty) ((tty)-&gt;termios.c_cc[VSTOP])
+DECL|macro|SUSPEND_CHAR
+mdefine_line|#define SUSPEND_CHAR(tty) ((tty)-&gt;termios.c_cc[VSUSP])
 DECL|struct|tty_struct
 r_struct
 id|tty_struct
@@ -121,9 +127,9 @@ id|tty_table
 (braket
 )braket
 suffix:semicolon
-multiline_comment|/*&t;intr=^C&t;&t;quit=^|&t;&t;erase=del&t;kill=^U&n;&t;eof=^D&t;&t;vtime=&bslash;0&t;vmin=&bslash;1&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Y&t;&t;eol=&bslash;0&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;&t;eol2=&bslash;0&n;*/
+multiline_comment|/*&t;intr=^C&t;&t;quit=^|&t;&t;erase=del&t;kill=^U&n;&t;eof=^D&t;&t;vtime=&bslash;0&t;vmin=&bslash;1&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Z&t;&t;eol=&bslash;0&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;&t;eol2=&bslash;0&n;*/
 DECL|macro|INIT_C_CC
-mdefine_line|#define INIT_C_CC &quot;&bslash;003&bslash;034&bslash;177&bslash;025&bslash;004&bslash;0&bslash;1&bslash;0&bslash;021&bslash;023&bslash;031&bslash;0&bslash;022&bslash;017&bslash;027&bslash;026&bslash;0&quot;
+mdefine_line|#define INIT_C_CC &quot;&bslash;003&bslash;034&bslash;177&bslash;025&bslash;004&bslash;0&bslash;1&bslash;0&bslash;021&bslash;023&bslash;032&bslash;0&bslash;022&bslash;017&bslash;027&bslash;026&bslash;0&quot;
 r_void
 id|rs_init
 c_func

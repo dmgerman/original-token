@@ -1,9 +1,15 @@
+multiline_comment|/*&n; *  linux/kernel/console.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; *&t;console.c&n; *&n; * This module implements the console io functions&n; *&t;&squot;void con_init(void)&squot;&n; *&t;&squot;void con_write(struct tty_queue * queue)&squot;&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; */
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/*&n; * These are set up by the setup-routine at boot-time:&n; */
+DECL|macro|ORIG_X
+mdefine_line|#define ORIG_X (*(unsigned char *)0x90000)
+DECL|macro|ORIG_Y
+mdefine_line|#define ORIG_Y (*(unsigned char *)0x90001)
 DECL|macro|SCREEN_START
 mdefine_line|#define SCREEN_START 0xb8000
 DECL|macro|SCREEN_END
@@ -124,6 +130,7 @@ suffix:semicolon
 multiline_comment|/*&n; * this is what the terminal answers to a ESC-Z or csi0c&n; * query (= vt100 response).&n; */
 DECL|macro|RESPONSE
 mdefine_line|#define RESPONSE &quot;&bslash;033[?1;2c&quot;
+multiline_comment|/* NOTE! gotoxy thinks x==columns is ok */
 DECL|function|gotoxy
 r_static
 r_inline
@@ -144,7 +151,7 @@ r_if
 c_cond
 (paren
 id|new_x
-op_ge
+OG
 id|columns
 op_logical_or
 id|new_y
@@ -1377,6 +1384,7 @@ id|csi_at
 c_func
 (paren
 r_int
+r_int
 id|nr
 )paren
 (brace
@@ -1420,6 +1428,7 @@ r_void
 id|csi_L
 c_func
 (paren
+r_int
 r_int
 id|nr
 )paren
@@ -1465,6 +1474,7 @@ id|csi_P
 c_func
 (paren
 r_int
+r_int
 id|nr
 )paren
 (brace
@@ -1508,6 +1518,7 @@ r_void
 id|csi_M
 c_func
 (paren
+r_int
 r_int
 id|nr
 )paren
@@ -1587,28 +1598,12 @@ c_func
 r_void
 )paren
 (brace
-id|x
-op_assign
+id|gotoxy
+c_func
+(paren
 id|saved_x
-suffix:semicolon
-id|y
-op_assign
+comma
 id|saved_y
-suffix:semicolon
-id|pos
-op_assign
-id|origin
-op_plus
-(paren
-(paren
-id|y
-op_star
-id|columns
-op_plus
-id|x
-)paren
-op_lshift
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2628,29 +2623,9 @@ suffix:semicolon
 id|gotoxy
 c_func
 (paren
-op_star
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-l_int|0x90000
-op_plus
-l_int|510
-)paren
+id|ORIG_X
 comma
-op_star
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-l_int|0x90000
-op_plus
-l_int|511
-)paren
+id|ORIG_Y
 )paren
 suffix:semicolon
 id|set_trap_gate

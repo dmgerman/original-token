@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/kernel/fork.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; *  &squot;fork.c&squot; contains the help-routines for the &squot;fork&squot; system call&n; * (see also system_call.s), and some misc functions (&squot;verify_area&squot;).&n; * Fork is rather simple, once you get the hang of it, but the memory&n; * management can be a bitch. See &squot;mm/mm.c&squot;: &squot;copy_page_tables()&squot;&n; */
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -12,6 +12,7 @@ mdefine_line|#define LAST_TASK task[NR_TASKS-1]
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;signal.h&gt;
 macro_line|#if (NR_OPEN &gt; 32)
 macro_line|#error &quot;Currently the close-on-exec-flags are in one word, max 32 files/proc&quot;
 macro_line|#endif
@@ -308,17 +309,19 @@ DECL|member|signal
 r_int
 id|signal
 suffix:semicolon
-DECL|member|sig_restorer
-id|fn_ptr
-id|sig_restorer
-suffix:semicolon
-DECL|member|sig_fn
-id|fn_ptr
-id|sig_fn
+DECL|member|sigaction
+r_struct
+id|sigaction
+id|sigaction
 (braket
 l_int|32
 )braket
 suffix:semicolon
+DECL|member|blocked
+r_int
+id|blocked
+suffix:semicolon
+multiline_comment|/* bitmap of masked signals */
 multiline_comment|/* various fields */
 DECL|member|exit_code
 r_int
@@ -457,7 +460,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x9ffff (=640kB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,NULL,{(fn_ptr) 0,}, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,-1,0,0,0, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* alarm */&t;0,0,0,0,0,0, &bslash;&n;/* math */&t;0, &bslash;&n;/* fs info */&t;-1,0133,NULL,NULL,0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;&t;{ &bslash;&n;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;{0x9f,0xc0f200}, &bslash;&n;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,-1,0,0,0, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* alarm */&t;0,0,0,0,0,0, &bslash;&n;/* math */&t;0, &bslash;&n;/* fs info */&t;-1,0022,NULL,NULL,0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;&t;{ &bslash;&n;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;{0x9f,0xc0f200}, &bslash;&n;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -490,6 +493,24 @@ id|startup_time
 suffix:semicolon
 DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (startup_time+jiffies/HZ)
+r_extern
+r_void
+id|add_timer
+c_func
+(paren
+r_int
+id|jiffies
+comma
+r_void
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+)paren
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|sleep_on
@@ -543,7 +564,7 @@ DECL|macro|str
 mdefine_line|#define str(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;a&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
 multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; * This also clears the TS-flag if the task we switched to has used&n; * tha math co-processor latest.&n; */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(n) {&bslash;&n;struct {long a,b;} __tmp; &bslash;&n;__asm__(&quot;cmpl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%dx,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,%2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;::&quot;m&quot; (*&amp;__tmp.a),&quot;m&quot; (*&amp;__tmp.b), &bslash;&n;&t;&quot;m&quot; (last_task_used_math),&quot;d&quot; _TSS(n),&quot;c&quot; ((long) task[n])); &bslash;&n;}
+mdefine_line|#define switch_to(n) {&bslash;&n;struct {long a,b;} __tmp; &bslash;&n;__asm__(&quot;cmpl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%dx,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;::&quot;m&quot; (*&amp;__tmp.a),&quot;m&quot; (*&amp;__tmp.b), &bslash;&n;&t;&quot;d&quot; (_TSS(n)),&quot;c&quot; ((long) task[n])); &bslash;&n;}
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(n) (((n)+0xfff)&amp;0xfffff000)
 DECL|macro|_set_base

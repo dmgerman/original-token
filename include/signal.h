@@ -67,6 +67,10 @@ mdefine_line|#define SIGTTOU&t;&t;22
 multiline_comment|/* Ok, I haven&squot;t implemented sigactions, but trying to keep headers POSIX */
 DECL|macro|SA_NOCLDSTOP
 mdefine_line|#define SA_NOCLDSTOP&t;1
+DECL|macro|SA_NOMASK
+mdefine_line|#define SA_NOMASK&t;0x40000000
+DECL|macro|SA_ONESHOT
+mdefine_line|#define SA_ONESHOT&t;0x80000000
 DECL|macro|SIG_BLOCK
 mdefine_line|#define SIG_BLOCK          0&t;/* for blocking signals */
 DECL|macro|SIG_UNBLOCK
@@ -98,6 +102,16 @@ suffix:semicolon
 DECL|member|sa_flags
 r_int
 id|sa_flags
+suffix:semicolon
+DECL|member|sa_restorer
+r_void
+(paren
+op_star
+id|sa_restorer
+)paren
+(paren
+r_void
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon

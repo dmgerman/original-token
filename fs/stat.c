@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/fs/stat.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -6,7 +7,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|function|cp_stat
 r_static
-r_int
+r_void
 id|cp_stat
 c_func
 (paren
@@ -132,11 +133,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
 )brace
 DECL|function|sys_stat
 r_int
@@ -153,9 +149,6 @@ op_star
 id|statbuf
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_struct
 id|m_inode
 op_star
@@ -179,8 +172,6 @@ r_return
 op_minus
 id|ENOENT
 suffix:semicolon
-id|i
-op_assign
 id|cp_stat
 c_func
 (paren
@@ -196,7 +187,7 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-id|i
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_fstat
@@ -250,9 +241,8 @@ id|f-&gt;f_inode
 )paren
 r_return
 op_minus
-id|ENOENT
+id|EBADF
 suffix:semicolon
-r_return
 id|cp_stat
 c_func
 (paren
@@ -260,6 +250,9 @@ id|inode
 comma
 id|statbuf
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

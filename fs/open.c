@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/fs/open.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
@@ -8,6 +9,25 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+DECL|function|sys_ustat
+r_int
+id|sys_ustat
+c_func
+(paren
+r_int
+id|dev
+comma
+r_struct
+id|ustat
+op_star
+id|ubuf
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
 DECL|function|sys_utime
 r_int
 id|sys_utime
@@ -115,6 +135,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * XXX should we use the real or effective uid?  BSD uses the real uid,&n; * so as to make this call useful to setuid programs.&n; */
 DECL|function|sys_access
 r_int
 id|sys_access
@@ -136,6 +157,8 @@ id|inode
 suffix:semicolon
 r_int
 id|res
+comma
+id|i_mode
 suffix:semicolon
 id|mode
 op_and_assign
@@ -159,6 +182,8 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
+id|i_mode
+op_assign
 id|res
 op_assign
 id|inode-&gt;i_mode
@@ -174,33 +199,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|current-&gt;euid
-op_logical_and
 id|current-&gt;uid
-)paren
-)paren
-r_if
-c_cond
-(paren
-id|res
-op_amp
-l_int|0111
-)paren
-id|res
-op_assign
-l_int|0777
-suffix:semicolon
-r_else
-id|res
-op_assign
-l_int|0666
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;euid
 op_eq
 id|inode-&gt;i_uid
 )paren
@@ -212,7 +211,7 @@ r_else
 r_if
 c_cond
 (paren
-id|current-&gt;egid
+id|current-&gt;gid
 op_eq
 id|inode-&gt;i_gid
 )paren
@@ -232,6 +231,33 @@ id|mode
 )paren
 op_eq
 id|mode
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * XXX we are doing this test last because we really should be&n;&t; * swapping the effective with the real user id (temporarily),&n;&t; * and then calling suser() routine.  If we do call the&n;&t; * suser() routine, it needs to be called last. &n;&t; */
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|current-&gt;uid
+)paren
+op_logical_and
+(paren
+op_logical_neg
+(paren
+id|mode
+op_amp
+l_int|1
+)paren
+op_logical_or
+(paren
+id|i_mode
+op_amp
+l_int|0111
+)paren
+)paren
 )paren
 r_return
 l_int|0
@@ -425,20 +451,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;uid
-op_logical_and
-id|current-&gt;euid
-)paren
-r_if
-c_cond
 (paren
-id|current-&gt;uid
-op_ne
-id|inode-&gt;i_uid
-op_logical_and
 id|current-&gt;euid
 op_ne
 id|inode-&gt;i_uid
+)paren
+op_logical_and
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
 )paren
 (brace
 id|iput
@@ -452,21 +475,6 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
-r_else
-id|mode
-op_assign
-(paren
-id|mode
-op_amp
-l_int|0777
-)paren
-op_or
-(paren
-id|inode-&gt;i_mode
-op_amp
-l_int|07000
-)paren
-suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 (paren
@@ -539,9 +547,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;uid
-op_logical_and
-id|current-&gt;euid
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
 )paren
 (brace
 id|iput
@@ -855,6 +865,25 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
+multiline_comment|/* Likewise with block-devices: check for floppy_change */
+r_if
+c_cond
+(paren
+id|S_ISBLK
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+)paren
+id|check_disk_change
+c_func
+(paren
+id|inode-&gt;i_zone
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
 id|f-&gt;f_mode
 op_assign
 id|inode-&gt;i_mode

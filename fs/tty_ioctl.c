@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/fs/tty_ioctl.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;termios.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -338,6 +339,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This only works as the 386 is low-byt-first&n; */
 DECL|function|set_termio
 r_static
 r_int

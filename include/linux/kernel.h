@@ -65,4 +65,31 @@ r_int
 id|count
 )paren
 suffix:semicolon
+r_void
+op_star
+id|malloc
+c_func
+(paren
+r_int
+r_int
+id|len
+)paren
+suffix:semicolon
+r_void
+id|free_s
+c_func
+(paren
+r_void
+op_star
+id|obj
+comma
+r_int
+id|size
+)paren
+suffix:semicolon
+DECL|macro|free
+mdefine_line|#define free(x)  free_s((x), 0)
+multiline_comment|/*&n; * This is defined as a macro, but at some point this might become a&n; * real subroutine that sets a flag if it returns true (to do&n; * BSD-style accounting where the process is flagged if it uses root&n; * privs).  The implication of this is that you should do normal&n; * permissions checks first, and check suser() last.&n; */
+DECL|macro|suser
+mdefine_line|#define suser() (current-&gt;euid == 0)
 eof

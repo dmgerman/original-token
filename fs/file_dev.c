@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/fs/file_dev.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
