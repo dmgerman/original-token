@@ -160,6 +160,9 @@ r_int
 id|sock_fasync
 c_func
 (paren
+r_int
+id|fd
+comma
 r_struct
 id|file
 op_star
@@ -1559,6 +1562,9 @@ suffix:semicolon
 id|sock_fasync
 c_func
 (paren
+op_minus
+l_int|1
+comma
 id|filp
 comma
 l_int|0
@@ -1585,6 +1591,9 @@ r_int
 id|sock_fasync
 c_func
 (paren
+r_int
+id|fd
+comma
 r_struct
 id|file
 op_star
@@ -1727,6 +1736,10 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|fa-&gt;fa_fd
+op_assign
+id|fd
+suffix:semicolon
 id|kfree_s
 c_func
 (paren
@@ -1752,6 +1765,10 @@ suffix:semicolon
 id|fna-&gt;fa_file
 op_assign
 id|filp
+suffix:semicolon
+id|fna-&gt;fa_fd
+op_assign
+id|fd
 suffix:semicolon
 id|fna-&gt;magic
 op_assign

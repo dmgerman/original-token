@@ -546,6 +546,20 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_void
+id|rpciod_wake_up
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|rpciod_tcp_dispatcher
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifdef RPC_DEBUG
 r_void
 id|rpc_show_tasks

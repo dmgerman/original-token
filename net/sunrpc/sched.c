@@ -1348,12 +1348,10 @@ op_amp
 id|task-&gt;tk_wait
 )paren
 suffix:semicolon
-multiline_comment|/* When the task received a signal, remove from&n;&t;&t;&t; * any queues etc, and make runnable again. */
+multiline_comment|/* When the task received a signal, remove from&n;&t;&t;&t; * any queues etc, and make runnable again.&n;&t;&t;&t; *&n;&t;&t;&t; * The &quot;intr&quot; property isnt handled here. rpc_do_call&n;&t;&t;&t; * has changed the signal mask of the process for&n;&t;&t;&t; * a synchronous rpc call. If a signal gets through&n;&t;&t;&t; * this then its real.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
-l_int|0
-op_logical_and
 id|signalled
 c_func
 (paren
@@ -1384,8 +1382,6 @@ multiline_comment|/*&n;&t;&t; * When a sync task receives a signal, it exits wit
 r_if
 c_cond
 (paren
-l_int|0
-op_logical_and
 op_logical_neg
 id|RPC_IS_ASYNC
 c_func

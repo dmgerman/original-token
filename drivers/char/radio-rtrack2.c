@@ -687,6 +687,10 @@ id|v.volume
 op_assign
 l_int|1
 suffix:semicolon
+id|v.step
+op_assign
+l_int|65535
+suffix:semicolon
 id|strcpy
 c_func
 (paren

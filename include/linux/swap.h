@@ -9,6 +9,79 @@ DECL|macro|SWAP_FLAG_PRIO_SHIFT
 mdefine_line|#define SWAP_FLAG_PRIO_SHIFT&t;0
 DECL|macro|MAX_SWAPFILES
 mdefine_line|#define MAX_SWAPFILES 8
+DECL|union|swap_header
+r_union
+id|swap_header
+(brace
+r_struct
+(brace
+DECL|member|reserved
+r_char
+id|reserved
+(braket
+id|PAGE_SIZE
+op_minus
+l_int|10
+)braket
+suffix:semicolon
+DECL|member|magic
+r_char
+id|magic
+(braket
+l_int|10
+)braket
+suffix:semicolon
+DECL|member|magic
+)brace
+id|magic
+suffix:semicolon
+r_struct
+(brace
+DECL|member|bootbits
+r_char
+id|bootbits
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+multiline_comment|/* Space for disklabel etc. */
+DECL|member|version
+r_int
+r_int
+id|version
+suffix:semicolon
+DECL|member|last_page
+r_int
+r_int
+id|last_page
+suffix:semicolon
+DECL|member|nr_badpages
+r_int
+r_int
+id|nr_badpages
+suffix:semicolon
+DECL|member|padding
+r_int
+r_int
+id|padding
+(braket
+l_int|125
+)braket
+suffix:semicolon
+DECL|member|badpages
+r_int
+r_int
+id|badpages
+(braket
+l_int|1
+)braket
+suffix:semicolon
+DECL|member|info
+)brace
+id|info
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
 DECL|macro|DEBUG_SWAP
 macro_line|#undef DEBUG_SWAP
@@ -19,6 +92,10 @@ DECL|macro|SWP_WRITEOK
 mdefine_line|#define SWP_WRITEOK&t;3
 DECL|macro|SWAP_CLUSTER_MAX
 mdefine_line|#define SWAP_CLUSTER_MAX 32
+DECL|macro|SWAP_MAP_MAX
+mdefine_line|#define SWAP_MAP_MAX&t;0x7fff
+DECL|macro|SWAP_MAP_BAD
+mdefine_line|#define SWAP_MAP_BAD&t;0x8000
 DECL|struct|swap_info_struct
 r_struct
 id|swap_info_struct
@@ -40,7 +117,7 @@ id|swap_file
 suffix:semicolon
 DECL|member|swap_map
 r_int
-r_char
+r_int
 op_star
 id|swap_map
 suffix:semicolon

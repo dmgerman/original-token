@@ -26,5 +26,7 @@ DECL|macro|MSP_GET_TREBLE
 mdefine_line|#define MSP_GET_TREBLE     _IOR(&squot;m&squot;,11,int)
 DECL|macro|MSP_SET_TREBLE
 mdefine_line|#define MSP_SET_TREBLE     _IOW(&squot;m&squot;,12,int)
+DECL|macro|MSP_GET_UNIT
+mdefine_line|#define MSP_GET_UNIT&t;   _IOR(&squot;m&squot;,13,int)
 macro_line|#endif /* MSP3400_H */
 eof

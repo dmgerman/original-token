@@ -1796,6 +1796,11 @@ op_assign
 l_int|32
 suffix:semicolon
 multiline_comment|/* Fixme --- we need to standardise our&n;&t;&t;&t;&t;    namings for POSIX.4 realtime scheduling&n;&t;&t;&t;&t;    priorities.  */
+multiline_comment|/*&n;&t; * Tell the memory management that we&squot;re a &quot;memory allocator&quot;,&n;&t; * and that if we need more memory we should get access to it&n;&t; * regardless (see &quot;try_to_free_pages()&quot;). &quot;kswapd&quot; should&n;&t; * never get caught in the normal page freeing logic.&n;&t; *&n;&t; * (Kswapd normally doesn&squot;t need memory anyway, but sometimes&n;&t; * you need a small amount of memory in order to be able to&n;&t; * page out something else, and this flag essentially protects&n;&t; * us from recursively trying to free more memory as we&squot;re&n;&t; * trying to free the first piece of memory in the first place).&n;&t; */
+id|current-&gt;flags
+op_or_assign
+id|PF_MEMALLOC
+suffix:semicolon
 id|init_swap_timer
 c_func
 (paren
@@ -1957,9 +1962,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
 id|current-&gt;flags
 op_amp
 id|PF_MEMALLOC
+)paren
 )paren
 (brace
 id|current-&gt;flags
@@ -1998,6 +2006,7 @@ l_int|0
 suffix:semicolon
 id|current-&gt;flags
 op_and_assign
+op_complement
 id|PF_MEMALLOC
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/nfs/xdr.c&n; *&n; * XDR functions to encode/decode NFS RPC arguments and results.&n; *&n; * Copyright (C) 1992, 1993, 1994  Rick Sladkey&n; * Copyright (C) 1996 Olaf Kirch&n; */
+multiline_comment|/*&n; * linux/fs/nfs/xdr.c&n; *&n; * XDR functions to encode/decode NFS RPC arguments and results.&n; *&n; * Copyright (C) 1992, 1993, 1994  Rick Sladkey&n; * Copyright (C) 1996 Olaf Kirch&n; *&n; * 04 Aug 1998  Ion Badulescu &lt;ionut@cs.columbia.edu&gt;     &n; *&t;        FIFO&squot;s need special handling in NFSv2&n; */
 DECL|macro|NFS_NEED_XDR_TYPES
 mdefine_line|#define NFS_NEED_XDR_TYPES
 macro_line|#include &lt;linux/param.h&gt;
@@ -436,6 +436,38 @@ id|p
 op_increment
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fattr-&gt;type
+op_eq
+id|NFCHR
+op_logical_and
+id|fattr-&gt;rdev
+op_eq
+id|NFS_FIFO_DEV
+)paren
+(brace
+id|fattr-&gt;type
+op_assign
+id|NFFIFO
+suffix:semicolon
+id|fattr-&gt;mode
+op_assign
+(paren
+id|fattr-&gt;mode
+op_amp
+op_complement
+id|S_IFMT
+)paren
+op_or
+id|S_IFIFO
+suffix:semicolon
+id|fattr-&gt;rdev
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_return
 id|p
 suffix:semicolon

@@ -7350,10 +7350,6 @@ c_func
 id|proto
 )paren
 suffix:semicolon
-id|skb-&gt;mac.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
 id|skb_pull
 c_func
 (paren
@@ -7363,6 +7359,10 @@ id|PPP_HDRLEN
 )paren
 suffix:semicolon
 multiline_comment|/* pull off ppp header */
+id|skb-&gt;mac.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 id|ppp-&gt;last_recv
 op_assign
 id|jiffies

@@ -26,8 +26,6 @@ DECL|macro|NR_OPEN
 macro_line|#undef NR_OPEN
 DECL|macro|NR_OPEN
 mdefine_line|#define NR_OPEN 1024
-DECL|macro|NR_SUPER
-mdefine_line|#define NR_SUPER 64
 DECL|macro|BLOCK_SIZE_BITS
 mdefine_line|#define BLOCK_SIZE_BITS 10
 DECL|macro|BLOCK_SIZE
@@ -45,10 +43,18 @@ id|nr_files
 comma
 id|nr_free_files
 suffix:semicolon
+r_extern
+r_int
+id|max_super_blocks
+comma
+id|nr_super_blocks
+suffix:semicolon
 DECL|macro|NR_FILE
 mdefine_line|#define NR_FILE  4096&t;/* this can well be larger on a larger system */
 DECL|macro|NR_RESERVED_FILES
 mdefine_line|#define NR_RESERVED_FILES 10 /* reserved for root */
+DECL|macro|NR_SUPER
+mdefine_line|#define NR_SUPER 256
 DECL|macro|MAY_EXEC
 mdefine_line|#define MAY_EXEC 1
 DECL|macro|MAY_WRITE
@@ -1029,6 +1035,11 @@ comma
 id|euid
 suffix:semicolon
 multiline_comment|/* uid/euid of process setting the owner */
+DECL|member|signum
+r_int
+id|signum
+suffix:semicolon
+multiline_comment|/* posix.1b rt signal to be delivered on IO */
 )brace
 suffix:semicolon
 DECL|struct|file
@@ -1539,6 +1550,10 @@ DECL|member|magic
 r_int
 id|magic
 suffix:semicolon
+DECL|member|fa_fd
+r_int
+id|fa_fd
+suffix:semicolon
 DECL|member|fa_next
 r_struct
 id|fasync_struct
@@ -1561,6 +1576,8 @@ r_int
 id|fasync_helper
 c_func
 (paren
+r_int
+comma
 r_struct
 id|file
 op_star
@@ -1587,10 +1604,23 @@ macro_line|#include &lt;linux/romfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/smb_fs_sb.h&gt;
 macro_line|#include &lt;linux/hfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/adfs_fs_sb.h&gt;
+r_extern
+r_struct
+id|list_head
+id|super_blocks
+suffix:semicolon
+DECL|macro|sb_entry
+mdefine_line|#define sb_entry(list)&t;list_entry((list), struct super_block, s_list)
 DECL|struct|super_block
 r_struct
 id|super_block
 (brace
+DECL|member|s_list
+r_struct
+id|list_head
+id|s_list
+suffix:semicolon
+multiline_comment|/* Keep this first */
 DECL|member|s_dev
 id|kdev_t
 id|s_dev
@@ -1981,6 +2011,8 @@ op_star
 id|fasync
 )paren
 (paren
+r_int
+comma
 r_struct
 id|file
 op_star
@@ -3059,14 +3091,6 @@ r_struct
 id|file
 op_star
 id|inuse_filps
-suffix:semicolon
-r_extern
-r_struct
-id|super_block
-id|super_blocks
-(braket
-id|NR_SUPER
-)braket
 suffix:semicolon
 r_extern
 r_void

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *&t;linux/mm/filemap.c&n; *&n; * Copyright (C) 1994, 1995  Linus Torvalds&n; */
-multiline_comment|/*&n; * This file handles the generic file mmap semantics used by&n; * most &quot;normal&quot; filesystems (but you don&squot;t /have/ to use this:&n; * the NFS filesystem does this differently, for example)&n; */
+multiline_comment|/*&n; * This file handles the generic file mmap semantics used by&n; * most &quot;normal&quot; filesystems (but you don&squot;t /have/ to use this:&n; * the NFS filesystem used to do this differently, for example)&n; */
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -562,7 +562,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -585,7 +584,6 @@ id|num_physpages
 )paren
 r_break
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -717,7 +715,7 @@ op_assign
 (paren
 id|limit
 op_lshift
-l_int|1
+l_int|2
 )paren
 op_rshift
 (paren
@@ -731,7 +729,7 @@ op_assign
 (paren
 id|limit
 op_lshift
-l_int|1
+l_int|2
 )paren
 op_rshift
 (paren

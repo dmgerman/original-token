@@ -5430,6 +5430,16 @@ id|msp-&gt;bus
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|MSP_GET_UNIT
+suffix:colon
+op_star
+id|iarg
+op_assign
+id|msp-&gt;mixer
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 r_return

@@ -530,7 +530,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* printk( &quot;Sound Blaster: Unexpected interrupt&bslash;n&quot;); */
+multiline_comment|/* printk(KERN_WARN &quot;Sound Blaster: Unexpected interrupt&bslash;n&quot;); */
 suffix:semicolon
 )brace
 )brace
@@ -885,7 +885,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;sb16: Invalid 8 bit DMA (%d)&bslash;n&quot;
+l_string|&quot;SB16: Invalid 8 bit DMA (%d)&bslash;n&quot;
 comma
 id|devc-&gt;dma8
 )paren
@@ -1100,7 +1100,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;SB16 IRQ%d is not possible&bslash;n&quot;
+l_string|&quot;SB16: Invalid IRQ%d&bslash;n&quot;
 comma
 id|level
 )paren
@@ -2703,7 +2703,8 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|sb_dsp_init
-r_void
+r_static
+r_int
 id|sb_dsp_init
 c_func
 (paren
@@ -2771,6 +2772,7 @@ l_string|&quot;No detected device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|devc
@@ -2800,6 +2802,7 @@ l_string|&quot;I/O port mismatch&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Now continue initialization of the device&n;&t; */
@@ -2857,6 +2860,7 @@ id|hw_config-&gt;irq
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|devc-&gt;irq_ok
@@ -2893,6 +2897,7 @@ id|devc
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -3423,12 +3428,29 @@ id|devc-&gt;dma16
 op_assign
 id|hw_config-&gt;dma2
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|sb16_set_dma_hw
 c_func
 (paren
 id|devc
 )paren
+)paren
+(brace
+id|free_irq
+c_func
+(paren
+id|devc-&gt;irq
+comma
+id|devc
+)paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|devc-&gt;caps
 op_or_assign
 id|SB_NO_MIDI
@@ -3649,7 +3671,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;SB: Can&squot;t allocate 8 bit DMA channel %d&bslash;n&quot;
+l_string|&quot;Sound Blaster: Can&squot;t allocate 8 bit DMA channel %d&bslash;n&quot;
 comma
 id|devc-&gt;dma8
 )paren
@@ -3717,6 +3739,9 @@ l_string|&quot;Sound Blaster:  no audio devices found.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
 DECL|function|sb_dsp_disable_midi
 r_void
@@ -4768,10 +4793,15 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* MPU enabled without interrupts */
+multiline_comment|/* May be shared: if so the value is -ve */
 r_switch
 c_cond
 (paren
+id|abs
+c_func
+(paren
 id|hw_config-&gt;irq
+)paren
 )paren
 (brace
 r_case

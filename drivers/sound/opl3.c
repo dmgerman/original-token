@@ -650,7 +650,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;OPL3: Can&squot;t allocate memory for the device control &quot;
+l_string|&quot;opl3: Can&squot;t allocate memory for the device control &quot;
 l_string|&quot;structure &bslash;n &quot;
 )paren
 suffix:semicolon
@@ -2444,7 +2444,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;OPL3: Initializing voice %d with undefined instrument&bslash;n&quot;
+l_string|&quot;opl3: Initializing voice %d with undefined instrument&bslash;n&quot;
 comma
 id|voice
 )paren
@@ -5037,7 +5037,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;opl3_init: Device control structure not initialized.&bslash;n&quot;
+l_string|&quot;opl3: Device control structure not initialized.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5226,37 +5226,21 @@ c_cond
 (paren
 id|devc-&gt;is_opl4
 )paren
-id|conf_printf2
+id|strcpy
 c_func
 (paren
+id|devc-&gt;fm_info.name
+comma
 l_string|&quot;Yamaha OPL4/OPL3 FM&quot;
-comma
-id|ioaddr
-comma
-l_int|0
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 r_else
-id|conf_printf2
+id|strcpy
 c_func
 (paren
-l_string|&quot;Yamaha OPL3 FM&quot;
+id|devc-&gt;fm_info.name
 comma
-id|ioaddr
-comma
-l_int|0
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
+l_string|&quot;Yamaha OPL3&quot;
 )paren
 suffix:semicolon
 id|devc-&gt;v_alloc-&gt;max_voice
@@ -5276,14 +5260,6 @@ suffix:semicolon
 id|devc-&gt;fm_info.capabilities
 op_or_assign
 id|SYNTH_CAP_OPL3
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|devc-&gt;fm_info.name
-comma
-l_string|&quot;Yamaha OPL-3&quot;
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -5355,20 +5331,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|conf_printf2
+id|strcpy
 c_func
 (paren
-l_string|&quot;Yamaha OPL2 FM&quot;
+id|devc-&gt;fm_info.name
 comma
-id|ioaddr
-comma
-l_int|0
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
+l_string|&quot;Yamaha OPL2&quot;
 )paren
 suffix:semicolon
 id|devc-&gt;v_alloc-&gt;max_voice
@@ -5405,6 +5373,22 @@ op_assign
 id|devc-&gt;left_io
 suffix:semicolon
 )brace
+suffix:semicolon
+id|conf_printf2
+c_func
+(paren
+id|devc-&gt;fm_info.name
+comma
+id|ioaddr
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -5457,6 +5441,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;YM3812 and OPL-3 driver Copyright (C) by Hannu Savolainen, Rob Hooft 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5470,6 +5455,31 @@ l_int|1
 )paren
 multiline_comment|/* User loading pure OPL3 module */
 (brace
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|io
+comma
+l_int|4
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;opl3: I/O port 0x%x already in use&bslash;n&quot;
+comma
+id|io
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5498,6 +5508,16 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+id|request_region
+c_func
+(paren
+id|io
+comma
+l_int|4
+comma
+id|devc-&gt;fm_info.name
+)paren
+suffix:semicolon
 )brace
 id|SOUND_LOCK
 suffix:semicolon
@@ -5519,6 +5539,21 @@ c_cond
 id|devc
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|devc-&gt;base
+)paren
+(brace
+id|release_region
+c_func
+(paren
+id|devc-&gt;base
+comma
+l_int|4
+)paren
+suffix:semicolon
+)brace
 id|kfree
 c_func
 (paren

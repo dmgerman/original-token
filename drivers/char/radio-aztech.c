@@ -867,6 +867,10 @@ id|v.volume
 op_assign
 id|az-&gt;curvol
 suffix:semicolon
+id|v.step
+op_assign
+l_int|16384
+suffix:semicolon
 id|strcpy
 c_func
 (paren

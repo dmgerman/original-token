@@ -1,9 +1,8 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      es1371.c  --  Creative Ensoniq ES1371.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to Ensoniq&n; *&n; *&n; * Module command line parameters:&n; *   joystick if 1 enables the joystick interface on the card; but it still&n; *            needs a separate joystick driver (presumably PC standard, although&n; *            the chip doc doesn&squot;t say anything and it looks slightly fishy from&n; *            the PCI standpoint...)&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/dsp1   additional DAC, like /dev/dsp, but outputs to mixer &quot;SYNTH&quot; setting&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  NOTE: the card does not have any FM/Wavetable synthesizer, it is supposed&n; *  to be done in software. That is what /dev/dac is for. By now (Q2 1998)&n; *  there are several MIDI to PCM (WAV) packages, one of them is timidity.&n; *&n; *  Revision history&n; *    04.06.98   0.1   Initial release&n; *                     Mixer stuff should be overhauled; especially optional AC97 mixer bits&n; *                     should be detected. This results in strange behaviour of some mixer&n; *                     settings, like master volume and mic.&n; *    08.06.98   0.2   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *&n; *&n; *&n; */
+multiline_comment|/*&n; *      es1371.c  --  Creative Ensoniq ES1371.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to Ensoniq&n; *&n; *&n; * Module command line parameters:&n; *   joystick if 1 enables the joystick interface on the card; but it still&n; *            needs a separate joystick driver (presumably PC standard, although&n; *            the chip doc doesn&squot;t say anything and it looks slightly fishy from&n; *            the PCI standpoint...)&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/dsp1   additional DAC, like /dev/dsp, but outputs to mixer &quot;SYNTH&quot; setting&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  NOTE: the card does not have any FM/Wavetable synthesizer, it is supposed&n; *  to be done in software. That is what /dev/dac is for. By now (Q2 1998)&n; *  there are several MIDI to PCM (WAV) packages, one of them is timidity.&n; *&n; *  Revision history&n; *    04.06.98   0.1   Initial release&n; *                     Mixer stuff should be overhauled; especially optional AC97 mixer bits&n; *                     should be detected. This results in strange behaviour of some mixer&n; *                     settings, like master volume and mic.&n; *    08.06.98   0.2   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.3   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -19,6 +18,9 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+multiline_comment|/* --------------------------------------------------------------------- */
+DECL|macro|OSS_DOCUMENTED_MIXER_SEMANTICS
+macro_line|#undef OSS_DOCUMENTED_MIXER_SEMANTICS
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifndef PCI_VENDOR_ID_ENSONIQ
 DECL|macro|PCI_VENDOR_ID_ENSONIQ
@@ -502,6 +504,16 @@ r_int
 r_int
 id|modcnt
 suffix:semicolon
+macro_line|#ifndef OSS_DOCUMENTED_MIXER_SEMANTICS
+DECL|member|vol
+r_int
+r_int
+id|vol
+(braket
+l_int|13
+)braket
+suffix:semicolon
+macro_line|#endif /* OSS_DOCUMENTED_MIXER_SEMANTICS */
 DECL|member|mix
 )brace
 id|mix
@@ -704,6 +716,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|devs
+r_static
 r_struct
 id|es1371_state
 op_star
@@ -2989,7 +3002,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|DMABUF_DEFAULTORDER
-mdefine_line|#define DMABUF_DEFAULTORDER 8
+mdefine_line|#define DMABUF_DEFAULTORDER (17-PAGE_SHIFT)
 DECL|macro|DMABUF_MINORDER
 mdefine_line|#define DMABUF_MINORDER 1
 DECL|function|dealloc_dmabuf
@@ -4587,6 +4600,7 @@ r_int
 r_char
 id|volreg
 (braket
+id|SOUND_MIXER_NRDEVICES
 )braket
 op_assign
 (brace
@@ -4676,6 +4690,7 @@ op_assign
 l_int|0x1e
 )brace
 suffix:semicolon
+macro_line|#ifdef OSS_DOCUMENTED_MIXER_SEMANTICS
 DECL|macro|swab
 mdefine_line|#define swab(x) ((((x) &gt;&gt; 8) &amp; 0xff) | (((x) &lt;&lt; 8) &amp; 0xff00))
 DECL|function|mixer_rdch
@@ -5354,6 +5369,105 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+macro_line|#else /* OSS_DOCUMENTED_MIXER_SEMANTICS */
+DECL|variable|volidx
+r_static
+r_const
+r_int
+r_char
+id|volidx
+(braket
+id|SOUND_MIXER_NRDEVICES
+)braket
+op_assign
+(brace
+multiline_comment|/* 5 bit stereo */
+(braket
+id|SOUND_MIXER_LINE
+)braket
+op_assign
+l_int|1
+comma
+(braket
+id|SOUND_MIXER_CD
+)braket
+op_assign
+l_int|2
+comma
+(braket
+id|SOUND_MIXER_VIDEO
+)braket
+op_assign
+l_int|3
+comma
+(braket
+id|SOUND_MIXER_LINE1
+)braket
+op_assign
+l_int|4
+comma
+(braket
+id|SOUND_MIXER_PCM
+)braket
+op_assign
+l_int|5
+comma
+multiline_comment|/* 6 bit stereo */
+(braket
+id|SOUND_MIXER_VOLUME
+)braket
+op_assign
+l_int|6
+comma
+(braket
+id|SOUND_MIXER_PHONEOUT
+)braket
+op_assign
+l_int|7
+comma
+multiline_comment|/* 6 bit mono */
+(braket
+id|SOUND_MIXER_OGAIN
+)braket
+op_assign
+l_int|8
+comma
+(braket
+id|SOUND_MIXER_PHONEIN
+)braket
+op_assign
+l_int|9
+comma
+multiline_comment|/* 4 bit mono but shifted by 1 */
+(braket
+id|SOUND_MIXER_SPEAKER
+)braket
+op_assign
+l_int|10
+comma
+multiline_comment|/* 6 bit mono + preamp */
+(braket
+id|SOUND_MIXER_MIC
+)braket
+op_assign
+l_int|11
+comma
+multiline_comment|/* 4 bit stereo */
+(braket
+id|SOUND_MIXER_RECLEV
+)braket
+op_assign
+l_int|12
+comma
+multiline_comment|/* 4 bit mono */
+(braket
+id|SOUND_MIXER_IGAIN
+)braket
+op_assign
+l_int|13
+)brace
+suffix:semicolon
+macro_line|#endif /* OSS_DOCUMENTED_MIXER_SEMANTICS */
 DECL|function|mixer_wrch
 r_static
 r_int
@@ -6801,6 +6915,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#ifdef OSS_DOCUMENTED_MIXER_SEMANTICS
 r_return
 id|mixer_rdch
 c_func
@@ -6816,6 +6931,42 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+macro_line|#else /* OSS_DOCUMENTED_MIXER_SEMANTICS */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|volidx
+(braket
+id|i
+)braket
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_return
+id|put_user
+c_func
+(paren
+id|s-&gt;mix.vol
+(braket
+id|volidx
+(braket
+id|i
+)braket
+op_minus
+l_int|1
+)braket
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+macro_line|#endif /* OSS_DOCUMENTED_MIXER_SEMANTICS */
 )brace
 )brace
 r_if
@@ -7011,6 +7162,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#ifdef OSS_DOCUMENTED_MIXER_SEMANTICS
 r_return
 id|mixer_rdch
 c_func
@@ -7026,6 +7178,54 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+macro_line|#else /* OSS_DOCUMENTED_MIXER_SEMANTICS */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|volidx
+(braket
+id|i
+)braket
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|s-&gt;mix.vol
+(braket
+id|volidx
+(braket
+id|i
+)braket
+op_minus
+l_int|1
+)braket
+op_assign
+id|val
+suffix:semicolon
+r_return
+id|put_user
+c_func
+(paren
+id|s-&gt;mix.vol
+(braket
+id|volidx
+(braket
+id|i
+)braket
+op_minus
+l_int|1
+)braket
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+macro_line|#endif /* OSS_DOCUMENTED_MIXER_SEMANTICS */
 )brace
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
@@ -14733,7 +14933,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;es1371: version v0.2 time &quot;
+l_string|&quot;es1371: version v0.3 time &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -15892,51 +16092,7 @@ c_func
 (paren
 id|joystick
 comma
-l_string|&quot;if 1 enables joystick interface (still need separate driver)&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|lineout
-comma
-l_string|&quot;1-&quot;
-id|__MODULE_STRING
-c_func
-(paren
-id|NR_DEVICE
-)paren
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|lineout
-comma
-l_string|&quot;if 1 the LINE input is converted to LINE out&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|micz
-comma
-l_string|&quot;1-&quot;
-id|__MODULE_STRING
-c_func
-(paren
-id|NR_DEVICE
-)paren
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|micz
-comma
-l_string|&quot;changes (??) the microphone impedance&quot;
+l_string|&quot;sets address and enables joystick interface (still need separate driver)&quot;
 )paren
 suffix:semicolon
 id|MODULE_AUTHOR

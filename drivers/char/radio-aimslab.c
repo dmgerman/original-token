@@ -1170,6 +1170,10 @@ id|rt-&gt;curvol
 op_star
 l_int|6554
 suffix:semicolon
+id|v.step
+op_assign
+l_int|6554
+suffix:semicolon
 id|strcpy
 c_func
 (paren

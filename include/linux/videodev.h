@@ -238,6 +238,8 @@ DECL|macro|VID_TYPE_SCALES
 mdefine_line|#define VID_TYPE_SCALES&t;&t;128&t;/* Scalable */
 DECL|macro|VID_TYPE_MONOCHROME
 mdefine_line|#define VID_TYPE_MONOCHROME&t;256&t;/* Monochrome only */
+DECL|macro|VID_TYPE_SUBCAPTURE
+mdefine_line|#define VID_TYPE_SUBCAPTURE&t;512&t;/* Can capture subareas of the image */
 DECL|struct|video_capability
 r_struct
 id|video_capability
@@ -320,6 +322,11 @@ DECL|macro|VIDEO_TYPE_TV
 mdefine_line|#define VIDEO_TYPE_TV&t;&t;1
 DECL|macro|VIDEO_TYPE_CAMERA
 mdefine_line|#define VIDEO_TYPE_CAMERA&t;2&t;
+DECL|member|norm
+id|__u16
+id|norm
+suffix:semicolon
+multiline_comment|/* Norm set by channel */
 )brace
 suffix:semicolon
 DECL|struct|video_tuner
@@ -357,6 +364,8 @@ DECL|macro|VIDEO_TUNER_SECAM
 mdefine_line|#define VIDEO_TUNER_SECAM&t;4
 DECL|macro|VIDEO_TUNER_LOW
 mdefine_line|#define VIDEO_TUNER_LOW&t;&t;8&t;/* Uses KHz not MHz */
+DECL|macro|VIDEO_TUNER_NORM
+mdefine_line|#define VIDEO_TUNER_NORM&t;16&t;/* Tuner can set norm */
 DECL|macro|VIDEO_TUNER_STEREO_ON
 mdefine_line|#define VIDEO_TUNER_STEREO_ON&t;128&t;/* Tuner is seeing stereo */
 DECL|member|mode
@@ -498,6 +507,16 @@ DECL|member|mode
 id|__u16
 id|mode
 suffix:semicolon
+DECL|member|balance
+id|__u16
+id|balance
+suffix:semicolon
+multiline_comment|/* Stereo balance */
+DECL|member|step
+id|__u16
+id|step
+suffix:semicolon
+multiline_comment|/* Step actual volume uses */
 )brace
 suffix:semicolon
 DECL|struct|video_clip
@@ -538,6 +557,7 @@ id|x
 comma
 id|y
 suffix:semicolon
+multiline_comment|/* Position of window */
 DECL|member|width
 DECL|member|height
 id|__u32
@@ -545,6 +565,7 @@ id|width
 comma
 id|height
 suffix:semicolon
+multiline_comment|/* Its size */
 DECL|member|chromakey
 id|__u32
 id|chromakey
@@ -566,6 +587,42 @@ id|clipcount
 suffix:semicolon
 DECL|macro|VIDEO_WINDOW_INTERLACE
 mdefine_line|#define VIDEO_WINDOW_INTERLACE&t;1
+)brace
+suffix:semicolon
+DECL|struct|video_capture
+r_struct
+id|video_capture
+(brace
+DECL|member|x
+DECL|member|y
+id|__u32
+id|x
+comma
+id|y
+suffix:semicolon
+multiline_comment|/* Offsets into image */
+DECL|member|width
+DECL|member|height
+id|__u32
+id|width
+comma
+id|height
+suffix:semicolon
+multiline_comment|/* Area to capture */
+DECL|member|decimation
+id|__u16
+id|decimation
+suffix:semicolon
+multiline_comment|/* Decimation divder */
+DECL|member|flags
+id|__u16
+id|flags
+suffix:semicolon
+multiline_comment|/* Flags for capture */
+DECL|macro|VIDEO_CAPTURE_ODD
+mdefine_line|#define VIDEO_CAPTURE_ODD&t;&t;0&t;/* Temporal */
+DECL|macro|VIDEO_CAPTURE_EVEN
+mdefine_line|#define VIDEO_CAPTURE_EVEN&t;&t;1
 )brace
 suffix:semicolon
 DECL|struct|video_buffer
@@ -603,7 +660,7 @@ r_int
 r_int
 id|frame
 suffix:semicolon
-multiline_comment|/* Frame (0 or 1) for double buffer */
+multiline_comment|/* Frame (0 - n) for double buffer */
 DECL|member|height
 DECL|member|width
 r_int
@@ -634,6 +691,64 @@ DECL|member|flags
 id|__u32
 id|flags
 suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|VIDEO_MAX_FRAME
+mdefine_line|#define VIDEO_MAX_FRAME&t;&t;32
+DECL|struct|video_mbuf
+r_struct
+id|video_mbuf
+(brace
+DECL|member|size
+r_int
+id|size
+suffix:semicolon
+multiline_comment|/* Total memory to map */
+DECL|member|frames
+r_int
+id|frames
+suffix:semicolon
+multiline_comment|/* Frames */
+DECL|member|offsets
+r_int
+id|offsets
+(braket
+id|VIDEO_MAX_FRAME
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|VIDEO_NO_UNIT
+mdefine_line|#define &t;VIDEO_NO_UNIT&t;(-1)
+DECL|struct|video_unit
+r_struct
+id|video_unit
+(brace
+DECL|member|video
+r_int
+id|video
+suffix:semicolon
+multiline_comment|/* Video minor */
+DECL|member|vbi
+r_int
+id|vbi
+suffix:semicolon
+multiline_comment|/* VBI minor */
+DECL|member|radio
+r_int
+id|radio
+suffix:semicolon
+multiline_comment|/* Radio minor */
+DECL|member|audio
+r_int
+id|audio
+suffix:semicolon
+multiline_comment|/* Audio minor */
+DECL|member|teletext
+r_int
+id|teletext
+suffix:semicolon
+multiline_comment|/* Teletext minor */
 )brace
 suffix:semicolon
 DECL|macro|VIDIOCGCAP
@@ -671,9 +786,17 @@ mdefine_line|#define VIDIOCGAUDIO&t;&t;_IOR(&squot;v&squot;,16, struct video_aud
 DECL|macro|VIDIOCSAUDIO
 mdefine_line|#define VIDIOCSAUDIO&t;&t;_IOW(&squot;v&squot;,17, struct video_audio)&t;/* Audio source, mute etc */
 DECL|macro|VIDIOCSYNC
-mdefine_line|#define VIDIOCSYNC&t;&t;_IO(&squot;v&squot;,18)&t;&t;&t;&t;/* Sync with mmap grabbing */
+mdefine_line|#define VIDIOCSYNC&t;&t;_IOW(&squot;v&squot;,18, int)&t;&t;&t;/* Sync with mmap grabbing */
 DECL|macro|VIDIOCMCAPTURE
 mdefine_line|#define VIDIOCMCAPTURE&t;&t;_IOW(&squot;v&squot;,19, struct video_mmap)&t;&t;/* Grab frames */
+DECL|macro|VIDIOCGMBUF
+mdefine_line|#define VIDIOCGMBUF&t;&t;_IOR(&squot;v&squot;, 20, struct video_mbuf)&t;/* Memory map buffer info */
+DECL|macro|VIDIOCGUNIT
+mdefine_line|#define VIDIOCGUNIT&t;&t;_IOR(&squot;v&squot;, 21, struct video_unit)&t;/* Get attached units */
+DECL|macro|VIDIOCGCAPTURE
+mdefine_line|#define VIDIOCGCAPTURE&t;&t;_IOR(&squot;v&squot;,22, struct video_capture)&t;/* Get frame buffer */
+DECL|macro|VIDIOCSCAPTURE
+mdefine_line|#define VIDIOCSCAPTURE&t;&t;_IOW(&squot;v&squot;,23, struct video_capture)&t;/* Set frame buffer - root only */
 DECL|macro|BASE_VIDIOCPRIVATE
 mdefine_line|#define BASE_VIDIOCPRIVATE&t;192&t;&t;/* 192-255 are private */
 DECL|macro|VID_HARDWARE_BT848
@@ -702,6 +825,10 @@ DECL|macro|VID_HARDWARE_VIDEUM
 mdefine_line|#define VID_HARDWARE_VIDEUM&t;12&t;/* Reserved for Winnov videum */
 DECL|macro|VID_HARDWARE_RTRACK2
 mdefine_line|#define VID_HARDWARE_RTRACK2&t;13
+DECL|macro|VID_HARDWARE_PERMEDIA2
+mdefine_line|#define VID_HARDWARE_PERMEDIA2&t;14&t;/* Reserved for Permedia2 */
+DECL|macro|VID_HARDWARE_RIVA128
+mdefine_line|#define VID_HARDWARE_RIVA128&t;15&t;/* Reserved for RIVA 128 */
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

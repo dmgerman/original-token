@@ -1,9 +1,8 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      es1370.c  --  Ensoniq ES1370/Ashai Kasei AK4531 audio driver.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   joystick if 1 enables the joystick interface on the card; but it still&n; *            needs a separate joystick driver (presumably PC standard, although&n; *            the chip doc doesn&squot;t say anything and it looks slightly fishy from&n; *            the PCI standpoint...)&n; *   lineout  if 1 the LINE jack is used as an output instead of an input.&n; *            LINE then contains the unmixed dsp output. This can be used&n; *            to make the card a four channel one: use dsp to output two&n; *            channels to LINE and dac to output the other two channels to&n; *            SPKR. Set the mixer to only output synth to SPKR.&n; *   micz     it looks like this changes the MIC input impedance. I don&squot;t know&n; *            any detail though.&n; *&n; *  Note: sync mode is not yet supported (i.e. running dsp and dac from the same&n; *  clock source)&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/dsp1   additional DAC, like /dev/dsp, but output only,&n; *              only 5512, 11025, 22050 and 44100 samples/s,&n; *              outputs to mixer &quot;SYNTH&quot; setting&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  NOTE: the card does not have any FM/Wavetable synthesizer, it is supposed&n; *  to be done in software. That is what /dev/dac is for. By now (Q2 1998)&n; *  there are several MIDI to PCM (WAV) packages, one of them is timidity.&n; *&n; *  Revision history&n; *    26.03.98   0.1   Initial release&n; *    31.03.98   0.2   Fix bug in GETOSPACE&n; *    04.04.98   0.3   Make it work (again) under 2.0.33&n; *                     Fix mixer write operation not returning the actual&n; *                     settings&n; *    05.04.98   0.4   First attempt at using the new PCI stuff&n; *    29.04.98   0.5   Fix hang when ^C is pressed on amp&n; *    07.05.98   0.6   Don&squot;t double lock around stop_*() in *_release()&n; *    10.05.98   0.7   First stab at a simple midi interface (no bells&amp;whistles)&n; *    14.05.98   0.8   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.9   First release using Alan Cox&squot; soundcore instead of&n; *                     miscdevice&n; *    05.07.98   0.10  Fixed the driver to correctly maintin OSS style volume&n; *                     settings (not sure if this should be standard)&n; *                     Fixed many references: f_flags should be f_mode&n; *                     -- Gerald Britton &lt;gbritton@mit.edu&gt;&n; *&n; * some important things missing in Ensoniq documentation:&n; *&n; * Experimental PCLKDIV results:  play the same waveforms on both DAC1 and DAC2&n; * and vary PCLKDIV to obtain zero beat.&n; *  5512sps:  254&n; * 44100sps:   30&n; * seems to be fs = 1411200/(PCLKDIV+2)&n; *&n; * should find out when curr_sample_ct is cleared and&n; * where exactly the CCB fetches data&n; *&n; * The card uses a 22.5792 MHz crystal.&n; * The LINEIN jack may be converted to an AOUT jack by&n; * setting pin 47 (XCTL0) of the ES1370 to high.&n; * Pin 48 (XCTL1) of the ES1370 presumably changes the input impedance of the&n; * MIC jack.&n; *&n; */
+multiline_comment|/*&n; *      es1370.c  --  Ensoniq ES1370/Ashai Kasei AK4531 audio driver.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   joystick if 1 enables the joystick interface on the card; but it still&n; *            needs a separate joystick driver (presumably PC standard, although&n; *            the chip doc doesn&squot;t say anything and it looks slightly fishy from&n; *            the PCI standpoint...)&n; *   lineout  if 1 the LINE jack is used as an output instead of an input.&n; *            LINE then contains the unmixed dsp output. This can be used&n; *            to make the card a four channel one: use dsp to output two&n; *            channels to LINE and dac to output the other two channels to&n; *            SPKR. Set the mixer to only output synth to SPKR.&n; *   micz     it looks like this changes the MIC input impedance. I don&squot;t know&n; *            any detail though.&n; *&n; *  Note: sync mode is not yet supported (i.e. running dsp and dac from the same&n; *  clock source)&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/dsp1   additional DAC, like /dev/dsp, but output only,&n; *              only 5512, 11025, 22050 and 44100 samples/s,&n; *              outputs to mixer &quot;SYNTH&quot; setting&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  NOTE: the card does not have any FM/Wavetable synthesizer, it is supposed&n; *  to be done in software. That is what /dev/dac is for. By now (Q2 1998)&n; *  there are several MIDI to PCM (WAV) packages, one of them is timidity.&n; *&n; *  Revision history&n; *    26.03.98   0.1   Initial release&n; *    31.03.98   0.2   Fix bug in GETOSPACE&n; *    04.04.98   0.3   Make it work (again) under 2.0.33&n; *                     Fix mixer write operation not returning the actual&n; *                     settings&n; *    05.04.98   0.4   First attempt at using the new PCI stuff&n; *    29.04.98   0.5   Fix hang when ^C is pressed on amp&n; *    07.05.98   0.6   Don&squot;t double lock around stop_*() in *_release()&n; *    10.05.98   0.7   First stab at a simple midi interface (no bells&amp;whistles)&n; *    14.05.98   0.8   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.9   First release using Alan Cox&squot; soundcore instead of&n; *                     miscdevice&n; *    05.07.98   0.10  Fixed the driver to correctly maintin OSS style volume&n; *                     settings (not sure if this should be standard)&n; *                     Fixed many references: f_flags should be f_mode&n; *                     -- Gerald Britton &lt;gbritton@mit.edu&gt;&n; *    03.08.98   0.11  Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *                     Fixed mixer table thanks to Hakan.Lennestal@lu.erisoft.se&n; *                     On module startup, set DAC2 to 11kSPS instead of 5.5kSPS,&n; *                     as it produces an annoying ssssh in the lower sampling rate&n; *                     Do not include modversions.h&n; *&n; * some important things missing in Ensoniq documentation:&n; *&n; * Experimental PCLKDIV results:  play the same waveforms on both DAC1 and DAC2&n; * and vary PCLKDIV to obtain zero beat.&n; *  5512sps:  254&n; * 44100sps:   30&n; * seems to be fs = 1411200/(PCLKDIV+2)&n; *&n; * should find out when curr_sample_ct is cleared and&n; * where exactly the CCB fetches data&n; *&n; * The card uses a 22.5792 MHz crystal.&n; * The LINEIN jack may be converted to an AOUT jack by&n; * setting pin 47 (XCTL0) of the ES1370 to high.&n; * Pin 48 (XCTL1) of the ES1370 presumably changes the input impedance of the&n; * MIC jack.&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -19,6 +18,9 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+multiline_comment|/* --------------------------------------------------------------------- */
+DECL|macro|OSS_DOCUMENTED_MIXER_SEMANTICS
+macro_line|#undef OSS_DOCUMENTED_MIXER_SEMANTICS
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifndef PCI_VENDOR_ID_ENSONIQ
 DECL|macro|PCI_VENDOR_ID_ENSONIQ
@@ -554,6 +556,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|devs
+r_static
 r_struct
 id|es1370_state
 op_star
@@ -1474,7 +1477,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|DMABUF_DEFAULTORDER
-mdefine_line|#define DMABUF_DEFAULTORDER 8
+mdefine_line|#define DMABUF_DEFAULTORDER (17-PAGE_SHIFT)
 DECL|macro|DMABUF_MINORDER
 mdefine_line|#define DMABUF_MINORDER 1
 DECL|function|dealloc_dmabuf
@@ -1554,6 +1557,21 @@ suffix:semicolon
 id|free_pages
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
+id|db-&gt;rawbuf
+comma
+id|db-&gt;buforder
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;es: freeing dmabuf %8.8lx order %d&bslash;n&quot;
+comma
 (paren
 r_int
 r_int
@@ -1735,6 +1753,21 @@ id|map
 )braket
 dot
 id|flags
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;es: allocating dmabuf %8.8lx order %d&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|db-&gt;rawbuf
+comma
+id|db-&gt;buforder
 )paren
 suffix:semicolon
 )brace
@@ -3236,7 +3269,7 @@ l_int|0xc
 comma
 l_int|0x0
 comma
-l_int|1
+l_int|0
 comma
 l_int|0x0100
 comma
@@ -3255,7 +3288,7 @@ l_int|0xd
 comma
 l_int|0x0
 comma
-l_int|1
+l_int|0
 comma
 l_int|0x0200
 comma
@@ -3274,7 +3307,7 @@ l_int|0xe
 comma
 l_int|0x0
 comma
-l_int|1
+l_int|0
 comma
 l_int|0x0001
 comma
@@ -3293,7 +3326,7 @@ l_int|0xf
 comma
 l_int|0x0
 comma
-l_int|1
+l_int|0
 comma
 l_int|0x0000
 comma
@@ -3323,6 +3356,10 @@ id|arg
 )paren
 (brace
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|i
 comma
 id|val
@@ -3338,10 +3375,6 @@ comma
 id|rl
 comma
 id|rr
-comma
-id|sr
-comma
-id|sl
 suffix:semicolon
 id|VALIDATE_STATE
 c_func
@@ -3357,6 +3390,7 @@ op_eq
 id|SOUND_MIXER_PRIVATE1
 )paren
 (brace
+multiline_comment|/* enable/disable/query mixer preamp */
 id|get_user_ret
 c_func
 (paren
@@ -3403,6 +3437,206 @@ id|put_user
 c_func
 (paren
 id|s-&gt;mix.micpreamp
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|SOUND_MIXER_PRIVATE2
+)paren
+(brace
+multiline_comment|/* enable/disable/query use of linein as second lineout */
+id|get_user_ret
+c_func
+(paren
+id|val
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+comma
+op_minus
+id|EFAULT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+)paren
+id|s-&gt;ctrl
+op_or_assign
+id|CTRL_XCTL0
+suffix:semicolon
+r_else
+id|s-&gt;ctrl
+op_and_assign
+op_complement
+id|CTRL_XCTL0
+suffix:semicolon
+id|outl
+c_func
+(paren
+id|s-&gt;ctrl
+comma
+id|s-&gt;io
+op_plus
+id|ES1370_REG_CONTROL
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_return
+id|put_user
+c_func
+(paren
+(paren
+id|s-&gt;ctrl
+op_amp
+id|CTRL_XCTL0
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|SOUND_MIXER_PRIVATE3
+)paren
+(brace
+multiline_comment|/* enable/disable/query microphone impedance setting */
+id|get_user_ret
+c_func
+(paren
+id|val
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+comma
+op_minus
+id|EFAULT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+)paren
+id|s-&gt;ctrl
+op_or_assign
+id|CTRL_XCTL1
+suffix:semicolon
+r_else
+id|s-&gt;ctrl
+op_and_assign
+op_complement
+id|CTRL_XCTL1
+suffix:semicolon
+id|outl
+c_func
+(paren
+id|s-&gt;ctrl
+comma
+id|s-&gt;io
+op_plus
+id|ES1370_REG_CONTROL
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_return
+id|put_user
+c_func
+(paren
+(paren
+id|s-&gt;ctrl
+op_amp
+id|CTRL_XCTL1
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
 comma
 (paren
 r_int
@@ -4132,12 +4366,6 @@ id|l
 op_assign
 l_int|100
 suffix:semicolon
-id|sl
-op_assign
-id|sr
-op_assign
-id|l
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4169,10 +4397,6 @@ l_int|100
 id|r
 op_assign
 l_int|100
-suffix:semicolon
-id|sr
-op_assign
-id|r
 suffix:semicolon
 r_if
 c_cond
@@ -4419,6 +4643,7 @@ comma
 id|rl
 )paren
 suffix:semicolon
+macro_line|#ifdef OSS_DOCUMENTED_MIXER_SEMANTICS
 id|s-&gt;mix.vol
 (braket
 id|mixtable
@@ -4434,13 +4659,27 @@ op_assign
 r_int
 r_int
 )paren
-id|sr
+id|r
 op_lshift
 l_int|8
 )paren
 op_or
-id|sl
+id|l
 suffix:semicolon
+macro_line|#else
+id|s-&gt;mix.vol
+(braket
+id|mixtable
+(braket
+id|i
+)braket
+dot
+id|volidx
+)braket
+op_assign
+id|val
+suffix:semicolon
+macro_line|#endif
 r_return
 id|put_user
 c_func
@@ -12616,6 +12855,12 @@ l_int|8000
 op_lshift
 id|CTRL_SH_PCLKDIV
 )paren
+op_or
+(paren
+l_int|1
+op_lshift
+id|CTRL_SH_WTSRSEL
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -13188,6 +13433,12 @@ id|outl
 c_func
 (paren
 id|CTRL_SERR_DIS
+op_or
+(paren
+l_int|1
+op_lshift
+id|CTRL_SH_WTSRSEL
+)paren
 comma
 id|s-&gt;io
 op_plus

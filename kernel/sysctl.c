@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
@@ -1238,6 +1239,48 @@ l_string|&quot;file-max&quot;
 comma
 op_amp
 id|max_files
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+(brace
+id|FS_NRSUPER
+comma
+l_string|&quot;super-nr&quot;
+comma
+op_amp
+id|nr_super_blocks
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0444
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+(brace
+id|FS_MAXSUPER
+comma
+l_string|&quot;super-max&quot;
+comma
+op_amp
+id|max_super_blocks
 comma
 r_sizeof
 (paren

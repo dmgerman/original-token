@@ -379,7 +379,7 @@ op_star
 id|hw_config
 )paren
 suffix:semicolon
-r_void
+r_int
 id|sb_dsp_init
 (paren
 r_struct

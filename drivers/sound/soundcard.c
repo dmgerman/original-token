@@ -4016,6 +4016,20 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE
+DECL|variable|traceinit
+r_int
+id|traceinit
+op_assign
+l_int|0
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|traceinit
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -4035,6 +4049,10 @@ l_int|21
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+id|trace_init
+op_assign
+id|traceinit
 suffix:semicolon
 multiline_comment|/*&n;&t; * &quot;sound=&quot; command line handling by Harald Milz.&n;&t; */
 id|i

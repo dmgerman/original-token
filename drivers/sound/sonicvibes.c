@@ -1,9 +1,8 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      sonicvibes.c  --  S3 Sonic Vibes audio driver.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.98   0.1   Initial release&n; *    10.05.98   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                     First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.98   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                     set_dac_rate in the FMODE_WRITE case in sv_open&n; *                     Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.98   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *&n; */
+multiline_comment|/*&n; *      sonicvibes.c  --  S3 Sonic Vibes audio driver.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.98   0.1   Initial release&n; *    10.05.98   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                     First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.98   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                     set_dac_rate in the FMODE_WRITE case in sv_open&n; *                     Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.98   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.6   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -20,6 +19,9 @@ macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &quot;dm.h&quot;
+multiline_comment|/* --------------------------------------------------------------------- */
+DECL|macro|OSS_DOCUMENTED_MIXER_SEMANTICS
+macro_line|#undef OSS_DOCUMENTED_MIXER_SEMANTICS
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifndef PCI_VENDOR_ID_S3
 DECL|macro|PCI_VENDOR_ID_S3
@@ -362,6 +364,16 @@ r_int
 r_int
 id|modcnt
 suffix:semicolon
+macro_line|#ifndef OSS_DOCUMENTED_MIXER_SEMANTICS
+DECL|member|vol
+r_int
+r_int
+id|vol
+(braket
+l_int|13
+)braket
+suffix:semicolon
+macro_line|#endif /* OSS_DOCUMENTED_MIXER_SEMANTICS */
 DECL|member|mix
 )brace
 id|mix
@@ -1586,6 +1598,7 @@ op_assign
 op_complement
 l_int|0U
 suffix:semicolon
+multiline_comment|/* the warnings about m and n used uninitialized are bogus and may safely be ignored */
 r_if
 c_cond
 (paren
@@ -2550,7 +2563,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|DMABUF_DEFAULTORDER
-mdefine_line|#define DMABUF_DEFAULTORDER 8
+mdefine_line|#define DMABUF_DEFAULTORDER (17-PAGE_SHIFT)
 DECL|macro|DMABUF_MINORDER
 mdefine_line|#define DMABUF_MINORDER 1
 DECL|function|dealloc_dmabuf
@@ -4170,6 +4183,7 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
+macro_line|#ifdef OSS_DOCUMENTED_MIXER_SEMANTICS
 DECL|function|return_mixval
 r_static
 r_int
@@ -4438,6 +4452,74 @@ id|arg
 )paren
 suffix:semicolon
 )brace
+macro_line|#else /* OSS_DOCUMENTED_MIXER_SEMANTICS */
+DECL|variable|volidx
+r_static
+r_const
+r_int
+r_char
+id|volidx
+(braket
+id|SOUND_MIXER_NRDEVICES
+)braket
+op_assign
+(brace
+(braket
+id|SOUND_MIXER_RECLEV
+)braket
+op_assign
+l_int|1
+comma
+(braket
+id|SOUND_MIXER_LINE1
+)braket
+op_assign
+l_int|2
+comma
+(braket
+id|SOUND_MIXER_CD
+)braket
+op_assign
+l_int|3
+comma
+(braket
+id|SOUND_MIXER_LINE
+)braket
+op_assign
+l_int|4
+comma
+(braket
+id|SOUND_MIXER_MIC
+)braket
+op_assign
+l_int|5
+comma
+(braket
+id|SOUND_MIXER_SYNTH
+)braket
+op_assign
+l_int|6
+comma
+(braket
+id|SOUND_MIXER_LINE2
+)braket
+op_assign
+l_int|7
+comma
+(braket
+id|SOUND_MIXER_VOLUME
+)braket
+op_assign
+l_int|8
+comma
+(braket
+id|SOUND_MIXER_PCM
+)braket
+op_assign
+l_int|9
+)brace
+suffix:semicolon
+macro_line|#endif /* OSS_DOCUMENTED_MIXER_SEMANTICS */
 DECL|function|mixer_recmask
 r_static
 r_int
@@ -5219,6 +5301,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#ifdef OSS_DOCUMENTED_MIXER_SEMANTICS
 r_return
 id|return_mixval
 c_func
@@ -5234,6 +5317,42 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+macro_line|#else /* OSS_DOCUMENTED_MIXER_SEMANTICS */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|volidx
+(braket
+id|i
+)braket
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_return
+id|put_user
+c_func
+(paren
+id|s-&gt;mix.vol
+(braket
+id|volidx
+(braket
+id|i
+)braket
+op_minus
+l_int|1
+)braket
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+macro_line|#endif /* OSS_DOCUMENTED_MIXER_SEMANTICS */
 )brace
 )brace
 r_if
@@ -5884,6 +6003,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifdef OSS_DOCUMENTED_MIXER_SEMANTICS
 r_return
 id|return_mixval
 c_func
@@ -5899,6 +6019,54 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+macro_line|#else /* OSS_DOCUMENTED_MIXER_SEMANTICS */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|volidx
+(braket
+id|i
+)braket
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|s-&gt;mix.vol
+(braket
+id|volidx
+(braket
+id|i
+)braket
+op_minus
+l_int|1
+)braket
+op_assign
+id|val
+suffix:semicolon
+r_return
+id|put_user
+c_func
+(paren
+id|s-&gt;mix.vol
+(braket
+id|volidx
+(braket
+id|i
+)braket
+op_minus
+l_int|1
+)braket
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+macro_line|#endif /* OSS_DOCUMENTED_MIXER_SEMANTICS */
 )brace
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
@@ -12494,7 +12662,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-DECL|variable|wavetable
+macro_line|#if 0
 r_static
 r_int
 id|wavetable
@@ -12507,6 +12675,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|variable|dmaio
 r_static
 r_int
@@ -12659,7 +12828,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;sv: version v0.5 time &quot;
+l_string|&quot;sv: version v0.6 time &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -13357,7 +13526,19 @@ c_func
 id|SV_CCTRL_INTADRIVE
 op_or
 id|SV_CCTRL_ENHANCED
-multiline_comment|/*| SV_CCTRL_WAVETABLE | SV_CCTRL_REVERB*/
+multiline_comment|/*| SV_CCTRL_WAVETABLE */
+op_or
+(paren
+id|reverb
+(braket
+id|index
+)braket
+ques
+c_cond
+id|SV_CCTRL_REVERB
+suffix:colon
+l_int|0
+)paren
 comma
 id|s-&gt;ioenh
 op_plus
@@ -13933,9 +14114,10 @@ c_func
 (paren
 id|reverb
 comma
-l_string|&quot;if 1 enables joystick interface (still need separate driver)&quot;
+l_string|&quot;if 1 enables the reverb circuitry. NOTE: your card must have the reverb RAM&quot;
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|MODULE_PARM
 c_func
 (paren
@@ -13955,9 +14137,10 @@ c_func
 (paren
 id|wavetable
 comma
-l_string|&quot;if 1 the LINE input is converted to LINE out&quot;
+l_string|&quot;if 1 the wavetable synth is enabled&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|MODULE_PARM
 c_func
 (paren

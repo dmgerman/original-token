@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl.h: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; */
+multiline_comment|/*&n; * sysctl.h: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; *&n; ****************************************************************&n; ****************************************************************&n; **&n; **  WARNING:  &n; **  The values in this file are exported to user space via &n; **  the sysctl() binary interface.  Do *NOT* change the &n; **  numbering of any existing values here, and do not change&n; **  any numbers within any one set of values.  If you have&n; **  to redefine an existing interface, use a new number for it.&n; **  The kernel will then return ENOTDIR to any application using&n; **  the old binary interface.&n; **&n; **  --sct&n; **&n; ****************************************************************&n; ****************************************************************&n; */
 macro_line|#include &lt;linux/lists.h&gt;
 macro_line|#ifndef _LINUX_SYSCTL_H
 DECL|macro|_LINUX_SYSCTL_H
@@ -59,6 +59,7 @@ macro_line|#endif
 r_enum
 (brace
 DECL|enumerator|CTL_KERN
+multiline_comment|/*1*/
 id|CTL_KERN
 op_assign
 l_int|1
@@ -85,6 +86,7 @@ id|CTL_DEBUG
 comma
 multiline_comment|/* Debugging */
 DECL|enumerator|CTL_DEV
+multiline_comment|/*7*/
 id|CTL_DEV
 comma
 multiline_comment|/* Devices */
@@ -94,6 +96,7 @@ multiline_comment|/* CTL_KERN names: */
 r_enum
 (brace
 DECL|enumerator|KERN_OSTYPE
+multiline_comment|/*1*/
 id|KERN_OSTYPE
 op_assign
 l_int|1
@@ -123,10 +126,14 @@ DECL|enumerator|KERN_NODENAME
 id|KERN_NODENAME
 comma
 DECL|enumerator|KERN_DOMAINNAME
+multiline_comment|/*8*/
 id|KERN_DOMAINNAME
 comma
 DECL|enumerator|KERN_SECURELVL
+multiline_comment|/*14*/
 id|KERN_SECURELVL
+op_assign
+l_int|14
 comma
 multiline_comment|/* int: system security level */
 DECL|enumerator|KERN_PANIC
@@ -134,14 +141,19 @@ id|KERN_PANIC
 comma
 multiline_comment|/* int: panic timeout */
 DECL|enumerator|KERN_REALROOTDEV
+multiline_comment|/*16*/
 id|KERN_REALROOTDEV
 comma
 multiline_comment|/* real root device to mount after initrd */
 DECL|enumerator|KERN_JAVA_INTERPRETER
+multiline_comment|/*19*/
 id|KERN_JAVA_INTERPRETER
+op_assign
+l_int|19
 comma
 multiline_comment|/* path to Java(tm) interpreter */
 DECL|enumerator|KERN_JAVA_APPLETVIEWER
+multiline_comment|/*20*/
 id|KERN_JAVA_APPLETVIEWER
 comma
 multiline_comment|/* path to Java(tm) appletviewer */
@@ -177,6 +189,7 @@ DECL|enumerator|KERN_MODPROBE
 id|KERN_MODPROBE
 comma
 DECL|enumerator|KERN_SG_BIG_BUFF
+multiline_comment|/*29*/
 id|KERN_SG_BIG_BUFF
 )brace
 suffix:semicolon
@@ -184,6 +197,7 @@ multiline_comment|/* CTL_VM names: */
 r_enum
 (brace
 DECL|enumerator|VM_SWAPCTL
+multiline_comment|/*1*/
 id|VM_SWAPCTL
 op_assign
 l_int|1
@@ -218,6 +232,7 @@ id|VM_PAGERDAEMON
 comma
 multiline_comment|/* struct: Control kswapd behaviour */
 DECL|enumerator|VM_PGT_CACHE
+multiline_comment|/*9*/
 id|VM_PGT_CACHE
 multiline_comment|/* struct: Set page table cache parameters */
 )brace
@@ -226,6 +241,7 @@ multiline_comment|/* CTL_NET names: */
 r_enum
 (brace
 DECL|enumerator|NET_CORE
+multiline_comment|/*1*/
 id|NET_CORE
 op_assign
 l_int|1
@@ -255,13 +271,14 @@ DECL|enumerator|NET_AX25
 id|NET_AX25
 comma
 DECL|enumerator|NET_BRIDGE
+multiline_comment|/*10*/
 id|NET_BRIDGE
-comma
-DECL|enumerator|NET_IPV6
-id|NET_IPV6
 comma
 DECL|enumerator|NET_ROSE
 id|NET_ROSE
+comma
+DECL|enumerator|NET_IPV6
+id|NET_IPV6
 comma
 DECL|enumerator|NET_X25
 id|NET_X25
@@ -270,6 +287,7 @@ DECL|enumerator|NET_TR
 id|NET_TR
 comma
 DECL|enumerator|NET_DECNET
+multiline_comment|/*15*/
 id|NET_DECNET
 )brace
 suffix:semicolon
@@ -277,6 +295,7 @@ multiline_comment|/* /proc/sys/net/core */
 r_enum
 (brace
 DECL|enumerator|NET_CORE_WMEM_MAX
+multiline_comment|/*1*/
 id|NET_CORE_WMEM_MAX
 op_assign
 l_int|1
@@ -306,6 +325,7 @@ DECL|enumerator|NET_CORE_MSG_BURST
 id|NET_CORE_MSG_BURST
 comma
 DECL|enumerator|NET_CORE_OPTMEM_MAX
+multiline_comment|/*10*/
 id|NET_CORE_OPTMEM_MAX
 comma
 )brace
@@ -316,11 +336,13 @@ multiline_comment|/* /proc/sys/net/unix */
 r_enum
 (brace
 DECL|enumerator|NET_UNIX_DESTROY_DELAY
+multiline_comment|/*1*/
 id|NET_UNIX_DESTROY_DELAY
 op_assign
 l_int|1
 comma
 DECL|enumerator|NET_UNIX_DELETE_DELAY
+multiline_comment|/*2*/
 id|NET_UNIX_DELETE_DELAY
 comma
 )brace
@@ -330,6 +352,7 @@ r_enum
 (brace
 multiline_comment|/* v2.0 compatibile variables */
 DECL|enumerator|NET_IPV4_FORWARD
+multiline_comment|/*8*/
 id|NET_IPV4_FORWARD
 op_assign
 l_int|8
@@ -340,6 +363,7 @@ op_assign
 l_int|9
 comma
 DECL|enumerator|NET_IPV4_CONF
+multiline_comment|/*16*/
 id|NET_IPV4_CONF
 op_assign
 l_int|16
@@ -360,6 +384,7 @@ op_assign
 l_int|19
 comma
 DECL|enumerator|NET_IPV4_TCP_HOE_RETRANSMITS
+multiline_comment|/*32*/
 id|NET_IPV4_TCP_HOE_RETRANSMITS
 op_assign
 l_int|32
@@ -386,6 +411,7 @@ DECL|enumerator|NET_IPV4_NO_PMTU_DISC
 id|NET_IPV4_NO_PMTU_DISC
 comma
 DECL|enumerator|NET_IPV4_TCP_SYN_RETRIES
+multiline_comment|/*40*/
 id|NET_IPV4_TCP_SYN_RETRIES
 comma
 DECL|enumerator|NET_IPV4_IPFRAG_HIGH_THRESH
@@ -416,6 +442,7 @@ DECL|enumerator|NET_IPV4_TCP_FIN_TIMEOUT
 id|NET_IPV4_TCP_FIN_TIMEOUT
 comma
 DECL|enumerator|NET_IPV4_IP_MASQ_DEBUG
+multiline_comment|/*50*/
 id|NET_IPV4_IP_MASQ_DEBUG
 comma
 DECL|enumerator|NET_TCP_SYNCOOKIES
@@ -446,6 +473,7 @@ DECL|enumerator|NET_IPV4_ICMP_SOURCEQUENCH_RATE
 id|NET_IPV4_ICMP_SOURCEQUENCH_RATE
 comma
 DECL|enumerator|NET_IPV4_ICMP_DESTUNREACH_RATE
+multiline_comment|/*60*/
 id|NET_IPV4_ICMP_DESTUNREACH_RATE
 comma
 DECL|enumerator|NET_IPV4_ICMP_TIMEEXCEED_RATE
@@ -455,6 +483,7 @@ DECL|enumerator|NET_IPV4_ICMP_PARAMPROB_RATE
 id|NET_IPV4_ICMP_PARAMPROB_RATE
 comma
 DECL|enumerator|NET_IPV4_ICMP_ECHOREPLY_RATE
+multiline_comment|/*63*/
 id|NET_IPV4_ICMP_ECHOREPLY_RATE
 comma
 )brace
@@ -462,6 +491,7 @@ suffix:semicolon
 r_enum
 (brace
 DECL|enumerator|NET_IPV4_ROUTE_FLUSH
+multiline_comment|/*1*/
 id|NET_IPV4_ROUTE_FLUSH
 op_assign
 l_int|1
@@ -491,6 +521,7 @@ DECL|enumerator|NET_IPV4_ROUTE_REDIRECT_LOAD
 id|NET_IPV4_ROUTE_REDIRECT_LOAD
 comma
 DECL|enumerator|NET_IPV4_ROUTE_REDIRECT_NUMBER
+multiline_comment|/*10*/
 id|NET_IPV4_ROUTE_REDIRECT_NUMBER
 comma
 DECL|enumerator|NET_IPV4_ROUTE_REDIRECT_SILENCE
@@ -503,6 +534,7 @@ DECL|enumerator|NET_IPV4_ROUTE_ERROR_BURST
 id|NET_IPV4_ROUTE_ERROR_BURST
 comma
 DECL|enumerator|NET_IPV4_ROUTE_GC_ELASTICITY
+multiline_comment|/*14*/
 id|NET_IPV4_ROUTE_GC_ELASTICITY
 comma
 )brace
@@ -510,12 +542,14 @@ suffix:semicolon
 r_enum
 (brace
 DECL|enumerator|NET_PROTO_CONF_ALL
+multiline_comment|/*-2*/
 id|NET_PROTO_CONF_ALL
 op_assign
 op_minus
 l_int|2
 comma
 DECL|enumerator|NET_PROTO_CONF_DEFAULT
+multiline_comment|/*-3*/
 id|NET_PROTO_CONF_DEFAULT
 op_assign
 op_minus
@@ -527,6 +561,7 @@ suffix:semicolon
 r_enum
 (brace
 DECL|enumerator|NET_IPV4_CONF_FORWARDING
+multiline_comment|/*1*/
 id|NET_IPV4_CONF_FORWARDING
 op_assign
 l_int|1
@@ -556,9 +591,11 @@ DECL|enumerator|NET_IPV4_CONF_ACCEPT_SOURCE_ROUTE
 id|NET_IPV4_CONF_ACCEPT_SOURCE_ROUTE
 comma
 DECL|enumerator|NET_IPV4_CONF_BOOTP_RELAY
+multiline_comment|/*10*/
 id|NET_IPV4_CONF_BOOTP_RELAY
 comma
 DECL|enumerator|NET_IPV4_CONF_LOG_MARTIANS
+multiline_comment|/*11*/
 id|NET_IPV4_CONF_LOG_MARTIANS
 comma
 )brace
@@ -567,6 +604,7 @@ multiline_comment|/* /proc/sys/net/ipv6 */
 r_enum
 (brace
 DECL|enumerator|NET_IPV6_CONF
+multiline_comment|/*16*/
 id|NET_IPV6_CONF
 op_assign
 l_int|16
@@ -577,6 +615,7 @@ op_assign
 l_int|17
 comma
 DECL|enumerator|NET_IPV6_ROUTE
+multiline_comment|/*18*/
 id|NET_IPV6_ROUTE
 op_assign
 l_int|18
@@ -586,6 +625,7 @@ suffix:semicolon
 r_enum
 (brace
 DECL|enumerator|NET_IPV6_ROUTE_FLUSH
+multiline_comment|/*1*/
 id|NET_IPV6_ROUTE_FLUSH
 op_assign
 l_int|1
@@ -606,6 +646,7 @@ DECL|enumerator|NET_IPV6_ROUTE_GC_INTERVAL
 id|NET_IPV6_ROUTE_GC_INTERVAL
 comma
 DECL|enumerator|NET_IPV6_ROUTE_GC_ELASTICITY
+multiline_comment|/*7*/
 id|NET_IPV6_ROUTE_GC_ELASTICITY
 comma
 )brace
@@ -613,6 +654,7 @@ suffix:semicolon
 r_enum
 (brace
 DECL|enumerator|NET_IPV6_FORWARDING
+multiline_comment|/*1*/
 id|NET_IPV6_FORWARDING
 op_assign
 l_int|1
@@ -642,6 +684,7 @@ DECL|enumerator|NET_IPV6_RTR_SOLICIT_INTERVAL
 id|NET_IPV6_RTR_SOLICIT_INTERVAL
 comma
 DECL|enumerator|NET_IPV6_RTR_SOLICIT_DELAY
+multiline_comment|/*10*/
 id|NET_IPV6_RTR_SOLICIT_DELAY
 comma
 )brace
@@ -650,6 +693,7 @@ multiline_comment|/* /proc/sys/net/&lt;protocol&gt;/neigh/&lt;dev&gt; */
 r_enum
 (brace
 DECL|enumerator|NET_NEIGH_MCAST_SOLICIT
+multiline_comment|/*1*/
 id|NET_NEIGH_MCAST_SOLICIT
 op_assign
 l_int|1
@@ -679,6 +723,7 @@ DECL|enumerator|NET_NEIGH_PROXY_QLEN
 id|NET_NEIGH_PROXY_QLEN
 comma
 DECL|enumerator|NET_NEIGH_ANYCAST_DELAY
+multiline_comment|/*10*/
 id|NET_NEIGH_ANYCAST_DELAY
 comma
 DECL|enumerator|NET_NEIGH_PROXY_DELAY
@@ -697,6 +742,7 @@ DECL|enumerator|NET_NEIGH_GC_THRESH2
 id|NET_NEIGH_GC_THRESH2
 comma
 DECL|enumerator|NET_NEIGH_GC_THRESH3
+multiline_comment|/*16*/
 id|NET_NEIGH_GC_THRESH3
 )brace
 suffix:semicolon
@@ -705,6 +751,7 @@ multiline_comment|/* /proc/sys/net/appletalk */
 r_enum
 (brace
 DECL|enumerator|NET_ATALK_AARP_EXPIRY_TIME
+multiline_comment|/*1*/
 id|NET_ATALK_AARP_EXPIRY_TIME
 op_assign
 l_int|1
@@ -716,6 +763,7 @@ DECL|enumerator|NET_ATALK_AARP_RETRANSMIT_LIMIT
 id|NET_ATALK_AARP_RETRANSMIT_LIMIT
 comma
 DECL|enumerator|NET_ATALK_AARP_RESOLVE_TIME
+multiline_comment|/*4*/
 id|NET_ATALK_AARP_RESOLVE_TIME
 comma
 )brace
@@ -724,6 +772,7 @@ multiline_comment|/* /proc/sys/net/netrom */
 r_enum
 (brace
 DECL|enumerator|NET_NETROM_DEFAULT_PATH_QUALITY
+multiline_comment|/*1*/
 id|NET_NETROM_DEFAULT_PATH_QUALITY
 op_assign
 l_int|1
@@ -753,9 +802,11 @@ DECL|enumerator|NET_NETROM_TRANSPORT_NO_ACTIVITY_TIMEOUT
 id|NET_NETROM_TRANSPORT_NO_ACTIVITY_TIMEOUT
 comma
 DECL|enumerator|NET_NETROM_ROUTING_CONTROL
+multiline_comment|/*10*/
 id|NET_NETROM_ROUTING_CONTROL
 comma
 DECL|enumerator|NET_NETROM_LINK_FAILS_COUNT
+multiline_comment|/*11*/
 id|NET_NETROM_LINK_FAILS_COUNT
 )brace
 suffix:semicolon
@@ -763,6 +814,7 @@ multiline_comment|/* /proc/sys/net/ax25 */
 r_enum
 (brace
 DECL|enumerator|NET_AX25_IP_DEFAULT_MODE
+multiline_comment|/*1*/
 id|NET_AX25_IP_DEFAULT_MODE
 op_assign
 l_int|1
@@ -792,6 +844,7 @@ DECL|enumerator|NET_AX25_T3_TIMEOUT
 id|NET_AX25_T3_TIMEOUT
 comma
 DECL|enumerator|NET_AX25_IDLE_TIMEOUT
+multiline_comment|/*10*/
 id|NET_AX25_IDLE_TIMEOUT
 comma
 DECL|enumerator|NET_AX25_N2
@@ -804,6 +857,7 @@ DECL|enumerator|NET_AX25_PROTOCOL
 id|NET_AX25_PROTOCOL
 comma
 DECL|enumerator|NET_AX25_DAMA_SLAVE_TIMEOUT
+multiline_comment|/*14*/
 id|NET_AX25_DAMA_SLAVE_TIMEOUT
 )brace
 suffix:semicolon
@@ -811,6 +865,7 @@ multiline_comment|/* /proc/sys/net/rose */
 r_enum
 (brace
 DECL|enumerator|NET_ROSE_RESTART_REQUEST_TIMEOUT
+multiline_comment|/*1*/
 id|NET_ROSE_RESTART_REQUEST_TIMEOUT
 op_assign
 l_int|1
@@ -823,9 +878,6 @@ id|NET_ROSE_RESET_REQUEST_TIMEOUT
 comma
 DECL|enumerator|NET_ROSE_CLEAR_REQUEST_TIMEOUT
 id|NET_ROSE_CLEAR_REQUEST_TIMEOUT
-comma
-DECL|enumerator|NET_ROSE_NO_ACTIVITY_TIMEOUT
-id|NET_ROSE_NO_ACTIVITY_TIMEOUT
 comma
 DECL|enumerator|NET_ROSE_ACK_HOLD_BACK_TIMEOUT
 id|NET_ROSE_ACK_HOLD_BACK_TIMEOUT
@@ -841,12 +893,18 @@ id|NET_ROSE_MAX_VCS
 comma
 DECL|enumerator|NET_ROSE_WINDOW_SIZE
 id|NET_ROSE_WINDOW_SIZE
+comma
+DECL|enumerator|NET_ROSE_NO_ACTIVITY_TIMEOUT
+multiline_comment|/*10*/
+id|NET_ROSE_NO_ACTIVITY_TIMEOUT
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/x25 */
 r_enum
 (brace
 DECL|enumerator|NET_X25_RESTART_REQUEST_TIMEOUT
+multiline_comment|/*1*/
 id|NET_X25_RESTART_REQUEST_TIMEOUT
 op_assign
 l_int|1
@@ -861,6 +919,7 @@ DECL|enumerator|NET_X25_CLEAR_REQUEST_TIMEOUT
 id|NET_X25_CLEAR_REQUEST_TIMEOUT
 comma
 DECL|enumerator|NET_X25_ACK_HOLD_BACK_TIMEOUT
+multiline_comment|/*5*/
 id|NET_X25_ACK_HOLD_BACK_TIMEOUT
 )brace
 suffix:semicolon
@@ -868,6 +927,7 @@ multiline_comment|/* /proc/sys/net/token-ring */
 r_enum
 (brace
 DECL|enumerator|NET_TR_RIF_TIMEOUT
+multiline_comment|/*1*/
 id|NET_TR_RIF_TIMEOUT
 op_assign
 l_int|1
@@ -877,6 +937,7 @@ multiline_comment|/* /proc/sys/net/decnet */
 r_enum
 (brace
 DECL|enumerator|NET_DECNET_DEF_T3_BROADCAST
+multiline_comment|/*1*/
 id|NET_DECNET_DEF_T3_BROADCAST
 op_assign
 l_int|1
@@ -894,6 +955,7 @@ DECL|enumerator|NET_DECNET_CACHETIMEOUT
 id|NET_DECNET_CACHETIMEOUT
 comma
 DECL|enumerator|NET_DECNET_DEBUG_LEVEL
+multiline_comment|/*6*/
 id|NET_DECNET_DEBUG_LEVEL
 )brace
 suffix:semicolon
@@ -902,6 +964,7 @@ multiline_comment|/* CTL_FS names: */
 r_enum
 (brace
 DECL|enumerator|FS_NRINODE
+multiline_comment|/*1*/
 id|FS_NRINODE
 op_assign
 l_int|1
@@ -933,6 +996,15 @@ multiline_comment|/* int: maximum number of filedescriptors that can be allocate
 DECL|enumerator|FS_DENTRY
 id|FS_DENTRY
 comma
+DECL|enumerator|FS_NRSUPER
+id|FS_NRSUPER
+comma
+multiline_comment|/* int: current number of allocated super_blocks */
+DECL|enumerator|FS_MAXSUPER
+multiline_comment|/*10*/
+id|FS_MAXSUPER
+comma
+multiline_comment|/* int: maximum number of super_blocks that can be allocated */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_DEBUG names: */
@@ -940,9 +1012,14 @@ multiline_comment|/* CTL_DEV names: */
 r_enum
 (brace
 DECL|enumerator|DEV_CDROM
+multiline_comment|/*1*/
 id|DEV_CDROM
 op_assign
 l_int|1
+comma
+DECL|enumerator|DEV_HWMON
+multiline_comment|/*2*/
+id|DEV_HWMON
 comma
 )brace
 suffix:semicolon
@@ -950,6 +1027,7 @@ multiline_comment|/* /proc/sys/dev/cdrom */
 r_enum
 (brace
 DECL|enumerator|DEV_CDROM_INFO
+multiline_comment|/*1*/
 id|DEV_CDROM_INFO
 op_assign
 l_int|1

@@ -14308,6 +14308,13 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
+id|hw_config-&gt;slots
+(braket
+l_int|4
+)braket
+op_assign
+id|gus_devnum
+suffix:semicolon
 id|audio_devs
 (braket
 id|gus_devnum

@@ -1505,6 +1505,22 @@ suffix:semicolon
 r_int
 id|retval
 suffix:semicolon
+id|sigset_t
+id|oldmask
+suffix:semicolon
+id|rpc_clnt_sigmask
+c_func
+(paren
+id|NFS_CLIENT
+c_func
+(paren
+id|req-&gt;wb_inode
+)paren
+comma
+op_amp
+id|oldmask
+)paren
+suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -1559,11 +1575,10 @@ op_assign
 op_minus
 id|ERESTARTSYS
 suffix:semicolon
+multiline_comment|/* IS_SOFT is a timeout item .. */
 r_if
 c_cond
 (paren
-id|IS_SOFT
-op_logical_and
 id|signalled
 c_func
 (paren
@@ -1600,6 +1615,19 @@ c_func
 (paren
 id|page
 )paren
+)paren
+suffix:semicolon
+id|rpc_clnt_sigunmask
+c_func
+(paren
+id|NFS_CLIENT
+c_func
+(paren
+id|req-&gt;wb_inode
+)paren
+comma
+op_amp
+id|oldmask
 )paren
 suffix:semicolon
 r_return
@@ -1782,6 +1810,7 @@ id|count
 )paren
 (brace
 multiline_comment|/* N.B. check for a fault here and cancel the req */
+multiline_comment|/*&n;&t;&t;&t; *&t;SECURITY - copy_from_user must zero the&n;&t;&t;&t; *&t;rest of the data after a fault!&n;&t;&t;&t; */
 id|copy_from_user
 c_func
 (paren
@@ -3182,7 +3211,7 @@ op_assign
 op_amp
 id|req-&gt;wb_fattr
 suffix:semicolon
-multiline_comment|/* Update attributes as result of writeback. &n;&t;&t; * Beware: when UDP replies arrive out of order, we&n;&t;&t; * may end up overwriting a previous, bigger file size.&n;&t;&t; */
+multiline_comment|/* Update attributes as result of writeback. &n;&t;&t; * Beware: when UDP replies arrive out of order, we&n;&t;&t; * may end up overwriting a previous, bigger file size.&n;&t;&t; *&n;&t;&t; * When the file size shrinks we cancel all pending&n;&t;&t; * writebacks. &n;&t;&t; */
 r_if
 c_cond
 (paren

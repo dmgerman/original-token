@@ -48,6 +48,10 @@ DECL|macro|F_SETOWN
 mdefine_line|#define F_SETOWN&t;8&t;/*  for sockets. */
 DECL|macro|F_GETOWN
 mdefine_line|#define F_GETOWN&t;9&t;/*  for sockets. */
+DECL|macro|F_SETSIG
+mdefine_line|#define F_SETSIG&t;10&t;/*  for sockets. */
+DECL|macro|F_GETSIG
+mdefine_line|#define F_GETSIG&t;11&t;/*  for sockets. */
 multiline_comment|/* for F_[GET|SET]FL */
 DECL|macro|FD_CLOEXEC
 mdefine_line|#define FD_CLOEXEC&t;1&t;/* actually anything with low bit set goes */

@@ -18,12 +18,26 @@ id|hw_config
 )paren
 (brace
 macro_line|#if defined(CONFIG_AUDIO) || defined(CONFIG_MIDI)
+r_if
+c_cond
+(paren
+op_logical_neg
 id|sb_dsp_init
 c_func
 (paren
 id|hw_config
 )paren
+)paren
+(brace
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
+)brace
 macro_line|#endif
 )brace
 DECL|function|probe_sb
@@ -81,12 +95,25 @@ op_star
 id|hw_config
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
 id|sb_dsp_unload
 c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|variable|sb_be_quiet
 r_int
@@ -333,7 +360,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;I/O, IRQ, and DMA are mandatory&bslash;n&quot;
+l_string|&quot;sb_card: I/O, IRQ, and DMA are mandatory&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -383,6 +410,23 @@ op_amp
 id|config
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|config.slots
+(braket
+l_int|0
+)braket
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_MIDI
 id|config_mpu.io_base
 op_assign

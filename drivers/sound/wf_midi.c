@@ -1306,7 +1306,9 @@ l_int|NULL
 )paren
 r_return
 op_minus
+(paren
 id|ENXIO
+)paren
 suffix:semicolon
 id|devc
 op_assign
@@ -1324,7 +1326,9 @@ id|devc-&gt;opened
 (brace
 r_return
 op_minus
+(paren
 id|EBUSY
+)paren
 suffix:semicolon
 )brace
 id|devc-&gt;mode
@@ -2020,8 +2024,6 @@ r_struct
 id|synth_operations
 id|wf_mpu_synth_operations
 (braket
-id|WAVEFRONT_MAX_DEVICES
-op_star
 l_int|2
 )braket
 suffix:semicolon
@@ -2031,8 +2033,6 @@ r_struct
 id|midi_operations
 id|wf_mpu_midi_operations
 (braket
-id|WAVEFRONT_MAX_DEVICES
-op_star
 l_int|2
 )braket
 suffix:semicolon
@@ -2116,16 +2116,13 @@ c_cond
 (paren
 id|wfmpu_cnt
 op_ge
-id|WAVEFRONT_MAX_DEVICES
-op_star
 l_int|2
 )paren
 (brace
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WF-MPU: eh ? more MPU devices &quot;
-l_string|&quot;than cards ?!!&bslash;n&quot;
+l_string|&quot;WF-MPU: more MPU devices than cards ?!!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

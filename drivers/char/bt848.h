@@ -445,6 +445,11 @@ DECL|macro|BT848_RISC_COUNT
 mdefine_line|#define BT848_RISC_COUNT       0x120
 DECL|macro|BT848_GPIO_DATA
 mdefine_line|#define BT848_GPIO_DATA        0x200
+multiline_comment|/* Bt878 register */
+DECL|macro|BT878_DEVCTRL
+mdefine_line|#define BT878_DEVCTRL 0x40
+DECL|macro|BT878_NTBF
+mdefine_line|#define BT878_NTBF 0x02
 multiline_comment|/* Bt848 RISC commands */
 multiline_comment|/* only for the SYNC RISC command */
 DECL|macro|BT848_FIFO_STATUS_FM1

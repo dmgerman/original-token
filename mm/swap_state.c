@@ -231,7 +231,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * If swap_map[] reaches 127, the entries are treated as &quot;permanent&quot;.&n; */
+multiline_comment|/*&n; * If swap_map[] reaches SWAP_MAP_MAX the entries are treated as &quot;permanent&quot;.&n; */
 DECL|function|swap_duplicate
 r_void
 id|swap_duplicate
@@ -334,7 +334,7 @@ id|p-&gt;swap_map
 id|offset
 )braket
 OL
-l_int|126
+id|SWAP_MAP_MAX
 )paren
 id|p-&gt;swap_map
 (braket
@@ -376,7 +376,7 @@ id|p-&gt;swap_map
 id|offset
 )braket
 op_assign
-l_int|127
+id|SWAP_MAP_MAX
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG_SWAP

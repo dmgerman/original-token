@@ -211,6 +211,9 @@ r_int
 id|tty_fasync
 c_func
 (paren
+r_int
+id|fd
+comma
 r_struct
 id|file
 op_star
@@ -1411,6 +1414,9 @@ suffix:semicolon
 id|tty_fasync
 c_func
 (paren
+op_minus
+l_int|1
+comma
 id|filp
 comma
 l_int|0
@@ -3918,6 +3924,9 @@ suffix:semicolon
 id|tty_fasync
 c_func
 (paren
+op_minus
+l_int|1
+comma
 id|filp
 comma
 l_int|0
@@ -5358,6 +5367,9 @@ r_int
 id|fasync_helper
 c_func
 (paren
+r_int
+id|fd
+comma
 r_struct
 id|file
 op_star
@@ -5429,9 +5441,15 @@ c_cond
 (paren
 id|fa
 )paren
+(brace
+id|fa-&gt;fa_fd
+op_assign
+id|fd
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|fa
 op_assign
 (paren
@@ -5468,6 +5486,10 @@ suffix:semicolon
 id|fa-&gt;fa_file
 op_assign
 id|filp
+suffix:semicolon
+id|fa-&gt;fa_fd
+op_assign
+id|fd
 suffix:semicolon
 id|save_flags
 c_func
@@ -5547,6 +5569,9 @@ r_int
 id|tty_fasync
 c_func
 (paren
+r_int
+id|fd
+comma
 r_struct
 id|file
 op_star
@@ -5594,6 +5619,8 @@ op_assign
 id|fasync_helper
 c_func
 (paren
+id|fd
+comma
 id|filp
 comma
 id|on

@@ -4908,10 +4908,16 @@ op_logical_and
 op_logical_neg
 id|max_mididev
 )paren
+(brace
+id|sequencer_busy
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+)brace
 id|synth_open_mask
 op_assign
 l_int|0

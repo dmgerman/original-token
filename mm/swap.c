@@ -45,7 +45,7 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Constants for the page aging mechanism: the maximum age (actually,&n; * the maximum &quot;youthfulness&quot;); the quanta by which pages rejuvenate&n; * and age; and the initial age for new pages. &n; */
+multiline_comment|/*&n; * Constants for the page aging mechanism: the maximum age (actually,&n; * the maximum &quot;youthfulness&quot;); the quanta by which pages rejuvenate&n; * and age; and the initial age for new pages. &n; *&n; * The &quot;pageout_weight&quot; is strictly a fixedpoint number with the&n; * ten low bits being the fraction (ie 8192 really means &quot;8.0&quot;).&n; */
 DECL|variable|swap_control
 id|swap_control_t
 id|swap_control
@@ -67,9 +67,10 @@ comma
 multiline_comment|/* Aging cluster */
 l_int|8192
 comma
+multiline_comment|/* sc_pageout_weight aka PAGEOUT_WEIGHT */
 l_int|8192
 comma
-multiline_comment|/* Pageout and bufferout weights */
+multiline_comment|/* sc_bufferout_weight aka BUFFEROUT_WEIGHT */
 )brace
 suffix:semicolon
 DECL|variable|swapstats
@@ -91,7 +92,7 @@ multiline_comment|/* minimum percent buffer */
 l_int|25
 comma
 multiline_comment|/* borrow percent buffer */
-l_int|50
+l_int|60
 multiline_comment|/* maximum percent buffer */
 )brace
 suffix:semicolon
@@ -100,7 +101,7 @@ id|buffer_mem_t
 id|page_cache
 op_assign
 (brace
-l_int|10
+l_int|5
 comma
 multiline_comment|/* minimum percent page cache */
 l_int|30
