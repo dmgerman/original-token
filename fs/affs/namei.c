@@ -1353,6 +1353,7 @@ id|dir-&gt;i_sb-&gt;u.affs_sb.s_flags
 op_amp
 id|SF_OFS
 )paren
+(brace
 id|inode-&gt;i_op
 op_assign
 op_amp
@@ -1363,6 +1364,7 @@ op_assign
 op_amp
 id|affs_file_operations_ofs
 suffix:semicolon
+)brace
 r_else
 (brace
 id|inode-&gt;i_op

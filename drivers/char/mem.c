@@ -2656,20 +2656,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_OSS&t;
+macro_line|#ifdef CONFIG_SOUND_OSS
 id|soundcard_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 macro_line|#ifdef CONFIG_DMASOUND
 id|dmasound_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_SPARCAUDIO
 id|sparcaudio_init

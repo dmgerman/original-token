@@ -292,7 +292,11 @@ id|irq
 dot
 id|status
 op_amp
+(paren
 id|IRQ_DISABLED
+op_or
+id|IRQ_INPROGRESS
+)paren
 )paren
 )paren
 id|enable_8259A_irq

@@ -124,11 +124,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|init_rtc_irq
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Not interested in the bogus interrupts (3,10), Fan Fault (0),&n;           NMI (1), or EIDE (9).&n;&n;&t;   We also disable the risers (4,5), since we don&squot;t know how to&n;&t;   route the interrupts behind the bridge.  */
 id|init_pyxis_irqs
 c_func

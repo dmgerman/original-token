@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.19 2000/01/09 02:19:26 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.20 2000/02/27 19:51:38 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _NET_IPV6_H
 DECL|macro|_NET_IPV6_H
 mdefine_line|#define _NET_IPV6_H
@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/ipv6.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
 macro_line|#include &lt;net/flow.h&gt;
+DECL|macro|SIN6_LEN_RFC2133
+mdefine_line|#define SIN6_LEN_RFC2133&t;24
 multiline_comment|/*&n; *&t;NextHeader field of IPv6 header&n; */
 DECL|macro|NEXTHDR_HOP
 mdefine_line|#define NEXTHDR_HOP&t;&t;0&t;/* Hop-by-hop option header. */

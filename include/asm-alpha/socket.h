@@ -55,6 +55,8 @@ DECL|macro|SO_ATTACH_FILTER
 mdefine_line|#define SO_ATTACH_FILTER        26
 DECL|macro|SO_DETACH_FILTER
 mdefine_line|#define SO_DETACH_FILTER        27
+DECL|macro|SO_PEERNAME
+mdefine_line|#define SO_PEERNAME&t;&t;28
 multiline_comment|/* Security levels - as per NRL IPv6 - don&squot;t actually do anything */
 DECL|macro|SO_SECURITY_AUTHENTICATION
 mdefine_line|#define SO_SECURITY_AUTHENTICATION&t;&t;19

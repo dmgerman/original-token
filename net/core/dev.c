@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/brlock.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/slhc.h&gt;
@@ -96,13 +97,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Taps */
-DECL|variable|ptype_lock
-r_static
-id|rwlock_t
-id|ptype_lock
-op_assign
-id|RW_LOCK_UNLOCKED
-suffix:semicolon
 multiline_comment|/*&n; *&t;Our notifier list&n; */
 DECL|variable|netdev_chain
 r_static
@@ -156,11 +150,10 @@ id|pt
 r_int
 id|hash
 suffix:semicolon
-id|write_lock_bh
+id|br_write_lock_bh
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
@@ -233,11 +226,10 @@ op_assign
 id|pt
 suffix:semicolon
 )brace
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 )brace
@@ -259,11 +251,10 @@ op_star
 op_star
 id|pt1
 suffix:semicolon
-id|write_lock_bh
+id|br_write_lock_bh
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_if
@@ -354,22 +345,20 @@ id|netdev_fastroute_obstacles
 op_decrement
 suffix:semicolon
 macro_line|#endif
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 )brace
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 id|printk
@@ -1467,11 +1456,10 @@ op_amp
 id|skb-&gt;stamp
 )paren
 suffix:semicolon
-id|read_lock
+id|br_read_lock
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_for
@@ -1621,11 +1609,10 @@ id|ptype
 suffix:semicolon
 )brace
 )brace
-id|read_unlock
+id|br_read_unlock
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 )brace
@@ -2619,7 +2606,7 @@ id|net_bh_lock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Reparent skb to master device. This function is called&n; * only from net_rx_action under ptype_lock. It is misuse&n; * of ptype_lock, but it is OK for now.&n; */
+multiline_comment|/* Reparent skb to master device. This function is called&n; * only from net_rx_action under BR_NETPROTO_LOCK. It is misuse&n; * of BR_NETPROTO_LOCK, but it is OK for now.&n; */
 DECL|function|skb_bond
 r_static
 id|__inline__
@@ -2894,11 +2881,10 @@ r_void
 )paren
 )paren
 (brace
-id|write_lock_bh
+id|br_write_lock_bh
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 id|fn
@@ -2906,11 +2892,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 )brace
@@ -3035,11 +3020,10 @@ id|bugdet
 op_assign
 id|netdev_max_backlog
 suffix:semicolon
-id|read_lock
+id|br_read_lock
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_for
@@ -3390,11 +3374,10 @@ r_goto
 id|softnet_break
 suffix:semicolon
 )brace
-id|read_unlock
+id|br_read_unlock
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 id|local_irq_disable
@@ -3445,11 +3428,10 @@ r_return
 suffix:semicolon
 id|softnet_break
 suffix:colon
-id|read_unlock
+id|br_read_unlock
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 id|local_irq_disable
@@ -4733,22 +4715,20 @@ id|master
 )paren
 suffix:semicolon
 )brace
-id|write_lock_bh
+id|br_write_lock_bh
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 id|slave-&gt;master
 op_assign
 id|master
 suffix:semicolon
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|ptype_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_if
@@ -5287,6 +5267,12 @@ r_if
 c_cond
 (paren
 id|netif_running
+c_func
+(paren
+id|dev
+)paren
+op_logical_and
+id|netif_carrier_ok
 c_func
 (paren
 id|dev
@@ -7605,6 +7591,15 @@ id|dev_init_scheduler
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|__LINK_STATE_PRESENT
+comma
+op_amp
+id|dev-&gt;state
 )paren
 suffix:semicolon
 )brace

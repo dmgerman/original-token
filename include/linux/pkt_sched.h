@@ -384,6 +384,39 @@ r_char
 id|Scell_log
 suffix:semicolon
 multiline_comment|/* cell size for idle damping */
+DECL|member|flags
+r_int
+r_char
+id|flags
+suffix:semicolon
+DECL|macro|TC_RED_ECN
+mdefine_line|#define TC_RED_ECN&t;1
+)brace
+suffix:semicolon
+DECL|struct|tc_red_xstats
+r_struct
+id|tc_red_xstats
+(brace
+DECL|member|early
+id|__u32
+id|early
+suffix:semicolon
+multiline_comment|/* Early drops */
+DECL|member|pdrop
+id|__u32
+id|pdrop
+suffix:semicolon
+multiline_comment|/* Drops due to queue limits */
+DECL|member|other
+id|__u32
+id|other
+suffix:semicolon
+multiline_comment|/* Drops due to drop() calls */
+DECL|member|marked
+id|__u32
+id|marked
+suffix:semicolon
+multiline_comment|/* Marked packets */
 )brace
 suffix:semicolon
 multiline_comment|/* GRED section */

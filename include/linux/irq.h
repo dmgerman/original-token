@@ -159,14 +159,6 @@ DECL|member|lock
 id|spinlock_t
 id|lock
 suffix:semicolon
-DECL|member|__pad
-r_int
-r_int
-id|__pad
-(braket
-l_int|3
-)braket
-suffix:semicolon
 DECL|typedef|irq_desc_t
 )brace
 id|____cacheline_aligned
@@ -179,50 +171,6 @@ id|irq_desc
 id|NR_IRQS
 )braket
 suffix:semicolon
-r_typedef
-r_struct
-(brace
-DECL|member|__local_irq_count
-r_int
-r_int
-id|__local_irq_count
-suffix:semicolon
-DECL|member|__local_bh_count
-r_int
-r_int
-id|__local_bh_count
-suffix:semicolon
-DECL|member|__nmi_counter
-id|atomic_t
-id|__nmi_counter
-suffix:semicolon
-DECL|member|__pad
-r_int
-r_int
-id|__pad
-(braket
-l_int|5
-)braket
-suffix:semicolon
-DECL|typedef|irq_cpustat_t
-)brace
-id|____cacheline_aligned
-id|irq_cpustat_t
-suffix:semicolon
-r_extern
-id|irq_cpustat_t
-id|irq_stat
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-multiline_comment|/*&n; * Simple wrappers reducing source bloat&n; */
-DECL|macro|local_irq_count
-mdefine_line|#define local_irq_count(cpu) (irq_stat[(cpu)].__local_irq_count)
-DECL|macro|local_bh_count
-mdefine_line|#define local_bh_count(cpu) (irq_stat[(cpu)].__local_bh_count)
-DECL|macro|nmi_counter
-mdefine_line|#define nmi_counter(cpu) (irq_stat[(cpu)].__nmi_counter)
 macro_line|#include &lt;asm/hw_irq.h&gt; /* the arch dependent stuff */
 r_extern
 r_int
@@ -242,10 +190,6 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-id|spinlock_t
-id|irq_controller_lock
-suffix:semicolon
-r_extern
 r_int
 id|setup_irq
 c_func
@@ -263,5 +207,29 @@ id|hw_irq_controller
 id|no_irq_type
 suffix:semicolon
 multiline_comment|/* needed in every arch ? */
+r_extern
+r_void
+id|no_action
+c_func
+(paren
+r_int
+id|cpl
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_volatile
+r_int
+r_int
+id|irq_err_count
+suffix:semicolon
 macro_line|#endif /* __asm_h */
 eof

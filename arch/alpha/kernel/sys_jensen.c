@@ -80,7 +80,7 @@ id|jensen_local_ack
 comma
 id|end
 suffix:colon
-id|i8259a_enable_irq
+id|i8259a_end_irq
 comma
 )brace
 suffix:semicolon
@@ -246,11 +246,6 @@ r_void
 )paren
 (brace
 id|init_i8259a_irqs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|init_rtc_irq
 c_func
 (paren
 )paren

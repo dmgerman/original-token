@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;INET protocol dispatch tables.&n; *&n; * Version:&t;$Id: protocol.c,v 1.10 1999/08/20 11:05:55 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: Ahah! udp icmp errors don&squot;t work because&n; *&t;&t;&t;&t;  udp_err is never called!&n; *&t;&t;Alan Cox&t;: Added new fields for init and ready for&n; *&t;&t;&t;&t;  proper fragmentation (_NO_ 4K limits!)&n; *&t;&t;Richard Colella&t;: Hang on hash collision&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;INET protocol dispatch tables.&n; *&n; * Version:&t;$Id: protocol.c,v 1.11 2000/02/22 23:54:26 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: Ahah! udp icmp errors don&squot;t work because&n; *&t;&t;&t;&t;  udp_err is never called!&n; *&t;&t;Alan Cox&t;: Added new fields for init and ready for&n; *&t;&t;&t;&t;  proper fragmentation (_NO_ 4K limits!)&n; *&t;&t;Richard Colella&t;: Hang on hash collision&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/brlock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
@@ -176,12 +177,6 @@ op_assign
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|variable|inet_protocol_lock
-id|rwlock_t
-id|inet_protocol_lock
-op_assign
-id|RW_LOCK_UNLOCKED
-suffix:semicolon
 multiline_comment|/*&n; *&t;Add a protocol handler to the hash tables&n; */
 DECL|function|inet_add_protocol
 r_void
@@ -213,11 +208,10 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|write_lock_bh
+id|br_write_lock_bh
 c_func
 (paren
-op_amp
-id|inet_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 id|prot
@@ -283,11 +277,10 @@ op_star
 id|p2-&gt;next
 suffix:semicolon
 )brace
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|inet_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 )brace
@@ -329,11 +322,10 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|write_lock_bh
+id|br_write_lock_bh
 c_func
 (paren
-op_amp
-id|inet_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_if
@@ -364,11 +356,10 @@ id|hash
 op_member_access_from_pointer
 id|next
 suffix:semicolon
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|inet_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_return
@@ -428,11 +419,10 @@ id|p-&gt;next
 op_assign
 id|prot-&gt;next
 suffix:semicolon
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|inet_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_return
@@ -464,11 +454,10 @@ op_star
 id|p-&gt;next
 suffix:semicolon
 )brace
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|inet_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_return

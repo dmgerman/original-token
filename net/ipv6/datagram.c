@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;common UDP/RAW code&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: datagram.c,v 1.18 1999/08/20 11:06:17 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;common UDP/RAW code&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: datagram.c,v 1.19 2000/02/27 19:51:47 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -526,6 +526,10 @@ id|sin-&gt;sin6_port
 op_assign
 id|serr-&gt;port
 suffix:semicolon
+id|sin-&gt;sin6_scope_id
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -569,8 +573,39 @@ l_int|24
 op_amp
 id|IPV6_FLOWINFO_MASK
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ipv6_addr_type
+c_func
+(paren
+op_amp
+id|sin-&gt;sin6_addr
+)paren
+op_amp
+id|IPV6_ADDR_LINKLOCAL
+)paren
+(brace
+r_struct
+id|inet6_skb_parm
+op_star
+id|opt
+op_assign
+(paren
+r_struct
+id|inet6_skb_parm
+op_star
+)paren
+id|skb-&gt;cb
+suffix:semicolon
+id|sin-&gt;sin6_scope_id
+op_assign
+id|opt-&gt;iif
+suffix:semicolon
+)brace
 )brace
 r_else
+(brace
 id|ipv6_addr_set
 c_func
 (paren
@@ -599,6 +634,7 @@ id|serr-&gt;addr_offset
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 id|memcpy
 c_func
@@ -676,6 +712,36 @@ comma
 id|skb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ipv6_addr_type
+c_func
+(paren
+op_amp
+id|sin-&gt;sin6_addr
+)paren
+op_amp
+id|IPV6_ADDR_LINKLOCAL
+)paren
+(brace
+r_struct
+id|inet6_skb_parm
+op_star
+id|opt
+op_assign
+(paren
+r_struct
+id|inet6_skb_parm
+op_star
+)paren
+id|skb-&gt;cb
+suffix:semicolon
+id|sin-&gt;sin6_scope_id
+op_assign
+id|opt-&gt;iif
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace

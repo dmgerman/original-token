@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 input&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Ian P. Morris&t;&t;&lt;I.P.Morris@soton.ac.uk&gt;&n; *&n; *&t;$Id: ip6_input.c,v 1.15 2000/01/09 02:19:54 davem Exp $&n; *&n; *&t;Based in linux/net/ipv4/ip_input.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 input&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Ian P. Morris&t;&t;&lt;I.P.Morris@soton.ac.uk&gt;&n; *&n; *&t;$Id: ip6_input.c,v 1.17 2000/02/27 19:42:53 davem Exp $&n; *&n; *&t;Based in linux/net/ipv4/ip_input.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -8,6 +8,8 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/icmpv6.h&gt;
+macro_line|#include &lt;linux/netfilter.h&gt;
+macro_line|#include &lt;linux/netfilter_ipv6.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
@@ -17,6 +19,42 @@ macro_line|#include &lt;net/rawv6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
 macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
+DECL|function|ip6_rcv_finish
+r_static
+r_inline
+r_int
+id|ip6_rcv_finish
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|skb-&gt;dst
+op_eq
+l_int|NULL
+)paren
+id|ip6_route_input
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+id|skb-&gt;dst
+op_member_access_from_pointer
+id|input
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 DECL|function|ipv6_rcv
 r_int
 id|ipv6_rcv
@@ -213,26 +251,21 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|skb-&gt;dst
-op_eq
-l_int|NULL
-)paren
-id|ip6_route_input
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_return
-id|skb-&gt;dst
-op_member_access_from_pointer
-id|input
+id|NF_HOOK
 c_func
 (paren
+id|PF_INET6
+comma
+id|NF_IP6_PRE_ROUTING
+comma
 id|skb
+comma
+id|dev
+comma
+l_int|NULL
+comma
+id|ip6_rcv_finish
 )paren
 suffix:semicolon
 id|truncated
@@ -266,9 +299,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Deliver the packet to the host&n; */
-DECL|function|ip6_input
+DECL|function|ip6_input_finish
+r_static
+r_inline
 r_int
-id|ip6_input
+id|ip6_input_finish
 c_func
 (paren
 r_struct
@@ -479,13 +514,6 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|read_lock
-c_func
-(paren
-op_amp
-id|inet6_protocol_lock
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -568,13 +596,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|read_unlock
-c_func
-(paren
-op_amp
-id|inet6_protocol_lock
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -629,6 +650,35 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|ip6_input
+r_int
+id|ip6_input
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_return
+id|NF_HOOK
+c_func
+(paren
+id|PF_INET6
+comma
+id|NF_IP6_LOCAL_IN
+comma
+id|skb
+comma
+id|skb-&gt;dev
+comma
+l_int|NULL
+comma
+id|ip6_input_finish
+)paren
 suffix:semicolon
 )brace
 DECL|function|ip6_mc_input

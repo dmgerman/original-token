@@ -8275,6 +8275,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#ifdef CONFIG_PCI
 multiline_comment|/* Look for parallel controllers that we don&squot;t know about. */
 id|pci_for_each_dev
 c_func
@@ -8376,6 +8377,7 @@ id|pcidev-&gt;device
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_return
 id|count
 suffix:semicolon

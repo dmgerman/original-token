@@ -21,9 +21,6 @@ suffix:semicolon
 r_struct
 id|pci_controler
 suffix:semicolon
-r_struct
-id|irqaction
-suffix:semicolon
 multiline_comment|/* core_apecs.c */
 r_extern
 r_struct
@@ -476,11 +473,6 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|cpu_present_mask
-suffix:semicolon
 multiline_comment|/* bios32.c */
 multiline_comment|/* extern void reset_for_srm(void); */
 multiline_comment|/* time.c */
@@ -507,9 +499,7 @@ r_void
 id|common_init_rtc
 c_func
 (paren
-r_struct
-id|irqaction
-op_star
+r_void
 )paren
 suffix:semicolon
 r_extern

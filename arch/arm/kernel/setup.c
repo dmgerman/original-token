@@ -3133,6 +3133,11 @@ c_func
 id|mdesc
 )paren
 suffix:semicolon
+id|paging_init
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_VT
 macro_line|#if defined(CONFIG_VGA_CONSOLE)
 id|conswitchp

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PF_INET6 protocol dispatch tables.&n; *&n; * Version:&t;$Id: protocol.c,v 1.7 1999/08/20 11:06:26 davem Exp $&n; *&n; * Authors:&t;Pedro Roque&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PF_INET6 protocol dispatch tables.&n; *&n; * Version:&t;$Id: protocol.c,v 1.8 2000/02/22 23:54:29 davem Exp $&n; *&n; * Authors:&t;Pedro Roque&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/brlock.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
@@ -32,12 +33,6 @@ op_assign
 (brace
 l_int|NULL
 )brace
-suffix:semicolon
-DECL|variable|inet6_protocol_lock
-id|rwlock_t
-id|inet6_protocol_lock
-op_assign
-id|RW_LOCK_UNLOCKED
 suffix:semicolon
 DECL|function|inet6_add_protocol
 r_void
@@ -69,11 +64,10 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|write_lock_bh
+id|br_write_lock_bh
 c_func
 (paren
-op_amp
-id|inet6_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 id|prot-&gt;next
@@ -137,11 +131,10 @@ op_star
 id|p2-&gt;next
 suffix:semicolon
 )brace
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|inet6_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 )brace
@@ -183,11 +176,10 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|write_lock_bh
+id|br_write_lock_bh
 c_func
 (paren
-op_amp
-id|inet6_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_if
@@ -218,11 +210,10 @@ id|hash
 op_member_access_from_pointer
 id|next
 suffix:semicolon
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|inet6_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_return
@@ -282,11 +273,10 @@ id|p-&gt;next
 op_assign
 id|prot-&gt;next
 suffix:semicolon
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|inet6_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_return
@@ -318,11 +308,10 @@ op_star
 id|p-&gt;next
 suffix:semicolon
 )brace
-id|write_unlock_bh
+id|br_write_unlock_bh
 c_func
 (paren
-op_amp
-id|inet6_protocol_lock
+id|BR_NETPROTO_LOCK
 )paren
 suffix:semicolon
 r_return

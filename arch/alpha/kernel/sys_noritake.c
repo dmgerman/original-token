@@ -77,7 +77,6 @@ id|port
 suffix:semicolon
 )brace
 r_static
-r_inline
 r_void
 DECL|function|noritake_enable_irq
 id|noritake_enable_irq
@@ -106,7 +105,6 @@ l_int|16
 suffix:semicolon
 )brace
 r_static
-r_inline
 r_void
 DECL|function|noritake_disable_irq
 id|noritake_disable_irq
@@ -452,11 +450,6 @@ id|noritake_irq_type
 suffix:semicolon
 )brace
 id|init_i8259a_irqs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|init_rtc_irq
 c_func
 (paren
 )paren

@@ -3556,7 +3556,7 @@ id|inode-&gt;i_fop
 op_assign
 op_amp
 id|ntfs_file_operations_nommap
-comma
+suffix:semicolon
 )brace
 id|inode-&gt;i_mode
 op_assign

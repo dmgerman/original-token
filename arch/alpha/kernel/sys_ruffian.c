@@ -178,10 +178,7 @@ DECL|function|ruffian_init_rtc
 id|ruffian_init_rtc
 c_func
 (paren
-r_struct
-id|irqaction
-op_star
-id|action
+r_void
 )paren
 (brace
 multiline_comment|/* Ruffian does not have the RTC connected to the CPU timer&n;&t;   interrupt.  Instead, it uses the PIT connected to IRQ 0.  */
@@ -247,7 +244,8 @@ c_func
 (paren
 l_int|0
 comma
-id|action
+op_amp
+id|timer_irqaction
 )paren
 suffix:semicolon
 )brace

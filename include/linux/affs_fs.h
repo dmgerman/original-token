@@ -749,6 +749,11 @@ id|affs_dir_inode_operations
 suffix:semicolon
 r_extern
 r_struct
+id|inode_operations
+id|affs_symlink_inode_operations
+suffix:semicolon
+r_extern
+r_struct
 id|file_operations
 id|affs_file_operations
 suffix:semicolon

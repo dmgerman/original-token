@@ -5,7 +5,7 @@ mdefine_line|#define __SPARC_SPINLOCK_H
 macro_line|#include &lt;linux/threads.h&gt;&t;/* For NR_CPUS */
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/psr.h&gt;
-multiline_comment|/* Define this to use the verbose/debugging versions in arch/sparc/lib/debuglocks.c */
+multiline_comment|/*&n; * Define this to use the verbose/debugging versions in&n; * arch/sparc/lib/debuglocks.c&n; *&n; * Be sure to make check_asm whenever changing this option.&n; */
 DECL|macro|SPIN_LOCK_DEBUG
 mdefine_line|#define SPIN_LOCK_DEBUG
 macro_line|#ifdef SPIN_LOCK_DEBUG
@@ -182,11 +182,11 @@ suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED&t;0
 DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(lock)&t;(*(lock) = 0)
+mdefine_line|#define spin_lock_init(lock)   (*((unsigned char *)(lock)) = 0)
 DECL|macro|spin_is_locked
 mdefine_line|#define spin_is_locked(lock)    (*((volatile unsigned char *)(lock)) != 0)
 DECL|macro|spin_unlock_wait
-mdefine_line|#define spin_unlock_wait(lock)&t;do { barrier(); } while(*(volatile unsigned char *)lock)
+mdefine_line|#define spin_unlock_wait(lock) &bslash;&n;do { &bslash;&n;&t;barrier(); &bslash;&n;} while(*((volatile unsigned char *)lock))
 DECL|function|spin_lock
 r_extern
 id|__inline__
@@ -239,7 +239,7 @@ op_mod
 op_mod
 id|g2
 dot
-id|text
+id|subsection
 l_int|2
 l_int|2
 suffix:colon
@@ -445,8 +445,6 @@ l_string|&quot;g2&quot;
 comma
 l_string|&quot;g4&quot;
 comma
-l_string|&quot;g7&quot;
-comma
 l_string|&quot;memory&quot;
 comma
 l_string|&quot;cc&quot;
@@ -521,8 +519,6 @@ l_string|&quot;g2&quot;
 comma
 l_string|&quot;g4&quot;
 comma
-l_string|&quot;g7&quot;
-comma
 l_string|&quot;memory&quot;
 comma
 l_string|&quot;cc&quot;
@@ -596,8 +592,6 @@ suffix:colon
 l_string|&quot;g2&quot;
 comma
 l_string|&quot;g4&quot;
-comma
-l_string|&quot;g7&quot;
 comma
 l_string|&quot;memory&quot;
 comma

@@ -44,11 +44,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|init_rtc_irq
-c_func
-(paren
-)paren
-suffix:semicolon
 id|common_init_isa_dma
 c_func
 (paren

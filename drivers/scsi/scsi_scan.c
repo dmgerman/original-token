@@ -558,6 +558,17 @@ id|BLIST_NOLUN
 comma
 multiline_comment|/* Locks up if polled for lun != 0  &n;&t;&t;&t;&t;&t;&t;&t;&t; * extra reset */
 (brace
+l_string|&quot;MITSUMI&quot;
+comma
+l_string|&quot;CD-R CR-2201CS&quot;
+comma
+l_string|&quot;6119&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Locks up if polled for lun != 0 */
+(brace
 l_string|&quot;RELISYS&quot;
 comma
 l_string|&quot;Scorpio&quot;

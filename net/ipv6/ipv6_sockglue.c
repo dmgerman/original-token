@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.32 2000/01/31 01:21:25 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
+multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.33 2000/02/27 19:42:54 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
@@ -1465,6 +1466,28 @@ id|optlen
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER
+r_default
+suffix:colon
+id|retv
+op_assign
+id|nf_setsockopt
+c_func
+(paren
+id|sk
+comma
+id|PF_INET6
+comma
+id|optname
+comma
+id|optval
+comma
+id|optlen
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 )brace
 id|release_sock
 c_func
@@ -1849,10 +1872,62 @@ suffix:semicolon
 )brace
 r_default
 suffix:colon
+macro_line|#ifdef CONFIG_NETFILTER
+id|lock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|val
+op_assign
+id|nf_getsockopt
+c_func
+(paren
+id|sk
+comma
+id|PF_INET6
+comma
+id|optname
+comma
+id|optval
+comma
+op_amp
+id|len
+)paren
+suffix:semicolon
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_ge
+l_int|0
+)paren
+id|val
+op_assign
+id|put_user
+c_func
+(paren
+id|len
+comma
+id|optlen
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+macro_line|#else
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#endif
 )brace
 id|len
 op_assign

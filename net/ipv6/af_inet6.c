@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.54 2000/02/12 23:34:45 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.55 2000/02/27 19:51:47 davem Exp $&n; *&n; * &t;Fixes:&n; * &t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -709,11 +709,7 @@ c_cond
 (paren
 id|addr_len
 OL
-r_sizeof
-(paren
-r_struct
-id|sockaddr_in6
-)paren
+id|SIN6_LEN_RFC2133
 )paren
 r_return
 op_minus
@@ -884,6 +880,55 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|addr_type
+op_amp
+id|IPV6_ADDR_LINKLOCAL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|addr_len
+op_ge
+r_sizeof
+(paren
+r_struct
+id|sockaddr_in6
+)paren
+op_logical_and
+id|addr-&gt;sin6_scope_id
+)paren
+(brace
+multiline_comment|/* Override any existing binding, if another one&n;&t;&t;&t; * is supplied by user.&n;&t;&t;&t; */
+id|sk-&gt;bound_dev_if
+op_assign
+id|addr-&gt;sin6_scope_id
+suffix:semicolon
+)brace
+multiline_comment|/* Binding to link-local address requires an interface */
+r_if
+c_cond
+(paren
+id|sk-&gt;bound_dev_if
+op_eq
+l_int|0
+)paren
+(brace
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 )brace
 id|sk-&gt;rcv_saddr
 op_assign
@@ -1213,6 +1258,10 @@ id|sin-&gt;sin6_flowinfo
 op_assign
 l_int|0
 suffix:semicolon
+id|sin-&gt;sin6_scope_id
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1336,6 +1385,22 @@ op_assign
 id|sk-&gt;sport
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ipv6_addr_type
+c_func
+(paren
+op_amp
+id|sin-&gt;sin6_addr
+)paren
+op_amp
+id|IPV6_ADDR_LINKLOCAL
+)paren
+id|sin-&gt;sin6_scope_id
+op_assign
+id|sk-&gt;bound_dev_if
+suffix:semicolon
 op_star
 id|uaddr_len
 op_assign

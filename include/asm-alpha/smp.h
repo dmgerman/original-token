@@ -186,6 +186,11 @@ DECL|macro|hard_smp_processor_id
 mdefine_line|#define hard_smp_processor_id()&t;__hard_smp_processor_id()
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id()&t;(current-&gt;processor)
+r_extern
+r_int
+r_int
+id|cpu_present_mask
+suffix:semicolon
 macro_line|#endif /* __SMP__ */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;(-1)

@@ -183,6 +183,8 @@ comma
 id|nowrite_setup
 )paren
 suffix:semicolon
+DECL|macro|FIRST_KERNEL_PGD_NR
+mdefine_line|#define FIRST_KERNEL_PGD_NR&t;(FIRST_USER_PGD_NR + USER_PTRS_PER_PGD)
 multiline_comment|/*&n; * need to get a 16k page for level 1&n; */
 DECL|function|get_pgd_slow
 id|pgd_t
@@ -234,7 +236,7 @@ c_func
 (paren
 id|pgd
 comma
-id|USER_PTRS_PER_PGD
+id|FIRST_KERNEL_PGD_NR
 op_star
 r_sizeof
 (paren
@@ -247,16 +249,16 @@ c_func
 (paren
 id|pgd
 op_plus
-id|USER_PTRS_PER_PGD
+id|FIRST_KERNEL_PGD_NR
 comma
 id|init
 op_plus
-id|USER_PTRS_PER_PGD
+id|FIRST_KERNEL_PGD_NR
 comma
 (paren
 id|PTRS_PER_PGD
 op_minus
-id|USER_PTRS_PER_PGD
+id|FIRST_KERNEL_PGD_NR
 )paren
 op_star
 r_sizeof

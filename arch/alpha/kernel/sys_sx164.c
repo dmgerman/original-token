@@ -74,11 +74,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|init_rtc_irq
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Not interested in the bogus interrupts (0,3,4,5,40-47),&n;&t;   NMI (1), or HALT (2).  */
 r_if
 c_cond

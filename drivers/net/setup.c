@@ -487,60 +487,6 @@ id|dev_ipddp
 suffix:semicolon
 macro_line|#endif /* CONFIG_IPDDP */
 )brace
-multiline_comment|/*&n; *&t;The loopback device is global so it can be directly referenced&n; *&t;by the network code.&n; */
-r_extern
-r_int
-id|loopback_init
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-DECL|variable|loopback_dev
-r_struct
-id|net_device
-id|loopback_dev
-op_assign
-(brace
-l_string|&quot;lo&quot;
-id|__PAD2
-comma
-multiline_comment|/* Software Loopback interface&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* recv memory end&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* recv memory start&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* memory end&t;&t;&t;&t;*/
-l_int|0x0
-comma
-multiline_comment|/* memory start&t;&t;&t;&t;*/
-l_int|0
-comma
-multiline_comment|/* base I/O address&t;&t;&t;*/
-l_int|0
-comma
-multiline_comment|/* IRQ&t;&t;&t;&t;&t;*/
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* flags&t;&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* next device&t;&t;&t;&t;*/
-id|loopback_init
-multiline_comment|/* loopback_init should set up the rest&t;*/
-)brace
-suffix:semicolon
 DECL|function|special_device_init
 r_static
 r_void
@@ -739,7 +685,7 @@ id|net_device
 id|sb1000_dev
 op_assign
 (brace
-l_string|&quot;cm0&quot;
+l_string|&quot;cm0 __PAD3&quot;
 comma
 l_int|0x0
 comma
@@ -773,13 +719,61 @@ id|sb1000_dev
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef CONFIG_BONDING
+(brace
+r_extern
+r_int
+id|bond_init
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_struct
+id|net_device
+id|bond_dev
+op_assign
+(brace
+l_string|&quot;bond&quot;
+id|__PAD4
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|bond_init
+comma
+)brace
+suffix:semicolon
 id|register_netdev
 c_func
 (paren
 op_amp
-id|loopback_dev
+id|bond_dev
 )paren
 suffix:semicolon
+)brace
+macro_line|#endif&t;
 )brace
 multiline_comment|/*&n; *&t;Initialise network devices&n; */
 DECL|function|net_device_init

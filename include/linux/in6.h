@@ -84,6 +84,11 @@ id|in6_addr
 id|sin6_addr
 suffix:semicolon
 multiline_comment|/* IPv6 address */
+DECL|member|sin6_scope_id
+id|__u32
+id|sin6_scope_id
+suffix:semicolon
+multiline_comment|/* scope id (new in RFC2553) */
 )brace
 suffix:semicolon
 DECL|struct|ipv6_mreq
@@ -246,15 +251,6 @@ DECL|macro|IPV6_AUTHHDR
 mdefine_line|#define IPV6_AUTHHDR&t;&t;10
 DECL|macro|IPV6_FLOWINFO
 mdefine_line|#define IPV6_FLOWINFO&t;&t;11
-macro_line|#if 0
-multiline_comment|/* Aliases for obsolete names */
-mdefine_line|#define IPV6_RXHOPOPTS&t;&t;IPV6_HOPOPTS
-mdefine_line|#define IPV6_RXDSTOPTS&t;&t;IPV6_DSTOPTS
-mdefine_line|#define IPV6_RXSRCRT&t;&t;IPV6_RTHDR
-macro_line|#endif
-multiline_comment|/*&n; *&t;Alternative names&n; */
-DECL|macro|SCM_SRCRT
-mdefine_line|#define SCM_SRCRT&t;&t;IPV6_RXSRCRT
 DECL|macro|IPV6_UNICAST_HOPS
 mdefine_line|#define IPV6_UNICAST_HOPS&t;16
 DECL|macro|IPV6_MULTICAST_IF

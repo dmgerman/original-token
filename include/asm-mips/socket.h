@@ -69,6 +69,8 @@ DECL|macro|SO_ATTACH_FILTER
 mdefine_line|#define SO_ATTACH_FILTER        26
 DECL|macro|SO_DETACH_FILTER
 mdefine_line|#define SO_DETACH_FILTER        27
+DECL|macro|SO_PEERNAME
+mdefine_line|#define SO_PEERNAME             28
 multiline_comment|/* Types of sockets.  */
 DECL|macro|SOCK_DGRAM
 mdefine_line|#define SOCK_DGRAM 1&t;&t;/* Connectionless, unreliable datagrams&n;&t;&t;&t;&t;   of fixed maximum length.  */

@@ -30,9 +30,6 @@ suffix:semicolon
 r_struct
 id|pci_controler
 suffix:semicolon
-r_struct
-id|irqaction
-suffix:semicolon
 DECL|struct|alpha_machine_vector
 r_struct
 id|alpha_machine_vector
@@ -486,9 +483,7 @@ op_star
 id|init_rtc
 )paren
 (paren
-r_struct
-id|irqaction
-op_star
+r_void
 )paren
 suffix:semicolon
 DECL|member|init_pci

@@ -1837,6 +1837,16 @@ r_return
 id|irq_found
 suffix:semicolon
 )brace
+DECL|function|init_irq_proc
+r_void
+id|__init
+id|init_irq_proc
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
 DECL|function|init_IRQ
 r_void
 id|__init

@@ -72,5 +72,7 @@ DECL|macro|SO_ATTACH_FILTER
 mdefine_line|#define SO_ATTACH_FILTER&t;26
 DECL|macro|SO_DETACH_FILTER
 mdefine_line|#define SO_DETACH_FILTER&t;27
+DECL|macro|SO_PEERNAME
+mdefine_line|#define SO_PEERNAME&t;&t;28
 macro_line|#endif /* _ASM_SOCKET_H */
 eof

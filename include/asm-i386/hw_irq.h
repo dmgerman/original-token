@@ -39,24 +39,6 @@ mdefine_line|#define IO_APIC_VECTOR(irq)&t;irq_vector[irq]
 multiline_comment|/*&n; * Various low-level irq details needed by irq.c, process.c,&n; * time.c, io_apic.c and smp.c&n; *&n; * Interrupt entry/exit code at both C and assembly level&n; */
 r_extern
 r_void
-id|no_action
-c_func
-(paren
-r_int
-id|cpl
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|mask_irq
 c_func
 (paren

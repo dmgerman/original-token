@@ -1690,6 +1690,11 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|paging_init
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|variable|sys_unknown
 r_static

@@ -2295,6 +2295,13 @@ c_func
 id|dev_alloc_name
 )paren
 suffix:semicolon
+DECL|variable|__netdev_watchdog_up
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__netdev_watchdog_up
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_KMOD
 DECL|variable|dev_load
 id|EXPORT_SYMBOL

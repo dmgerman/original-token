@@ -740,6 +740,13 @@ c_func
 (paren
 id|dev
 )paren
+op_logical_or
+op_logical_neg
+id|netif_carrier_ok
+c_func
+(paren
+id|dev
+)paren
 )paren
 id|r-&gt;ifi_flags
 op_and_assign

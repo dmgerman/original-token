@@ -162,7 +162,6 @@ mdefine_line|#define wb977_device_enable()&t;&t;wb977_wb(0x30, 0x01)
 multiline_comment|/*&n; * This is a lock for accessing ports GP1_IO_BASE and GP2_IO_BASE&n; */
 DECL|variable|gpio_lock
 id|spinlock_t
-id|__netwinder_data
 id|gpio_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
@@ -171,7 +170,6 @@ DECL|variable|current_gpio_op
 r_static
 r_int
 r_int
-id|__netwinder_data
 id|current_gpio_op
 op_assign
 l_int|0
@@ -180,7 +178,6 @@ DECL|variable|current_gpio_io
 r_static
 r_int
 r_int
-id|__netwinder_data
 id|current_gpio_io
 op_assign
 l_int|0
@@ -189,14 +186,12 @@ DECL|variable|current_cpld
 r_static
 r_int
 r_int
-id|__netwinder_data
 id|current_cpld
 op_assign
 l_int|0
 suffix:semicolon
 DECL|function|gpio_modify_op
 r_void
-id|__netwinder_text
 id|gpio_modify_op
 c_func
 (paren
@@ -408,7 +403,6 @@ suffix:semicolon
 )brace
 DECL|function|gpio_modify_io
 r_void
-id|__netwinder_text
 id|gpio_modify_io
 c_func
 (paren
@@ -442,7 +436,6 @@ suffix:semicolon
 )brace
 DECL|function|gpio_read
 r_int
-id|__netwinder_text
 id|gpio_read
 c_func
 (paren
@@ -947,7 +940,6 @@ suffix:semicolon
 )brace
 DECL|function|cpld_modify
 r_void
-id|__netwinder_text
 id|cpld_modify
 c_func
 (paren

@@ -1235,5 +1235,13 @@ DECL|macro|pmd_ERROR
 mdefine_line|#define pmd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pmd %016lx.&bslash;n&quot;, __FILE__, __LINE__, pmd_val(e))
 DECL|macro|pgd_ERROR
 mdefine_line|#define pgd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pgd %016lx.&bslash;n&quot;, __FILE__, __LINE__, pgd_val(e))
+r_extern
+r_void
+id|paging_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* _ALPHA_PGTABLE_H */
 eof

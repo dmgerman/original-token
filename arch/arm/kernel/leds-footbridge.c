@@ -36,7 +36,6 @@ macro_line|#ifdef CONFIG_FOOTBRIDGE
 DECL|function|ebsa285_leds_event
 r_static
 r_void
-id|__ebsa285_text
 id|ebsa285_leds_event
 c_func
 (paren
@@ -322,7 +321,6 @@ macro_line|#ifdef CONFIG_ARCH_NETWINDER
 DECL|function|netwinder_leds_event
 r_static
 r_void
-id|__netwinder_text
 id|netwinder_leds_event
 c_func
 (paren

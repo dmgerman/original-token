@@ -3042,6 +3042,7 @@ id|NR_IRQS
 )braket
 suffix:semicolon
 DECL|variable|irq_affinity
+r_static
 r_int
 r_int
 id|irq_affinity
@@ -3060,7 +3061,8 @@ op_minus
 l_int|1
 )braket
 op_assign
-l_int|0xffffffff
+op_complement
+l_int|0UL
 )brace
 suffix:semicolon
 DECL|macro|HEX_DIGITS
@@ -3112,7 +3114,7 @@ id|sprintf
 (paren
 id|page
 comma
-l_string|&quot;%08x&bslash;n&quot;
+l_string|&quot;%08lx&bslash;n&quot;
 comma
 id|irq_affinity
 (braket
@@ -3660,6 +3662,9 @@ op_assign
 (paren
 r_void
 op_star
+)paren
+(paren
+r_int
 )paren
 id|irq
 suffix:semicolon

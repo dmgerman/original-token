@@ -4,21 +4,6 @@ mdefine_line|#define __ASM_ARM_SYSTEM_H
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
-DECL|macro|__ebsa285_data
-mdefine_line|#define __ebsa285_data&t;&t;__attribute__((__section__(&quot;.data.ebsa285&quot;)))
-DECL|macro|__netwinder_data
-mdefine_line|#define __netwinder_data&t;__attribute__((__section__(&quot;.data.netwinder&quot;)))
-macro_line|#ifdef CONFIG_TEXT_SECTIONS
-DECL|macro|__ebsa285_text
-mdefine_line|#define __ebsa285_text&t;&t;__attribute__((__section__(&quot;.text.ebsa285&quot;)))
-DECL|macro|__netwinder_text
-mdefine_line|#define __netwinder_text&t;__attribute__((__section__(&quot;.text.netwinder&quot;)))
-macro_line|#else
-DECL|macro|__ebsa285_text
-mdefine_line|#define __ebsa285_text
-DECL|macro|__netwinder_text
-mdefine_line|#define __netwinder_text
-macro_line|#endif
 multiline_comment|/* information about the system we&squot;re running on */
 r_extern
 r_int
