@@ -11,8 +11,6 @@ macro_line|#include &lt;linux/route.h&gt;
 macro_line|#ifndef __KERNEL__
 macro_line|#warning This file is not supposed to be used outside of kernel.
 macro_line|#endif
-DECL|macro|RT_HASH_DIVISOR
-mdefine_line|#define RT_HASH_DIVISOR&t;    &t;256
 DECL|macro|RTO_ONLINK
 mdefine_line|#define RTO_ONLINK&t;0x01
 DECL|macro|RTO_TPROXY

@@ -3416,6 +3416,12 @@ id|fd
 comma
 id|error
 suffix:semicolon
+macro_line|#if BITS_PER_LONG != 32
+id|flags
+op_or_assign
+id|O_LARGEFILE
+suffix:semicolon
+macro_line|#endif
 id|tmp
 op_assign
 id|getname

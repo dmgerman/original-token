@@ -6,17 +6,13 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+DECL|macro|DEBUG
+macro_line|#undef DEBUG&t;&t;/* Enable to print results of read/write_scanner() calls */
+DECL|macro|RD_DATA_DUMP
+macro_line|#undef RD_DATA_DUMP&t;/* Enable to dump data - limited to 24 bytes */
+DECL|macro|WR_DATA_DUMP
+macro_line|#undef WR_DATA_DUMP
 macro_line|#include &quot;usb.h&quot;
-singleline_comment|// #define SCN_DBG /* Enable to print results of read/write_scanner() calls */
-singleline_comment|// #define RD_DATA_DUMP /* Enable to dump data - limited to 24 bytes */
-singleline_comment|// #define WR_DATA_DUMP
-macro_line|#ifdef SCN_DBG
-DECL|macro|SCN_DEBUG
-mdefine_line|#define SCN_DEBUG(X) X
-macro_line|#else
-DECL|macro|SCN_DEBUG
-mdefine_line|#define SCN_DEBUG(X)
-macro_line|#endif
 DECL|macro|IBUF_SIZE
 mdefine_line|#define IBUF_SIZE 32768
 DECL|macro|OBUF_SIZE
@@ -384,14 +380,10 @@ op_star
 id|HZ
 )paren
 suffix:semicolon
-id|SCN_DEBUG
+id|dbg
 c_func
 (paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;write stats: result:%d copy_size:%lu partial:%lu&bslash;n&quot;
+l_string|&quot;write stats: result:%d copy_size:%lu partial:%lu&quot;
 comma
 (paren
 r_int
@@ -403,7 +395,6 @@ comma
 id|partial
 )paren
 suffix:semicolon
-)paren
 r_if
 c_cond
 (paren
@@ -413,11 +404,10 @@ id|USB_ST_TIMEOUT
 )paren
 (brace
 multiline_comment|/* NAK -- shouldn&squot;t happen */
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;write_scanner: NAK recieved.&bslash;n&quot;
+l_string|&quot;write_scanner: NAK recieved.&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -438,11 +428,10 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* We should not get any I/O errors */
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;write_scanner: funky result: %d. Please notify the maintainer.&bslash;n&quot;
+l_string|&quot;write_scanner: funky result: %d. Please notify the maintainer.&quot;
 comma
 id|result
 )paren
@@ -485,7 +474,8 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;dump: &quot;
+id|__FILE__
+l_string|&quot;: dump: &quot;
 )paren
 suffix:semicolon
 r_for
@@ -719,14 +709,10 @@ op_star
 id|HZ
 )paren
 suffix:semicolon
-id|SCN_DEBUG
+id|dbg
 c_func
 (paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;read stats: result:%d this_read:%u partial:%lu&bslash;n&quot;
+l_string|&quot;read stats: result:%d this_read:%u partial:%lu&quot;
 comma
 (paren
 r_int
@@ -738,7 +724,6 @@ comma
 id|partial
 )paren
 suffix:semicolon
-)paren
 r_if
 c_cond
 (paren
@@ -748,11 +733,10 @@ id|USB_ST_TIMEOUT
 )paren
 (brace
 multiline_comment|/* NAK -- shouldn&squot;t happen */
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;read_scanner: NAK received&bslash;n&quot;
+l_string|&quot;read_scanner: NAK received&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -780,11 +764,10 @@ id|USB_ST_DATAUNDERRUN
 )paren
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;read_scanner: funky result: %d. Please notify the maintainer.&bslash;n&quot;
+l_string|&quot;read_scanner: funky result: %d. Please notify the maintainer.&quot;
 comma
 (paren
 r_int
@@ -830,7 +813,8 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;dump: &quot;
+id|__FILE__
+l_string|&quot;: dump: &quot;
 )paren
 suffix:semicolon
 r_for
@@ -1001,11 +985,9 @@ id|product
 op_ne
 l_int|0
 )paren
-(brace
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;USB Scanner Vendor:Product - %x:%x&bslash;n&quot;
 comma
 id|vendor
@@ -1013,7 +995,6 @@ comma
 id|product
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* There doesn&squot;t seem to be an imaging class defined in the USB&n; * Spec. (yet).  If there is, HP isn&squot;t following it and it doesn&squot;t&n; * look like anybody else is either.  Therefore, we have to test the&n; * Vendor and Product ID&squot;s to see what we have.  This makes this&n; * driver a high maintenance driver since it has to be updated with&n; * each release of a product.  Also, other scanners may be able to use&n; * this driver but again, their Vendor and Product ID&squot;s must be added.&n; *&n; * NOTE: Just because a product is supported here does not mean that&n; * applications exist that support the product.  It&squot;s in the hopes&n; * that this will allow developers a means to produce applications&n; * that will support USB products.&n; *&n; * Until we detect a device which is pleasing, we silently punt.&n; * */
 r_if
 c_cond
@@ -1114,11 +1095,10 @@ op_ne
 l_int|1
 )paren
 (brace
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;probe_scanner: only simple configurations supported&bslash;n&quot;
+l_string|&quot;probe_scanner: only simple configurations supported&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1166,11 +1146,10 @@ op_ne
 id|USB_ENDPOINT_XFER_BULK
 )paren
 (brace
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;probe_scanner: invalid bulk endpoints&bslash;n&quot;
+l_string|&quot;probe_scanner: invalid bulk endpoints&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1194,10 +1173,10 @@ id|bConfigurationValue
 )paren
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_INFO
-l_string|&quot;probe_scanner: failed usb_set_configuration&bslash;n&quot;
+l_string|&quot;probe_scanner: failed usb_set_configuration&quot;
 )paren
 suffix:semicolon
 id|hps-&gt;hpscan_dev
@@ -1308,11 +1287,10 @@ id|dev-&gt;descriptor.iProduct
 )paren
 suffix:semicolon
 multiline_comment|/* usb_string allocates memory using kmalloc() so kfree() needs to be called afterwards when the pointer is no longer needed. */
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Scanner (%s) found at address %d&bslash;n&quot;
+l_string|&quot;USB Scanner (%s) found at address %d&quot;
 comma
 id|ident
 comma
@@ -1325,21 +1303,16 @@ c_func
 id|ident
 )paren
 suffix:semicolon
-id|SCN_DEBUG
+id|dbg
 c_func
 (paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;probe_scanner: using bulk endpoints - In: %x  Out: %x&bslash;n&quot;
+l_string|&quot;probe_scanner: using bulk endpoints - In: %x  Out: %x&quot;
 comma
 id|hps-&gt;iep
 comma
 id|hps-&gt;oep
 )paren
 suffix:semicolon
-)paren
 id|hps-&gt;present
 op_assign
 l_int|1
@@ -1550,11 +1523,10 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Scanner support registered.&bslash;n&quot;
+l_string|&quot;USB Scanner support registered.&quot;
 )paren
 suffix:semicolon
 r_return

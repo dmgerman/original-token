@@ -59,7 +59,6 @@ id|loff_t
 op_star
 )paren
 suffix:semicolon
-macro_line|#if BITS_PER_LONG &lt; 64
 r_static
 r_int
 id|udf_open_file
@@ -74,7 +73,6 @@ id|file
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|udf_release_file
@@ -117,15 +115,9 @@ multiline_comment|/* ioctl */
 id|generic_file_mmap
 comma
 multiline_comment|/* mmap */
-macro_line|#if BITS_PER_LONG == 64
-l_int|NULL
-comma
-multiline_comment|/* open */
-macro_line|#else
 id|udf_open_file
 comma
 multiline_comment|/* open */
-macro_line|#endif
 l_int|NULL
 comma
 multiline_comment|/* flush */
@@ -1273,8 +1265,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if BITS_PER_LONG &lt; 64
-multiline_comment|/*&n; * udf_open_file&n; *&n; * PURPOSE&n; *  Called when an inode is about to be open.&n; *&n; * DESCRIPTION&n; *  Use this to disallow opening RW large files on 32 bit systems.&n; *&n; * HISTORY&n; *&n; */
+multiline_comment|/*&n; * udf_open_file&n; *&n; * PURPOSE&n; *  Called when an inode is about to be open.&n; *&n; * DESCRIPTION&n; *  Use this to disallow opening RW large files on 32 bit systems.&n; *  On 64 bit systems we force on O_LARGEFILE in sys_open.&n; *&n; * HISTORY&n; *&n; */
 DECL|function|udf_open_file
 r_static
 r_int
@@ -1316,5 +1307,4 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

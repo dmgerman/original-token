@@ -13,14 +13,9 @@ macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+DECL|macro|DEBUG
+macro_line|#undef DEBUG
 macro_line|#include &quot;usb.h&quot;
-macro_line|#ifdef CONFIG_USB_ACM_DEBUG
-DECL|macro|acm_debug
-mdefine_line|#define acm_debug(fmt,arg...)&t;printk(KERN_DEBUG &quot;acm: &quot; fmt &quot;&bslash;n&quot; , ##arg)
-macro_line|#else
-DECL|macro|acm_debug
-mdefine_line|#define acm_debug(fmt,arg...)&t;do {} while(0)
-macro_line|#endif
 multiline_comment|/*&n; * Major and minor numbers.&n; */
 DECL|macro|ACM_TTY_MAJOR
 mdefine_line|#define ACM_TTY_MAJOR&t;&t;166
@@ -218,13 +213,13 @@ id|HZ
 OL
 l_int|0
 )paren
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;acm_set_control() failed&quot;
 )paren
 suffix:semicolon
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;output control lines: dtr%c rts%c&quot;
@@ -303,7 +298,7 @@ id|HZ
 OL
 l_int|0
 )paren
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;acm_set_coding() failed&quot;
@@ -357,7 +352,7 @@ id|HZ
 OL
 l_int|0
 )paren
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;acm_send_break() failed&quot;
@@ -415,7 +410,7 @@ OL
 l_int|0
 )paren
 (brace
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;nonzero ctrl irq status received: %d&quot;
@@ -464,7 +459,7 @@ l_int|2
 )paren
 )paren
 (brace
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;unknown set serial line request: index %d len %d&quot;
@@ -499,7 +494,7 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;input control lines: dcd%c dsr%c break%c ring%c framing%c parity%c overrun%c&quot;
@@ -572,7 +567,7 @@ r_return
 suffix:semicolon
 r_default
 suffix:colon
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;unknown control event received: request %d index %d len %d data0 %d data1 %d&quot;
@@ -642,7 +637,7 @@ c_cond
 id|urb-&gt;status
 )paren
 (brace
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;nonzero read bulk status received: %d&quot;
@@ -707,7 +702,7 @@ c_func
 id|urb
 )paren
 )paren
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;failed resubmitting read urb&quot;
@@ -753,7 +748,7 @@ c_cond
 id|urb-&gt;status
 )paren
 (brace
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;nonzero write bulk status received: %d&quot;
@@ -880,7 +875,7 @@ op_amp
 id|acm-&gt;ctrlurb
 )paren
 )paren
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;usb_submit_urb(ctrl irq) failed&quot;
@@ -896,7 +891,7 @@ op_amp
 id|acm-&gt;readurb
 )paren
 )paren
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;usb_submit_urb(read bulk) failed&quot;
@@ -1108,7 +1103,7 @@ op_amp
 id|acm-&gt;writeurb
 )paren
 )paren
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;usb_submit_urb(write bulk) failed&quot;
@@ -1324,7 +1319,7 @@ op_star
 id|old
 )paren
 (brace
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;set_termios called, but not there yet&quot;
@@ -1438,7 +1433,7 @@ dot
 id|used
 )paren
 (brace
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;no more free acm devices&quot;
@@ -1507,7 +1502,7 @@ id|i
 op_increment
 )paren
 (brace
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;probing config %d&quot;
@@ -1908,7 +1903,7 @@ op_logical_neg
 id|acm-&gt;present
 )paren
 (brace
-id|acm_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;disconnect on nonexisting interface&quot;

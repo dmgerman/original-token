@@ -1021,17 +1021,6 @@ id|buffer
 id|i
 )braket
 suffix:semicolon
-macro_line|#ifdef MOUSEDEV_DEBUG
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;mousedev: received char %#x&bslash;n&quot;
-comma
-id|c
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

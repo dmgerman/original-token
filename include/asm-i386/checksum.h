@@ -138,53 +138,6 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* Not used at the moment. It is difficult to imagine for what purpose&n;   it can be used :-) Please, do not forget to verify_area before it --ANK&n; */
-multiline_comment|/*&n; * This combination is currently not used, but possible:&n; */
-r_extern
-id|__inline__
-r_int
-r_int
-id|csum_partial_copy_to_user
-(paren
-r_const
-r_char
-op_star
-id|src
-comma
-r_char
-op_star
-id|dst
-comma
-r_int
-id|len
-comma
-r_int
-id|sum
-comma
-r_int
-op_star
-id|err_ptr
-)paren
-(brace
-r_return
-id|csum_partial_copy_generic
-(paren
-id|src
-comma
-id|dst
-comma
-id|len
-comma
-id|sum
-comma
-l_int|NULL
-comma
-id|err_ptr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/*&n; * These are the old (and unsafe) way of doing checksums, a warning message will be&n; * printed if they are used and an exeption occurs.&n; *&n; * these functions should go away after some time.&n; */
 DECL|macro|csum_partial_copy_fromuser
 mdefine_line|#define csum_partial_copy_fromuser csum_partial_copy

@@ -70,6 +70,12 @@ DECL|macro|PCDATA_CODE_TYPE
 mdefine_line|#define PCDATA_CODE_TYPE&t;0x0014
 DECL|macro|PCDATA_INDICATOR
 mdefine_line|#define PCDATA_INDICATOR&t;0x0015
+macro_line|#ifndef CONFIG_PROC_FS
+DECL|macro|pci_proc_attach_device
+mdefine_line|#define pci_proc_attach_device(dev)&t;do { } while (0)
+DECL|macro|pci_proc_detach_device
+mdefine_line|#define pci_proc_detach_device(dev)&t;do { } while (0)
+macro_line|#endif
 DECL|struct|cb_config_t
 r_typedef
 r_struct
@@ -1170,20 +1176,6 @@ id|r
 )paren
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;Resource %d at %08lx-%08lx (%04lx)&bslash;n&quot;
-comma
-id|r
-comma
-id|res-&gt;start
-comma
-id|res-&gt;end
-comma
-id|res-&gt;flags
-)paren
-suffix:semicolon
 )brace
 id|list_add_tail
 c_func
@@ -1205,14 +1197,12 @@ op_amp
 id|pci_devices
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 id|pci_proc_attach_device
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|pci_enable_device
 c_func
 (paren
@@ -1305,6 +1295,13 @@ c_cond
 id|c
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
+id|s-&gt;cb_config
+op_assign
+l_int|NULL
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1353,24 +1350,18 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 id|pci_proc_detach_device
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|kfree
 c_func
 (paren
-id|s-&gt;cb_config
+id|c
 )paren
-suffix:semicolon
-id|s-&gt;cb_config
-op_assign
-l_int|NULL
 suffix:semicolon
 id|printk
 c_func

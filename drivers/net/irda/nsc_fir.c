@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      pc87108.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the NS PC87108 chip&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Nov  7 21:43:15 1998&n; * Modified at:   Tue Dec 21 21:51:54 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb(iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb(bank, iobase+BSR);&n; *&n; *    If you find bugs in this file, its very likely that the same bug&n; *    will also be in w83977af_ir.c since the implementations are quite&n; *    similar.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      nsc_fir.c&n; * Version:       1.0&n; * Description:   Driver for the NSC PC&squot;108 and PC&squot;338 IrDA chipsets&n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Nov  7 21:43:15 1998&n; * Modified at:   Wed Jan  5 13:59:21 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb(iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb(bank, iobase+BSR);&n; *&n; *    If you find bugs in this file, its very likely that the same bug&n; *    will also be in w83977af_ir.c since the implementations are quite&n; *    similar.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -12,22 +12,31 @@ macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#ifdef CONFIG_APM
+macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#endif
 macro_line|#include &lt;net/irda/wrapper.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irlap_frame.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
-macro_line|#include &lt;net/irda/pc87108.h&gt;
+macro_line|#include &lt;net/irda/nsc_fir.h&gt;
+DECL|macro|CHIP_IO_EXTENT
+mdefine_line|#define CHIP_IO_EXTENT 8
 DECL|macro|BROKEN_DONGLE_ID
 mdefine_line|#define BROKEN_DONGLE_ID
+multiline_comment|/* &n; * Define if you have multiple NSC IrDA controllers in your machine. Not&n; * enabled by default since some single chips detects at multiple addresses&n; */
+DECL|macro|CONFIG_NSC_FIR_MULTIPLE
+macro_line|#undef  CONFIG_NSC_FIR_MULTIPLE 
 DECL|variable|driver_name
 r_static
 r_char
 op_star
 id|driver_name
 op_assign
-l_string|&quot;pc87108&quot;
+l_string|&quot;nsc_fir&quot;
 suffix:semicolon
+multiline_comment|/* Module parameters */
 DECL|variable|qos_mtt_bits
 r_static
 r_int
@@ -36,8 +45,13 @@ op_assign
 l_int|0x07
 suffix:semicolon
 multiline_comment|/* 1 ms or more */
-DECL|macro|CHIP_IO_EXTENT
-mdefine_line|#define CHIP_IO_EXTENT 8
+DECL|variable|dongle_id
+r_static
+r_int
+id|dongle_id
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|io
 r_static
 r_int
@@ -49,14 +63,13 @@ op_assign
 (brace
 l_int|0x2f8
 comma
-op_complement
-l_int|0
+l_int|0x2f8
 comma
-op_complement
-l_int|0
+l_int|0x2f8
 comma
-op_complement
-l_int|0
+l_int|0x2f8
+comma
+l_int|0x2f8
 )brace
 suffix:semicolon
 DECL|variable|io2
@@ -70,11 +83,13 @@ op_assign
 (brace
 l_int|0x150
 comma
-l_int|0
+l_int|0x398
 comma
-l_int|0
+l_int|0xea
 comma
-l_int|0
+l_int|0x15c
+comma
+l_int|0x2e
 )brace
 suffix:semicolon
 DECL|variable|irq
@@ -88,11 +103,13 @@ op_assign
 (brace
 l_int|3
 comma
-l_int|0
+l_int|3
 comma
-l_int|0
+l_int|3
 comma
-l_int|0
+l_int|3
+comma
+l_int|3
 )brace
 suffix:semicolon
 DECL|variable|dma
@@ -111,18 +128,22 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|3
 )brace
 suffix:semicolon
 DECL|variable|dev_self
 r_static
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|dev_self
 (braket
 )braket
 op_assign
 (brace
+l_int|NULL
+comma
 l_int|NULL
 comma
 l_int|NULL
@@ -177,7 +198,7 @@ suffix:semicolon
 multiline_comment|/* Some prototypes */
 r_static
 r_int
-id|pc87108_open
+id|nsc_fir_open
 c_func
 (paren
 r_int
@@ -203,11 +224,11 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 r_static
 r_int
-id|pc87108_close
+id|nsc_fir_close
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 )paren
@@ -215,7 +236,7 @@ suffix:semicolon
 macro_line|#endif /* MODULE */
 r_static
 r_int
-id|pc87108_probe
+id|nsc_fir_probe
 c_func
 (paren
 r_int
@@ -233,33 +254,33 @@ id|dma
 suffix:semicolon
 r_static
 r_void
-id|pc87108_pio_receive
+id|nsc_fir_pio_receive
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 )paren
 suffix:semicolon
 r_static
 r_int
-id|pc87108_dma_receive
+id|nsc_fir_dma_receive
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 )paren
 suffix:semicolon
 r_static
 r_int
-id|pc87108_dma_receive_complete
+id|nsc_fir_dma_receive_complete
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 comma
@@ -269,7 +290,7 @@ id|iobase
 suffix:semicolon
 r_static
 r_int
-id|pc87108_hard_xmit
+id|nsc_fir_hard_xmit_sir
 c_func
 (paren
 r_struct
@@ -285,7 +306,23 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|pc87108_pio_write
+id|nsc_fir_hard_xmit_fir
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_int
+id|nsc_fir_pio_write
 c_func
 (paren
 r_int
@@ -304,11 +341,11 @@ id|fifo_size
 suffix:semicolon
 r_static
 r_void
-id|pc87108_dma_write
+id|nsc_fir_dma_xmit
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 comma
@@ -318,11 +355,11 @@ id|iobase
 suffix:semicolon
 r_static
 r_void
-id|pc87108_change_speed
+id|nsc_fir_change_speed
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 comma
@@ -332,7 +369,7 @@ id|baud
 suffix:semicolon
 r_static
 r_void
-id|pc87108_interrupt
+id|nsc_fir_interrupt
 c_func
 (paren
 r_int
@@ -350,18 +387,18 @@ id|regs
 suffix:semicolon
 r_static
 r_int
-id|pc87108_is_receiving
+id|nsc_fir_is_receiving
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 )paren
 suffix:semicolon
 r_static
 r_int
-id|pc87108_read_dongle_id
+id|nsc_fir_read_dongle_id
 (paren
 r_int
 id|iobase
@@ -369,7 +406,7 @@ id|iobase
 suffix:semicolon
 r_static
 r_void
-id|pc87108_init_dongle_interface
+id|nsc_fir_init_dongle_interface
 (paren
 r_int
 id|iobase
@@ -380,7 +417,7 @@ id|dongle_id
 suffix:semicolon
 r_static
 r_int
-id|pc87108_net_init
+id|nsc_fir_net_init
 c_func
 (paren
 r_struct
@@ -391,7 +428,7 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|pc87108_net_open
+id|nsc_fir_net_open
 c_func
 (paren
 r_struct
@@ -402,7 +439,7 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|pc87108_net_close
+id|nsc_fir_net_close
 c_func
 (paren
 r_struct
@@ -413,7 +450,7 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|pc87108_net_ioctl
+id|nsc_fir_net_ioctl
 c_func
 (paren
 r_struct
@@ -430,19 +467,60 @@ r_int
 id|cmd
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function pc87108_init ()&n; *&n; *    Initialize chip. Just try to find out how many chips we are dealing with&n; *    and where they are&n; */
-DECL|function|pc87108_init
+r_static
+r_struct
+id|net_device_stats
+op_star
+id|nsc_fir_net_get_stats
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+r_static
+r_int
+id|nsc_fir_apmproc
+c_func
+(paren
+id|apm_event_t
+id|event
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_APM */
+multiline_comment|/*&n; * Function nsc_fir_init ()&n; *&n; *    Initialize chip. Just try to find out how many chips we are dealing with&n; *    and where they are&n; */
+DECL|function|nsc_fir_init
 r_int
 id|__init
-id|pc87108_init
+id|nsc_fir_init
 c_func
 (paren
 r_void
 )paren
 (brace
 r_int
+id|ret
+op_assign
+op_minus
+id|ENODEV
+suffix:semicolon
+r_int
+id|ioaddr
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+id|apm_register_callback
+c_func
+(paren
+id|nsc_fir_apmproc
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_APM */
 r_for
 c_loop
 (paren
@@ -462,14 +540,13 @@ op_logical_and
 (paren
 id|i
 OL
-l_int|4
+l_int|5
 )paren
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
-r_int
 id|ioaddr
 op_assign
 id|io
@@ -495,7 +572,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pc87108_open
+id|nsc_fir_open
 c_func
 (paren
 id|i
@@ -523,21 +600,29 @@ id|i
 op_eq
 l_int|0
 )paren
+(brace
+macro_line|#ifdef CONFIG_NSC_FIR_MULTIPLE
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 r_return
-op_minus
-id|ENODEV
+id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_cleanup ()&n; *&n; *    Close all configured chips&n; *&n; */
+multiline_comment|/*&n; * Function nsc_fir_cleanup ()&n; *&n; *    Close all configured chips&n; *&n; */
 macro_line|#ifdef MODULE
-DECL|function|pc87108_cleanup
+DECL|function|nsc_fir_cleanup
 r_static
 r_void
-id|pc87108_cleanup
+id|nsc_fir_cleanup
 c_func
 (paren
 r_void
@@ -555,6 +640,14 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+id|apm_unregister_callback
+c_func
+(paren
+id|nsc_fir_apmproc
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_APM */
 r_for
 c_loop
 (paren
@@ -564,7 +657,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|4
+l_int|5
 suffix:semicolon
 id|i
 op_increment
@@ -578,7 +671,7 @@ id|dev_self
 id|i
 )braket
 )paren
-id|pc87108_close
+id|nsc_fir_close
 c_func
 (paren
 id|dev_self
@@ -590,11 +683,11 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* MODULE */
-multiline_comment|/*&n; * Function pc87108_open (iobase, irq)&n; *&n; *    Open driver instance&n; *&n; */
-DECL|function|pc87108_open
+multiline_comment|/*&n; * Function nsc_fir_open (iobase, irq)&n; *&n; *    Open driver instance&n; *&n; */
 r_static
 r_int
-id|pc87108_open
+DECL|function|nsc_fir_open
+id|nsc_fir_open
 c_func
 (paren
 r_int
@@ -623,7 +716,7 @@ op_star
 id|dev
 suffix:semicolon
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 suffix:semicolon
@@ -639,7 +732,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -651,7 +744,7 @@ c_cond
 (paren
 id|dongle_id
 op_assign
-id|pc87108_probe
+id|nsc_fir_probe
 c_func
 (paren
 id|iobase
@@ -680,7 +773,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 )paren
 comma
 id|GFP_KERNEL
@@ -694,12 +787,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|ERROR
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;IrDA: Can&squot;t allocate memory for &quot;
-l_string|&quot;IrDA control block!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), can&squot;t allocate memory for &quot;
+l_string|&quot;control block!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -717,8 +810,15 @@ comma
 r_sizeof
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 )paren
+)paren
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|self-&gt;lock
 )paren
 suffix:semicolon
 multiline_comment|/* Need to store self somewhere */
@@ -780,7 +880,7 @@ comma
 id|self-&gt;io.iobase
 )paren
 suffix:semicolon
-multiline_comment|/* pc87108_cleanup(self-&gt;self);  */
+multiline_comment|/* nsc_fir_cleanup(self-&gt;self);  */
 r_return
 op_minus
 id|ENODEV
@@ -859,17 +959,9 @@ l_int|14384
 suffix:semicolon
 id|self-&gt;tx_buff.truesize
 op_assign
-l_int|4000
+l_int|14384
 suffix:semicolon
 multiline_comment|/* Allocate memory if needed */
-r_if
-c_cond
-(paren
-id|self-&gt;rx_buff.truesize
-OG
-l_int|0
-)paren
-(brace
 id|self-&gt;rx_buff.head
 op_assign
 (paren
@@ -907,15 +999,6 @@ comma
 id|self-&gt;rx_buff.truesize
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|self-&gt;tx_buff.truesize
-OG
-l_int|0
-)paren
-(brace
 id|self-&gt;tx_buff.head
 op_assign
 (paren
@@ -961,7 +1044,6 @@ comma
 id|self-&gt;tx_buff.truesize
 )paren
 suffix:semicolon
-)brace
 id|self-&gt;rx_buff.in_frame
 op_assign
 id|FALSE
@@ -977,6 +1059,19 @@ suffix:semicolon
 id|self-&gt;rx_buff.data
 op_assign
 id|self-&gt;rx_buff.head
+suffix:semicolon
+multiline_comment|/* Reset Tx queue info */
+id|self-&gt;tx_fifo.len
+op_assign
+id|self-&gt;tx_fifo.ptr
+op_assign
+id|self-&gt;tx_fifo.free
+op_assign
+l_int|0
+suffix:semicolon
+id|self-&gt;tx_fifo.tail
+op_assign
+id|self-&gt;tx_buff.head
 suffix:semicolon
 r_if
 c_cond
@@ -1023,23 +1118,27 @@ suffix:semicolon
 multiline_comment|/* Override the network functions we need to use */
 id|dev-&gt;init
 op_assign
-id|pc87108_net_init
+id|nsc_fir_net_init
 suffix:semicolon
 id|dev-&gt;hard_start_xmit
 op_assign
-id|pc87108_hard_xmit
+id|nsc_fir_hard_xmit_sir
 suffix:semicolon
 id|dev-&gt;open
 op_assign
-id|pc87108_net_open
+id|nsc_fir_net_open
 suffix:semicolon
 id|dev-&gt;stop
 op_assign
-id|pc87108_net_close
+id|nsc_fir_net_close
 suffix:semicolon
 id|dev-&gt;do_ioctl
 op_assign
-id|pc87108_net_ioctl
+id|nsc_fir_net_ioctl
+suffix:semicolon
+id|dev-&gt;get_stats
+op_assign
+id|nsc_fir_net_get_stats
 suffix:semicolon
 id|rtnl_lock
 c_func
@@ -1089,7 +1188,7 @@ id|self-&gt;io.dongle_id
 op_assign
 id|dongle_id
 suffix:semicolon
-id|pc87108_init_dongle_interface
+id|nsc_fir_init_dongle_interface
 c_func
 (paren
 id|iobase
@@ -1102,15 +1201,15 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; * Function pc87108_close (self)&n; *&n; *    Close driver instance&n; *&n; */
-DECL|function|pc87108_close
+multiline_comment|/*&n; * Function nsc_fir_close (self)&n; *&n; *    Close driver instance&n; *&n; */
+DECL|function|nsc_fir_close
 r_static
 r_int
-id|pc87108_close
+id|nsc_fir_close
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 )paren
@@ -1221,11 +1320,11 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-multiline_comment|/*&n; * Function pc87108_probe (iobase, board_addr, irq, dma)&n; *&n; *    Returns non-negative on success.&n; *&n; */
-DECL|function|pc87108_probe
+multiline_comment|/*&n; * Function nsc_fir_init_807 (iobase, board_addr, irq, dma)&n; *&n; *    Initialize the NSC &squot;108 chip&n; *&n; */
+DECL|function|nsc_fir_init_807
 r_static
-r_int
-id|pc87108_probe
+r_void
+id|nsc_fir_init_807
 c_func
 (paren
 r_int
@@ -1241,27 +1340,32 @@ r_int
 id|dma
 )paren
 (brace
-r_int
-id|version
-suffix:semicolon
 id|__u8
 id|temp
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|dongle_id
-suffix:semicolon
-id|IRDA_DEBUG
+id|outb
 c_func
 (paren
-l_int|4
+l_int|2
 comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+id|board_addr
 )paren
 suffix:semicolon
-multiline_comment|/* Base Address and Interrupt Control Register BAIC */
+multiline_comment|/* Mode Control Register (MCTL) */
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|board_addr
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* Disable device */
+multiline_comment|/* Base Address and Interrupt Control Register (BAIC) */
 id|outb
 c_func
 (paren
@@ -1277,7 +1381,7 @@ id|iobase
 )paren
 (brace
 r_case
-l_int|0x3E8
+l_int|0x3e8
 suffix:colon
 id|outb
 c_func
@@ -1292,7 +1396,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|0x2E8
+l_int|0x2e8
 suffix:colon
 id|outb
 c_func
@@ -1307,7 +1411,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|0x3F8
+l_int|0x3f8
 suffix:colon
 id|outb
 c_func
@@ -1322,7 +1426,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|0x2F8
+l_int|0x2f8
 suffix:colon
 id|outb
 c_func
@@ -1346,7 +1450,7 @@ l_string|&quot;(), invalid base_address&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Control Signal Routing Register CSRT */
+multiline_comment|/* Control Signal Routing Register (CSRT) */
 r_switch
 c_cond
 (paren
@@ -1493,17 +1597,14 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|IRDA_DEBUG
+id|ERROR
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), invalid dma&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Mode Control Register MCTL */
 id|outb
 c_func
 (paren
@@ -1512,6 +1613,7 @@ comma
 id|board_addr
 )paren
 suffix:semicolon
+multiline_comment|/* Mode Control Register (MCTL) */
 id|outb
 c_func
 (paren
@@ -1522,7 +1624,269 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* read the Module ID */
+multiline_comment|/* Enable device */
+)brace
+multiline_comment|/*&n; * Function nsc_fir_init_338 (iobase, board_addr, irq, dma)&n; *&n; *    Initialize the NSC &squot;338 chip. Remember that the 87338 needs two &n; *    consecutive writes to the data registers while CPU interrupts are&n; *    disabled. The 97338 does not require this, but shouldn&squot;t be any&n; *    harm if we do it anyway.&n; */
+DECL|function|nsc_fir_init_338
+r_static
+r_void
+id|nsc_fir_init_338
+c_func
+(paren
+r_int
+id|iobase
+comma
+r_int
+id|board_addr
+comma
+r_int
+id|irq
+comma
+r_int
+id|dma
+)paren
+(brace
+multiline_comment|/* No init yet */
+)brace
+DECL|function|nsc_fir_find_chip
+r_static
+r_int
+id|nsc_fir_find_chip
+c_func
+(paren
+r_int
+id|board_addr
+)paren
+(brace
+id|__u8
+id|index
+comma
+id|id
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Read index register */
+id|index
+op_assign
+id|inb
+c_func
+(paren
+id|board_addr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|index
+op_eq
+l_int|0xff
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), no chip at 0x%03x&bslash;n&quot;
+comma
+id|board_addr
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Read chip identification register (SID) for the PC97338 */
+id|outb
+c_func
+(paren
+l_int|8
+comma
+id|board_addr
+)paren
+suffix:semicolon
+id|id
+op_assign
+id|inb
+c_func
+(paren
+id|board_addr
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|id
+op_amp
+l_int|0xf0
+)paren
+op_eq
+id|PC97338
+)paren
+(brace
+id|MESSAGE
+c_func
+(paren
+l_string|&quot;%s, Found NSC PC97338 chip, revision=%d&bslash;n&quot;
+comma
+id|driver_name
+comma
+id|id
+op_amp
+l_int|0x0f
+)paren
+suffix:semicolon
+r_return
+id|PC97338
+suffix:semicolon
+)brace
+multiline_comment|/* Read device identification (DID) for the PC87108 */
+id|outb
+c_func
+(paren
+l_int|5
+comma
+id|board_addr
+)paren
+suffix:semicolon
+id|id
+op_assign
+id|inb
+c_func
+(paren
+id|board_addr
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|id
+op_amp
+l_int|0xf0
+)paren
+op_eq
+id|PC87108
+)paren
+(brace
+id|MESSAGE
+c_func
+(paren
+l_string|&quot;%s, Found NSC PC87108 chip, revision=%d&bslash;n&quot;
+comma
+id|driver_name
+comma
+id|id
+op_amp
+l_int|0x0f
+)paren
+suffix:semicolon
+r_return
+id|PC87108
+suffix:semicolon
+)brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function nsc_fir_probe (iobase, board_addr, irq, dma)&n; *&n; *    Returns non-negative on success.&n; *&n; */
+DECL|function|nsc_fir_probe
+r_static
+r_int
+id|nsc_fir_probe
+c_func
+(paren
+r_int
+id|iobase
+comma
+r_int
+id|board_addr
+comma
+r_int
+id|irq
+comma
+r_int
+id|dma
+)paren
+(brace
+r_int
+id|version
+suffix:semicolon
+id|__u8
+id|chip
+suffix:semicolon
+id|chip
+op_assign
+id|nsc_fir_find_chip
+c_func
+(paren
+id|board_addr
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|chip
+)paren
+(brace
+r_case
+id|PC87108
+suffix:colon
+id|nsc_fir_init_807
+c_func
+(paren
+id|iobase
+comma
+id|board_addr
+comma
+id|irq
+comma
+id|dma
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PC97338
+suffix:colon
+id|nsc_fir_init_338
+c_func
+(paren
+id|iobase
+comma
+id|board_addr
+comma
+id|irq
+comma
+id|dma
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+multiline_comment|/* Found no chip */
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Read the Module ID */
 id|switch_bank
 c_func
 (paren
@@ -1541,7 +1905,7 @@ op_plus
 id|MID
 )paren
 suffix:semicolon
-multiline_comment|/* should be 0x2? */
+multiline_comment|/* Should be 0x2? */
 r_if
 c_cond
 (paren
@@ -1557,8 +1921,9 @@ l_int|0xf0
 id|ERROR
 c_func
 (paren
-id|__FUNCTION__
-l_string|&quot;(), Wrong chip version %02x&bslash;n&quot;
+l_string|&quot;%s, Wrong chip version %02x&bslash;n&quot;
+comma
+id|driver_name
 comma
 id|version
 )paren
@@ -1568,6 +1933,16 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|MESSAGE
+c_func
+(paren
+l_string|&quot;%s, Found chip at base=0x%04x&bslash;n&quot;
+comma
+id|driver_name
+comma
+id|board_addr
+)paren
+suffix:semicolon
 multiline_comment|/* Switch to advanced mode */
 id|switch_bank
 c_func
@@ -1595,21 +1970,28 @@ comma
 id|BANK0
 )paren
 suffix:semicolon
+multiline_comment|/* Check if user has supplied the dongle id or not */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dongle_id
+)paren
+(brace
 id|dongle_id
 op_assign
-id|pc87108_read_dongle_id
+id|nsc_fir_read_dongle_id
 c_func
 (paren
 id|iobase
 )paren
 suffix:semicolon
-id|IRDA_DEBUG
+id|MESSAGE
 c_func
 (paren
-l_int|0
+l_string|&quot;%s, Found dongle: %s&bslash;n&quot;
 comma
-id|__FUNCTION__
-l_string|&quot;(), Found dongle: %s&bslash;n&quot;
+id|driver_name
 comma
 id|dongle_types
 (braket
@@ -1617,6 +1999,23 @@ id|dongle_id
 )braket
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|MESSAGE
+c_func
+(paren
+l_string|&quot;%s, Using dongle: %s&bslash;n&quot;
+comma
+id|driver_name
+comma
+id|dongle_types
+(braket
+id|dongle_id
+)braket
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Set FIFO threshold to TX17, RX16, reset and enable FIFO&squot;s */
 id|switch_bank
 c_func
@@ -1737,80 +2136,12 @@ l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Set beginning frag, and preamble length */
-multiline_comment|/* Receiver frame length */
-id|switch_bank
+id|MESSAGE
 c_func
 (paren
-id|iobase
+l_string|&quot;%s, driver loaded (Dag Brattli)&bslash;n&quot;
 comma
-id|BANK4
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|2048
-op_amp
-l_int|0xff
-comma
-id|iobase
-op_plus
-l_int|6
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-(paren
-l_int|2048
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|0x1f
-comma
-id|iobase
-op_plus
-l_int|7
-)paren
-suffix:semicolon
-multiline_comment|/* Transmitter frame length */
-id|outb
-c_func
-(paren
-l_int|2048
-op_amp
-l_int|0xff
-comma
-id|iobase
-op_plus
-l_int|4
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-(paren
-l_int|2048
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|0x1f
-comma
-id|iobase
-op_plus
-l_int|5
-)paren
-suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;PC87108 driver loaded. Version: 0x%02x&bslash;n&quot;
-comma
-id|version
+id|driver_name
 )paren
 suffix:semicolon
 multiline_comment|/* Enable receive interrupts */
@@ -1836,11 +2167,11 @@ r_return
 id|dongle_id
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_read_dongle_id (void)&n; *&n; * Try to read dongle indentification. This procedure needs to be executed&n; * once after power-on/reset. It also needs to be used whenever you suspect&n; * that the user may have plugged/unplugged the IrDA Dongle.&n; * &n; */
-DECL|function|pc87108_read_dongle_id
+multiline_comment|/*&n; * Function nsc_fir_read_dongle_id (void)&n; *&n; * Try to read dongle indentification. This procedure needs to be executed&n; * once after power-on/reset. It also needs to be used whenever you suspect&n; * that the user may have plugged/unplugged the IrDA Dongle.&n; * &n; */
+DECL|function|nsc_fir_read_dongle_id
 r_static
 r_int
-id|pc87108_read_dongle_id
+id|nsc_fir_read_dongle_id
 (paren
 r_int
 id|iobase
@@ -1933,17 +2264,6 @@ comma
 id|BANK0
 )paren
 suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Dongle = %#x&bslash;n&quot;
-comma
-id|dongle_id
-)paren
-suffix:semicolon
 id|outb
 c_func
 (paren
@@ -1958,11 +2278,11 @@ r_return
 id|dongle_id
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_init_dongle_interface (iobase, dongle_id)&n; *&n; *     This function initializes the dongle for the transceiver that is&n; *     used. This procedure needs to be executed once after&n; *     power-on/reset. It also needs to be used whenever you suspect that&n; *     the dongle is changed. &n; */
-DECL|function|pc87108_init_dongle_interface
+multiline_comment|/*&n; * Function nsc_fir_init_dongle_interface (iobase, dongle_id)&n; *&n; *     This function initializes the dongle for the transceiver that is&n; *     used. This procedure needs to be executed once after&n; *     power-on/reset. It also needs to be used whenever you suspect that&n; *     the dongle is changed. &n; */
+DECL|function|nsc_fir_init_dongle_interface
 r_static
 r_void
-id|pc87108_init_dongle_interface
+id|nsc_fir_init_dongle_interface
 (paren
 r_int
 id|iobase
@@ -2072,14 +2392,14 @@ suffix:semicolon
 r_case
 l_int|0x05
 suffix:colon
-multiline_comment|/* Reserved */
+multiline_comment|/* Reserved, but this is what the Thinkpad reports */
 id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), %s not defined by irda yet&quot;
+l_string|&quot;(), %s not defined by irda yet&bslash;n&quot;
 comma
 id|dongle_types
 (braket
@@ -2246,14 +2566,6 @@ id|dongle_id
 )braket
 )paren
 suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;***&bslash;n&quot;
-)paren
-suffix:semicolon
 id|switch_bank
 c_func
 (paren
@@ -2312,11 +2624,11 @@ id|BSR
 suffix:semicolon
 )brace
 multiline_comment|/* set_up_dongle_interface */
-multiline_comment|/*&n; * Function pc87108_change_dongle_speed (iobase, speed, dongle_id)&n; *&n; *    Change speed of the attach dongle&n; *&n; */
-DECL|function|pc87108_change_dongle_speed
+multiline_comment|/*&n; * Function nsc_fir_change_dongle_speed (iobase, speed, dongle_id)&n; *&n; *    Change speed of the attach dongle&n; *&n; */
+DECL|function|nsc_fir_change_dongle_speed
 r_static
 r_void
-id|pc87108_change_dongle_speed
+id|nsc_fir_change_dongle_speed
 c_func
 (paren
 r_int
@@ -2699,15 +3011,15 @@ id|BSR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_change_speed (self, baud)&n; *&n; *    Change the speed of the device&n; *&n; */
-DECL|function|pc87108_change_speed
+multiline_comment|/*&n; * Function nsc_fir_change_speed (self, baud)&n; *&n; *    Change the speed of the device&n; *&n; */
+DECL|function|nsc_fir_change_speed
 r_static
 r_void
-id|pc87108_change_speed
+id|nsc_fir_change_speed
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 comma
@@ -2715,16 +3027,23 @@ id|__u32
 id|speed
 )paren
 (brace
+r_struct
+id|net_device
+op_star
+id|dev
+op_assign
+id|self-&gt;netdev
+suffix:semicolon
 id|__u8
 id|mcr
 op_assign
 id|MCR_SIR
 suffix:semicolon
-id|__u8
-id|bank
-suffix:semicolon
 r_int
 id|iobase
+suffix:semicolon
+id|__u8
+id|bank
 suffix:semicolon
 id|IRDA_DEBUG
 c_func
@@ -2843,7 +3162,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|37600
+l_int|38400
 suffix:colon
 id|outb
 c_func
@@ -3010,7 +3329,7 @@ id|MCR
 )paren
 suffix:semicolon
 multiline_comment|/* Give some hits to the transceiver */
-id|pc87108_change_dongle_speed
+id|nsc_fir_change_dongle_speed
 c_func
 (paren
 id|iobase
@@ -3027,6 +3346,26 @@ c_func
 id|iobase
 comma
 id|BANK0
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|iobase
+op_plus
+id|FCR
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|FCR_FIFO_EN
+comma
+id|iobase
+op_plus
+id|FCR
 )paren
 suffix:semicolon
 id|outb
@@ -3052,7 +3391,6 @@ op_plus
 id|FCR
 )paren
 suffix:semicolon
-multiline_comment|/* outb(0xa7, iobase+FCR); */
 multiline_comment|/* Set FIFO size to 32 */
 id|switch_bank
 c_func
@@ -3095,6 +3433,11 @@ OG
 l_int|115200
 )paren
 (brace
+multiline_comment|/* Install FIR xmit handler */
+id|dev-&gt;hard_start_xmit
+op_assign
+id|nsc_fir_hard_xmit_fir
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -3105,7 +3448,7 @@ op_plus
 id|IER
 )paren
 suffix:semicolon
-id|pc87108_dma_receive
+id|nsc_fir_dma_receive
 c_func
 (paren
 id|self
@@ -3113,6 +3456,12 @@ id|self
 suffix:semicolon
 )brace
 r_else
+(brace
+multiline_comment|/* Install SIR xmit handler */
+id|dev-&gt;hard_start_xmit
+op_assign
+id|nsc_fir_hard_xmit_sir
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -3123,6 +3472,7 @@ op_plus
 id|IER
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Restore BSR */
 id|outb
 c_func
@@ -3135,11 +3485,11 @@ id|BSR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_hard_xmit (skb, dev)&n; *&n; *    Transmit the frame!&n; *&n; */
-DECL|function|pc87108_hard_xmit
+multiline_comment|/*&n; * Function nsc_fir_hard_xmit (skb, dev)&n; *&n; *    Transmit the frame!&n; *&n; */
+DECL|function|nsc_fir_hard_xmit_sir
 r_static
 r_int
-id|pc87108_hard_xmit
+id|nsc_fir_hard_xmit_sir
 c_func
 (paren
 r_struct
@@ -3154,9 +3504,13 @@ id|dev
 )paren
 (brace
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_int
 id|iobase
@@ -3167,14 +3521,11 @@ suffix:semicolon
 id|__u8
 id|bank
 suffix:semicolon
-r_int
-id|mtt
-suffix:semicolon
 id|self
 op_assign
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 )paren
 id|dev-&gt;priv
@@ -3194,22 +3545,6 @@ suffix:semicolon
 id|iobase
 op_assign
 id|self-&gt;io.iobase
-suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(%ld), skb-&gt;len=%d&bslash;n&quot;
-comma
-id|jiffies
-comma
-(paren
-r_int
-)paren
-id|skb-&gt;len
-)paren
 suffix:semicolon
 multiline_comment|/* Lock transmit buffer */
 r_if
@@ -3252,6 +3587,15 @@ id|self-&gt;new_speed
 op_assign
 id|speed
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|self-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* Save current bank */
 id|bank
 op_assign
@@ -3263,33 +3607,250 @@ op_plus
 id|BSR
 )paren
 suffix:semicolon
-multiline_comment|/* Decide if we should use PIO or DMA transfer */
-r_if
-c_cond
-(paren
-id|self-&gt;io.speed
-OG
-l_int|115200
-)paren
-(brace
 id|self-&gt;tx_buff.data
 op_assign
 id|self-&gt;tx_buff.head
 suffix:semicolon
+id|self-&gt;tx_buff.len
+op_assign
+id|async_wrap_skb
+c_func
+(paren
+id|skb
+comma
+id|self-&gt;tx_buff.data
+comma
+id|self-&gt;tx_buff.truesize
+)paren
+suffix:semicolon
+multiline_comment|/* Add interrupt on tx low level (will fire immediately) */
+id|switch_bank
+c_func
+(paren
+id|iobase
+comma
+id|BANK0
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|IER_TXLDL_IE
+comma
+id|iobase
+op_plus
+id|IER
+)paren
+suffix:semicolon
+multiline_comment|/* Restore bank register */
+id|outb
+c_func
+(paren
+id|bank
+comma
+id|iobase
+op_plus
+id|BSR
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|self-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|nsc_fir_hard_xmit_fir
+r_static
+r_int
+id|nsc_fir_hard_xmit_fir
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|nsc_fir_cb
+op_star
+id|self
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|iobase
+suffix:semicolon
+id|__u32
+id|speed
+suffix:semicolon
+id|__u8
+id|bank
+suffix:semicolon
+r_int
+id|mtt
+comma
+id|diff
+suffix:semicolon
+id|self
+op_assign
+(paren
+r_struct
+id|nsc_fir_cb
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+l_int|0
+suffix:semicolon
+)paren
+suffix:semicolon
+id|iobase
+op_assign
+id|self-&gt;io.iobase
+suffix:semicolon
+multiline_comment|/* Lock transmit buffer */
+r_if
+c_cond
+(paren
+id|irda_lock
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|dev-&gt;tbusy
+)paren
+op_eq
+id|FALSE
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+multiline_comment|/* Check if we need to change the speed */
+r_if
+c_cond
+(paren
+(paren
+id|speed
+op_assign
+id|irda_get_speed
+c_func
+(paren
+id|skb
+)paren
+)paren
+op_ne
+id|self-&gt;io.speed
+)paren
+id|self-&gt;new_speed
+op_assign
+id|speed
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|self-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* Save current bank */
+id|bank
+op_assign
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|BSR
+)paren
+suffix:semicolon
+multiline_comment|/* Register and copy this frame to DMA memory */
+id|self-&gt;tx_fifo.queue
+(braket
+id|self-&gt;tx_fifo.free
+)braket
+dot
+id|start
+op_assign
+id|self-&gt;tx_fifo.tail
+suffix:semicolon
+id|self-&gt;tx_fifo.queue
+(braket
+id|self-&gt;tx_fifo.free
+)braket
+dot
+id|len
+op_assign
+id|skb-&gt;len
+suffix:semicolon
+id|self-&gt;tx_fifo.tail
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|memcpy
 c_func
 (paren
-id|self-&gt;tx_buff.data
+id|self-&gt;tx_fifo.queue
+(braket
+id|self-&gt;tx_fifo.free
+)braket
+dot
+id|start
 comma
 id|skb-&gt;data
 comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|self-&gt;tx_buff.len
-op_assign
-id|skb-&gt;len
+id|self-&gt;tx_fifo.len
+op_increment
 suffix:semicolon
+id|self-&gt;tx_fifo.free
+op_increment
+suffix:semicolon
+multiline_comment|/* Start transmit only if there is currently no transmit going on */
+r_if
+c_cond
+(paren
+id|self-&gt;tx_fifo.len
+op_eq
+l_int|1
+)paren
+(brace
 id|mtt
 op_assign
 id|irda_get_mtt
@@ -3302,8 +3863,52 @@ r_if
 c_cond
 (paren
 id|mtt
+)paren
+(brace
+multiline_comment|/* Check how much time we have used already */
+id|do_gettimeofday
+c_func
+(paren
+op_amp
+id|self-&gt;now
+)paren
+suffix:semicolon
+id|diff
+op_assign
+id|self-&gt;now.tv_usec
+op_minus
+id|self-&gt;stamp.tv_usec
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|diff
+OL
+l_int|0
+)paren
+id|diff
+op_add_assign
+l_int|1000000
+suffix:semicolon
+multiline_comment|/* Check if the mtt is larger than the time we have&n;&t;&t;&t; * already used by all the protocol processing&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|mtt
 OG
-l_int|50
+id|diff
+)paren
+(brace
+id|mtt
+op_sub_assign
+id|diff
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mtt
+OG
+l_int|125
 )paren
 (brace
 multiline_comment|/* Adjust for timer resolution */
@@ -3386,21 +3991,20 @@ op_plus
 id|IER
 )paren
 suffix:semicolon
+multiline_comment|/* Timer will take care of the rest */
+r_goto
+id|out
+suffix:semicolon
 )brace
 r_else
-(brace
-multiline_comment|/* Use udelay for delays less than 50 us. */
-r_if
-c_cond
-(paren
-id|mtt
-)paren
 id|udelay
 c_func
 (paren
 id|mtt
 )paren
 suffix:semicolon
+)brace
+)brace
 multiline_comment|/* Enable DMA interrupt */
 id|switch_bank
 c_func
@@ -3420,7 +4024,7 @@ op_plus
 id|IER
 )paren
 suffix:semicolon
-id|pc87108_dma_write
+id|nsc_fir_dma_xmit
 c_func
 (paren
 id|self
@@ -3429,51 +4033,20 @@ id|iobase
 )paren
 suffix:semicolon
 )brace
-)brace
-r_else
-(brace
-id|self-&gt;tx_buff.data
+multiline_comment|/* Not busy transmitting anymore if window is not full */
+r_if
+c_cond
+(paren
+id|self-&gt;tx_fifo.len
+OL
+id|MAX_WINDOW
+)paren
+id|dev-&gt;tbusy
 op_assign
-id|self-&gt;tx_buff.head
+l_int|0
 suffix:semicolon
-id|self-&gt;tx_buff.len
-op_assign
-id|async_wrap_skb
-c_func
-(paren
-id|skb
-comma
-id|self-&gt;tx_buff.data
-comma
-id|self-&gt;tx_buff.truesize
-)paren
-suffix:semicolon
-multiline_comment|/* Add interrupt on tx low level (will fire immediately) */
-id|switch_bank
-c_func
-(paren
-id|iobase
-comma
-id|BANK0
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|IER_TXLDL_IE
-comma
-id|iobase
-op_plus
-id|IER
-)paren
-suffix:semicolon
-)brace
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
+id|out
+suffix:colon
 multiline_comment|/* Restore bank register */
 id|outb
 c_func
@@ -3485,19 +4058,34 @@ op_plus
 id|BSR
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|self-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_dma_xmit (self, iobase)&n; *&n; *    Transmit data using DMA&n; *&n; */
-DECL|function|pc87108_dma_write
+multiline_comment|/*&n; * Function nsc_fir_dma_xmit (self, iobase)&n; *&n; *    Transmit data using DMA&n; *&n; */
+DECL|function|nsc_fir_dma_xmit
 r_static
 r_void
-id|pc87108_dma_write
+id|nsc_fir_dma_xmit
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 comma
@@ -3507,15 +4095,6 @@ id|iobase
 (brace
 r_int
 id|bsr
-suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 multiline_comment|/* Save current bank */
 id|bsr
@@ -3556,18 +4135,6 @@ op_plus
 id|MCR
 )paren
 suffix:semicolon
-id|setup_dma
-c_func
-(paren
-id|self-&gt;io.dma
-comma
-id|self-&gt;tx_buff.data
-comma
-id|self-&gt;tx_buff.len
-comma
-id|DMA_MODE_WRITE
-)paren
-suffix:semicolon
 id|self-&gt;io.direction
 op_assign
 id|IO_XMIT
@@ -3584,14 +4151,6 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|ECR1
-)paren
-op_or
 id|ECR1_DMASWP
 op_or
 id|ECR1_DMANF
@@ -3603,7 +4162,29 @@ op_plus
 id|ECR1
 )paren
 suffix:semicolon
-multiline_comment|/* Enable DMA */
+id|setup_dma
+c_func
+(paren
+id|self-&gt;io.dma
+comma
+id|self-&gt;tx_fifo.queue
+(braket
+id|self-&gt;tx_fifo.ptr
+)braket
+dot
+id|start
+comma
+id|self-&gt;tx_fifo.queue
+(braket
+id|self-&gt;tx_fifo.ptr
+)braket
+dot
+id|len
+comma
+id|DMA_TX_MODE
+)paren
+suffix:semicolon
+multiline_comment|/* Enable DMA and SIR interaction pulse */
 id|switch_bank
 c_func
 (paren
@@ -3623,7 +4204,11 @@ op_plus
 id|MCR
 )paren
 op_or
+id|MCR_TX_DFR
+op_or
 id|MCR_DMA_EN
+op_or
+id|MCR_IR_PLS
 comma
 id|iobase
 op_plus
@@ -3642,11 +4227,11 @@ id|BSR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_pio_xmit (self, iobase)&n; *&n; *    Transmit data using PIO. Returns the number of bytes that actually&n; *    got transfered&n; *&n; */
-DECL|function|pc87108_pio_write
+multiline_comment|/*&n; * Function nsc_fir_pio_xmit (self, iobase)&n; *&n; *    Transmit data using PIO. Returns the number of bytes that actually&n; *    got transfered&n; *&n; */
+DECL|function|nsc_fir_pio_write
 r_static
 r_int
-id|pc87108_pio_write
+id|nsc_fir_pio_write
 c_func
 (paren
 r_int
@@ -3729,17 +4314,6 @@ id|fifo_size
 op_sub_assign
 l_int|17
 suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), %d bytes left in tx fifo&bslash;n&quot;
-comma
-id|fifo_size
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* Fill FIFO with current frame */
 r_while
@@ -3805,15 +4379,15 @@ r_return
 id|actual
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_dma_xmit_complete (self)&n; *&n; *    The transfer of a frame in finished. This function will only be called &n; *    by the interrupt handler&n; *&n; */
-DECL|function|pc87108_dma_xmit_complete
+multiline_comment|/*&n; * Function nsc_fir_dma_xmit_complete (self)&n; *&n; *    The transfer of a frame in finished. This function will only be called &n; *    by the interrupt handler&n; *&n; */
+DECL|function|nsc_fir_dma_xmit_complete
 r_static
-r_void
-id|pc87108_dma_xmit_complete
+r_int
+id|nsc_fir_dma_xmit_complete
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 )paren
@@ -3824,24 +4398,18 @@ suffix:semicolon
 id|__u8
 id|bank
 suffix:semicolon
+r_int
+id|ret
+op_assign
+id|TRUE
+suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
 )paren
 suffix:semicolon
 id|iobase
@@ -3936,7 +4504,7 @@ c_cond
 id|self-&gt;new_speed
 )paren
 (brace
-id|pc87108_change_speed
+id|nsc_fir_change_speed
 c_func
 (paren
 id|self
@@ -3949,12 +4517,39 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Unlock tx_buff and request another frame */
+multiline_comment|/* Finished with this frame, so prepare for next */
+id|self-&gt;tx_fifo.ptr
+op_increment
+suffix:semicolon
+id|self-&gt;tx_fifo.len
+op_decrement
+suffix:semicolon
+multiline_comment|/* Any frames to be sent back-to-back? */
+r_if
+c_cond
+(paren
+id|self-&gt;tx_fifo.len
+)paren
+(brace
+id|nsc_fir_dma_xmit
+c_func
+(paren
+id|self
+comma
+id|iobase
+)paren
+suffix:semicolon
+multiline_comment|/* Not finished yet! */
+id|ret
+op_assign
+id|FALSE
+suffix:semicolon
+)brace
+multiline_comment|/* Not busy transmitting anymore */
 id|self-&gt;netdev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Unlock */
 multiline_comment|/* Tell the network layer, that we can accept more frames */
 id|mark_bh
 c_func
@@ -3973,16 +4568,19 @@ op_plus
 id|BSR
 )paren
 suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_dma_receive (self)&n; *&n; *    Get ready for receiving a frame. The device will initiate a DMA&n; *    if it starts to receive a frame.&n; *&n; */
-DECL|function|pc87108_dma_receive
+multiline_comment|/*&n; * Function nsc_fir_dma_receive (self)&n; *&n; *    Get ready for receiving a frame. The device will initiate a DMA&n; *    if it starts to receive a frame.&n; *&n; */
+DECL|function|nsc_fir_dma_receive
 r_static
 r_int
-id|pc87108_dma_receive
+id|nsc_fir_dma_receive
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 )paren
@@ -4006,18 +4604,22 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
 id|iobase
 op_assign
 id|self-&gt;io.iobase
+suffix:semicolon
+multiline_comment|/* Reset Tx FIFO info */
+id|self-&gt;tx_fifo.len
+op_assign
+id|self-&gt;tx_fifo.ptr
+op_assign
+id|self-&gt;tx_fifo.free
+op_assign
+l_int|0
+suffix:semicolon
+id|self-&gt;tx_fifo.tail
+op_assign
+id|self-&gt;tx_buff.head
 suffix:semicolon
 multiline_comment|/* Save current bank */
 id|bsr
@@ -4058,35 +4660,47 @@ op_plus
 id|MCR
 )paren
 suffix:semicolon
-id|self-&gt;rx_buff.data
-op_assign
-id|self-&gt;rx_buff.head
-suffix:semicolon
-id|setup_dma
+multiline_comment|/* Choose DMA Rx, DMA Fairness, and Advanced mode */
+id|switch_bank
 c_func
 (paren
-id|self-&gt;io.dma
+id|iobase
 comma
-id|self-&gt;rx_buff.data
-comma
-id|self-&gt;rx_buff.truesize
-comma
-id|DMA_MODE_READ
+id|BANK2
 )paren
 suffix:semicolon
-multiline_comment|/* driver-&gt;media_busy = FALSE; */
+id|outb
+c_func
+(paren
+id|ECR1_DMANF
+op_or
+id|ECR1_EXT_SL
+comma
+id|iobase
+op_plus
+id|ECR1
+)paren
+suffix:semicolon
 id|self-&gt;io.direction
 op_assign
 id|IO_RECV
 suffix:semicolon
+id|self-&gt;rx_buff.data
+op_assign
+id|self-&gt;rx_buff.head
+suffix:semicolon
 multiline_comment|/* Reset Rx FIFO. This will also flush the ST_FIFO */
+id|switch_bank
+c_func
+(paren
+id|iobase
+comma
+id|BANK0
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
-id|FCR_RXTH
-op_or
-id|FCR_TXTH
-op_or
 id|FCR_RXSR
 op_or
 id|FCR_FIFO_EN
@@ -4104,41 +4718,19 @@ id|self-&gt;st_fifo.head
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Choose DMA Rx, DMA Fairness, and Advanced mode */
-id|switch_bank
+id|setup_dma
 c_func
 (paren
-id|iobase
+id|self-&gt;io.dma
 comma
-id|BANK2
+id|self-&gt;rx_buff.data
+comma
+id|self-&gt;rx_buff.truesize
+comma
+id|DMA_RX_MODE
 )paren
 suffix:semicolon
-id|outb
-c_func
-(paren
-(paren
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|ECR1
-)paren
-op_amp
-op_complement
-id|ECR1_DMASWP
-)paren
-op_or
-id|ECR1_DMANF
-op_or
-id|ECR1_EXT_SL
-comma
-id|iobase
-op_plus
-id|ECR1
-)paren
-suffix:semicolon
-multiline_comment|/* enable DMA */
+multiline_comment|/* Enable DMA */
 id|switch_bank
 c_func
 (paren
@@ -4176,28 +4768,19 @@ op_plus
 id|BSR
 )paren
 suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), done!&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_dma_receive_complete (self)&n; *&n; *    Finished with receiving frames&n; *&n; *    &n; */
-DECL|function|pc87108_dma_receive_complete
+multiline_comment|/*&n; * Function nsc_fir_dma_receive_complete (self)&n; *&n; *    Finished with receiving frames&n; *&n; *    &n; */
+DECL|function|nsc_fir_dma_receive_complete
 r_static
 r_int
-id|pc87108_dma_receive_complete
+id|nsc_fir_dma_receive_complete
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 comma
@@ -4316,14 +4899,6 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* Try to process all entries in status FIFO */
-id|switch_bank
-c_func
-(paren
-id|iobase
-comma
-id|BANK0
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -4444,6 +5019,14 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Check if we have transfered all data to memory */
+id|switch_bank
+c_func
+(paren
+id|iobase
+comma
+id|BANK0
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4499,7 +5082,14 @@ id|FALSE
 suffix:semicolon
 multiline_comment|/* I&squot;ll be back! */
 )brace
-multiline_comment|/* Should be OK then */
+multiline_comment|/* &n;&t;&t;&t; * Remember when we received this frame, so we can&n;&t;&t;&t; * reduce the min turn time a bit since we will know&n;&t;&t;&t; * how much time we have used for protocol processing&n;&t;&t;&t; */
+id|do_gettimeofday
+c_func
+(paren
+op_amp
+id|self-&gt;stamp
+)paren
+suffix:semicolon
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -4518,12 +5108,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_INFO
 id|__FUNCTION__
-l_string|&quot;(), memory squeeze, dropping frame.&bslash;n&quot;
+l_string|&quot;(), memory squeeze, &quot;
+l_string|&quot;dropping frame.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Restore bank register */
@@ -4654,15 +5244,15 @@ r_return
 id|TRUE
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_pio_receive (self)&n; *&n; *    Receive all data in receiver FIFO&n; *&n; */
-DECL|function|pc87108_pio_receive
+multiline_comment|/*&n; * Function nsc_fir_pio_receive (self)&n; *&n; *    Receive all data in receiver FIFO&n; *&n; */
+DECL|function|nsc_fir_pio_receive
 r_static
 r_void
-id|pc87108_pio_receive
+id|nsc_fir_pio_receive
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 )paren
@@ -4743,15 +5333,15 @@ id|LSR_RXDA
 suffix:semicolon
 multiline_comment|/* Data available */
 )brace
-multiline_comment|/*&n; * Function pc87108_sir_interrupt (self, eir)&n; *&n; *    Handle SIR interrupt&n; *&n; */
-DECL|function|pc87108_sir_interrupt
+multiline_comment|/*&n; * Function nsc_fir_sir_interrupt (self, eir)&n; *&n; *    Handle SIR interrupt&n; *&n; */
+DECL|function|nsc_fir_sir_interrupt
 r_static
 id|__u8
-id|pc87108_sir_interrupt
+id|nsc_fir_sir_interrupt
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 comma
@@ -4767,7 +5357,7 @@ id|new_ier
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Transmit FIFO low on data */
+multiline_comment|/* Check if transmit FIFO is low on data */
 r_if
 c_cond
 (paren
@@ -4779,7 +5369,7 @@ id|EIR_TXLDL_EV
 multiline_comment|/* Write data left in transmit buffer */
 id|actual
 op_assign
-id|pc87108_pio_write
+id|nsc_fir_pio_write
 c_func
 (paren
 id|self-&gt;io.iobase
@@ -4825,35 +5415,6 @@ multiline_comment|/* Unlock */
 id|self-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-multiline_comment|/* Check if we need to change the speed? */
-r_if
-c_cond
-(paren
-id|self-&gt;new_speed
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), Changing speed!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|pc87108_change_speed
-c_func
-(paren
-id|self
-comma
-id|self-&gt;new_speed
-)paren
-suffix:semicolon
-id|self-&gt;new_speed
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 id|mark_bh
 c_func
 (paren
@@ -4891,7 +5452,7 @@ id|__FUNCTION__
 l_string|&quot;(), Changing speed!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|pc87108_change_speed
+id|nsc_fir_change_speed
 c_func
 (paren
 id|self
@@ -4923,7 +5484,7 @@ op_amp
 id|EIR_RXHDL_EV
 )paren
 (brace
-id|pc87108_pio_receive
+id|nsc_fir_pio_receive
 c_func
 (paren
 id|self
@@ -4939,15 +5500,15 @@ r_return
 id|new_ier
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_fir_interrupt (self, eir)&n; *&n; *    Handle MIR/FIR interrupt&n; *&n; */
-DECL|function|pc87108_fir_interrupt
+multiline_comment|/*&n; * Function nsc_fir_fir_interrupt (self, eir)&n; *&n; *    Handle MIR/FIR interrupt&n; *&n; */
+DECL|function|nsc_fir_fir_interrupt
 r_static
 id|__u8
-id|pc87108_fir_interrupt
+id|nsc_fir_fir_interrupt
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 comma
@@ -4992,7 +5553,7 @@ id|EIR_LS_EV
 r_if
 c_cond
 (paren
-id|pc87108_dma_receive_complete
+id|nsc_fir_dma_receive_complete
 c_func
 (paren
 id|self
@@ -5029,7 +5590,7 @@ op_plus
 id|TMRL
 )paren
 suffix:semicolon
-multiline_comment|/* 125 us */
+multiline_comment|/* 125 us * 15 */
 id|outb
 c_func
 (paren
@@ -5057,7 +5618,7 @@ id|IER_TMR_IE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Timer finished */
+r_else
 r_if
 c_cond
 (paren
@@ -5066,6 +5627,7 @@ op_amp
 id|EIR_TMR_EV
 )paren
 (brace
+multiline_comment|/* Timer finished */
 multiline_comment|/* Disable timer */
 id|switch_bank
 c_func
@@ -5113,7 +5675,7 @@ op_eq
 id|IO_XMIT
 )paren
 (brace
-id|pc87108_dma_write
+id|nsc_fir_dma_xmit
 c_func
 (paren
 id|self
@@ -5130,7 +5692,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Check if DMA has now finished */
-id|pc87108_dma_receive_complete
+id|nsc_fir_dma_receive_complete
 c_func
 (paren
 id|self
@@ -5144,7 +5706,7 @@ id|IER_SFIF_IE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Finished with transmission */
+r_else
 r_if
 c_cond
 (paren
@@ -5153,12 +5715,17 @@ op_amp
 id|EIR_DMA_EV
 )paren
 (brace
-id|pc87108_dma_xmit_complete
+multiline_comment|/* Finished with transmission */
+r_if
+c_cond
+(paren
+id|nsc_fir_dma_xmit_complete
 c_func
 (paren
 id|self
 )paren
-suffix:semicolon
+)paren
+(brace
 multiline_comment|/* Check if there are more frames to be transmitted */
 r_if
 c_cond
@@ -5171,7 +5738,7 @@ id|self-&gt;netdev
 )paren
 (brace
 multiline_comment|/* Prepare for receive */
-id|pc87108_dma_receive
+id|nsc_fir_dma_receive
 c_func
 (paren
 id|self
@@ -5182,6 +5749,15 @@ op_assign
 id|IER_LS_IE
 op_or
 id|IER_SFIF_IE
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/*  Not finished yet, so interrupt on DMA again */
+id|new_ier
+op_or_assign
+id|IER_DMA_IE
 suffix:semicolon
 )brace
 )brace
@@ -5199,11 +5775,11 @@ r_return
 id|new_ier
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_interrupt (irq, dev_id, regs)&n; *&n; *    An interrupt from the chip has arrived. Time to do some work&n; *&n; */
-DECL|function|pc87108_interrupt
+multiline_comment|/*&n; * Function nsc_fir_interrupt (irq, dev_id, regs)&n; *&n; *    An interrupt from the chip has arrived. Time to do some work&n; *&n; */
+DECL|function|nsc_fir_interrupt
 r_static
 r_void
-id|pc87108_interrupt
+id|nsc_fir_interrupt
 c_func
 (paren
 r_int
@@ -5232,7 +5808,7 @@ op_star
 id|dev_id
 suffix:semicolon
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 suffix:semicolon
@@ -5271,10 +5847,17 @@ id|self
 op_assign
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|self-&gt;lock
+)paren
 suffix:semicolon
 id|dev-&gt;interrupt
 op_assign
@@ -5284,7 +5867,6 @@ id|iobase
 op_assign
 id|self-&gt;io.iobase
 suffix:semicolon
-multiline_comment|/* Save current bank */
 id|bsr
 op_assign
 id|inb
@@ -5295,6 +5877,7 @@ op_plus
 id|BSR
 )paren
 suffix:semicolon
+multiline_comment|/* Save current bank */
 id|switch_bank
 c_func
 (paren
@@ -5353,7 +5936,7 @@ l_int|115200
 )paren
 id|ier
 op_assign
-id|pc87108_fir_interrupt
+id|nsc_fir_fir_interrupt
 c_func
 (paren
 id|self
@@ -5366,7 +5949,7 @@ suffix:semicolon
 r_else
 id|ier
 op_assign
-id|pc87108_sir_interrupt
+id|nsc_fir_sir_interrupt
 c_func
 (paren
 id|self
@@ -5401,16 +5984,23 @@ id|dev-&gt;interrupt
 op_assign
 l_int|0
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|self-&gt;lock
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_is_receiving (self)&n; *&n; *    Return TRUE is we are currently receiving a frame&n; *&n; */
-DECL|function|pc87108_is_receiving
+multiline_comment|/*&n; * Function nsc_fir_is_receiving (self)&n; *&n; *    Return TRUE is we are currently receiving a frame&n; *&n; */
+DECL|function|nsc_fir_is_receiving
 r_static
 r_int
-id|pc87108_is_receiving
+id|nsc_fir_is_receiving
 c_func
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 )paren
@@ -5517,11 +6107,11 @@ r_return
 id|status
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_net_init (dev)&n; *&n; *    Initialize network device&n; *&n; */
-DECL|function|pc87108_net_init
+multiline_comment|/*&n; * Function nsc_fir_net_init (dev)&n; *&n; *    Initialize network device&n; *&n; */
+DECL|function|nsc_fir_net_init
 r_static
 r_int
-id|pc87108_net_init
+id|nsc_fir_net_init
 c_func
 (paren
 r_struct
@@ -5551,11 +6141,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_net_open (dev)&n; *&n; *    Start the device&n; *&n; */
-DECL|function|pc87108_net_open
+multiline_comment|/*&n; * Function nsc_fir_net_open (dev)&n; *&n; *    Start the device&n; *&n; */
+DECL|function|nsc_fir_net_open
 r_static
 r_int
-id|pc87108_net_open
+id|nsc_fir_net_open
 c_func
 (paren
 r_struct
@@ -5565,7 +6155,7 @@ id|dev
 )paren
 (brace
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 suffix:semicolon
@@ -5601,7 +6191,7 @@ id|self
 op_assign
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 )paren
 id|dev-&gt;priv
@@ -5630,7 +6220,7 @@ c_func
 (paren
 id|self-&gt;io.irq
 comma
-id|pc87108_interrupt
+id|nsc_fir_interrupt
 comma
 l_int|0
 comma
@@ -5649,7 +6239,7 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Always allocate the DMA channel after the IRQ,&n;&t; * and clean up on failure.&n;&t; */
+multiline_comment|/*&n;&t; * Always allocate the DMA channel after the IRQ, and clean up on &n;&t; * failure.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5749,11 +6339,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_net_close (dev)&n; *&n; *    Stop the device&n; *&n; */
-DECL|function|pc87108_net_close
+multiline_comment|/*&n; * Function nsc_fir_net_close (dev)&n; *&n; *    Stop the device&n; *&n; */
+DECL|function|nsc_fir_net_close
 r_static
 r_int
-id|pc87108_net_close
+id|nsc_fir_net_close
 c_func
 (paren
 r_struct
@@ -5763,7 +6353,7 @@ id|dev
 )paren
 (brace
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 suffix:semicolon
@@ -5799,7 +6389,7 @@ id|self
 op_assign
 (paren
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 )paren
 id|dev-&gt;priv
@@ -5912,11 +6502,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_net_ioctl (dev, rq, cmd)&n; *&n; *    Process IOCTL commands for this device&n; *&n; */
-DECL|function|pc87108_net_ioctl
+multiline_comment|/*&n; * Function nsc_fir_net_ioctl (dev, rq, cmd)&n; *&n; *    Process IOCTL commands for this device&n; *&n; */
+DECL|function|nsc_fir_net_ioctl
 r_static
 r_int
-id|pc87108_net_ioctl
+id|nsc_fir_net_ioctl
 c_func
 (paren
 r_struct
@@ -5946,7 +6536,7 @@ op_star
 id|rq
 suffix:semicolon
 r_struct
-id|pc87108
+id|nsc_fir_cb
 op_star
 id|self
 suffix:semicolon
@@ -6024,7 +6614,7 @@ r_case
 id|SIOCSBANDWIDTH
 suffix:colon
 multiline_comment|/* Set bandwidth */
-id|pc87108_change_speed
+id|nsc_fir_change_speed
 c_func
 (paren
 id|self
@@ -6054,7 +6644,7 @@ suffix:colon
 multiline_comment|/* Check if we are receiving right now */
 id|irq-&gt;ifr_receiving
 op_assign
-id|pc87108_is_receiving
+id|nsc_fir_is_receiving
 c_func
 (paren
 id|self
@@ -6080,6 +6670,269 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+DECL|function|nsc_fir_net_get_stats
+r_static
+r_struct
+id|net_device_stats
+op_star
+id|nsc_fir_net_get_stats
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|nsc_fir_cb
+op_star
+id|self
+op_assign
+(paren
+r_struct
+id|nsc_fir_cb
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_return
+op_amp
+id|self-&gt;stats
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_APM
+DECL|function|nsc_fir_suspend
+r_static
+r_void
+id|nsc_fir_suspend
+c_func
+(paren
+r_struct
+id|nsc_fir_cb
+op_star
+id|self
+)paren
+(brace
+r_int
+id|i
+op_assign
+l_int|10
+suffix:semicolon
+id|MESSAGE
+c_func
+(paren
+l_string|&quot;%s, Suspending&bslash;n&quot;
+comma
+id|driver_name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;suspend
+)paren
+r_return
+suffix:semicolon
+id|self-&gt;suspend
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+DECL|function|nsc_fir_wakeup
+r_static
+r_void
+id|nsc_fir_wakeup
+c_func
+(paren
+r_struct
+id|nsc_fir_cb
+op_star
+id|self
+)paren
+(brace
+r_struct
+id|net_device
+op_star
+id|dev
+op_assign
+id|self-&gt;netdev
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self-&gt;suspend
+)paren
+r_return
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|MESSAGE
+c_func
+(paren
+l_string|&quot;%s, Waking up&bslash;n&quot;
+comma
+id|driver_name
+)paren
+suffix:semicolon
+)brace
+DECL|function|nsc_fir_apmproc
+r_static
+r_int
+id|nsc_fir_apmproc
+c_func
+(paren
+id|apm_event_t
+id|event
+)paren
+(brace
+r_static
+r_int
+id|down
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Filter out double events */
+r_int
+id|i
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|event
+)paren
+(brace
+r_case
+id|APM_SYS_SUSPEND
+suffix:colon
+r_case
+id|APM_USER_SUSPEND
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|down
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev_self
+(braket
+id|i
+)braket
+)paren
+id|nsc_fir_suspend
+c_func
+(paren
+id|dev_self
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
+id|down
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|APM_NORMAL_RESUME
+suffix:colon
+r_case
+id|APM_CRITICAL_RESUME
+suffix:colon
+r_if
+c_cond
+(paren
+id|down
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev_self
+(braket
+id|i
+)braket
+)paren
+id|nsc_fir_wakeup
+c_func
+(paren
+id|dev_self
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
+id|down
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_APM */
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
@@ -6090,7 +6943,7 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;NSC PC87108 IrDA Device Driver&quot;
+l_string|&quot;NSC FIR IrDA Device Driver&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -6125,7 +6978,14 @@ comma
 l_string|&quot;1-4i&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    &n; *&n; */
+id|MODULE_PARM
+c_func
+(paren
+id|dongle_id
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -6135,13 +6995,12 @@ r_void
 )paren
 (brace
 r_return
-id|pc87108_init
+id|nsc_fir_init
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    &n; *&n; */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -6150,7 +7009,7 @@ c_func
 r_void
 )paren
 (brace
-id|pc87108_cleanup
+id|nsc_fir_cleanup
 c_func
 (paren
 )paren

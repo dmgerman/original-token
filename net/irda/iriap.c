@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Fri Dec 17 15:58:16 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Sat Dec 25 16:42:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -216,6 +216,12 @@ id|iriap_cb
 op_star
 id|server
 suffix:semicolon
+id|__u8
+id|oct_seq
+(braket
+l_int|6
+)braket
+suffix:semicolon
 id|__u16
 id|hints
 suffix:semicolon
@@ -274,7 +280,6 @@ c_func
 id|S_COMPUTER
 )paren
 suffix:semicolon
-multiline_comment|/*hints |= irlmp_service_to_hint(S_PNP);*/
 id|service_handle
 op_assign
 id|irlmp_register_service
@@ -283,7 +288,7 @@ c_func
 id|hints
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Register the Device object with LM-IAS&n;&t; */
+multiline_comment|/* Register the Device object with LM-IAS */
 id|obj
 op_assign
 id|irias_new_object
@@ -302,6 +307,52 @@ comma
 l_string|&quot;DeviceName&quot;
 comma
 l_string|&quot;Linux&quot;
+)paren
+suffix:semicolon
+id|oct_seq
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0x01
+suffix:semicolon
+multiline_comment|/* Version 1 */
+id|oct_seq
+(braket
+l_int|1
+)braket
+op_assign
+l_int|0x00
+suffix:semicolon
+multiline_comment|/* IAS support bits */
+id|oct_seq
+(braket
+l_int|2
+)braket
+op_assign
+l_int|0x00
+suffix:semicolon
+multiline_comment|/* LM-MUX support bits */
+macro_line|#ifdef CONFIG_IRDA_ULTRA
+id|oct_seq
+(braket
+l_int|2
+)braket
+op_or_assign
+l_int|0x04
+suffix:semicolon
+multiline_comment|/* Connectionless Data support */
+macro_line|#endif
+id|irias_add_octseq_attrib
+c_func
+(paren
+id|obj
+comma
+l_string|&quot;IrLMPSupport&quot;
+comma
+id|oct_seq
+comma
+l_int|3
 )paren
 suffix:semicolon
 id|irias_insert_object
@@ -2788,6 +2839,93 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+DECL|function|iriap_connect_request
+r_void
+id|iriap_connect_request
+c_func
+(paren
+r_struct
+id|iriap_cb
+op_star
+id|self
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|IAS_MAGIC
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|irlmp_connect_request
+c_func
+(paren
+id|self-&gt;lsap
+comma
+id|LSAP_IAS
+comma
+id|self-&gt;saddr
+comma
+id|self-&gt;daddr
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+OL
+l_int|0
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), connect failed!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|self
+op_member_access_from_pointer
+id|confirm
+c_func
+(paren
+id|IAS_DISCONNECT
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|self-&gt;priv
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n; * Function iriap_connect_confirm (handle, skb)&n; *&n; *    LSAP connection confirmed!&n; *&n; */
 DECL|function|iriap_connect_confirm
 r_static
@@ -2889,12 +3027,6 @@ id|self
 comma
 id|IAP_LM_CONNECT_CONFIRM
 comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
 id|userdata
 )paren
 suffix:semicolon

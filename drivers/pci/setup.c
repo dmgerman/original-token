@@ -598,17 +598,12 @@ id|pbus_set_ranges_data
 id|inner
 suffix:semicolon
 r_struct
-id|pci_bus
-op_star
-id|child
-suffix:semicolon
-r_struct
 id|pci_dev
 op_star
 id|dev
 suffix:semicolon
 r_struct
-id|list_node
+id|list_head
 op_star
 id|ln
 suffix:semicolon
@@ -1105,7 +1100,7 @@ r_void
 )paren
 (brace
 r_struct
-id|list_node
+id|list_head
 op_star
 id|ln
 suffix:semicolon
@@ -1126,7 +1121,7 @@ op_assign
 id|ln-&gt;next
 )paren
 (brace
-id|pci_set_ranges
+id|pbus_set_ranges
 c_func
 (paren
 id|pci_bus_b

@@ -23,7 +23,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#if BITS_PER_LONG &lt; 64
 r_static
 r_int
 id|ext2_open_file
@@ -37,7 +36,6 @@ id|file
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|macro|EXT2_MAX_SIZE
 mdefine_line|#define EXT2_MAX_SIZE(bits)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(((EXT2_NDIR_BLOCKS + (1LL &lt;&lt; (bits - 2)) + &t;&t;&t;&t;&bslash;&n;&t;   (1LL &lt;&lt; (bits - 2)) * (1LL &lt;&lt; (bits - 2)) + &t;&t;&t;&t;&bslash;&n;&t;   (1LL &lt;&lt; (bits - 2)) * (1LL &lt;&lt; (bits - 2)) * (1LL &lt;&lt; (bits - 2))) * &t;&bslash;&n;&t;  (1LL &lt;&lt; bits)) - 1)
 DECL|variable|ext2_max_sizes
@@ -398,8 +396,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if BITS_PER_LONG &lt; 64
-multiline_comment|/*&n; * Called when an inode is about to be open.&n; * We use this to disallow opening RW large files on 32bit systems if&n; * the caller didn&squot;t specify O_LARGEFILE.&n; */
+multiline_comment|/*&n; * Called when an inode is about to be open.&n; * We use this to disallow opening RW large files on 32bit systems if&n; * the caller didn&squot;t specify O_LARGEFILE.  On 64bit systems we force&n; * on this flag in sys_open.&n; */
 DECL|function|ext2_open_file
 r_static
 r_int
@@ -436,7 +433,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the ext2 filesystem.&n; */
 DECL|variable|ext2_file_operations
 r_static
@@ -466,14 +462,8 @@ multiline_comment|/* ioctl */
 id|generic_file_mmap
 comma
 multiline_comment|/* mmap */
-macro_line|#if BITS_PER_LONG == 64&t;
-l_int|NULL
-comma
-multiline_comment|/* no special open is needed */
-macro_line|#else
 id|ext2_open_file
 comma
-macro_line|#endif
 l_int|NULL
 comma
 multiline_comment|/* flush */

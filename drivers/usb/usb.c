@@ -1,22 +1,13 @@
 multiline_comment|/*&n; * drivers/usb/usb.c&n; *&n; * (C) Copyright Linus Torvalds 1999&n; * (C) Copyright Johannes Erdfelt 1999&n; * (C) Copyright Andreas Gal 1999&n; * (C) Copyright Gregory P. Smith 1999&n; * (C) Copyright Deti Fliegl 1999 (new USB architecture)&n; *&n; * NOTE! This is not actually a driver at all, rather this is&n; * just a collection of helper routines that implement the&n; * generic USB things that the real drivers can use..&n; *&n; * Think of this as a &quot;USB library&quot; rather than anything else.&n; * It should be considered a slave, with no callbacks. Callbacks&n; * are evil.&n; *&n; * $Id: usb.c,v 1.39 1999/12/27 15:17:47 acher Exp $&n; */
-DECL|macro|USB_DEBUG
-mdefine_line|#define USB_DEBUG&t;1
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;  /* for in_interrupt() */
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG
 macro_line|#include &quot;usb.h&quot;
-DECL|macro|MODSTR
-mdefine_line|#define MODSTR &quot;usbcore: &quot;
-macro_line|#ifdef USB_DEBUG
-DECL|macro|dbg
-mdefine_line|#define dbg(format, arg...) printk(format, ## arg)
-macro_line|#else
-DECL|macro|dbg
-mdefine_line|#define dbg(format, arg...)
-macro_line|#endif
 multiline_comment|/*&n; * Prototypes for the device driver probing/loading functions&n; */
 r_static
 r_void
@@ -653,7 +644,8 @@ op_plus
 id|bustime
 suffix:semicolon
 multiline_comment|/* what new total allocated bus time would be */
-id|PRINTD
+id|dbg
+c_func
 (paren
 l_string|&quot;usb-bandwidth-alloc: was: %u, new: %u, &quot;
 l_string|&quot;bustime = %ld us, Pipe allowed: %s&quot;
@@ -1072,11 +1064,10 @@ id|driver
 )paren
 r_return
 suffix:semicolon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;usbcore: %s driver claimed interface %p&bslash;n&quot;
+l_string|&quot;%s driver claimed interface %p&quot;
 comma
 id|driver-&gt;name
 comma
@@ -1379,13 +1370,20 @@ c_cond
 (paren
 id|rejected
 )paren
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;usbcore: unhandled interfaces on device.&bslash;n&quot;
+l_string|&quot;unhandled interfaces on device&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
+id|usb_show_device
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Only HC&squot;s should call usb_alloc_dev and usb_free_dev directly&n; * Anybody may use usb_inc_dev_use or usb_dec_dev_use&n; */
 DECL|function|usb_alloc_dev
@@ -1594,12 +1592,10 @@ op_logical_neg
 id|urb
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;alloc_urb: kmalloc failed&bslash;n&quot;
+l_string|&quot;alloc_urb: kmalloc failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1754,9 +1750,7 @@ r_else
 id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;(blocking_completion): waitqueue empty!&bslash;n&quot;
+l_string|&quot;(blocking_completion): waitqueue empty!&quot;
 )paren
 suffix:semicolon
 singleline_comment|// even occurs if urb was unlinked by timeout...
@@ -1955,12 +1949,10 @@ id|status
 )paren
 (brace
 singleline_comment|// timeout
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;usb_control/bulk_msg: timeout&bslash;n&quot;
+l_string|&quot;usb_control/bulk_msg: timeout&quot;
 )paren
 suffix:semicolon
 id|usb_unlink_urb
@@ -2194,7 +2186,7 @@ op_amp
 id|size
 )paren
 suffix:semicolon
-singleline_comment|//dbg(KERN_DEBUG MODSTR&quot;usb_control_msg&bslash;n&quot;);&t;
+singleline_comment|//dbg(&quot;usb_control_msg&quot;);&t;
 r_return
 id|usb_internal_control_msg
 c_func
@@ -2521,9 +2513,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;usb_terminate_bulk: urb:%p&bslash;n&quot;
+l_string|&quot;usb_terminate_bulk: urb:%p&quot;
 comma
 id|urb
 )paren
@@ -2583,7 +2573,8 @@ suffix:semicolon
 id|dev-&gt;bus-&gt;bandwidth_int_reqs
 op_decrement
 suffix:semicolon
-id|PRINTD
+id|dbg
+c_func
 (paren
 l_string|&quot;bw_alloc reduced to %d for %d requesters&quot;
 comma
@@ -3006,7 +2997,8 @@ suffix:semicolon
 id|dev-&gt;bus-&gt;bandwidth_int_reqs
 op_increment
 suffix:semicolon
-id|PRINTD
+id|dbg
+c_func
 (paren
 l_string|&quot;bw_alloc bumped to %d for %d requesters&quot;
 comma
@@ -4241,12 +4233,6 @@ comma
 id|buffer
 comma
 id|USB_DT_INTERFACE_SIZE
-)paren
-suffix:semicolon
-id|usb_show_config_descriptor
-c_func
-(paren
-id|config
 )paren
 suffix:semicolon
 id|le16_to_cpus

@@ -1383,6 +1383,10 @@ id|priority
 comma
 r_int
 id|gfp_mask
+comma
+id|zone_t
+op_star
+id|zone
 )paren
 (brace
 r_if

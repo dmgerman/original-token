@@ -678,11 +678,10 @@ l_int|0
 )paren
 suffix:semicolon
 r_else
-id|printk
+id|info
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;usbkbd.c: Unknown key (scancode %#x) released.&bslash;n&quot;
+l_string|&quot;Unknown key (scancode %#x) released.&quot;
 comma
 id|kbd-&gt;old
 (braket
@@ -758,11 +757,10 @@ l_int|1
 )paren
 suffix:semicolon
 r_else
-id|printk
+id|info
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;usbkbd.c: Unknown key (scancode %#x) pressed.&bslash;n&quot;
+l_string|&quot;Unknown key (scancode %#x) pressed.&quot;
 comma
 id|kbd
 op_member_access_from_pointer

@@ -1,7 +1,6 @@
 macro_line|#ifndef __LINUX_RTNETLINK_H
 DECL|macro|__LINUX_RTNETLINK_H
 mdefine_line|#define __LINUX_RTNETLINK_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netlink.h&gt;
 DECL|macro|RTNL_DEBUG
 mdefine_line|#define RTNL_DEBUG 1
@@ -868,6 +867,7 @@ DECL|macro|RTMGRP_DECnet_ROUTE
 mdefine_line|#define RTMGRP_DECnet_ROUTE     0x4000
 multiline_comment|/* End of information exported to user level */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 DECL|function|rtattr_strcmp
 r_extern
 id|__inline__

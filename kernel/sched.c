@@ -1923,7 +1923,12 @@ c_cond
 (paren
 id|state
 op_amp
+(paren
 id|mode
+op_amp
+op_complement
+id|TASK_EXCLUSIVE
+)paren
 )paren
 (brace
 macro_line|#if WAITQUEUE_DEBUG
@@ -1961,6 +1966,8 @@ r_if
 c_cond
 (paren
 id|state
+op_amp
+id|mode
 op_amp
 id|TASK_EXCLUSIVE
 )paren

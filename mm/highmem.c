@@ -402,6 +402,10 @@ id|vaddr
 suffix:semicolon
 r_int
 id|count
+suffix:semicolon
+id|start
+suffix:colon
+id|count
 op_assign
 id|LAST_PKMAP
 suffix:semicolon
@@ -429,11 +433,17 @@ c_cond
 op_logical_neg
 id|last_pkmap_nr
 )paren
+(brace
 id|flush_all_zero_pkmaps
 c_func
 (paren
 )paren
 suffix:semicolon
+id|count
+op_assign
+id|LAST_PKMAP
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -521,9 +531,8 @@ op_member_access_from_pointer
 r_virtual
 suffix:semicolon
 multiline_comment|/* Re-start */
-id|count
-op_assign
-id|LAST_PKMAP
+r_goto
+id|start
 suffix:semicolon
 )brace
 )brace

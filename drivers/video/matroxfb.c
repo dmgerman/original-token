@@ -33096,11 +33096,11 @@ id|rev
 suffix:semicolon
 id|svid
 op_assign
-id|dev-&gt;subsystem_vendor
+id|pdev-&gt;subsystem_vendor
 suffix:semicolon
 id|sid
 op_assign
-id|dev-&gt;subsystem_device
+id|pdev-&gt;subsystem_device
 suffix:semicolon
 r_for
 c_loop

@@ -104,6 +104,7 @@ DECL|macro|IPOPT_TS_TSANDADDR
 mdefine_line|#define&t;IPOPT_TS_TSANDADDR&t;1&t;&t;/* timestamps and addresses */
 DECL|macro|IPOPT_TS_PRESPEC
 mdefine_line|#define&t;IPOPT_TS_PRESPEC&t;3&t;&t;/* specified modules only */
+macro_line|#ifdef __KERNEL__
 DECL|struct|ip_options
 r_struct
 id|ip_options
@@ -208,7 +209,6 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
 DECL|macro|optlength
 mdefine_line|#define optlength(opt) (sizeof(struct ip_options) + opt-&gt;optlen)
 macro_line|#endif

@@ -735,21 +735,6 @@ mdefine_line|#define DEVICE_OFF(device)
 macro_line|#elif (MAJOR_NR == COMPAQ_SMART2_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;ida&quot;
-DECL|macro|DEVICE_INTR
-mdefine_line|#define DEVICE_INTR do_ida
-DECL|macro|TIMEOUT_VALUE
-mdefine_line|#define TIMEOUT_VALUE (25*HZ)
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_ida_request0
-DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 4)
-DECL|macro|DEVICE_ON
-mdefine_line|#define DEVICE_ON(device)
-DECL|macro|DEVICE_OFF
-mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == COMPAQ_SMART2_MAJOR)
-DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;ida&quot;
 DECL|macro|TIMEOUT_VALUE
 mdefine_line|#define TIMEOUT_VALUE (25*HZ)
 DECL|macro|DEVICE_REQUEST

@@ -2,33 +2,10 @@ multiline_comment|/*&n; * $Id: uhci-debug.c,v 1.12 1999/12/13 15:24:42 fliegl Ex
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;usb.h&quot;
-macro_line|#include &quot;uhci.h&quot;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
-macro_line|#ifdef DEBUG
-DECL|macro|dbg
-mdefine_line|#define dbg printk
-macro_line|#else
-DECL|macro|dbg
-mdefine_line|#define dbg nix
-DECL|function|nix
-r_static
-r_void
-id|nix
-(paren
-r_const
-r_char
-op_star
-id|format
-comma
-dot
-dot
-dot
-)paren
-(brace
-)brace
-macro_line|#endif
+macro_line|#include &quot;usb.h&quot;
+macro_line|#include &quot;uhci.h&quot;
 DECL|function|dump_urb
 r_void
 id|dump_urb
@@ -37,114 +14,130 @@ id|purb_t
 id|purb
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;urb                   :%p&bslash;n&quot;
+l_string|&quot;urb                   :%p&quot;
 comma
 id|purb
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;next                  :%p&bslash;n&quot;
+l_string|&quot;next                  :%p&quot;
 comma
 id|purb-&gt;next
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;dev                   :%p&bslash;n&quot;
+l_string|&quot;dev                   :%p&quot;
 comma
 id|purb-&gt;dev
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;pipe                  :%08X&bslash;n&quot;
+l_string|&quot;pipe                  :%08X&quot;
 comma
 id|purb-&gt;pipe
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;status                :%d&bslash;n&quot;
+l_string|&quot;status                :%d&quot;
 comma
 id|purb-&gt;status
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;transfer_flags        :%08X&bslash;n&quot;
+l_string|&quot;transfer_flags        :%08X&quot;
 comma
 id|purb-&gt;transfer_flags
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;transfer_buffer       :%p&bslash;n&quot;
+l_string|&quot;transfer_buffer       :%p&quot;
 comma
 id|purb-&gt;transfer_buffer
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;transfer_buffer_length:%d&bslash;n&quot;
+l_string|&quot;transfer_buffer_length:%d&quot;
 comma
 id|purb-&gt;transfer_buffer_length
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;actual_length         :%d&bslash;n&quot;
+l_string|&quot;actual_length         :%d&quot;
 comma
 id|purb-&gt;actual_length
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;setup_packet          :%p&bslash;n&quot;
+l_string|&quot;setup_packet          :%p&quot;
 comma
 id|purb-&gt;setup_packet
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;start_frame           :%d&bslash;n&quot;
+l_string|&quot;start_frame           :%d&quot;
 comma
 id|purb-&gt;start_frame
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;number_of_packets     :%d&bslash;n&quot;
+l_string|&quot;number_of_packets     :%d&quot;
 comma
 id|purb-&gt;number_of_packets
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;interval              :%d&bslash;n&quot;
+l_string|&quot;interval              :%d&quot;
 comma
 id|purb-&gt;interval
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;error_count           :%d&bslash;n&quot;
+l_string|&quot;error_count           :%d&quot;
 comma
 id|purb-&gt;error_count
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;context               :%p&bslash;n&quot;
+l_string|&quot;context               :%p&quot;
 comma
 id|purb-&gt;context
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;complete              :%p&bslash;n&quot;
+l_string|&quot;complete              :%p&quot;
 comma
 id|purb-&gt;complete
 )paren
@@ -270,20 +263,18 @@ id|QH_TYPE
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;qh has not QH_TYPE&bslash;n&quot;
+l_string|&quot;qh has not QH_TYPE&quot;
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;uhci_show_qh %p (%08lX):&bslash;n&quot;
+l_string|&quot;uhci_show_qh %p (%08lX):&quot;
 comma
 id|qh
 comma
@@ -301,10 +292,9 @@ op_amp
 id|UHCI_PTR_TERM
 )paren
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Head Terminate&bslash;n&quot;
+l_string|&quot;Head Terminate&quot;
 )paren
 suffix:semicolon
 r_else
@@ -317,25 +307,22 @@ op_amp
 id|UHCI_PTR_QH
 )paren
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Head points to QH&bslash;n&quot;
+l_string|&quot;Head points to QH&quot;
 )paren
 suffix:semicolon
 r_else
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Head points to TD&bslash;n&quot;
+l_string|&quot;Head points to TD&quot;
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;head: %08X&bslash;n&quot;
+l_string|&quot;head: %08X&quot;
 comma
 id|qh-&gt;hw.qh.head
 op_amp
@@ -352,10 +339,9 @@ op_amp
 id|UHCI_PTR_TERM
 )paren
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Element Terminate&bslash;n&quot;
+l_string|&quot;Element Terminate&quot;
 )paren
 suffix:semicolon
 r_else
@@ -368,25 +354,22 @@ op_amp
 id|UHCI_PTR_QH
 )paren
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Element points to QH&bslash;n&quot;
+l_string|&quot;Element points to QH&quot;
 )paren
 suffix:semicolon
 r_else
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Element points to TD&bslash;n&quot;
+l_string|&quot;Element points to TD&quot;
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;element: %08X&bslash;n&quot;
+l_string|&quot;element: %08X&quot;
 comma
 id|qh-&gt;hw.qh.element
 op_amp
@@ -407,20 +390,6 @@ id|td
 r_char
 op_star
 id|spid
-suffix:semicolon
-id|dbg
-(paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;uhci_show_td %p (%08lX) &quot;
-comma
-id|td
-comma
-id|virt_to_bus
-(paren
-id|td
-)paren
-)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -467,8 +436,17 @@ r_break
 suffix:semicolon
 )brace
 id|dbg
+c_func
 (paren
-l_string|&quot;MaxLen=%02x DT%d EndPt=%x Dev=%x, PID=%x(%s) (buf=%08x)&bslash;n&quot;
+l_string|&quot;uhci_show_td %p (%08lX) MaxLen=%02x DT%d EndPt=%x Dev=%x, PID=%x(%s) (buf=%08x)&quot;
+comma
+id|td
+comma
+id|virt_to_bus
+c_func
+(paren
+id|td
+)paren
 comma
 id|td-&gt;hw.td.info
 op_rshift
@@ -512,10 +490,9 @@ id|td-&gt;hw.td.buffer
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Len=%02x e%d %s%s%s%s%s%s%s%s%s%s&bslash;n&quot;
+l_string|&quot;Len=%02x e%d %s%s%s%s%s%s%s%s%s%s&quot;
 comma
 id|td-&gt;hw.td.status
 op_amp
@@ -642,7 +619,6 @@ suffix:colon
 l_string|&quot;&quot;
 )paren
 suffix:semicolon
-macro_line|#if 1
 r_if
 c_cond
 (paren
@@ -651,10 +627,9 @@ op_amp
 id|UHCI_PTR_TERM
 )paren
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Link Terminate&bslash;n&quot;
+l_string|&quot;Link Terminate&quot;
 )paren
 suffix:semicolon
 r_else
@@ -667,10 +642,9 @@ op_amp
 id|UHCI_PTR_QH
 )paren
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;%s, link points to QH @ %08x&bslash;n&quot;
+l_string|&quot;%s, link points to QH @ %08x&quot;
 comma
 (paren
 id|td-&gt;hw.td.link
@@ -691,10 +665,9 @@ id|UHCI_PTR_BITS
 suffix:semicolon
 r_else
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;%s, link points to TD @ %08x &bslash;n&quot;
+l_string|&quot;%s, link points to TD @ %08x&quot;
 comma
 (paren
 id|td-&gt;hw.td.link
@@ -714,7 +687,6 @@ id|UHCI_PTR_BITS
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 DECL|function|uhci_show_td_queue
 r_void
@@ -725,10 +697,9 @@ id|td
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;uhci_show_td_queue %p (%08lX):&bslash;n&quot;
+l_string|&quot;uhci_show_td_queue %p (%08lX):&quot;
 comma
 id|td
 comma
@@ -786,10 +757,9 @@ suffix:semicolon
 r_else
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;td points to itself!&bslash;n&quot;
+l_string|&quot;td points to itself!&quot;
 )paren
 suffix:semicolon
 r_break
@@ -807,10 +777,9 @@ id|qh
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;uhci_show_queue %p:&bslash;n&quot;
+l_string|&quot;uhci_show_queue %p:&quot;
 comma
 id|qh
 )paren
@@ -834,10 +803,9 @@ op_amp
 id|UHCI_PTR_QH
 )paren
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Warning: qh-&gt;element points to qh!&bslash;n&quot;
+l_string|&quot;Warning: qh-&gt;element points to qh!&quot;
 )paren
 suffix:semicolon
 r_else
@@ -897,10 +865,9 @@ suffix:semicolon
 r_else
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;qh points to itself!&bslash;n&quot;
+l_string|&quot;qh points to itself!&quot;
 )paren
 suffix:semicolon
 r_break
@@ -922,8 +889,9 @@ id|status
 )paren
 (brace
 id|dbg
+c_func
 (paren
-l_string|&quot;  stat%d     =     %04x   %s%s%s%s%s%s%s%s&bslash;n&quot;
+l_string|&quot;  stat%d     =     %04x   %s%s%s%s%s%s%s%s&quot;
 comma
 id|port
 comma
@@ -1130,8 +1098,9 @@ l_int|18
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-l_string|&quot;  usbcmd    =     %04x   %s%s%s%s%s%s%s%s&bslash;n&quot;
+l_string|&quot;  usbcmd    =     %04x   %s%s%s%s%s%s%s%s&quot;
 comma
 id|usbcmd
 comma
@@ -1225,8 +1194,9 @@ l_string|&quot;&quot;
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-l_string|&quot;  usbstat   =     %04x   %s%s%s%s%s%s&bslash;n&quot;
+l_string|&quot;  usbstat   =     %04x   %s%s%s%s%s%s&quot;
 comma
 id|usbstat
 comma
@@ -1298,15 +1268,17 @@ l_string|&quot;&quot;
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-l_string|&quot;  usbint    =     %04x&bslash;n&quot;
+l_string|&quot;  usbint    =     %04x&quot;
 comma
 id|usbint
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-l_string|&quot;  usbfrnum  =   (%d)%03x&bslash;n&quot;
+l_string|&quot;  usbfrnum  =   (%d)%03x&quot;
 comma
 (paren
 id|usbfrnum
@@ -1330,15 +1302,17 @@ id|usbfrnum
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-l_string|&quot;  flbaseadd = %08x&bslash;n&quot;
+l_string|&quot;  flbaseadd = %08x&quot;
 comma
 id|flbaseadd
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-l_string|&quot;  sof       =       %02x&bslash;n&quot;
+l_string|&quot;  sof       =       %02x&quot;
 comma
 id|sof
 )paren

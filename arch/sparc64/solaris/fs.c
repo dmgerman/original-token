@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fs.c,v 1.14 1999/09/22 09:28:49 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * 1999-08-19 Implemented solaris F_FREESP (truncate)&n; *            fcntl, by Jason Rappleye (rappleye@ccr.buffalo.edu)&n; */
+multiline_comment|/* $Id: fs.c,v 1.15 2000/01/04 23:54:47 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * 1999-08-19 Implemented solaris F_FREESP (truncate)&n; *            fcntl, by Jason Rappleye (rappleye@ccr.buffalo.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -3416,6 +3416,24 @@ r_return
 id|error
 suffix:semicolon
 )brace
+r_extern
+id|asmlinkage
+r_int
+id|sparc32_open
+c_func
+(paren
+r_const
+r_char
+op_star
+id|filename
+comma
+r_int
+id|flags
+comma
+r_int
+id|mode
+)paren
+suffix:semicolon
 DECL|function|solaris_open
 id|asmlinkage
 r_int
@@ -3423,7 +3441,7 @@ id|solaris_open
 c_func
 (paren
 id|u32
-id|filename
+id|fname
 comma
 r_int
 id|flags
@@ -3432,41 +3450,20 @@ id|u32
 id|mode
 )paren
 (brace
-r_int
-(paren
-op_star
-id|sys_open
-)paren
-(paren
 r_const
 r_char
 op_star
-comma
-r_int
-comma
-r_int
-)paren
+id|filename
 op_assign
 (paren
-r_int
-(paren
-op_star
-)paren
-(paren
 r_const
 r_char
 op_star
-comma
-r_int
-comma
-r_int
 )paren
-)paren
-id|SYS
-c_func
 (paren
-id|open
+r_int
 )paren
+id|fname
 suffix:semicolon
 r_int
 id|fl
@@ -3475,7 +3472,18 @@ id|flags
 op_amp
 l_int|0xf
 suffix:semicolon
-multiline_comment|/*&t;if (flags &amp; 0x2000) - allow LFS&t;&t;&t;*/
+multiline_comment|/* Translate flags first. */
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+l_int|0x2000
+)paren
+id|fl
+op_or_assign
+id|O_LARGEFILE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3542,22 +3550,17 @@ id|fl
 op_or_assign
 id|O_NOCTTY
 suffix:semicolon
+id|flags
+op_assign
+id|fl
+suffix:semicolon
 r_return
-id|sys_open
-c_func
-(paren
-(paren
-r_const
-r_char
-op_star
-)paren
-id|A
+id|sparc32_open
 c_func
 (paren
 id|filename
-)paren
 comma
-id|fl
+id|flags
 comma
 id|mode
 )paren

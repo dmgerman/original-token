@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       1.0&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Thu Dec 16 22:59:40 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       1.0&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Wed Jan  5 11:26:03 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -109,7 +109,7 @@ id|len
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * Function irlmp_init (void)&n; *&n; *    Create (allocate) the main IrLMP structure and the pointer array&n; *    which will contain pointers to each instance of a LSAP.&n; */
+multiline_comment|/*&n; * Function irlmp_init (void)&n; *&n; *    Create (allocate) the main IrLMP structure&n; *&n; */
 DECL|function|irlmp_init
 r_int
 id|__init
@@ -120,14 +120,6 @@ r_void
 )paren
 (brace
 multiline_comment|/* Initialize the irlmp structure. */
-r_if
-c_cond
-(paren
-id|irlmp
-op_eq
-l_int|NULL
-)paren
-(brace
 id|irlmp
 op_assign
 id|kmalloc
@@ -153,7 +145,6 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -171,6 +162,13 @@ suffix:semicolon
 id|irlmp-&gt;magic
 op_assign
 id|LMP_MAGIC
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|irlmp-&gt;lock
+)paren
 suffix:semicolon
 id|irlmp-&gt;clients
 op_assign
@@ -1274,6 +1272,13 @@ op_logical_neg
 id|saddr
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|daddr
+op_ne
+id|DEV_ADDR_ANY
+)paren
 id|discovery
 op_assign
 id|hashbin_find
@@ -1286,15 +1291,45 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+r_else
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), no daddr&bslash;n&quot;
+)paren
+suffix:semicolon
+id|discovery
+op_assign
+(paren
+id|discovery_t
+op_star
+)paren
+id|hashbin_get_first
+c_func
+(paren
+id|irlmp-&gt;cachelog
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 id|discovery
 )paren
+(brace
 id|saddr
 op_assign
 id|discovery-&gt;saddr
 suffix:semicolon
+id|daddr
+op_assign
+id|discovery-&gt;daddr
+suffix:semicolon
+)brace
 )brace
 id|lap
 op_assign

@@ -500,8 +500,6 @@ DECL|macro|PageReferenced
 mdefine_line|#define PageReferenced(page)&t;test_bit(PG_referenced, &amp;(page)-&gt;flags)
 DECL|macro|PageDecrAfter
 mdefine_line|#define PageDecrAfter(page)&t;test_bit(PG_decr_after, &amp;(page)-&gt;flags)
-DECL|macro|PageDMA
-mdefine_line|#define PageDMA(page)&t;&t;(contig_page_data.node_zones + ZONE_DMA == (page)-&gt;zone)
 DECL|macro|PageSlab
 mdefine_line|#define PageSlab(page)&t;&t;test_bit(PG_slab, &amp;(page)-&gt;flags)
 DECL|macro|PageSwapCache
@@ -1435,6 +1433,9 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_struct
+id|zone_t
+suffix:semicolon
 multiline_comment|/* filemap.c */
 r_extern
 r_void
@@ -1465,6 +1466,9 @@ c_func
 r_int
 comma
 r_int
+comma
+id|zone_t
+op_star
 )paren
 suffix:semicolon
 r_extern

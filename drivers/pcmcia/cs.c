@@ -1836,10 +1836,6 @@ id|s-&gt;irq.Config
 op_assign
 l_int|0
 suffix:semicolon
-id|s-&gt;functions
-op_assign
-l_int|0
-suffix:semicolon
 id|s-&gt;lock_count
 op_assign
 l_int|0
@@ -1879,6 +1875,10 @@ id|s
 )paren
 suffix:semicolon
 macro_line|#endif
+id|s-&gt;functions
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren

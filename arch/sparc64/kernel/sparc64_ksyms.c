@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.68 1999/12/17 12:32:05 jj Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.69 2000/01/04 23:54:44 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -387,6 +387,23 @@ comma
 r_struct
 id|fpustate
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sparc32_open
+c_func
+(paren
+r_const
+r_char
+op_star
+id|filename
+comma
+r_int
+id|flags
+comma
+r_int
+id|mode
 )paren
 suffix:semicolon
 r_extern
@@ -1350,6 +1367,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sys32_ioctl
+)paren
+suffix:semicolon
+DECL|variable|sparc32_open
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sparc32_open
 )paren
 suffix:semicolon
 DECL|variable|move_addr_to_kernel

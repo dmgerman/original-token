@@ -240,6 +240,38 @@ suffix:semicolon
 multiline_comment|/* next 32-bit memory resource */
 )brace
 suffix:semicolon
+DECL|struct|isapnp_fixup
+r_struct
+id|isapnp_fixup
+(brace
+DECL|member|vendor
+r_int
+r_int
+id|vendor
+suffix:semicolon
+multiline_comment|/* matching vendor */
+DECL|member|device
+r_int
+r_int
+id|device
+suffix:semicolon
+multiline_comment|/* matching device */
+DECL|member|quirk_function
+r_void
+(paren
+op_star
+id|quirk_function
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* fixup function */
+)brace
+suffix:semicolon
 DECL|macro|ISAPNP_RES_PRIORITY_PREFERRED
 mdefine_line|#define ISAPNP_RES_PRIORITY_PREFERRED&t;0
 DECL|macro|ISAPNP_RES_PRIORITY_ACCEPTABLE
@@ -452,6 +484,25 @@ c_func
 r_int
 r_char
 id|device
+)paren
+suffix:semicolon
+r_void
+id|isapnp_fixup_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_void
+op_star
+id|isapnp_alloc
+c_func
+(paren
+r_int
+id|size
 )paren
 suffix:semicolon
 multiline_comment|/* manager */

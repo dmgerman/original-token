@@ -32,62 +32,13 @@ mdefine_line|#define IFF_SLAVE&t;0x800&t;&t;/* slave of a load balancer&t;*/
 DECL|macro|IFF_MULTICAST
 mdefine_line|#define IFF_MULTICAST&t;0x1000&t;&t;/* Supports multicast&t;&t;*/
 DECL|macro|IFF_VOLATILE
-mdefine_line|#define IFF_VOLATILE&t;(IFF_LOOPBACK|IFF_POINTOPOINT|IFF_BROADCAST|IFF_ALLMULTI)
+mdefine_line|#define IFF_VOLATILE&t;(IFF_LOOPBACK|IFF_POINTOPOINT|IFF_BROADCAST|IFF_MASTER|IFF_SLAVE|IFF_RUNNING)
 DECL|macro|IFF_PORTSEL
 mdefine_line|#define IFF_PORTSEL&t;0x2000          /* can set media type&t;&t;*/
 DECL|macro|IFF_AUTOMEDIA
 mdefine_line|#define IFF_AUTOMEDIA&t;0x4000&t;&t;/* auto media select active&t;*/
 DECL|macro|IFF_DYNAMIC
 mdefine_line|#define IFF_DYNAMIC&t;0x8000&t;&t;/* dialup device with changing addresses*/
-macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * The ifaddr structure contains information about one address&n; * of an interface.  They are maintained by the different address&n; * families, are allocated and attached when an address is set,&n; * and are linked together so all addresses for an interface can&n; * be located.&n; */
-DECL|struct|ifaddr
-r_struct
-id|ifaddr
-(brace
-DECL|member|ifa_addr
-r_struct
-id|sockaddr
-id|ifa_addr
-suffix:semicolon
-multiline_comment|/* address of interface&t;&t;*/
-r_union
-(brace
-DECL|member|ifu_broadaddr
-r_struct
-id|sockaddr
-id|ifu_broadaddr
-suffix:semicolon
-DECL|member|ifu_dstaddr
-r_struct
-id|sockaddr
-id|ifu_dstaddr
-suffix:semicolon
-DECL|member|ifa_ifu
-)brace
-id|ifa_ifu
-suffix:semicolon
-DECL|member|ifa_ifp
-r_struct
-id|iface
-op_star
-id|ifa_ifp
-suffix:semicolon
-multiline_comment|/* back-pointer to interface&t;*/
-DECL|member|ifa_next
-r_struct
-id|ifaddr
-op_star
-id|ifa_next
-suffix:semicolon
-multiline_comment|/* next address for interface&t;*/
-)brace
-suffix:semicolon
-DECL|macro|ifa_broadaddr
-mdefine_line|#define&t;ifa_broadaddr&t;ifa_ifu.ifu_broadaddr&t;/* broadcast address&t;*/
-DECL|macro|ifa_dstaddr
-mdefine_line|#define&t;ifa_dstaddr&t;ifa_ifu.ifu_dstaddr&t;/* other end of link&t;*/
-macro_line|#endif /* __KERNEL__ */ 
 multiline_comment|/*&n; *&t;Device mapping structure. I&squot;d just gone off and designed a &n; *&t;beautiful scheme using only loadable modules with arguments&n; *&t;for driver options and along come the PCMCIA people 8)&n; *&n; *&t;Ah well. The get() side of this is good for WDSETUP, and it&squot;ll&n; *&t;be handy for debugging things. The set side is fine for now and&n; *&t;being very small might be worth keeping for clean configuration.&n; */
 DECL|struct|ifmap
 r_struct

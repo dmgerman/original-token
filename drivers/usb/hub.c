@@ -4,9 +4,10 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-singleline_comment|//#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;hub.h&quot;
 macro_line|#ifdef __alpha
@@ -173,7 +174,7 @@ id|HZ
 )paren
 suffix:semicolon
 )brace
-DECL|function|usb_clear_hub_feature
+macro_line|#if 0
 r_static
 r_int
 id|usb_clear_hub_feature
@@ -218,6 +219,7 @@ id|HZ
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|usb_clear_port_feature
 r_static
 r_int
@@ -675,11 +677,10 @@ id|dev-&gt;maxchild
 op_assign
 id|descriptor-&gt;bNbrPorts
 suffix:semicolon
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: %d port%s detected&bslash;n&quot;
+l_string|&quot;%d port%s detected&quot;
 comma
 id|hub-&gt;nports
 comma
@@ -706,11 +707,10 @@ id|HUB_CHAR_LPSM
 r_case
 l_int|0x00
 suffix:colon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: ganged power switching&bslash;n&quot;
+l_string|&quot;ganged power switching&quot;
 )paren
 suffix:semicolon
 r_break
@@ -718,11 +718,10 @@ suffix:semicolon
 r_case
 l_int|0x01
 suffix:colon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: individual port power switching&bslash;n&quot;
+l_string|&quot;individual port power switching&quot;
 )paren
 suffix:semicolon
 r_break
@@ -733,11 +732,10 @@ suffix:colon
 r_case
 l_int|0x03
 suffix:colon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: unknown reserved power switching mode&bslash;n&quot;
+l_string|&quot;unknown reserved power switching mode&quot;
 )paren
 suffix:semicolon
 r_break
@@ -750,19 +748,17 @@ id|descriptor-&gt;wHubCharacteristics
 op_amp
 id|HUB_CHAR_COMPOUND
 )paren
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: part of a compound device&bslash;n&quot;
+l_string|&quot;part of a compound device&quot;
 )paren
 suffix:semicolon
 r_else
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: standalone hub&bslash;n&quot;
+l_string|&quot;standalone hub&quot;
 )paren
 suffix:semicolon
 r_switch
@@ -776,11 +772,10 @@ id|HUB_CHAR_OCPM
 r_case
 l_int|0x00
 suffix:colon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: global over-current protection&bslash;n&quot;
+l_string|&quot;global over-current protection&quot;
 )paren
 suffix:semicolon
 r_break
@@ -788,11 +783,10 @@ suffix:semicolon
 r_case
 l_int|0x08
 suffix:colon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: individual port over-current protection&bslash;n&quot;
+l_string|&quot;individual port over-current protection&quot;
 )paren
 suffix:semicolon
 r_break
@@ -803,32 +797,29 @@ suffix:colon
 r_case
 l_int|0x18
 suffix:colon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: no over-current protection&bslash;n&quot;
+l_string|&quot;no over-current protection&quot;
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: power on to power good time: %dms&bslash;n&quot;
+l_string|&quot;power on to power good time: %dms&quot;
 comma
 id|descriptor-&gt;bPwrOn2PwrGood
 op_star
 l_int|2
 )paren
 suffix:semicolon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: hub controller current requirement: %dmA&bslash;n&quot;
+l_string|&quot;hub controller current requirement: %dmA&quot;
 comma
 id|descriptor-&gt;bHubContrCurrent
 )paren
@@ -847,11 +838,10 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub:  port %d is%s removable&bslash;n&quot;
+l_string|&quot;port %d is%s removable&quot;
 comma
 id|i
 op_plus
@@ -924,11 +914,10 @@ op_star
 )paren
 id|buffer
 suffix:semicolon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: local power source is %s&bslash;n&quot;
+l_string|&quot;local power source is %s&quot;
 comma
 (paren
 id|le16_to_cpu
@@ -946,11 +935,10 @@ suffix:colon
 l_string|&quot;good&quot;
 )paren
 suffix:semicolon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: %sover-current condition exists&bslash;n&quot;
+l_string|&quot;%sover-current condition exists&quot;
 comma
 (paren
 id|le16_to_cpu
@@ -969,11 +957,10 @@ l_string|&quot;no &quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Enable power to the ports */
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: enabling power on all ports&bslash;n&quot;
+l_string|&quot;enabling power on all ports&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1138,11 +1125,10 @@ r_return
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* We found a hub */
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB hub found&bslash;n&quot;
+l_string|&quot;USB hub found&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1167,11 +1153,10 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;couldn&squot;t kmalloc hub struct&bslash;n&quot;
+l_string|&quot;couldn&squot;t kmalloc hub struct&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1286,10 +1271,10 @@ c_cond
 id|ret
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;hub: usb_request_irq failed (%d)&bslash;n&quot;
+l_string|&quot;usb_request_irq failed (%d)&quot;
 comma
 id|ret
 )paren
@@ -1523,11 +1508,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;get_port_status failed&bslash;n&quot;
+l_string|&quot;get_port_status failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1549,16 +1533,15 @@ c_func
 id|portsts.wPortChange
 )paren
 suffix:semicolon
-id|printk
+id|dbg
 c_func
 (paren
-l_string|&quot;hub.c: portstatus %x, change %x, %s&bslash;n&quot;
+l_string|&quot;portstatus %x, change %x, %s&quot;
 comma
 id|portstatus
 comma
 id|portchange
 comma
-(paren
 id|portstatus
 op_amp
 (paren
@@ -1571,7 +1554,6 @@ c_cond
 l_string|&quot;Low Speed&quot;
 suffix:colon
 l_string|&quot;High Speed&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* If it&squot;s not in CONNECT and ENABLE state, we&squot;re done */
@@ -1673,11 +1655,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;get_port_status failed&bslash;n&quot;
+l_string|&quot;get_port_status failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1699,16 +1680,15 @@ c_func
 id|portsts.wPortChange
 )paren
 suffix:semicolon
-id|printk
+id|dbg
 c_func
 (paren
-l_string|&quot;hub.c: portstatus %x, change %x, %s&bslash;n&quot;
+l_string|&quot;portstatus %x, change %x, %s&quot;
 comma
 id|portstatus
 comma
 id|portchange
 comma
-(paren
 id|portstatus
 op_amp
 (paren
@@ -1721,7 +1701,6 @@ c_cond
 l_string|&quot;Low Speed&quot;
 suffix:colon
 l_string|&quot;High Speed&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1754,10 +1733,10 @@ op_eq
 id|MAX_TRIES
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;hub.c: Can not enable port %i after %i retries, disabling port&bslash;n&quot;
+l_string|&quot;can not enable port %i after %i retries, disabling port&quot;
 comma
 id|port
 op_plus
@@ -1787,11 +1766,10 @@ op_logical_neg
 id|usb
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;couldn&squot;t allocate usb_device&bslash;n&quot;
+l_string|&quot;couldn&squot;t allocate usb_device&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1836,11 +1814,10 @@ id|usb
 )paren
 (brace
 multiline_comment|/* Woops, disable the port */
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;hub: disabling port %d&bslash;n&quot;
+l_string|&quot;hub: disabling port %d&quot;
 comma
 id|port
 op_plus
@@ -2008,11 +1985,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;get_port_status failed&bslash;n&quot;
+l_string|&quot;get_port_status failed&quot;
 )paren
 suffix:semicolon
 r_continue
@@ -2042,11 +2018,10 @@ op_amp
 id|USB_PORT_STAT_C_CONNECTION
 )paren
 (brace
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: port %d connection change&bslash;n&quot;
+l_string|&quot;port %d connection change&quot;
 comma
 id|i
 op_plus
@@ -2082,11 +2057,10 @@ op_amp
 id|USB_PORT_STAT_C_ENABLE
 )paren
 (brace
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: port %d enable change&bslash;n&quot;
+l_string|&quot;port %d enable change&quot;
 comma
 id|i
 op_plus
@@ -2113,11 +2087,10 @@ id|portchange
 op_amp
 id|USB_PORT_STAT_C_SUSPEND
 )paren
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: port %d suspend change&bslash;n&quot;
+l_string|&quot;port %d suspend change&quot;
 comma
 id|i
 op_plus
@@ -2131,11 +2104,10 @@ id|portchange
 op_amp
 id|USB_PORT_STAT_C_OVERCURRENT
 )paren
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: port %d over-current change&bslash;n&quot;
+l_string|&quot;port %d over-current change&quot;
 comma
 id|i
 op_plus
@@ -2150,11 +2122,10 @@ op_amp
 id|USB_PORT_STAT_C_RESET
 )paren
 (brace
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;hub: port %d reset change&bslash;n&quot;
+l_string|&quot;port %d reset change&quot;
 comma
 id|i
 op_plus
@@ -2267,10 +2238,10 @@ id|current
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;MOD_DEC_USE_COUNT;&n;*/
-id|printk
+id|dbg
 c_func
 (paren
-l_string|&quot;usb_hub_thread exiting&bslash;n&quot;
+l_string|&quot;usb_hub_thread exiting&quot;
 )paren
 suffix:semicolon
 id|khubd_running
@@ -2439,11 +2410,10 @@ c_cond
 op_logical_neg
 id|count
 )paren
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;hub: giving up on killing khubd&bslash;n&quot;
+l_string|&quot;giving up on killing khubd&quot;
 )paren
 suffix:semicolon
 )brace

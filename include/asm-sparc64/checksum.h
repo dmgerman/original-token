@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.13 1999/07/30 09:31:13 davem Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.14 2000/01/05 21:27:42 davem Exp $ */
 macro_line|#ifndef __SPARC64_CHECKSUM_H
 DECL|macro|__SPARC64_CHECKSUM_H
 mdefine_line|#define __SPARC64_CHECKSUM_H
@@ -11,6 +11,7 @@ r_int
 id|csum_partial
 c_func
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -184,7 +185,7 @@ id|sum
 suffix:semicolon
 )brace
 macro_line|#if 0
-multiline_comment|/* Not implemented, but nobody uses it yet... */
+multiline_comment|/* XXX should implement this now... -DaveM */
 r_extern
 id|__inline__
 r_int

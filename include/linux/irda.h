@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Mar  8 14:06:12 1999&n; * Modified at:   Tue Dec 21 09:00:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     You probably need to include &lt;sys/types.h&gt; before this one if your&n; *     including this file from user-space &n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Mar  8 14:06:12 1999&n; * Modified at:   Sat Dec 25 16:06:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef KERNEL_IRDA_H
 DECL|macro|KERNEL_IRDA_H
 mdefine_line|#define KERNEL_IRDA_H
@@ -162,12 +162,12 @@ id|sir_family
 suffix:semicolon
 multiline_comment|/* AF_IRDA */
 DECL|member|sir_lsap_sel
-id|u_int8_t
+id|__u8
 id|sir_lsap_sel
 suffix:semicolon
 multiline_comment|/* LSAP selector */
 DECL|member|sir_addr
-id|u_int32_t
+id|__u32
 id|sir_addr
 suffix:semicolon
 multiline_comment|/* Device address */
@@ -186,12 +186,12 @@ r_struct
 id|irda_device_info
 (brace
 DECL|member|saddr
-id|u_int32_t
+id|__u32
 id|saddr
 suffix:semicolon
 multiline_comment|/* Address of local interface */
 DECL|member|daddr
-id|u_int32_t
+id|__u32
 id|daddr
 suffix:semicolon
 multiline_comment|/* Address of remote device */
@@ -204,12 +204,12 @@ l_int|22
 suffix:semicolon
 multiline_comment|/* Description */
 DECL|member|charset
-id|u_int8_t
+id|__u8
 id|charset
 suffix:semicolon
 multiline_comment|/* Charset used for description */
 DECL|member|hints
-id|u_int8_t
+id|__u8
 id|hints
 (braket
 l_int|2
@@ -223,7 +223,7 @@ r_struct
 id|irda_device_list
 (brace
 DECL|member|len
-id|u_int32_t
+id|__u32
 id|len
 suffix:semicolon
 DECL|member|dev
@@ -273,9 +273,9 @@ r_int
 r_int
 id|len
 suffix:semicolon
-DECL|member|OctetSeq
-id|u_char
-id|OctetSeq
+DECL|member|octet_seq
+id|__u8
+id|octet_seq
 (braket
 id|IAS_MAX_OCTET_STRING
 )braket
@@ -287,18 +287,15 @@ suffix:semicolon
 r_struct
 (brace
 DECL|member|len
-r_int
-r_char
+id|__u8
 id|len
 suffix:semicolon
 DECL|member|charset
-r_int
-r_char
+id|__u8
 id|charset
 suffix:semicolon
 DECL|member|string
-r_int
-r_char
+id|__u8
 id|string
 (braket
 id|IAS_MAX_STRING
@@ -386,13 +383,11 @@ r_struct
 id|if_irda_line
 (brace
 DECL|member|dtr
-r_int
-r_char
+id|__u8
 id|dtr
 suffix:semicolon
 DECL|member|rts
-r_int
-r_char
+id|__u8
 id|rts
 suffix:semicolon
 )brace

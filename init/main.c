@@ -158,6 +158,14 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|bdev_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|init_pcmcia_ds
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.29 1999/03/21 05:22:07 davem Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.30 2000/01/05 21:27:39 davem Exp $ */
 macro_line|#ifndef __SPARC_CHECKSUM_H
 DECL|macro|__SPARC_CHECKSUM_H
 mdefine_line|#define __SPARC_CHECKSUM_H
@@ -12,6 +12,7 @@ r_int
 id|csum_partial
 c_func
 (paren
+r_const
 r_int
 r_char
 op_star

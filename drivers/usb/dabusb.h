@@ -40,12 +40,6 @@ mdefine_line|#define IOCTL_DAB_OVERRUNS&t;    _IOR(&squot;d&squot;,  0x15, int)
 DECL|macro|IOCTL_DAB_VERSION
 mdefine_line|#define IOCTL_DAB_VERSION           _IOR(&squot;d&squot;, 0x3f, int) 
 macro_line|#ifdef __KERNEL__
-macro_line|#ifdef MODSTR
-DECL|macro|MODSTR
-macro_line|#undef MODSTR
-macro_line|#endif
-DECL|macro|MODSTR
-mdefine_line|#define MODSTR &quot;dabusb: &quot;
 DECL|enumerator|_stopped
 DECL|enumerator|_started
 DECL|typedef|driver_state_t

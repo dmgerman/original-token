@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       1.0&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Tue Dec 21 11:19:19 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       1.0&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Wed Jan  5 08:59:04 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
@@ -1569,7 +1569,7 @@ l_int|2
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; *  Terminate string, should be safe since this is where the &n;&t; *  FCS bytes resides.&n;&t; */
+multiline_comment|/* &n;&t; *  Terminate info string, should be safe since this is where the &n;&t; *  FCS bytes resides.&n;&t; */
 id|skb-&gt;data
 (braket
 id|skb-&gt;len
@@ -4544,6 +4544,9 @@ id|irlap_cb
 op_star
 id|self
 comma
+id|__u8
+id|caddr
+comma
 id|__u32
 id|daddr
 comma
@@ -4583,6 +4586,22 @@ id|skb
 )paren
 r_return
 suffix:semicolon
+multiline_comment|/* Broadcast frames must include saddr and daddr fields */
+r_if
+c_cond
+(paren
+id|caddr
+op_eq
+id|CBROADCAST
+)paren
+(brace
+id|frame
+op_assign
+(paren
+r_struct
+id|test_frame
+op_star
+)paren
 id|skb_put
 c_func
 (paren
@@ -4594,37 +4613,6 @@ r_struct
 id|test_frame
 )paren
 )paren
-suffix:semicolon
-id|frame
-op_assign
-(paren
-r_struct
-id|test_frame
-op_star
-)paren
-id|skb-&gt;data
-suffix:semicolon
-multiline_comment|/* Build header */
-r_if
-c_cond
-(paren
-id|self-&gt;state
-op_eq
-id|LAP_NDM
-)paren
-id|frame-&gt;caddr
-op_assign
-id|CBROADCAST
-suffix:semicolon
-multiline_comment|/* Send response */
-r_else
-id|frame-&gt;caddr
-op_assign
-id|self-&gt;caddr
-suffix:semicolon
-id|frame-&gt;control
-op_assign
-id|TEST_RSP
 suffix:semicolon
 multiline_comment|/* Insert the swapped addresses */
 id|frame-&gt;saddr
@@ -4642,6 +4630,31 @@ c_func
 (paren
 id|daddr
 )paren
+suffix:semicolon
+)brace
+r_else
+id|frame
+op_assign
+(paren
+r_struct
+id|test_frame
+op_star
+)paren
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|LAP_MAX_HEADER
+)paren
+suffix:semicolon
+id|frame-&gt;caddr
+op_assign
+id|caddr
+suffix:semicolon
+id|frame-&gt;control
+op_assign
+id|TEST_RSP
 suffix:semicolon
 multiline_comment|/* Copy info */
 id|info
@@ -4723,6 +4736,24 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
+id|frame
+op_assign
+(paren
+r_struct
+id|test_frame
+op_star
+)paren
+id|skb-&gt;data
+suffix:semicolon
+multiline_comment|/* Broadcast frames must carry saddr and daddr fields */
+r_if
+c_cond
+(paren
+id|info-&gt;caddr
+op_eq
+id|CBROADCAST
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -4753,15 +4784,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|frame
-op_assign
-(paren
-r_struct
-id|test_frame
-op_star
-)paren
-id|skb-&gt;data
-suffix:semicolon
 multiline_comment|/* Read and swap addresses */
 id|info-&gt;daddr
 op_assign
@@ -4804,6 +4826,7 @@ id|skb
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -5229,7 +5252,7 @@ suffix:semicolon
 r_case
 id|DISC_CMD
 suffix:colon
-multiline_comment|/* And RD_RSP */
+multiline_comment|/* And RD_RSP since they have the same value */
 id|irlap_recv_disc_frame
 c_func
 (paren

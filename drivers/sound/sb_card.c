@@ -479,21 +479,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do acer notebook init */
-macro_line|#ifdef CONFIG_ISAPNP
-DECL|variable|isapnp
-r_int
-id|isapnp
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#else
-DECL|variable|isapnp
-r_int
-id|isapnp
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|MODULE_PARM
 c_func
 (paren
@@ -590,16 +575,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
-id|MODULE_PARM
-c_func
-(paren
-id|isapnp
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|variable|smw_free
 r_void
 op_star
@@ -1157,10 +1132,6 @@ macro_line|#ifdef CONFIG_ISAPNP&t;&t;&t;
 r_if
 c_cond
 (paren
-id|isapnp
-op_eq
-l_int|1
-op_logical_and
 id|sb_probe_isapnp
 c_func
 (paren
@@ -1173,20 +1144,6 @@ id|config_mpu
 OL
 l_int|0
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;sb_card: No ISAPnP cards found&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-r_else
 (brace
 macro_line|#endif&t;&t;&t;
 r_if
@@ -1240,6 +1197,12 @@ id|config.card_subtype
 op_assign
 id|type
 suffix:semicolon
+macro_line|#ifdef CONFIG_MIDI
+id|config_mpu.io_base
+op_assign
+id|mpu_io
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_ISAPNP
 )brace
 macro_line|#endif
@@ -1283,17 +1246,6 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_MIDI
-r_if
-c_cond
-(paren
-id|isapnp
-op_eq
-l_int|0
-)paren
-id|config_mpu.io_base
-op_assign
-id|mpu_io
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -11,6 +11,10 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+DECL|macro|DEBUG
+macro_line|#undef DEBUG
+DECL|macro|DEBUG_ALL
+macro_line|#undef DEBUG_ALL
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;dabusb.h&quot;
 macro_line|#include &quot;bitstream.h&quot;
@@ -142,114 +146,130 @@ id|purb_t
 id|purb
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;urb                   :%p&bslash;n&quot;
+l_string|&quot;urb                   :%p&quot;
 comma
 id|purb
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;next                  :%p&bslash;n&quot;
+l_string|&quot;next                  :%p&quot;
 comma
 id|purb-&gt;next
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;dev                   :%p&bslash;n&quot;
+l_string|&quot;dev                   :%p&quot;
 comma
 id|purb-&gt;dev
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;pipe                  :%08X&bslash;n&quot;
+l_string|&quot;pipe                  :%08X&quot;
 comma
 id|purb-&gt;pipe
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;status                :%d&bslash;n&quot;
+l_string|&quot;status                :%d&quot;
 comma
 id|purb-&gt;status
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;transfer_flags        :%08X&bslash;n&quot;
+l_string|&quot;transfer_flags        :%08X&quot;
 comma
 id|purb-&gt;transfer_flags
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;transfer_buffer       :%p&bslash;n&quot;
+l_string|&quot;transfer_buffer       :%p&quot;
 comma
 id|purb-&gt;transfer_buffer
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;transfer_buffer_length:%d&bslash;n&quot;
+l_string|&quot;transfer_buffer_length:%d&quot;
 comma
 id|purb-&gt;transfer_buffer_length
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;actual_length         :%d&bslash;n&quot;
+l_string|&quot;actual_length         :%d&quot;
 comma
 id|purb-&gt;actual_length
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;setup_packet          :%p&bslash;n&quot;
+l_string|&quot;setup_packet          :%p&quot;
 comma
 id|purb-&gt;setup_packet
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;start_frame           :%d&bslash;n&quot;
+l_string|&quot;start_frame           :%d&quot;
 comma
 id|purb-&gt;start_frame
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;number_of_packets     :%d&bslash;n&quot;
+l_string|&quot;number_of_packets     :%d&quot;
 comma
 id|purb-&gt;number_of_packets
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;interval              :%d&bslash;n&quot;
+l_string|&quot;interval              :%d&quot;
 comma
 id|purb-&gt;interval
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;error_count           :%d&bslash;n&quot;
+l_string|&quot;error_count           :%d&quot;
 comma
 id|purb-&gt;error_count
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;context               :%p&bslash;n&quot;
+l_string|&quot;context               :%p&quot;
 comma
 id|purb-&gt;context
 )paren
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;complete              :%p&bslash;n&quot;
+l_string|&quot;complete              :%p&quot;
 comma
 id|purb-&gt;complete
 )paren
@@ -283,15 +303,12 @@ suffix:semicolon
 id|pbuff_t
 id|b
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_cancel_queue&bslash;n&quot;
+l_string|&quot;dabusb_cancel_queue&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|spin_lock_irqsave
 (paren
 op_amp
@@ -378,15 +395,12 @@ suffix:semicolon
 id|pbuff_t
 id|b
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_free_queue&bslash;n&quot;
+l_string|&quot;dabusb_free_queue&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -472,15 +486,12 @@ id|pdabusb_t
 id|s
 )paren
 (brace
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_free_buffers&bslash;n&quot;
+l_string|&quot;dabusb_free_buffers&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|dabusb_free_queue
 (paren
 op_amp
@@ -539,12 +550,10 @@ op_assign
 id|purb-&gt;transfer_buffer
 suffix:semicolon
 macro_line|#ifdef DEBUG_ALL
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_iso_complete&bslash;n&quot;
+l_string|&quot;dabusb_iso_complete&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -650,11 +659,10 @@ id|len
 suffix:semicolon
 )brace
 r_else
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;dabusb_iso_complete: invalid len %d&bslash;n&quot;
+l_string|&quot;dabusb_iso_complete: invalid len %d&quot;
 comma
 id|len
 )paren
@@ -667,11 +675,10 @@ id|dst
 op_ne
 id|purb-&gt;actual_length
 )paren
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;dst!=purb-&gt;actual_length:%d!=%d&bslash;n&quot;
+l_string|&quot;dst!=purb-&gt;actual_length:%d!=%d&quot;
 comma
 id|dst
 comma
@@ -699,11 +706,10 @@ id|_stopped
 id|s-&gt;overruns
 op_increment
 suffix:semicolon
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;overrun (%d)&bslash;n&quot;
+l_string|&quot;overrun (%d)&quot;
 comma
 id|s-&gt;overruns
 )paren
@@ -792,12 +798,10 @@ r_sizeof
 id|iso_packet_descriptor_t
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_alloc_buffers len:%d pipesize:%d packets:%d transfer_buffer_len:%d&bslash;n&quot;
+l_string|&quot;dabusb_alloc_buffers len:%d pipesize:%d packets:%d transfer_buffer_len:%d&quot;
 comma
 id|len
 comma
@@ -808,7 +812,6 @@ comma
 id|transfer_buffer_length
 )paren
 suffix:semicolon
-macro_line|#endif
 r_while
 c_loop
 (paren
@@ -843,11 +846,10 @@ op_logical_neg
 id|b
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;kmalloc(sizeof(buff_t))==NULL&bslash;n&quot;
+l_string|&quot;kmalloc(sizeof(buff_t))==NULL&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -889,11 +891,10 @@ op_logical_neg
 id|b-&gt;purb
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;kmalloc(sizeof(urb_t)+packets*sizeof(iso_packet_descriptor_t))==NULL&bslash;n&quot;
+l_string|&quot;kmalloc(sizeof(urb_t)+packets*sizeof(iso_packet_descriptor_t))==NULL&quot;
 )paren
 suffix:semicolon
 id|kfree
@@ -940,11 +941,10 @@ id|kfree
 id|b
 )paren
 suffix:semicolon
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;kmalloc(%d)==NULL&bslash;n&quot;
+l_string|&quot;kmalloc(%d)==NULL&quot;
 comma
 id|transfer_buffer_length
 )paren
@@ -1066,15 +1066,12 @@ r_int
 id|ep
 )paren
 (brace
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_reset_pipe&bslash;n&quot;
+l_string|&quot;dabusb_reset_pipe&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1166,11 +1163,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_bulk: usb_submit_urb returned %d&bslash;n&quot;
+l_string|&quot;dabusb_bulk: usb_submit_urb returned %d&quot;
 comma
 id|ret
 )paren
@@ -1196,11 +1192,10 @@ op_eq
 id|USB_ST_URB_PENDING
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;dabusb_usb_submit_urb: %p timed out&bslash;n&quot;
+l_string|&quot;dabusb_usb_submit_urb: %p timed out&quot;
 comma
 id|purb
 )paren
@@ -1243,12 +1238,10 @@ op_assign
 id|purb-&gt;context
 suffix:semicolon
 macro_line|#ifdef DEBUG_ALL
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_bulk_complete&bslash;n&quot;
+l_string|&quot;dabusb_bulk_complete&quot;
 )paren
 suffix:semicolon
 id|dump_urb
@@ -1289,12 +1282,10 @@ r_int
 id|pipe
 suffix:semicolon
 macro_line|#ifdef DEBUG_ALL
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_bulk&bslash;n&quot;
+l_string|&quot;dabusb_bulk&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1429,11 +1420,10 @@ op_logical_neg
 id|setup
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;dabusb_writemem: kmalloc(8) failed.&bslash;n&quot;
+l_string|&quot;dabusb_writemem: kmalloc(8) failed.&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1457,11 +1447,10 @@ op_logical_neg
 id|transfer_buffer
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;dabusb_writemem: kmalloc(%d) failed.&bslash;n&quot;
+l_string|&quot;dabusb_writemem: kmalloc(%d) failed.&quot;
 comma
 id|len
 )paren
@@ -1641,16 +1630,14 @@ r_char
 id|reset_bit
 )paren
 (brace
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
 c_func
 (paren
-l_string|&quot;dabusb_8051_reset: %d&bslash;n&quot;
+l_string|&quot;dabusb_8051_reset: %d&quot;
 comma
 id|reset_bit
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|dabusb_writemem
 (paren
@@ -1688,15 +1675,12 @@ id|ptr
 op_assign
 id|firmware
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Enter dabusb_loadmem (internal)&bslash;n&quot;
+l_string|&quot;Enter dabusb_loadmem (internal)&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|ret
 op_assign
 id|dabusb_8051_reset
@@ -1715,12 +1699,10 @@ l_int|0
 )paren
 (brace
 macro_line|#ifdef DEBUG_ALL
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;dabusb_writemem: %04X %p %d)&bslash;n&quot;
+l_string|&quot;dabusb_writemem: %04X %p %d)&quot;
 comma
 id|ptr-&gt;Address
 comma
@@ -1751,11 +1733,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;dabusb_writemem failed (%04X %p %d)&bslash;n&quot;
+l_string|&quot;dabusb_writemem failed (%04X %p %d)&quot;
 comma
 id|ptr-&gt;Address
 comma
@@ -1780,15 +1761,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_loadmem: exit&bslash;n&quot;
+l_string|&quot;dabusb_loadmem: exit&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|ret
 suffix:semicolon
@@ -1838,15 +1816,12 @@ l_int|3
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_fpga_clear&bslash;n&quot;
+l_string|&quot;dabusb_fpga_clear&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|dabusb_bulk
 (paren
@@ -1901,15 +1876,12 @@ l_int|3
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_fpga_init&bslash;n&quot;
+l_string|&quot;dabusb_fpga_init&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|dabusb_bulk
 (paren
@@ -1963,15 +1935,12 @@ id|buf
 op_assign
 id|bitstream
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Enter dabusb_fpga_download (internal)&bslash;n&quot;
+l_string|&quot;Enter dabusb_fpga_download (internal)&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1979,11 +1948,10 @@ op_logical_neg
 id|b
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;kmalloc(sizeof(bulk_transfer_t))==NULL&bslash;n&quot;
+l_string|&quot;kmalloc(sizeof(bulk_transfer_t))==NULL&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2025,17 +1993,14 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Bitstream len: %i&bslash;n&quot;
+l_string|&quot;Bitstream len: %i&quot;
 comma
 id|blen
 )paren
 suffix:semicolon
-macro_line|#endif
 id|b-&gt;data
 (braket
 l_int|0
@@ -2119,11 +2084,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;dabusb_bulk failed.&bslash;n&quot;
+l_string|&quot;dabusb_bulk failed.&quot;
 )paren
 suffix:semicolon
 r_break
@@ -2149,15 +2113,12 @@ id|kfree
 id|b
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;exit dabusb_fpga_download&bslash;n&quot;
+l_string|&quot;exit dabusb_fpga_download&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|ret
 suffix:semicolon
@@ -2193,15 +2154,12 @@ id|pdabusb_t
 id|s
 )paren
 (brace
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_stop&bslash;n&quot;
+l_string|&quot;dabusb_stop&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|s-&gt;state
 op_assign
 id|_stopped
@@ -2214,17 +2172,14 @@ op_amp
 id|s-&gt;rec_buff_list
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;pending_io: %d&bslash;n&quot;
+l_string|&quot;pending_io: %d&quot;
 comma
 id|s-&gt;pending_io.counter
 )paren
 suffix:semicolon
-macro_line|#endif
 id|s-&gt;pending_io.counter
 op_assign
 l_int|0
@@ -2253,15 +2208,12 @@ op_ne
 id|_started
 )paren
 (brace
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_startrek&bslash;n&quot;
+l_string|&quot;dabusb_startrek&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2331,10 +2283,10 @@ id|s-&gt;free_buff_list
 )paren
 (brace
 macro_line|#ifdef DEBUG_ALL
-id|printk
+id|dbg
 c_func
 (paren
-l_string|&quot;submitting: end:%p s-&gt;rec_buff_list:%p&bslash;n&quot;
+l_string|&quot;submitting: end:%p s-&gt;rec_buff_list:%p&quot;
 comma
 id|s-&gt;rec_buff_list.prev
 comma
@@ -2367,11 +2319,10 @@ c_cond
 id|ret
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;usb_submit_urb returned:%d&bslash;n&quot;
+l_string|&quot;usb_submit_urb returned:%d&quot;
 comma
 id|ret
 )paren
@@ -2390,10 +2341,9 @@ op_amp
 id|s-&gt;rec_buff_list
 )paren
 )paren
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
 l_string|&quot;startrek: dabusb_add_buf_tail failed&quot;
 )paren
 suffix:semicolon
@@ -2407,12 +2357,10 @@ id|s-&gt;pending_io
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG_ALL
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;pending_io: %d&bslash;n&quot;
+l_string|&quot;pending_io: %d&quot;
 comma
 id|s-&gt;pending_io.counter
 )paren
@@ -2473,12 +2421,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#ifdef DEBUG_ALL
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_read&bslash;n&quot;
+l_string|&quot;dabusb_read&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2534,11 +2480,10 @@ id|s-&gt;rec_buff_list
 )paren
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;error: rec_buf_list is empty&bslash;n&quot;
+l_string|&quot;error: rec_buf_list is empty&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2632,11 +2577,10 @@ id|s-&gt;rec_buff_list
 )paren
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;error: still no buffer available.&bslash;n&quot;
+l_string|&quot;error: still no buffer available.&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2687,10 +2631,10 @@ op_assign
 id|count
 suffix:semicolon
 macro_line|#ifdef DEBUG_ALL
-id|printk
+id|dbg
 c_func
 (paren
-l_string|&quot;copy_to_user:%p %p %d&bslash;n&quot;
+l_string|&quot;copy_to_user:%p %p %d&quot;
 comma
 id|buf
 comma
@@ -2717,11 +2661,10 @@ id|cnt
 )paren
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;read: copy_to_user failed&bslash;n&quot;
+l_string|&quot;read: copy_to_user failed&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2778,10 +2721,9 @@ op_amp
 id|s-&gt;rec_buff_list
 )paren
 )paren
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
 l_string|&quot;read: dabusb_add_buf_tail failed&quot;
 )paren
 suffix:semicolon
@@ -2852,11 +2794,10 @@ op_minus
 id|DABUSB_MINOR
 )braket
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_open&bslash;n&quot;
+l_string|&quot;dabusb_open&quot;
 )paren
 suffix:semicolon
 id|down
@@ -2950,10 +2891,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-l_string|&quot;dabusb: set_interface failed&bslash;n&quot;
+l_string|&quot;dabusb: set_interface failed&quot;
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -2999,11 +2940,10 @@ id|pdabusb_t
 )paren
 id|file-&gt;private_data
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_release&bslash;n&quot;
+l_string|&quot;dabusb_release&quot;
 )paren
 suffix:semicolon
 id|down
@@ -3049,10 +2989,10 @@ l_int|0
 OL
 l_int|0
 )paren
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-l_string|&quot;dabusb: set_interface failed&bslash;n&quot;
+l_string|&quot;dabusb: set_interface failed&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3125,7 +3065,7 @@ comma
 id|current
 )paren
 suffix:semicolon
-singleline_comment|//        printk(KERN_DEBUG MODSTR&quot;dabusb_ioctl&bslash;n&quot;);
+singleline_comment|//        dbg(&quot;dabusb_ioctl&quot;);
 r_if
 c_cond
 (paren
@@ -3442,12 +3382,10 @@ suffix:semicolon
 id|pdabusb_t
 id|s
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb: probe: vendor id 0x%x, device id 0x%x ifnum:%d&bslash;n&quot;
+l_string|&quot;dabusb: probe: vendor id 0x%x, device id 0x%x ifnum:%d&quot;
 comma
 id|usbdev-&gt;descriptor.idVendor
 comma
@@ -3456,7 +3394,6 @@ comma
 id|ifnum
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* the 1234:5678 is just a self assigned test ID */
 r_if
 c_cond
@@ -3566,11 +3503,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;set_configuration failed&bslash;n&quot;
+l_string|&quot;set_configuration failed&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -3615,11 +3551,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;set_interface failed&bslash;n&quot;
+l_string|&quot;set_interface failed&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -3627,11 +3562,10 @@ id|reject
 suffix:semicolon
 )brace
 )brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;bound to interface: %d&bslash;n&quot;
+l_string|&quot;bound to interface: %d&quot;
 comma
 id|ifnum
 )paren
@@ -3686,11 +3620,10 @@ id|pdabusb_t
 )paren
 id|ptr
 suffix:semicolon
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_disconnect&bslash;n&quot;
+l_string|&quot;dabusb_disconnect&quot;
 )paren
 suffix:semicolon
 id|s-&gt;remove_pending
@@ -3853,14 +3786,12 @@ op_amp
 id|dabusb_driver
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_INFO
-l_string|&quot;dabusb_init: driver registered&bslash;n&quot;
+l_string|&quot;dabusb_init: driver registered&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3873,15 +3804,12 @@ id|dabusb_cleanup
 r_void
 )paren
 (brace
-macro_line|#ifdef DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;dabusb_cleanup&bslash;n&quot;
+l_string|&quot;dabusb_cleanup&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|usb_deregister
 (paren
 op_amp

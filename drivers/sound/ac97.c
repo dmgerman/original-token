@@ -1,3 +1,6 @@
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;ac97.h&quot;
 multiline_comment|/* Flag for mono controls. */
 DECL|macro|MO
@@ -2118,6 +2121,62 @@ id|arg
 )paren
 suffix:semicolon
 )brace
+DECL|variable|ac97_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ac97_init
+)paren
+suffix:semicolon
+DECL|variable|ac97_set_values
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ac97_set_values
+)paren
+suffix:semicolon
+DECL|variable|ac97_set_mixer
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ac97_set_mixer
+)paren
+suffix:semicolon
+DECL|variable|ac97_get_register
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ac97_get_register
+)paren
+suffix:semicolon
+DECL|variable|ac97_put_register
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ac97_put_register
+)paren
+suffix:semicolon
+DECL|variable|ac97_get_mixer_scaled
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ac97_get_mixer_scaled
+)paren
+suffix:semicolon
+DECL|variable|ac97_mixer_ioctl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ac97_mixer_ioctl
+)paren
+suffix:semicolon
+DECL|variable|ac97_reset
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ac97_reset
+)paren
+suffix:semicolon
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  c-basic-offset: 4&n; * End:&n; */
 eof

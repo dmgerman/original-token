@@ -225,7 +225,12 @@ OG
 id|__size
 )paren
 r_return
-l_int|NULL
+(paren
+r_struct
+id|cmsghdr
+op_star
+)paren
+l_int|0
 suffix:semicolon
 r_return
 id|__ptr
@@ -486,21 +491,6 @@ mdefine_line|#define SOL_IRDA        266
 multiline_comment|/* IPX options */
 DECL|macro|IPX_TYPE
 mdefine_line|#define IPX_TYPE&t;1
-multiline_comment|/* TCP options - this way around because someone left a set in the c library includes */
-DECL|macro|TCP_NODELAY
-mdefine_line|#define TCP_NODELAY&t;1
-DECL|macro|TCP_MAXSEG
-mdefine_line|#define TCP_MAXSEG&t;2
-DECL|macro|TCP_CORK
-mdefine_line|#define TCP_CORK&t;3&t;/* Linux specific (for use with sendfile) */
-DECL|macro|TCP_KEEPIDLE
-mdefine_line|#define TCP_KEEPIDLE&t;4
-DECL|macro|TCP_KEEPINTVL
-mdefine_line|#define TCP_KEEPINTVL&t;5
-DECL|macro|TCP_KEEPCNT
-mdefine_line|#define TCP_KEEPCNT&t;6
-DECL|macro|TCP_SYNCNT
-mdefine_line|#define TCP_SYNCNT&t;7
 macro_line|#ifdef __KERNEL__
 r_extern
 r_int

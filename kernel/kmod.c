@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;kmod, the new module loader (replaces kerneld)&n;&t;Kirk Petersen&n;&n;&t;Reorganized not to be a daemon by Adam Richter, with guidance&n;&t;from Greg Zornetzer.&n;&n;&t;Modified to avoid chroot and file sharing problems.&n;&t;Mikael Pettersson&n;*/
+multiline_comment|/*&n;&t;kmod, the new module loader (replaces kerneld)&n;&t;Kirk Petersen&n;&n;&t;Reorganized not to be a daemon by Adam Richter, with guidance&n;&t;from Greg Zornetzer.&n;&n;&t;Modified to avoid chroot and file sharing problems.&n;&t;Mikael Pettersson&n;&n;&t;Limit the concurrent number of kmod modprobes to catch loops from&n;&t;&quot;modprobe needs a service that is in a module&quot;.&n;&t;Keith Owens &lt;kaos@ocs.com.au&gt; December 1999&n;*/
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,6 +14,10 @@ l_int|256
 )braket
 op_assign
 l_string|&quot;/sbin/modprobe&quot;
+suffix:semicolon
+r_extern
+r_int
+id|max_threads
 suffix:semicolon
 r_static
 r_inline
@@ -307,6 +311,25 @@ suffix:semicolon
 id|sigset_t
 id|tmpsig
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_static
+id|atomic_t
+id|kmod_concurrent
+op_assign
+id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+DECL|macro|MAX_KMOD_CONCURRENT
+mdefine_line|#define MAX_KMOD_CONCURRENT 50&t;/* Completely arbitrary value - KAO */
+r_static
+r_int
+id|kmod_loop_msg
+suffix:semicolon
 multiline_comment|/* Don&squot;t allow request_module() before the root fs is mounted!  */
 r_if
 c_cond
@@ -327,6 +350,71 @@ suffix:semicolon
 r_return
 op_minus
 id|EPERM
+suffix:semicolon
+)brace
+multiline_comment|/* If modprobe needs a service that is in a module, we get a recursive&n;&t; * loop.  Limit the number of running kmod threads to max_threads/2 or&n;&t; * MAX_KMOD_CONCURRENT, whichever is the smaller.  A cleaner method&n;&t; * would be to run the parents of this process, counting how many times&n;&t; * kmod was invoked.  That would mean accessing the internals of the&n;&t; * process tables to get the command line, proc_pid_cmdline is static&n;&t; * and it is not worth changing the proc code just to handle this case. &n;&t; * KAO.&n;&t; */
+id|i
+op_assign
+id|max_threads
+op_div
+l_int|2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OG
+id|MAX_KMOD_CONCURRENT
+)paren
+id|i
+op_assign
+id|MAX_KMOD_CONCURRENT
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|kmod_concurrent
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|kmod_concurrent
+)paren
+OG
+id|i
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|kmod_loop_msg
+op_increment
+OL
+l_int|5
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;kmod: runaway modprobe loop assumed and stopped&bslash;n&quot;
+)paren
+suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|kmod_concurrent
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 id|pid
@@ -363,6 +451,13 @@ id|module_name
 comma
 op_minus
 id|pid
+)paren
+suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|kmod_concurrent
 )paren
 suffix:semicolon
 r_return
@@ -423,6 +518,13 @@ comma
 l_int|NULL
 comma
 id|__WCLONE
+)paren
+suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|kmod_concurrent
 )paren
 suffix:semicolon
 multiline_comment|/* Allow signals again.. */

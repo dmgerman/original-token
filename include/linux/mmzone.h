@@ -35,6 +35,9 @@ DECL|typedef|free_area_t
 )brace
 id|free_area_t
 suffix:semicolon
+r_struct
+id|pglist_data
+suffix:semicolon
 DECL|struct|zone_struct
 r_typedef
 r_struct
@@ -66,6 +69,12 @@ r_int
 id|pages_low
 comma
 id|pages_high
+suffix:semicolon
+DECL|member|zone_pgdat
+r_struct
+id|pglist_data
+op_star
+id|zone_pgdat
 suffix:semicolon
 multiline_comment|/*&n;&t; * free areas of different sizes&n;&t; */
 DECL|member|free_area
@@ -173,6 +182,8 @@ r_extern
 r_int
 id|numnodes
 suffix:semicolon
+DECL|macro|memclass
+mdefine_line|#define memclass(pgzone, tzone)&t;(((pgzone)-&gt;zone_pgdat == (tzone)-&gt;zone_pgdat) &bslash;&n;&t;&t;&t;&amp;&amp; (((pgzone) - (pgzone)-&gt;zone_pgdat-&gt;node_zones) &lt;= &bslash;&n;&t;&t;&t;((tzone) - (pgzone)-&gt;zone_pgdat-&gt;node_zones)))
 macro_line|#ifndef CONFIG_DISCONTIGMEM
 r_extern
 id|pg_data_t

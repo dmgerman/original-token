@@ -247,6 +247,9 @@ suffix:semicolon
 r_struct
 id|sysinfo
 suffix:semicolon
+r_struct
+id|zone_t
+suffix:semicolon
 multiline_comment|/* linux/ipc/shm.c */
 r_extern
 r_int
@@ -255,6 +258,9 @@ id|shm_swap
 r_int
 comma
 r_int
+comma
+id|zone_t
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/swap.c */
@@ -274,6 +280,10 @@ c_func
 r_int
 r_int
 id|gfp_mask
+comma
+id|zone_t
+op_star
+id|zone
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/page_io.c */

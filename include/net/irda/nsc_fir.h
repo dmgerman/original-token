@@ -1,8 +1,19 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      pc87108.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Nov 13 14:37:40 1998&n; * Modified at:   Mon Nov  8 10:00:27 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
-macro_line|#ifndef PC87108_H
-DECL|macro|PC87108_H
-mdefine_line|#define PC87108_H
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      nsc_fir.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Nov 13 14:37:40 1998&n; * Modified at:   Wed Jan  5 12:00:16 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+macro_line|#ifndef NSC_FIR_H
+DECL|macro|NSC_FIR_H
+mdefine_line|#define NSC_FIR_H
+macro_line|#include &lt;linux/time.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+DECL|macro|PC87108
+mdefine_line|#define PC87108         0x10
+DECL|macro|PC97338
+mdefine_line|#define PC97338         0xb0
+multiline_comment|/* DMA modes needed */
+DECL|macro|DMA_TX_MODE
+mdefine_line|#define DMA_TX_MODE     0x08    /* Mem to I/O, ++, demand. */
+DECL|macro|DMA_RX_MODE
+mdefine_line|#define DMA_RX_MODE     0x04    /* I/O to mem, ++, demand. */
 multiline_comment|/* Flags for configuration register CRF0 */
 DECL|macro|APEDCRC
 mdefine_line|#define APEDCRC&t;&t;0x02
@@ -42,7 +53,7 @@ mdefine_line|#define FCR_RXSR        0x02 /* Rx FIFO soft reset */
 DECL|macro|FCR_TXSR
 mdefine_line|#define FCR_TXSR        0x04 /* Tx FIFO soft reset */
 DECL|macro|FCR_RXTH
-mdefine_line|#define FCR_RXTH&t;0x80 /* Rx FIFO threshold (set to 16) */
+mdefine_line|#define FCR_RXTH&t;0x40 /* Rx FIFO threshold (set to 16) */
 DECL|macro|FCR_TXTH
 mdefine_line|#define FCR_TXTH&t;0x20 /* Tx FIFO threshold (set to 17) */
 DECL|macro|EIR
@@ -103,6 +114,8 @@ DECL|macro|MCR_FIR
 mdefine_line|#define MCR_FIR&t;&t;0xa0
 DECL|macro|MCR_CEIR
 mdefine_line|#define MCR_CEIR        0xb0
+DECL|macro|MCR_IR_PLS
+mdefine_line|#define MCR_IR_PLS      0x10
 DECL|macro|MCR_DMA_EN
 mdefine_line|#define MCR_DMA_EN&t;0x04
 DECL|macro|MCR_EN_IRQ
@@ -143,7 +156,7 @@ mdefine_line|#define ECR1_EXT_SL&t;0x01 /* Extended Mode Select */
 DECL|macro|ECR1_DMANF
 mdefine_line|#define ECR1_DMANF&t;0x02 /* DMA Fairness */
 DECL|macro|ECR1_DMATH
-mdefine_line|#define ECR1_DMATH      0x04
+mdefine_line|#define ECR1_DMATH      0x04 /* DMA Threshold */
 DECL|macro|ECR1_DMASWP
 mdefine_line|#define ECR1_DMASWP&t;0x08 /* DMA Swap */
 DECL|macro|EXCR2
@@ -198,7 +211,7 @@ mdefine_line|#define FRM_ST_PHY_ERR  0x08 /* Physical layer error */
 DECL|macro|FRM_ST_BAD_CRC
 mdefine_line|#define FRM_ST_BAD_CRC  0x04 
 DECL|macro|FRM_ST_OVR1
-mdefine_line|#define FRM_ST_OVR1     0x02 /* Receive overrun */
+mdefine_line|#define FRM_ST_OVR1     0x02 /* Rx FIFO overrun */
 DECL|macro|FRM_ST_OVR2
 mdefine_line|#define FRM_ST_OVR2     0x01 /* Frame status FIFO overrun */
 DECL|macro|RFLFL
@@ -258,16 +271,78 @@ id|len
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Private data for each instance */
-DECL|struct|pc87108
+DECL|struct|frame_cb
 r_struct
-id|pc87108
+id|frame_cb
+(brace
+DECL|member|start
+r_void
+op_star
+id|start
+suffix:semicolon
+multiline_comment|/* Start of frame in DMA mem */
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+multiline_comment|/* Lenght of frame in DMA mem */
+)brace
+suffix:semicolon
+DECL|macro|MAX_WINDOW
+mdefine_line|#define MAX_WINDOW 7
+DECL|struct|tx_fifo
+r_struct
+id|tx_fifo
+(brace
+DECL|member|queue
+r_struct
+id|frame_cb
+id|queue
+(braket
+id|MAX_WINDOW
+)braket
+suffix:semicolon
+multiline_comment|/* Info about frames in queue */
+DECL|member|ptr
+r_int
+id|ptr
+suffix:semicolon
+multiline_comment|/* Currently being sent */
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+multiline_comment|/* Lenght of queue */
+DECL|member|free
+r_int
+id|free
+suffix:semicolon
+multiline_comment|/* Next free slot */
+DECL|member|tail
+r_void
+op_star
+id|tail
+suffix:semicolon
+multiline_comment|/* Next free start in DMA mem */
+)brace
+suffix:semicolon
+multiline_comment|/* Private data for each instance */
+DECL|struct|nsc_fir_cb
+r_struct
+id|nsc_fir_cb
 (brace
 DECL|member|st_fifo
 r_struct
 id|st_fifo
 id|st_fifo
 suffix:semicolon
+multiline_comment|/* Info about received frames */
+DECL|member|tx_fifo
+r_struct
+id|tx_fifo
+id|tx_fifo
+suffix:semicolon
+multiline_comment|/* Info about frames to be transmitted */
 DECL|member|tx_buff_offsets
 r_int
 id|tx_buff_offsets
@@ -324,6 +399,21 @@ id|qos_info
 id|qos
 suffix:semicolon
 multiline_comment|/* QoS capabilities for this device */
+DECL|member|stamp
+r_struct
+id|timeval
+id|stamp
+suffix:semicolon
+DECL|member|now
+r_struct
+id|timeval
+id|now
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+multiline_comment|/* For serializing operations */
 DECL|member|flags
 id|__u32
 id|flags
@@ -332,6 +422,10 @@ multiline_comment|/* Interface flags */
 DECL|member|new_speed
 id|__u32
 id|new_speed
+suffix:semicolon
+DECL|member|suspend
+r_int
+id|suspend
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -360,5 +454,5 @@ id|BSR
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* NSC_FIR_H */
 eof

@@ -699,6 +699,16 @@ id|clgenfb_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_FB_SBUS
+(brace
+l_string|&quot;sbus&quot;
+comma
+id|sbusfb_init
+comma
+id|sbusfb_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_ATY
 (brace
 l_string|&quot;atyfb&quot;
@@ -717,16 +727,6 @@ comma
 id|offb_init
 comma
 id|offb_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_SBUS
-(brace
-l_string|&quot;sbus&quot;
-comma
-id|sbusfb_init
-comma
-id|sbusfb_setup
 )brace
 comma
 macro_line|#endif

@@ -2,12 +2,12 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _LINUX_NETDEVICE_H
 DECL|macro|_LINUX_NETDEVICE_H
 mdefine_line|#define _LINUX_NETDEVICE_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/if_packet.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NET_PROFILE
 macro_line|#include &lt;net/profile.h&gt;
 macro_line|#endif

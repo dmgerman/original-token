@@ -2449,16 +2449,19 @@ r_int
 id|index
 )paren
 suffix:semicolon
-macro_line|#ifdef USB_DEBUG
-DECL|macro|PRINTD
-mdefine_line|#define PRINTD(format, args...) printk(KERN_DEBUG &quot;usb: &quot; format &quot;&bslash;n&quot; , ## args);
-macro_line|#else /* NOT DEBUGGING */
-DECL|macro|PRINTD
-mdefine_line|#define PRINTD(fmt, arg...) do {} while (0)
-macro_line|#endif /* USB_DEBUG */
-multiline_comment|/* A simple way to change one line from DEBUG to NOT DEBUG: */
-DECL|macro|XPRINTD
-mdefine_line|#define XPRINTD(fmt, arg...)&t;do {} while (0)
+macro_line|#ifdef DEBUG
+DECL|macro|dbg
+mdefine_line|#define dbg(format, arg...) printk(KERN_DEBUG __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
+macro_line|#else
+DECL|macro|dbg
+mdefine_line|#define dbg(format, arg...)
+macro_line|#endif
+DECL|macro|err
+mdefine_line|#define err(format, arg...) printk(KERN_ERR __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
+DECL|macro|info
+mdefine_line|#define info(format, arg...) printk(KERN_INFO __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
+DECL|macro|warn
+mdefine_line|#define warn(format, arg...) printk(KERN_WARNING __FILE__ &quot;: &quot; format &quot;&bslash;n&quot;, ## arg)
 multiline_comment|/*&n; * procfs stuff&n; */
 macro_line|#ifdef CONFIG_USB_PROC
 r_void

@@ -1,5 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.9&n; * Description:   IrDA sockets implementation&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Fri Dec 17 22:37:53 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1999 Jean Tourrilhes &lt;jeant@rockfort.hpl.hp.com&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     Linux-IrDA now supports four different types of IrDA sockets:&n; *&n; *     o SOCK_STREAM:    TinyTP connections with SAR disabled. The&n; *                       max SDU size is 0 for conn. of this type&n; *     o SOCK_SEQPACKET: TinyTP connections with SAR enabled. TTP may &n; *                       fragment the messages, but will preserve&n; *                       the message boundaries&n; *     o SOCK_DGRAM:     IRDAPROTO_UNITDATA: TinyTP connections with Unitdata &n; *                       (unreliable) transfers&n; *                       IRDAPROTO_ULTRA: Connectionless and unreliable data&n; *     &n; ********************************************************************/
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.9&n; * Description:   IrDA sockets implementation&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Sat Dec 25 21:10:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1999 Jean Tourrilhes &lt;jeant@rockfort.hpl.hp.com&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     Linux-IrDA now supports four different types of IrDA sockets:&n; *&n; *     o SOCK_STREAM:    TinyTP connections with SAR disabled. The&n; *                       max SDU size is 0 for conn. of this type&n; *     o SOCK_SEQPACKET: TinyTP connections with SAR enabled. TTP may &n; *                       fragment the messages, but will preserve&n; *                       the message boundaries&n; *     o SOCK_DGRAM:     IRDAPROTO_UNITDATA: TinyTP connections with Unitdata &n; *                       (unreliable) transfers&n; *                       IRDAPROTO_ULTRA: Connectionless and unreliable data&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
@@ -958,11 +957,11 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function irda_get_value_confirm (obj_id, value, priv)&n; *&n; *    Got answer from remote LM-IAS&n; *&n; */
-DECL|function|irda_get_value_confirm
+multiline_comment|/*&n; * Function irda_getvalue_confirm (obj_id, value, priv)&n; *&n; *    Got answer from remote LM-IAS&n; *&n; */
+DECL|function|irda_getvalue_confirm
 r_static
 r_void
-id|irda_get_value_confirm
+id|irda_getvalue_confirm
 c_func
 (paren
 r_int
@@ -1043,6 +1042,10 @@ id|self-&gt;iriap
 op_assign
 l_int|NULL
 suffix:semicolon
+id|self-&gt;errno
+op_assign
+id|result
+suffix:semicolon
 multiline_comment|/* Check if request succeeded */
 r_if
 c_cond
@@ -1060,10 +1063,6 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), IAS query failed!&bslash;n&quot;
 )paren
-suffix:semicolon
-id|self-&gt;errno
-op_assign
-id|result
 suffix:semicolon
 multiline_comment|/* Wake up any processes waiting for result */
 id|wake_up_interruptible
@@ -1485,7 +1484,7 @@ id|IAS_CLIENT
 comma
 id|self
 comma
-id|irda_get_value_confirm
+id|irda_getvalue_confirm
 )paren
 suffix:semicolon
 multiline_comment|/* Query remote LM-IAS */
@@ -5838,7 +5837,7 @@ id|ias_obj
 comma
 id|ias_opt.irda_attrib_name
 comma
-id|ias_opt.attribute.irda_attrib_octet_seq.OctetSeq
+id|ias_opt.attribute.irda_attrib_octet_seq.octet_seq
 comma
 id|ias_opt.attribute.irda_attrib_octet_seq.len
 )paren
@@ -6062,11 +6061,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irda_simple_get_value_confirm (obj_id, value, priv)&n; *&n; *    Got answer from remote LM-IAS, just copy object to requester...&n; *&n; * Note : duplicate from above, but we need our own version that&n; * doesn&squot;t touch the dtsap_sel and save the full value structure...&n; */
-DECL|function|irda_simple_get_value_confirm
+multiline_comment|/*&n; * Function irda_simple_getvalue_confirm (obj_id, value, priv)&n; *&n; *    Got answer from remote LM-IAS, just copy object to requester...&n; *&n; * Note : duplicate from above, but we need our own version that&n; * doesn&squot;t touch the dtsap_sel and save the full value structure...&n; */
+DECL|function|irda_simple_getvalue_confirm
 r_static
 r_void
-id|irda_simple_get_value_confirm
+id|irda_simple_getvalue_confirm
 c_func
 (paren
 r_int
@@ -6167,7 +6166,8 @@ l_string|&quot;(), IAS query failed!&bslash;n&quot;
 suffix:semicolon
 id|self-&gt;errno
 op_assign
-id|result
+op_minus
+id|EHOSTUNREACH
 suffix:semicolon
 multiline_comment|/* Wake up any processes waiting for result */
 id|wake_up_interruptible
@@ -6208,6 +6208,16 @@ r_struct
 id|ias_value
 )paren
 )paren
+suffix:semicolon
+id|irias_delete_value
+c_func
+(paren
+id|value
+)paren
+suffix:semicolon
+id|self-&gt;errno
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Wake up any processes waiting for result */
 id|wake_up_interruptible
@@ -6265,7 +6275,7 @@ multiline_comment|/* Copy over */
 id|memcpy
 c_func
 (paren
-id|ias_opt-&gt;attribute.irda_attrib_octet_seq.OctetSeq
+id|ias_opt-&gt;attribute.irda_attrib_octet_seq.octet_seq
 comma
 id|ias_value-&gt;t.oct_seq
 comma
@@ -6392,12 +6402,6 @@ op_star
 id|ias_attr
 suffix:semicolon
 multiline_comment|/* Attribute in IAS object */
-r_int
-id|daddr
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Destination address for IAS queries */
 r_int
 id|val
 op_assign
@@ -6959,63 +6963,6 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-multiline_comment|/* Check the destination address requested */
-id|daddr
-op_assign
-id|ias_opt.attribute.irda_attrib_int
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|self-&gt;daddr
-op_ne
-id|DEV_ADDR_ANY
-)paren
-(brace
-multiline_comment|/* If we are connected, we must use the correct&n;&t;&t;&t; * destination address (or leave it unspecified) */
-r_if
-c_cond
-(paren
-(paren
-id|daddr
-op_ne
-id|DEV_ADDR_ANY
-)paren
-op_logical_or
-(paren
-id|daddr
-op_ne
-id|self-&gt;daddr
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-id|daddr
-op_assign
-id|self-&gt;daddr
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* If we are not connected, we must specify a valid&n;&t;&t;&t; * destination address */
-r_if
-c_cond
-(paren
-id|daddr
-op_eq
-id|DEV_ADDR_ANY
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/* Check that we can proceed with IAP */
 r_if
 c_cond
@@ -7046,14 +6993,16 @@ id|IAS_CLIENT
 comma
 id|self
 comma
-id|irda_simple_get_value_confirm
+id|irda_simple_getvalue_confirm
 )paren
 suffix:semicolon
-multiline_comment|/* Query remote LM-IAS */
+multiline_comment|/* Treat unexpected signals as disconnect */
 id|self-&gt;errno
 op_assign
-l_int|0
+op_minus
+id|EHOSTUNREACH
 suffix:semicolon
+multiline_comment|/* Query remote LM-IAS */
 id|iriap_getvaluebyclass_request
 c_func
 (paren
@@ -7061,7 +7010,7 @@ id|self-&gt;iriap
 comma
 id|self-&gt;saddr
 comma
-id|daddr
+id|self-&gt;daddr
 comma
 id|ias_opt.irda_class_name
 comma
@@ -7082,11 +7031,11 @@ c_cond
 (paren
 id|self-&gt;errno
 )paren
-(brace
 r_return
+(paren
 id|self-&gt;errno
+)paren
 suffix:semicolon
-)brace
 multiline_comment|/* Translate from internal to user structure */
 id|err
 op_assign
@@ -7099,23 +7048,25 @@ comma
 id|self-&gt;ias_result
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;ias_result
+)paren
 id|kfree
 c_func
 (paren
 id|self-&gt;ias_result
 )paren
 suffix:semicolon
-multiline_comment|/* Cleanup (need to be *here*) */
 r_if
 c_cond
 (paren
 id|err
 )paren
-(brace
 r_return
 id|err
 suffix:semicolon
-)brace
 multiline_comment|/* Copy reply to the user */
 r_if
 c_cond

@@ -1,6 +1,5 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       1.0&n; * Description:   FIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Tue Dec 21 21:53:09 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998-1999 Rebel.com&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Rebel.com admit liability nor provide&n; *     warranty for any of this software. This material is provided &quot;AS-IS&quot;&n; *     and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations are quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       1.0&n; * Description:   FIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Wed Jan  5 15:11:21 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998-1999 Rebel.com&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Rebel.com admit liability nor provide&n; *     warranty for any of this software. This material is provided &quot;AS-IS&quot;&n; *     and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations are quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt; 
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -19,11 +18,11 @@ macro_line|#include &lt;net/irda/wrapper.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 macro_line|#include &lt;net/irda/w83977af.h&gt;
 macro_line|#include &lt;net/irda/w83977af_ir.h&gt;
-macro_line|#ifdef  CONFIG_ARCH_VNC            /* Adjust to NetWinder differences */
-DECL|macro|CONFIG_VNC_TX_DMA_PROBLEMS
-macro_line|#undef  CONFIG_VNC_TX_DMA_PROBLEMS /* Not needed */
-DECL|macro|CONFIG_VNC_RX_DMA_PROBLEMS
-mdefine_line|#define CONFIG_VNC_RX_DMA_PROBLEMS /* Must have this one! */
+macro_line|#ifdef  CONFIG_ARCH_NETWINDER            /* Adjust to NetWinder differences */
+DECL|macro|CONFIG_NETWINDER_TX_DMA_PROBLEMS
+macro_line|#undef  CONFIG_NETWINDER_TX_DMA_PROBLEMS /* Not needed */
+DECL|macro|CONFIG_NETWINDER_RX_DMA_PROBLEMS
+mdefine_line|#define CONFIG_NETWINDER_RX_DMA_PROBLEMS /* Must have this one! */
 macro_line|#endif
 DECL|macro|CONFIG_USE_INTERNAL_TIMER
 macro_line|#undef  CONFIG_USE_INTERNAL_TIMER  /* Just cannot make that timer work */
@@ -70,7 +69,7 @@ op_complement
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_ARCH_VNC             /* Adjust to NetWinder differences */
+macro_line|#ifdef CONFIG_ARCH_NETWINDER             /* Adjust to NetWinder differences */
 DECL|variable|irq
 r_static
 r_int
@@ -380,6 +379,19 @@ id|rq
 comma
 r_int
 id|cmd
+)paren
+suffix:semicolon
+r_static
+r_struct
+id|net_device_stats
+op_star
+id|w83977af_net_get_stats
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Function w83977af_init ()&n; *&n; *    Initialize chip. Just try to find out how many chips we are dealing with&n; *    and where they are&n; */
@@ -803,14 +815,6 @@ op_assign
 l_int|4000
 suffix:semicolon
 multiline_comment|/* Allocate memory if needed */
-r_if
-c_cond
-(paren
-id|self-&gt;rx_buff.truesize
-OG
-l_int|0
-)paren
-(brace
 id|self-&gt;rx_buff.head
 op_assign
 (paren
@@ -848,15 +852,6 @@ comma
 id|self-&gt;rx_buff.truesize
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|self-&gt;tx_buff.truesize
-OG
-l_int|0
-)paren
-(brace
 id|self-&gt;tx_buff.head
 op_assign
 (paren
@@ -902,7 +897,6 @@ comma
 id|self-&gt;tx_buff.truesize
 )paren
 suffix:semicolon
-)brace
 id|self-&gt;rx_buff.in_frame
 op_assign
 id|FALSE
@@ -949,6 +943,39 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+multiline_comment|/* dev_alloc doesn&squot;t clear the struct, so lets do a little hack */
+id|memset
+c_func
+(paren
+(paren
+(paren
+id|__u8
+op_star
+)paren
+id|dev
+)paren
+op_plus
+r_sizeof
+(paren
+r_char
+op_star
+)paren
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|net_device
+)paren
+op_minus
+r_sizeof
+(paren
+r_char
+op_star
+)paren
+)paren
+suffix:semicolon
 id|dev-&gt;priv
 op_assign
 (paren
@@ -981,6 +1008,10 @@ suffix:semicolon
 id|dev-&gt;do_ioctl
 op_assign
 id|w83977af_net_ioctl
+suffix:semicolon
+id|dev-&gt;get_stats
+op_assign
+id|w83977af_net_get_stats
 suffix:semicolon
 id|rtnl_lock
 c_func
@@ -1114,6 +1145,13 @@ suffix:semicolon
 id|rtnl_unlock
 c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* Must free the old-style 2.2.x device */
+id|kfree
+c_func
+(paren
+id|self-&gt;netdev
 )paren
 suffix:semicolon
 )brace
@@ -1286,7 +1324,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ARCH_VNC
+macro_line|#ifdef CONFIG_ARCH_NETWINDER
 multiline_comment|/* Netwinder uses 1 higher than Linux */
 id|w977_write_reg
 c_func
@@ -1317,7 +1355,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-macro_line|#endif /*CONFIG_ARCH_VNC */
+macro_line|#endif /*CONFIG_ARCH_NETWINDER */
 id|w977_write_reg
 c_func
 (paren
@@ -1751,7 +1789,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|37600
+l_int|38400
 suffix:colon
 id|outb
 c_func
@@ -2385,7 +2423,7 @@ id|iobase
 id|__u8
 id|set
 suffix:semicolon
-macro_line|#ifdef CONFIG_VNC_TX_DMA_PROBLEMS
+macro_line|#ifdef CONFIG_NETWINDER_TX_DMA_PROBLEMS
 r_int
 r_int
 id|flags
@@ -2466,7 +2504,7 @@ op_plus
 id|ADCR1
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_VNC_TX_DMA_PROBLEMS
+macro_line|#ifdef CONFIG_NETWINDER_TX_DMA_PROBLEMS
 id|save_flags
 c_func
 (paren
@@ -2545,7 +2583,7 @@ comma
 id|SET0
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_VNC_TX_DMA_PROBLEMS
+macro_line|#ifdef CONFIG_NETWINDER_TX_DMA_PROBLEMS
 id|hcr
 op_assign
 id|inb
@@ -2968,7 +3006,7 @@ suffix:semicolon
 id|__u8
 id|set
 suffix:semicolon
-macro_line|#ifdef CONFIG_VNC_RX_DMA_PROBLEMS
+macro_line|#ifdef CONFIG_NETWINDER_RX_DMA_PROBLEMS
 r_int
 r_int
 id|flags
@@ -3083,7 +3121,7 @@ id|self-&gt;rx_buff.data
 op_assign
 id|self-&gt;rx_buff.head
 suffix:semicolon
-macro_line|#ifdef CONFIG_VNC_RX_DMA_PROBLEMS
+macro_line|#ifdef CONFIG_NETWINDER_RX_DMA_PROBLEMS
 id|save_flags
 c_func
 (paren
@@ -3191,7 +3229,7 @@ comma
 id|SET0
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_VNC_RX_DMA_PROBLEMS
+macro_line|#ifdef CONFIG_NETWINDER_RX_DMA_PROBLEMS
 id|hcr
 op_assign
 id|inb
@@ -3982,35 +4020,6 @@ multiline_comment|/* Unlock */
 id|self-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-multiline_comment|/* Check if we need to change the speed? */
-r_if
-c_cond
-(paren
-id|self-&gt;new_speed
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), Changing speed!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|w83977af_change_speed
-c_func
-(paren
-id|self
-comma
-id|self-&gt;new_speed
-)paren
-suffix:semicolon
-id|self-&gt;new_speed
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Schedule network layer */
 id|mark_bh
 c_func
@@ -4330,7 +4339,7 @@ r_return
 id|new_icr
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function pc87108_interrupt (irq, dev_id, regs)&n; *&n; *    An interrupt from the chip has arrived. Time to do some work&n; *&n; */
+multiline_comment|/*&n; * Function w83977af_interrupt (irq, dev_id, regs)&n; *&n; *    An interrupt from the chip has arrived. Time to do some work&n; *&n; */
 DECL|function|w83977af_interrupt
 r_static
 r_void
@@ -5233,6 +5242,37 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+DECL|function|w83977af_net_get_stats
+r_static
+r_struct
+id|net_device_stats
+op_star
+id|w83977af_net_get_stats
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|w83977af_ir
+op_star
+id|self
+op_assign
+(paren
+r_struct
+id|w83977af_ir
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_return
+op_amp
+id|self-&gt;stats
+suffix:semicolon
+)brace
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
@@ -5252,6 +5292,30 @@ c_func
 id|qos_mtt_bits
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-4i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io2
+comma
+l_string|&quot;1-4i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-4i&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    &n; *&n; */

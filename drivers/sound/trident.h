@@ -188,15 +188,77 @@ mdefine_line|#define NX_AC97_BUSY_WRITE 0x0800
 DECL|macro|SI_AC97_BUSY_READ
 mdefine_line|#define SI_AC97_BUSY_READ  0x8000
 DECL|macro|DX_AC97_BUSY_READ
-mdefine_line|#define DX_AC97_BUSY_READ 0x8000
+mdefine_line|#define DX_AC97_BUSY_READ  0x8000
 DECL|macro|NX_AC97_BUSY_READ
-mdefine_line|#define NX_AC97_BUSY_READ 0x0800
+mdefine_line|#define NX_AC97_BUSY_READ  0x0800
 DECL|macro|AC97_REG_ADDR
 mdefine_line|#define AC97_REG_ADDR      0x000000ff
-DECL|macro|DX_AC97_REG_ADDR
-mdefine_line|#define DX_AC97_REG_ADDR   0x000000ff
-DECL|macro|NX_AC97_REG_ADDR
-mdefine_line|#define NX_AC97_REG_ADDR   0x000000ff
+DECL|enum|serial_intf_ctrl_bits
+r_enum
+id|serial_intf_ctrl_bits
+(brace
+DECL|enumerator|WARM_REST
+DECL|enumerator|COLD_RESET
+id|WARM_REST
+op_assign
+l_int|0x00000001
+comma
+id|COLD_RESET
+op_assign
+l_int|0x00000002
+comma
+DECL|enumerator|I2S_CLOCK
+DECL|enumerator|PCM_SEC_AC97
+id|I2S_CLOCK
+op_assign
+l_int|0x00000004
+comma
+id|PCM_SEC_AC97
+op_assign
+l_int|0x00000008
+comma
+DECL|enumerator|AC97_DBL_RATE
+DECL|enumerator|SPDIF_EN
+id|AC97_DBL_RATE
+op_assign
+l_int|0x00000010
+comma
+id|SPDIF_EN
+op_assign
+l_int|0x00000020
+comma
+DECL|enumerator|I2S_OUTPUT_EN
+DECL|enumerator|I2S_INPUT_EN
+id|I2S_OUTPUT_EN
+op_assign
+l_int|0x00000040
+comma
+id|I2S_INPUT_EN
+op_assign
+l_int|0x00000080
+comma
+DECL|enumerator|PCMIN
+DECL|enumerator|LINE1IN
+id|PCMIN
+op_assign
+l_int|0x00000100
+comma
+id|LINE1IN
+op_assign
+l_int|0x00000200
+comma
+DECL|enumerator|MICIN
+DECL|enumerator|LINE2IN
+id|MICIN
+op_assign
+l_int|0x00000400
+comma
+id|LINE2IN
+op_assign
+l_int|0x00000800
+comma
+)brace
+suffix:semicolon
 DECL|enum|global_control_bits
 r_enum
 id|global_control_bits

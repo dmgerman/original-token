@@ -11,8 +11,9 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+DECL|macro|DEBUG
+macro_line|#undef DEBUG
 macro_line|#include &quot;usb.h&quot;
-singleline_comment|// #define&t;CAMERA_DEBUG
 multiline_comment|/* XXX need to get registered minor number, cdev 10/MINOR */
 multiline_comment|/* XXX or: cdev USB_MAJOR(180)/USB_CAMERA_MINOR */
 DECL|macro|USB_CAMERA_MINOR
@@ -294,10 +295,10 @@ op_star
 l_int|10
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;CAMERA_DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;camera.r (%d) - 0x%x %ld&bslash;n&quot;
+l_string|&quot;read (%d) - 0x%x %ld&quot;
 comma
 id|len
 comma
@@ -306,7 +307,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -355,15 +355,14 @@ comma
 id|RETRY_TIMEOUT
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;CAMERA_DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;camera.r (%d) - retry&bslash;n&quot;
+l_string|&quot;read (%d) - retry&quot;
 comma
 id|len
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|camera-&gt;isActive
 op_assign
@@ -575,20 +574,19 @@ op_star
 l_int|10
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;CAMERA_DEBUG
 r_if
 c_cond
 (paren
 id|result
 )paren
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;camera.w USB err - %x&bslash;n&quot;
+l_string|&quot;write USB err - %x&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -696,15 +694,14 @@ id|camera-&gt;isActive
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef&t;CAMERA_DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;camera.w %d&bslash;n&quot;
+l_string|&quot;write %d&quot;
 comma
 id|bytes_written
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|bytes_written
 suffix:semicolon
@@ -773,13 +770,12 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-macro_line|#ifdef&t;CAMERA_DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;camera.open&bslash;n&quot;
+l_string|&quot;open&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Keep driver from being unloaded while it&squot;s in use */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -836,13 +832,12 @@ l_int|0
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#ifdef&t;CAMERA_DEBUG
-id|printk
+id|dbg
+c_func
 (paren
-l_string|&quot;camera.close&bslash;n&quot;
+l_string|&quot;close&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1058,10 +1053,10 @@ op_ne
 l_int|1
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_INFO
-l_string|&quot;Bogus camera config info&bslash;n&quot;
+l_string|&quot;Bogus camera config info&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1108,10 +1103,10 @@ op_ne
 l_int|2
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_INFO
-l_string|&quot;Bogus camera interface info&bslash;n&quot;
+l_string|&quot;Bogus camera interface info&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1130,21 +1125,19 @@ id|camera-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Camera is connected&bslash;n&quot;
+l_string|&quot;USB Camera is connected&quot;
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;Ignoring additional USB Camera&bslash;n&quot;
+l_string|&quot;Ignoring additional USB Camera&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1271,10 +1264,10 @@ op_ne
 id|USB_ENDPOINT_XFER_BULK
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_INFO
-l_string|&quot;Bogus camera endpoints&bslash;n&quot;
+l_string|&quot;Bogus camera endpoints&quot;
 )paren
 suffix:semicolon
 id|camera-&gt;dev
@@ -1301,10 +1294,10 @@ id|bConfigurationValue
 )paren
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_INFO
-l_string|&quot;Failed usb_set_configuration: camera&bslash;n&quot;
+l_string|&quot;Failed usb_set_configuration&quot;
 )paren
 suffix:semicolon
 id|camera-&gt;dev
@@ -1369,10 +1362,10 @@ id|camera-&gt;dev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|printk
+id|info
+c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Camera disconnected&bslash;n&quot;
+l_string|&quot;USB Camera disconnected&quot;
 )paren
 suffix:semicolon
 )brace

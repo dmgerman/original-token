@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty.c&n; * Version:       1.0&n; * Description:   IrCOMM serial TTY driver&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 21:00:56 1999&n; * Modified at:   Thu Dec 16 22:07:37 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       serial.c and previous IrCOMM work by Takahide Higuchi&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty.c&n; * Version:       1.0&n; * Description:   IrCOMM serial TTY driver&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 21:00:56 1999&n; * Modified at:   Tue Jan  4 14:12:06 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       serial.c and previous IrCOMM work by Takahide Higuchi&n; * &n; *     Copyright (c) 1999-2000 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -1046,6 +1046,7 @@ id|self-&gt;normal_termios.c_cflag
 op_amp
 id|CLOCAL
 )paren
+(brace
 id|IRDA_DEBUG
 c_func
 (paren
@@ -1060,6 +1061,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+)brace
 r_else
 (brace
 r_if
@@ -1069,6 +1071,7 @@ id|tty-&gt;termios-&gt;c_cflag
 op_amp
 id|CLOCAL
 )paren
+(brace
 id|IRDA_DEBUG
 c_func
 (paren
@@ -1082,6 +1085,7 @@ id|do_clocal
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Wait for carrier detect and the line to become&n;&t; * free (i.e., not in use by the callout).  While we are in&n;&t; * this loop, self-&gt;open_count is dropped by one, so that&n;&t; * mgsl_close() knows when to free things.  We restore it upon&n;&t; * exit, either normal or abnormal.&n;&t; */
 id|retval
@@ -1730,6 +1734,11 @@ id|IRCOMM_3_WIRE
 op_or
 id|IRCOMM_9_WIRE
 suffix:semicolon
+id|self-&gt;settings.service_type
+op_assign
+id|IRCOMM_9_WIRE
+suffix:semicolon
+multiline_comment|/* Default */
 id|IRDA_DEBUG
 c_func
 (paren
@@ -1755,6 +1764,11 @@ id|self-&gt;service_type
 op_assign
 id|IRCOMM_3_WIRE_RAW
 suffix:semicolon
+id|self-&gt;settings.service_type
+op_assign
+id|IRCOMM_3_WIRE_RAW
+suffix:semicolon
+multiline_comment|/* Default */
 )brace
 id|ret
 op_assign

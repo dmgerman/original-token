@@ -1,7 +1,6 @@
 macro_line|#ifndef _LINUX_ERRQUEUE_H
 DECL|macro|_LINUX_ERRQUEUE_H
 mdefine_line|#define _LINUX_ERRQUEUE_H 1
-macro_line|#include &lt;linux/config.h&gt;
 DECL|struct|sock_extended_err
 r_struct
 id|sock_extended_err
@@ -47,6 +46,7 @@ mdefine_line|#define SO_EE_ORIGIN_ICMP6&t;3
 DECL|macro|SO_EE_OFFENDER
 mdefine_line|#define SO_EE_OFFENDER(ee)&t;((struct sockaddr*)((ee)+1))
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|SKB_EXT_ERR
 mdefine_line|#define SKB_EXT_ERR(skb) ((struct sock_exterr_skb *) ((skb)-&gt;cb))
 DECL|struct|sock_exterr_skb

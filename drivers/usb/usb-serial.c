@@ -12,15 +12,9 @@ macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+DECL|macro|DEBUG
+macro_line|#undef DEBUG
 macro_line|#include &quot;usb.h&quot;
-multiline_comment|/*#define SERIAL_DEBUG 1*/
-macro_line|#ifdef SERIAL_DEBUG
-DECL|macro|debug_info
-mdefine_line|#define debug_info(format,arg...)&t;printk(KERN_DEBUG &quot;USB Serial: &quot; format &quot;&bslash;n&quot; , ##arg)
-macro_line|#else
-DECL|macro|debug_info
-mdefine_line|#define debug_info(format,arg...)&t;do {} while (0)
-macro_line|#endif
 multiline_comment|/* Module information */
 id|MODULE_AUTHOR
 c_func
@@ -1537,7 +1531,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial_read_irq&quot;
@@ -1549,7 +1543,7 @@ c_cond
 id|urb-&gt;status
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;nonzero read bulk status received: %d&quot;
@@ -1560,25 +1554,21 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef SERIAL_DEBUG
 r_if
 c_cond
 (paren
 id|urb-&gt;actual_length
 )paren
-(brace
-id|debug_info
+id|dbg
 c_func
 (paren
-l_string|&quot;%d %s&bslash;n&quot;
+l_string|&quot;%d %s&quot;
 comma
 id|urb-&gt;actual_length
 comma
 id|data
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1631,7 +1621,7 @@ c_func
 id|urb
 )paren
 )paren
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;failed resubmitting read urb&quot;
@@ -1670,7 +1660,7 @@ id|tty
 op_assign
 id|serial-&gt;tty
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial_write_irq&quot;
@@ -1682,7 +1672,7 @@ c_cond
 id|urb-&gt;status
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;nonzero write bulk status received: %d&quot;
@@ -1747,7 +1737,7 @@ id|usb_serial_state
 op_star
 id|serial
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial_open&quot;
@@ -1776,7 +1766,7 @@ op_logical_neg
 id|serial
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial == NULL!&quot;
@@ -1796,7 +1786,7 @@ op_logical_neg
 id|serial-&gt;type
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial-&gt;type == NULL!&quot;
@@ -1874,7 +1864,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial_close&quot;
@@ -1888,7 +1878,7 @@ op_logical_neg
 id|serial
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial == NULL!&quot;
@@ -1904,7 +1894,7 @@ op_logical_neg
 id|serial-&gt;type
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial-&gt;type == NULL!&quot;
@@ -1920,7 +1910,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;no device registered&quot;
@@ -1936,7 +1926,7 @@ op_logical_neg
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device already open&quot;
 )paren
@@ -1998,7 +1988,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial_write&quot;
@@ -2012,7 +2002,7 @@ op_logical_neg
 id|serial
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial == NULL!&quot;
@@ -2032,7 +2022,7 @@ op_logical_neg
 id|serial-&gt;type
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial-&gt;type == NULL!&quot;
@@ -2052,7 +2042,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;device not registered&quot;
@@ -2072,7 +2062,7 @@ op_logical_neg
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device not opened&quot;
 )paren
@@ -2143,7 +2133,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial_put_char&quot;
@@ -2157,7 +2147,7 @@ op_logical_neg
 id|serial
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial == NULL!&quot;
@@ -2173,7 +2163,7 @@ op_logical_neg
 id|serial-&gt;type
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial-&gt;type == NULL!&quot;
@@ -2189,7 +2179,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;no device registered&quot;
@@ -2205,7 +2195,7 @@ op_logical_neg
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device not open&quot;
 )paren
@@ -2257,7 +2247,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial_write_room&quot;
@@ -2271,7 +2261,7 @@ op_logical_neg
 id|serial
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial == NULL!&quot;
@@ -2291,7 +2281,7 @@ op_logical_neg
 id|serial-&gt;type
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial-&gt;type == NULL!&quot;
@@ -2311,7 +2301,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;no device registered&quot;
@@ -2331,7 +2321,7 @@ op_logical_neg
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device not open&quot;
 )paren
@@ -2391,7 +2381,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial_chars_in_buffer&quot;
@@ -2405,7 +2395,7 @@ op_logical_neg
 id|serial
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial == NULL!&quot;
@@ -2425,7 +2415,7 @@ op_logical_neg
 id|serial-&gt;type
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial-&gt;type == NULL!&quot;
@@ -2445,7 +2435,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;no device registered&quot;
@@ -2465,7 +2455,7 @@ op_logical_neg
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device not open&quot;
 )paren
@@ -2525,7 +2515,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial_throttle&quot;
@@ -2539,7 +2529,7 @@ op_logical_neg
 id|serial
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial == NULL!&quot;
@@ -2555,7 +2545,7 @@ op_logical_neg
 id|serial-&gt;type
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial-&gt;type == NULL!&quot;
@@ -2571,7 +2561,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;no device registered&quot;
@@ -2587,7 +2577,7 @@ op_logical_neg
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device not open&quot;
 )paren
@@ -2637,7 +2627,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial_unthrottle&quot;
@@ -2651,7 +2641,7 @@ op_logical_neg
 id|serial
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial == NULL!&quot;
@@ -2667,7 +2657,7 @@ op_logical_neg
 id|serial-&gt;type
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;serial-&gt;type == NULL!&quot;
@@ -2683,7 +2673,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;no device registered&quot;
@@ -2699,7 +2689,7 @@ op_logical_neg
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device not open&quot;
 )paren
@@ -2755,7 +2745,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;etek_serial_open&quot;
@@ -2768,7 +2758,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;no device registered&quot;
@@ -2785,7 +2775,7 @@ c_cond
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device already open&quot;
 )paren
@@ -2810,7 +2800,7 @@ op_amp
 id|serial-&gt;read_urb
 )paren
 )paren
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;usb_submit_urb(read bulk) failed&quot;
@@ -2853,7 +2843,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;etek_serial_close&quot;
@@ -2908,7 +2898,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;whiteheat_serial_open&quot;
@@ -2921,7 +2911,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;no device registered&quot;
@@ -2938,7 +2928,7 @@ c_cond
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device already open&quot;
 )paren
@@ -2963,7 +2953,7 @@ op_amp
 id|serial-&gt;read_urb
 )paren
 )paren
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;usb_submit_urb(read bulk) failed&quot;
@@ -3006,7 +2996,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;whiteheat_serial_close&quot;
@@ -3043,7 +3033,7 @@ op_star
 id|tty
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;whiteheat_throttle&quot;
@@ -3065,7 +3055,7 @@ op_star
 id|tty
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;whiteheat_unthrottle&quot;
@@ -3105,7 +3095,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;visor_serial_open&quot;
@@ -3118,7 +3108,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;no device registered&quot;
@@ -3135,7 +3125,7 @@ c_cond
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device already open&quot;
 )paren
@@ -3160,7 +3150,7 @@ op_amp
 id|serial-&gt;read_urb
 )paren
 )paren
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;usb_submit_urb(read bulk) failed&quot;
@@ -3201,7 +3191,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;USB: visor_serial_close&quot;
@@ -3237,7 +3227,7 @@ id|tty
 )paren
 (brace
 multiline_comment|/*&t;struct usb_serial_state *serial = (struct usb_serial_state *) tty-&gt;driver_data; */
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;visor_throttle&quot;
@@ -3260,7 +3250,7 @@ id|tty
 )paren
 (brace
 multiline_comment|/*&t;struct usb_serial_state *serial = (struct usb_serial_state *) tty-&gt;driver_data; */
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;visor_unthrottle&quot;
@@ -3300,7 +3290,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;generic_serial_open&quot;
@@ -3313,7 +3303,7 @@ op_logical_neg
 id|serial-&gt;present
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;no device registered&quot;
@@ -3330,7 +3320,7 @@ c_cond
 id|serial-&gt;active
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;device already open&quot;
 )paren
@@ -3362,7 +3352,7 @@ op_amp
 id|serial-&gt;read_urb
 )paren
 )paren
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;usb_submit_urb(read bulk) failed&quot;
@@ -3404,7 +3394,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;generic_serial_close&quot;
@@ -3477,7 +3467,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;generic_serial_write&quot;
@@ -3491,7 +3481,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;write request of 0 bytes&quot;
@@ -3519,7 +3509,7 @@ op_minus
 id|EINPROGRESS
 )paren
 (brace
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;already writing&quot;
 )paren
@@ -3593,7 +3583,7 @@ op_amp
 id|serial-&gt;write_urb
 )paren
 )paren
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;usb_submit_urb(write bulk) failed&quot;
@@ -3639,7 +3629,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;generic_serial_put_char&quot;
@@ -3677,7 +3667,7 @@ op_amp
 id|serial-&gt;write_urb
 )paren
 )paren
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;usb_submit_urb(write bulk) failed&quot;
@@ -3713,7 +3703,7 @@ suffix:semicolon
 r_int
 id|room
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;generic_write_room&quot;
@@ -3745,7 +3735,7 @@ id|serial-&gt;bulk_out_size
 l_int|0
 )braket
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;generic_write_room returns %d&quot;
@@ -3788,7 +3778,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;generic_chars_in_buffer&quot;
@@ -3994,7 +3984,7 @@ id|usb_serial_devices
 id|device_num
 )braket
 suffix:semicolon
-id|debug_info
+id|dbg
 (paren
 l_string|&quot;Looking at %s Vendor id=%.4x Product id=%.4x&quot;
 comma
@@ -4034,7 +4024,7 @@ id|type-&gt;idProduct
 )paren
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;descriptor matches...looking at the endpoints&quot;
@@ -4107,7 +4097,7 @@ l_int|0x02
 )paren
 (brace
 multiline_comment|/* we found a bulk in endpoint */
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;found bulk in&quot;
@@ -4153,7 +4143,7 @@ l_int|0x02
 )paren
 (brace
 multiline_comment|/* we found a bulk out endpoint */
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;found bulk out&quot;
@@ -4195,7 +4185,7 @@ l_int|0x03
 )paren
 (brace
 multiline_comment|/* we found a interrupt in endpoint */
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;found interrupt in&quot;
@@ -4241,10 +4231,10 @@ id|type-&gt;needs_bulk_out
 )paren
 (brace
 multiline_comment|/* found all that we need */
-id|printk
+id|info
+c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Serial: %s converter detected.&bslash;n&quot;
+l_string|&quot;%s converter detected&quot;
 comma
 id|type-&gt;name
 )paren
@@ -4264,7 +4254,7 @@ c_func
 )paren
 )paren
 (brace
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;Too many devices connected&quot;
@@ -4412,10 +4402,10 @@ id|i
 )braket
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;USB Serial: Couldn&squot;t allocate bulk_in_buffer&bslash;n&quot;
+l_string|&quot;Couldn&squot;t allocate bulk_in_buffer&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -4552,10 +4542,10 @@ id|i
 )braket
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;USB Serial: Couldn&squot;t allocate bulk_out_buffer&bslash;n&quot;
+l_string|&quot;Couldn&squot;t allocate bulk_out_buffer&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -4682,10 +4672,10 @@ id|i
 )braket
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;USB Serial: Couldn&squot;t allocate interrupt_in_buffer&bslash;n&quot;
+l_string|&quot;Couldn&squot;t allocate interrupt_in_buffer&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -4742,11 +4732,10 @@ c_cond
 id|ret
 )paren
 (brace
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Serial: failed usb_request_irq (0x%x)&bslash;n&quot;
+l_string|&quot;failed usb_request_irq (0x%x)&quot;
 comma
 id|ret
 )paren
@@ -4762,11 +4751,10 @@ l_int|1
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Serial: %s converter now attached to ttyUSB%d&bslash;n&quot;
+l_string|&quot;%s converter now attached to ttyUSB%d&quot;
 comma
 id|type-&gt;name
 comma
@@ -4779,11 +4767,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Serial: descriptors matched, but endpoints did not&bslash;n&quot;
+l_string|&quot;descriptors matched, but endpoints did not&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4941,7 +4928,7 @@ id|serial-&gt;present
 )paren
 (brace
 multiline_comment|/* something strange is going on */
-id|debug_info
+id|dbg
 c_func
 (paren
 l_string|&quot;disconnect but not present?&quot;
@@ -5062,10 +5049,10 @@ id|serial-&gt;active
 op_assign
 l_int|0
 suffix:semicolon
-id|printk
+id|info
+c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Serial: %s converter now disconnected from ttyUSB%d&bslash;n&quot;
+l_string|&quot;%s converter now disconnected from ttyUSB%d&quot;
 comma
 id|serial-&gt;type-&gt;name
 comma
@@ -5075,10 +5062,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
+id|info
+c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Serial: device disconnected.&bslash;n&quot;
+l_string|&quot;device disconnected&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5307,10 +5294,10 @@ id|serial_tty_driver
 )paren
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;USB Serial: failed to register tty driver&bslash;n&quot;
+l_string|&quot;failed to register tty driver&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5344,11 +5331,10 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB Serial: support registered.&bslash;n&quot;
+l_string|&quot;support registered&quot;
 )paren
 suffix:semicolon
 r_return

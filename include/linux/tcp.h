@@ -66,10 +66,15 @@ id|urg
 suffix:colon
 l_int|1
 comma
-DECL|member|res2
-id|res2
+DECL|member|ece
+id|ece
 suffix:colon
-l_int|2
+l_int|1
+comma
+DECL|member|cwr
+id|cwr
+suffix:colon
+l_int|1
 suffix:semicolon
 macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
 DECL|member|doff
@@ -83,10 +88,15 @@ id|res1
 suffix:colon
 l_int|4
 comma
-DECL|member|res2
-id|res2
+DECL|member|cwr
+id|cwr
 suffix:colon
-l_int|2
+l_int|1
+comma
+DECL|member|ece
+id|ece
+suffix:colon
+l_int|1
 comma
 DECL|member|urg
 id|urg
@@ -307,6 +317,24 @@ DECL|macro|tcp_flag_word
 mdefine_line|#define tcp_flag_word(tp) ( ((union tcp_word_hdr *)(tp))-&gt;words [3]) 
 r_enum
 (brace
+DECL|enumerator|TCP_FLAG_CWR
+id|TCP_FLAG_CWR
+op_assign
+id|__constant_htonl
+c_func
+(paren
+l_int|0x00800000
+)paren
+comma
+DECL|enumerator|TCP_FLAG_ECE
+id|TCP_FLAG_ECE
+op_assign
+id|__constant_htonl
+c_func
+(paren
+l_int|0x00400000
+)paren
+comma
 DECL|enumerator|TCP_FLAG_URG
 id|TCP_FLAG_URG
 op_assign
@@ -380,5 +408,24 @@ l_int|0xF0000000
 )paren
 )brace
 suffix:semicolon
+multiline_comment|/* TCP socket options */
+DECL|macro|TCP_NODELAY
+mdefine_line|#define TCP_NODELAY&t;&t;1&t;/* Turn off Nagle&squot;s algorithm. */
+DECL|macro|TCP_MAXSEG
+mdefine_line|#define TCP_MAXSEG&t;&t;2&t;/* Limit MSS */
+DECL|macro|TCP_CORK
+mdefine_line|#define TCP_CORK&t;&t;3&t;/* Never send partially complete segments */
+DECL|macro|TCP_KEEPIDLE
+mdefine_line|#define TCP_KEEPIDLE&t;&t;4&t;/* Start keeplives after this period */
+DECL|macro|TCP_KEEPINTVL
+mdefine_line|#define TCP_KEEPINTVL&t;&t;5&t;/* Interval between keepalives */
+DECL|macro|TCP_KEEPCNT
+mdefine_line|#define TCP_KEEPCNT&t;&t;6&t;/* Number of keepalives before death */
+DECL|macro|TCP_SYNCNT
+mdefine_line|#define TCP_SYNCNT&t;&t;7&t;/* Number of SYN retransmits */
+DECL|macro|TCP_LINGER2
+mdefine_line|#define TCP_LINGER2&t;&t;8&t;/* Life time of orphaned FIN-WAIT-2 state */
+DECL|macro|TCP_DEFER_ACCEPT
+mdefine_line|#define TCP_DEFER_ACCEPT&t;9&t;/* Wake up listener only when data arrive */
 macro_line|#endif&t;/* _LINUX_TCP_H */
 eof

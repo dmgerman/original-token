@@ -248,6 +248,13 @@ id|contig_page_data
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|num_physpages
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|num_physpages
+)paren
+suffix:semicolon
 DECL|variable|kmem_find_general_cachep
 id|EXPORT_SYMBOL
 c_func
