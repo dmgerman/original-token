@@ -3,7 +3,6 @@ DECL|macro|__ALPHA_IO_H
 mdefine_line|#define __ALPHA_IO_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/machvec.h&gt;
 multiline_comment|/* We don&squot;t use IO slowdowns on the Alpha, but.. */
 DECL|macro|__SLOW_DOWN_IO
 mdefine_line|#define __SLOW_DOWN_IO&t;do { } while (0)
@@ -18,6 +17,7 @@ DECL|macro|IDENT_ADDR
 mdefine_line|#define IDENT_ADDR     0xfffffc0000000000
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;asm/machvec.h&gt;
 multiline_comment|/*&n; * We try to avoid hae updates (thus the cache), but when we&n; * do need to update the hae, we need to do it atomically, so&n; * that any interrupts wouldn&squot;t get confused with the hae&n; * register not being up-to-date with respect to the hardware&n; * value.&n; */
 DECL|function|__set_hae
 r_static
@@ -169,6 +169,7 @@ suffix:semicolon
 multiline_comment|/* cached version */
 macro_line|#endif /* !__KERNEL__ */
 multiline_comment|/*&n; * There are different chipsets to interface the Alpha CPUs to the world.&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 multiline_comment|/* In a generic kernel, we always go through the machine vector.  */
 DECL|macro|virt_to_bus
@@ -259,6 +260,7 @@ macro_line|#endif
 DECL|macro|__WANT_IO_DEF
 macro_line|#undef __WANT_IO_DEF
 macro_line|#endif /* GENERIC */
+macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * The convention used for inb/outb etc. is that names starting with&n; * two underscores are the inline versions, names starting with a&n; * single underscore are proper functions, and names starting with a&n; * letter are macros that map in some way to inline or proper function&n; * versions.  Not all that pretty, but before you change it, be sure&n; * to convince yourself that it won&squot;t break anything (in particular&n; * module support).&n; */
 r_extern
 r_int
@@ -429,6 +431,7 @@ r_int
 id|addr
 )paren
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * The platform header files may define some of these macros to use&n; * the inlined versions where appropriate.  These macros may also be&n; * redefined by userlevel programs.&n; */
 macro_line|#ifndef inb
 DECL|macro|inb
@@ -478,6 +481,154 @@ macro_line|#ifndef outl_p
 DECL|macro|outl_p
 macro_line|# define outl_p&t;&t;outl
 macro_line|#endif
+macro_line|#else 
+multiline_comment|/* Userspace declarations.  */
+r_extern
+r_int
+r_int
+id|inb
+(paren
+r_int
+r_int
+id|port
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|inw
+(paren
+r_int
+r_int
+id|port
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|inl
+(paren
+r_int
+r_int
+id|port
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|outb
+(paren
+r_int
+r_char
+id|b
+comma
+r_int
+r_int
+id|port
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|outw
+(paren
+r_int
+r_int
+id|w
+comma
+r_int
+r_int
+id|port
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|outl
+(paren
+r_int
+r_int
+id|l
+comma
+r_int
+r_int
+id|port
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|readb
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|readw
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|readl
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|writeb
+c_func
+(paren
+r_int
+r_char
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|writew
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|writel
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * The &quot;address&quot; in IO memory space is not clearly either an integer or a&n; * pointer. We will accept both, thus the casts.&n; *&n; * On the alpha, we have the whole physical address space mapped at all&n; * times, so &quot;ioremap()&quot; and &quot;iounmap()&quot; do not need to do anything.&n; */
 DECL|function|ioremap
 r_static
@@ -549,7 +700,6 @@ macro_line|#ifndef writeq
 DECL|macro|writeq
 macro_line|# define writeq(v,a)&t;_writeq((v),(unsigned long)(a))
 macro_line|#endif
-macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * String version of IO memory access ops:&n; */
 r_extern
 r_void

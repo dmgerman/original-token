@@ -63,4 +63,13 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+DECL|macro|RTC_IRQ
+mdefine_line|#define RTC_IRQ    8
+macro_line|#ifdef CONFIG_RTC
+DECL|macro|TIMER_IRQ
+mdefine_line|#define TIMER_IRQ  0&t;&t;&t; /* timer is the pit */
+macro_line|#else
+DECL|macro|TIMER_IRQ
+mdefine_line|#define TIMER_IRQ  RTC_IRQ&t;&t; /* timer is the rtc */
+macro_line|#endif
 eof

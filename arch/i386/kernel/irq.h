@@ -125,8 +125,23 @@ DECL|typedef|irq_desc_t
 )brace
 id|irq_desc_t
 suffix:semicolon
+multiline_comment|/*&n; * Special IRQ vectors used by the SMP architecture:&n; *&n; * (some of the following vectors are &squot;rare&squot;, they might be merged&n; *  into a single vector to save vector space. TLB, reschedule and&n; *  local APIC vectors are performance-critical.)&n; */
+DECL|macro|RESCHEDULE_VECTOR
+mdefine_line|#define RESCHEDULE_VECTOR&t;0x30
+DECL|macro|INVALIDATE_TLB_VECTOR
+mdefine_line|#define INVALIDATE_TLB_VECTOR&t;0x31
+DECL|macro|STOP_CPU_VECTOR
+mdefine_line|#define STOP_CPU_VECTOR&t;&t;0x40
+DECL|macro|LOCAL_TIMER_VECTOR
+mdefine_line|#define LOCAL_TIMER_VECTOR&t;0x41
+DECL|macro|MTRR_CHANGE_VECTOR
+mdefine_line|#define MTRR_CHANGE_VECTOR&t;0x50
+multiline_comment|/*&n; * First vector available to drivers: (vectors 0x51-0xfe)&n; */
 DECL|macro|IRQ0_TRAP_VECTOR
-mdefine_line|#define IRQ0_TRAP_VECTOR 0x51
+mdefine_line|#define IRQ0_TRAP_VECTOR&t;0x51
+multiline_comment|/*&n; * This IRQ should never happen, but we print a message nevertheless.&n; */
+DECL|macro|SPURIOUS_APIC_VECTOR
+mdefine_line|#define SPURIOUS_APIC_VECTOR&t;0xff
 r_extern
 id|irq_desc_t
 id|irq_desc
@@ -169,6 +184,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Various low-level irq details needed by irq.c, process.c,&n; * time.c, io_apic.c and smp.c&n; *&n; * Interrupt entry/exit code at both C and assembly level&n; */
+r_extern
 r_void
 id|mask_irq
 c_func
@@ -178,6 +194,7 @@ r_int
 id|irq
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|unmask_irq
 c_func
@@ -187,6 +204,7 @@ r_int
 id|irq
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|disable_8259A_irq
 c_func
@@ -196,6 +214,7 @@ r_int
 id|irq
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|i8259A_irq_pending
 c_func
@@ -205,6 +224,7 @@ r_int
 id|irq
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|ack_APIC_irq
 c_func
@@ -212,6 +232,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|setup_IO_APIC
 c_func
@@ -219,6 +240,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|IO_APIC_get_PCI_irq_vector
 c_func
@@ -233,6 +255,7 @@ r_int
 id|fn
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|make_8259A_irq
 c_func
@@ -242,17 +265,28 @@ r_int
 id|irq
 )paren
 suffix:semicolon
+r_extern
 r_void
-id|send_IPI
+id|FASTCALL
+c_func
+(paren
+id|send_IPI_self
 c_func
 (paren
 r_int
-id|dest
-comma
-r_int
 id|vector
 )paren
+)paren
 suffix:semicolon
+r_extern
+r_void
+id|smp_send_mtrr
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|init_pic_mode
 c_func
@@ -260,6 +294,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|print_IO_APIC
 c_func

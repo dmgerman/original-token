@@ -29,6 +29,8 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
+macro_line|#include &quot;irq.h&quot;
 DECL|macro|MTRR_VERSION
 mdefine_line|#define MTRR_VERSION            &quot;1.26 (19981001)&quot;
 DECL|macro|TRUE
@@ -1791,15 +1793,9 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|smp_message_pass
+id|smp_send_mtrr
+c_func
 (paren
-id|MSG_ALL_BUT_SELF
-comma
-id|MSG_MTRR_CHANGE
-comma
-l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*  Wait for it to be done  */

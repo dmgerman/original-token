@@ -29,7 +29,7 @@ id|atomic_t
 suffix:semicolon
 macro_line|#endif
 DECL|macro|ATOMIC_INIT
-mdefine_line|#define ATOMIC_INIT(i)&t;{ (i) }
+mdefine_line|#define ATOMIC_INIT(i)&t;( (atomic_t) { (i) } )
 DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)&t;&t;((v)-&gt;counter)
 DECL|macro|atomic_set

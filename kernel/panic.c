@@ -173,16 +173,9 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
-id|smp_message_pass
+id|smp_send_stop
 c_func
 (paren
-id|MSG_ALL_BUT_SELF
-comma
-id|MSG_STOP_CPU
-comma
-l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -398,6 +398,11 @@ id|nr
 )braket
 )paren
 suffix:semicolon
+id|synchronize_bh
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|enable_bh
 r_extern

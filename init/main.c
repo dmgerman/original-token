@@ -5051,6 +5051,10 @@ op_or
 id|CLONE_SIGHAND
 )paren
 suffix:semicolon
+id|current-&gt;need_resched
+op_assign
+l_int|1
+suffix:semicolon
 id|cpu_idle
 c_func
 (paren

@@ -14,13 +14,7 @@ macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#ifdef CONFIG_RTC 
-DECL|macro|TIMER_IRQ
-mdefine_line|#define TIMER_IRQ 0  /* using pit for timer */
-macro_line|#else 
-DECL|macro|TIMER_IRQ
-mdefine_line|#define TIMER_IRQ 8  /* using rtc for timer */
-macro_line|#endif
+macro_line|#include &quot;irq.h&quot;
 r_static
 r_int
 id|set_rtc_mmss

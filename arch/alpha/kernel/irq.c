@@ -45,15 +45,6 @@ id|hardirq_no
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|macro|RTC_IRQ
-mdefine_line|#define RTC_IRQ    8
-macro_line|#ifdef CONFIG_RTC
-DECL|macro|TIMER_IRQ
-mdefine_line|#define TIMER_IRQ  0        /* timer is the pit */
-macro_line|#else
-DECL|macro|TIMER_IRQ
-mdefine_line|#define TIMER_IRQ  RTC_IRQ  /* the timer is, in fact, the rtc */
-macro_line|#endif
 macro_line|#if NR_IRQS &gt; 64
 macro_line|#  error Unable to handle more than 64 irq levels.
 macro_line|#endif

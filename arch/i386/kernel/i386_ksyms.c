@@ -387,13 +387,6 @@ c_func
 id|__global_restore_flags
 )paren
 suffix:semicolon
-DECL|variable|smp_message_pass
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|smp_message_pass
-)paren
-suffix:semicolon
 DECL|variable|mtrr_hook
 id|EXPORT_SYMBOL
 c_func

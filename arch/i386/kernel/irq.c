@@ -683,7 +683,7 @@ c_func
 (paren
 l_int|63
 )paren
-multiline_comment|/*&n; * The following vectors are part of the Linux architecture, there&n; * is no hardware IRQ pin equivalent for them, they are triggered&n; * through the ICC by us (IPIs), via smp_message_pass():&n; */
+multiline_comment|/*&n; * The following vectors are part of the Linux architecture, there&n; * is no hardware IRQ pin equivalent for them, they are triggered&n; * through the ICC by us (IPIs)&n; */
 id|BUILD_SMP_INTERRUPT
 c_func
 (paren
@@ -1225,7 +1225,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;IPI: %10lu&bslash;n&quot;
+l_string|&quot;ERR: %10lu&bslash;n&quot;
 comma
 id|ipi_count
 )paren
@@ -3848,7 +3848,7 @@ multiline_comment|/* IPI for rescheduling */
 id|set_intr_gate
 c_func
 (paren
-l_int|0x30
+id|RESCHEDULE_VECTOR
 comma
 id|reschedule_interrupt
 )paren
@@ -3857,7 +3857,7 @@ multiline_comment|/* IPI for invalidation */
 id|set_intr_gate
 c_func
 (paren
-l_int|0x31
+id|INVALIDATE_TLB_VECTOR
 comma
 id|invalidate_interrupt
 )paren
@@ -3866,7 +3866,7 @@ multiline_comment|/* IPI for CPU halt */
 id|set_intr_gate
 c_func
 (paren
-l_int|0x40
+id|STOP_CPU_VECTOR
 comma
 id|stop_cpu_interrupt
 )paren
@@ -3875,7 +3875,7 @@ multiline_comment|/* self generated IPI for local APIC timer */
 id|set_intr_gate
 c_func
 (paren
-l_int|0x41
+id|LOCAL_TIMER_VECTOR
 comma
 id|apic_timer_interrupt
 )paren
@@ -3884,7 +3884,7 @@ multiline_comment|/* IPI for MTRR control */
 id|set_intr_gate
 c_func
 (paren
-l_int|0x50
+id|MTRR_CHANGE_VECTOR
 comma
 id|mtrr_interrupt
 )paren
@@ -3893,7 +3893,7 @@ multiline_comment|/* IPI vector for APIC spurious interrupts */
 id|set_intr_gate
 c_func
 (paren
-l_int|0xff
+id|SPURIOUS_APIC_VECTOR
 comma
 id|spurious_interrupt
 )paren

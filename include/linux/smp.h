@@ -4,7 +4,30 @@ mdefine_line|#define __LINUX_SMP_H
 multiline_comment|/*&n; *&t;Generic SMP support&n; *&t;&t;Alan Cox. &lt;alan@cymru.net&gt;&n; */
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;asm/smp.h&gt;
-multiline_comment|/*&n; * main IPI interface, handles INIT, TLB flush, STOP, etc. (defined in asm header):&n; *&n; * extern void smp_message_pass(int target, int msg, unsigned long data, int wait);&n; */
+multiline_comment|/*&n; * main cross-CPU interfaces, handles INIT, TLB flush, STOP, etc.&n; * (defined in asm header):&n; */
+multiline_comment|/*&n; * stops all CPUs but the current one:&n; */
+r_extern
+r_void
+id|smp_send_stop
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * sends a &squot;reschedule&squot; event to another CPU:&n; */
+r_extern
+r_void
+id|FASTCALL
+c_func
+(paren
+id|smp_send_reschedule
+c_func
+(paren
+r_int
+id|cpu
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Boot processor call to load the other CPU&squot;s&n; */
 r_extern
 r_void
@@ -77,8 +100,6 @@ DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id()&t;&t;0
 DECL|macro|hard_smp_processor_id
 mdefine_line|#define hard_smp_processor_id()&t;&t;0
-DECL|macro|smp_message_pass
-mdefine_line|#define smp_message_pass(t,m,d,w)&t;
 DECL|macro|smp_threads_ready
 mdefine_line|#define smp_threads_ready&t;&t;1
 DECL|macro|kernel_lock

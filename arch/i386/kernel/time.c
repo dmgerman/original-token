@@ -39,6 +39,10 @@ r_int
 id|cpu_hz
 suffix:semicolon
 multiline_comment|/* Detected as we calibrate the TSC */
+DECL|variable|cacheflush_time
+id|cycles_t
+id|cacheflush_time
+suffix:semicolon
 multiline_comment|/* Number of usecs that the last interrupt was delayed */
 DECL|variable|delay_at_last_interrupt
 r_static
@@ -113,10 +117,6 @@ id|edx
 )paren
 suffix:semicolon
 multiline_comment|/* .. relative to previous jiffy (32 bits is enough) */
-id|edx
-op_assign
-l_int|0
-suffix:semicolon
 id|eax
 op_sub_assign
 id|last_tsc_low
@@ -138,7 +138,7 @@ l_string|&quot;=d&quot;
 id|edx
 )paren
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;g&quot;
 (paren
 id|fast_gettimeoffset_quotient
 )paren
@@ -147,18 +147,13 @@ l_string|&quot;0&quot;
 (paren
 id|eax
 )paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|edx
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* our adjusted time offset in microseconds */
 r_return
-id|edx
-op_plus
 id|delay_at_last_interrupt
+op_plus
+id|edx
 suffix:semicolon
 )brace
 multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
@@ -372,6 +367,12 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+r_int
+id|usec
+comma
+id|sec
+suffix:semicolon
 id|read_lock_irqsave
 c_func
 (paren
@@ -381,32 +382,43 @@ comma
 id|flags
 )paren
 suffix:semicolon
-op_star
-id|tv
+id|usec
 op_assign
-id|xtime
-suffix:semicolon
-id|tv-&gt;tv_usec
-op_add_assign
 id|do_gettimeoffset
 c_func
 (paren
 )paren
 suffix:semicolon
+(brace
+r_int
+r_int
+id|lost
+op_assign
+id|lost_ticks
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|lost_ticks
+id|lost
 )paren
-id|tv-&gt;tv_usec
+id|usec
 op_add_assign
-id|lost_ticks
+id|lost
 op_star
 (paren
 l_int|1000000
 op_div
 id|HZ
 )paren
+suffix:semicolon
+)brace
+id|sec
+op_assign
+id|xtime.tv_sec
+suffix:semicolon
+id|usec
+op_add_assign
+id|xtime.tv_usec
 suffix:semicolon
 id|read_unlock_irqrestore
 c_func
@@ -420,19 +432,27 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|tv-&gt;tv_usec
+id|usec
 op_ge
 l_int|1000000
 )paren
 (brace
-id|tv-&gt;tv_usec
+id|usec
 op_sub_assign
 l_int|1000000
 suffix:semicolon
-id|tv-&gt;tv_sec
+id|sec
 op_increment
 suffix:semicolon
 )brace
+id|tv-&gt;tv_sec
+op_assign
+id|sec
+suffix:semicolon
+id|tv-&gt;tv_usec
+op_assign
+id|usec
+suffix:semicolon
 )brace
 DECL|function|do_settimeofday
 r_void
@@ -865,21 +885,6 @@ l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 )brace
-macro_line|#if 0
-multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically it&squot;s a hack, so don&squot;t look&n;&t;   closely for now.. */
-id|smp_message_pass
-c_func
-(paren
-id|MSG_ALL_BUT_SELF
-comma
-id|MSG_RESCHEDULE
-comma
-l_int|0L
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_MCA
 r_if
 c_cond
@@ -1635,6 +1640,13 @@ id|cpu_hz
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; * Rough estimation for SMP scheduling, this is the number of&n;&t; * cycles it takes for a fully memory-limited process to flush&n;&t; * the SMP-local cache.&n;&t; */
+id|cacheflush_time
+op_assign
+id|cpu_hz
+op_div
+l_int|10000
+suffix:semicolon
 id|setup_x86_irq
 c_func
 (paren

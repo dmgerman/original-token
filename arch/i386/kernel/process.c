@@ -337,6 +337,13 @@ c_func
 l_string|&quot;hlt&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * although we are an idle CPU, we do not want to&n;&t;&t; * get into the scheduler unnecessarily.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;need_resched
+)paren
+(brace
 id|schedule
 c_func
 (paren
@@ -347,6 +354,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 macro_line|#endif

@@ -3517,11 +3517,9 @@ id|status
 op_or
 id|IRQ_REPLAY
 suffix:semicolon
-id|send_IPI
+id|send_IPI_self
 c_func
 (paren
-id|APIC_DEST_SELF
-comma
 id|IO_APIC_VECTOR
 c_func
 (paren

@@ -279,6 +279,7 @@ l_int|7
 )paren
 (brace
 multiline_comment|/* if ISA int */
+multiline_comment|/* Ruffian does not have the RTC connected to &n;&t;&t;&t;   the CPU timer interrupt.  Instead, it uses the&n;&t;&t;&t;   PIT connected to IRQ 0.  So we must detect that&n;&t;&t;&t;   and route that specifically to where we expected&n;&t;&t;&t;   to find the timer interrupt come in.  */
 multiline_comment|/* Copy this code from isa_device_interrupt because&n;&t;&t;&t;   we need to hook into int 0 for the timer.  I&n;&t;&t;&t;   refuse to soil device_interrupt with ifdefs.  */
 multiline_comment|/* Generate a PCI interrupt acknowledge cycle.&n;&t;&t;&t;   The PIC will respond with the interrupt&n;&t;&t;&t;   vector of the highest priority interrupt&n;&t;&t;&t;   that is pending.  The PALcode sets up the&n;&t;&t;&t;   interrupts vectors such that irq level L&n;&t;&t;&t;   generates vector L.  */
 r_int
@@ -326,7 +327,7 @@ l_int|0
 id|handle_irq
 c_func
 (paren
-l_int|8
+id|TIMER_IRQ
 comma
 op_minus
 l_int|1
@@ -334,7 +335,6 @@ comma
 id|regs
 )paren
 suffix:semicolon
-multiline_comment|/* fake it */
 id|ruffian_ack_irq
 c_func
 (paren
