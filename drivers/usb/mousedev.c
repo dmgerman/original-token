@@ -317,7 +317,7 @@ id|ABS_Y
 )braket
 suffix:semicolon
 id|list-&gt;dy
-op_add_assign
+op_sub_assign
 (paren
 id|value
 op_star
@@ -329,7 +329,7 @@ op_div
 id|size
 suffix:semicolon
 id|list-&gt;oldy
-op_add_assign
+op_sub_assign
 id|list-&gt;dy
 op_star
 id|size

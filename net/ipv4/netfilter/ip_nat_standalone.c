@@ -1,9 +1,5 @@
 multiline_comment|/* This file contains all the functions required for the standalone&n;   ip_nat module.&n;&n;   These are not required by the compatibility layer.&n;*/
 multiline_comment|/* (c) 1999 Paul `Rusty&squot; Russell.  Licenced under the GNU General&n;   Public Licence. */
-macro_line|#ifdef MODULE
-DECL|macro|EXPORT_SYMTAB
-mdefine_line|#define EXPORT_SYMTAB
-macro_line|#endif
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;

@@ -515,12 +515,14 @@ DECL|macro|BTN_TOOL_FINGER
 mdefine_line|#define BTN_TOOL_FINGER&t;&t;0x145
 DECL|macro|BTN_TOOL_MOUSE
 mdefine_line|#define BTN_TOOL_MOUSE&t;&t;0x146
+DECL|macro|BTN_TOOL_LENS
+mdefine_line|#define BTN_TOOL_LENS&t;&t;0x147
 DECL|macro|BTN_TOUCH
-mdefine_line|#define BTN_TOUCH&t;&t;0x147
+mdefine_line|#define BTN_TOUCH&t;&t;0x14a
 DECL|macro|BTN_STYLUS
-mdefine_line|#define BTN_STYLUS&t;&t;0x148
+mdefine_line|#define BTN_STYLUS&t;&t;0x14b
 DECL|macro|BTN_STYLUS2
-mdefine_line|#define BTN_STYLUS2&t;&t;0x149
+mdefine_line|#define BTN_STYLUS2&t;&t;0x14c
 DECL|macro|KEY_MAX
 mdefine_line|#define KEY_MAX&t;&t;&t;0x1ff
 multiline_comment|/*&n; * Relative axes&n; */

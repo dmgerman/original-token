@@ -203,6 +203,11 @@ DECL|macro|HID_OUTPUT_REPORT
 mdefine_line|#define HID_OUTPUT_REPORT&t;1
 DECL|macro|HID_FEATURE_REPORT
 mdefine_line|#define HID_FEATURE_REPORT&t;2
+multiline_comment|/*&n; * HID device quirks.&n; */
+DECL|macro|HID_QUIRK_INVERT
+mdefine_line|#define HID_QUIRK_INVERT&t;0x01
+DECL|macro|HID_QUIRK_NOTOUCH
+mdefine_line|#define HID_QUIRK_NOTOUCH&t;0x02
 multiline_comment|/*&n; * This is the global enviroment of the parser. This information is&n; * persistent for main-items. The global enviroment can be saved and&n; * restored with PUSH/POP statements.&n; */
 DECL|struct|hid_global
 r_struct
@@ -578,6 +583,11 @@ id|input_dev
 id|input
 suffix:semicolon
 multiline_comment|/* input device structure */
+DECL|member|quirks
+r_int
+id|quirks
+suffix:semicolon
+multiline_comment|/* Various nasty tricks the device can pull on us */
 )brace
 suffix:semicolon
 DECL|macro|HID_GLOBAL_STACK_SIZE

@@ -3,7 +3,7 @@ macro_line|#ifndef _BTTV_H_
 DECL|macro|_BTTV_H_
 mdefine_line|#define _BTTV_H_
 DECL|macro|BTTV_VERSION_CODE
-mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,22) 
+mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,24) 
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
@@ -212,6 +212,11 @@ DECL|macro|GBUFFER_DONE
 mdefine_line|#define GBUFFER_DONE         2
 DECL|macro|GBUFFER_ERROR
 mdefine_line|#define GBUFFER_ERROR        3
+DECL|member|tv
+r_struct
+id|timeval
+id|tv
+suffix:semicolon
 DECL|member|width
 id|u16
 id|width
@@ -537,6 +542,14 @@ suffix:semicolon
 DECL|member|triton1
 r_int
 id|triton1
+suffix:semicolon
+DECL|member|errors
+r_int
+id|errors
+suffix:semicolon
+DECL|member|needs_restart
+r_int
+id|needs_restart
 suffix:semicolon
 DECL|member|gpioq
 id|WAIT_QUEUE

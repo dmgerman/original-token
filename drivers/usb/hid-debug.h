@@ -583,6 +583,14 @@ comma
 (brace
 l_int|0
 comma
+l_int|0x3c
+comma
+l_string|&quot;Invert&quot;
+)brace
+comma
+(brace
+l_int|0
+comma
 l_int|0x42
 comma
 l_string|&quot;TipSwitch&quot;

@@ -1,8 +1,4 @@
 multiline_comment|/* FTP extension for IP connection tracking. */
-macro_line|#ifdef MODULE
-DECL|macro|EXPORT_SYMTAB
-mdefine_line|#define EXPORT_SYMTAB
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;

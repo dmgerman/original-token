@@ -1394,6 +1394,10 @@ suffix:semicolon
 id|datasize
 op_sub_assign
 id|len
+comma
+id|offset
+op_add_assign
+id|len
 )paren
 (brace
 id|ntfs_io
@@ -1454,7 +1458,7 @@ l_string|&quot;error in load_attributes&bslash;n&quot;
 suffix:semicolon
 )brace
 id|delta
-op_assign
+op_add_assign
 id|len
 suffix:semicolon
 id|parse_attributes

@@ -18244,6 +18244,37 @@ id|pnp_devices
 id|__initdata
 op_assign
 (brace
+multiline_comment|/* Motorola VoiceSURFR 56K Modem */
+(brace
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;M&squot;
+comma
+l_char|&squot;O&squot;
+comma
+l_char|&squot;T&squot;
+)paren
+comma
+id|ISAPNP_DEVICE
+c_func
+(paren
+l_int|0x15F0
+)paren
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_PNPDEFAULT
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
 multiline_comment|/* Rockwell 56K ACF II Fax+Data+Voice Modem */
 (brace
 id|ISAPNP_VENDOR

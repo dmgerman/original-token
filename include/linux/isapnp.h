@@ -354,6 +354,54 @@ suffix:semicolon
 multiline_comment|/* next resource */
 )brace
 suffix:semicolon
+DECL|macro|ISAPNP_ANY_ID
+mdefine_line|#define ISAPNP_ANY_ID&t;&t;0xffff
+DECL|macro|ISAPNP_CARD_DEVS
+mdefine_line|#define ISAPNP_CARD_DEVS&t;8
+DECL|macro|ISAPNP_CARD_ID
+mdefine_line|#define ISAPNP_CARD_ID(_va, _vb, _vc, _device) &bslash;&n;&t;&t;vendor: ISAPNP_VENDOR(_va, _vb, _vc), device: ISAPNP_DEVICE(_device)
+DECL|macro|ISAPNP_CARD_END
+mdefine_line|#define ISAPNP_CARD_END &bslash;&n;&t;&t;vendor: 0, device: 0
+DECL|macro|ISAPNP_DEVICE_ID
+mdefine_line|#define ISAPNP_DEVICE_ID(_va, _vb, _vc, _function) &bslash;&n;&t;&t;{ vendor: ISAPNP_VENDOR(_va, _vb, _vc), function: ISAPNP_FUNCTION(_function) }
+DECL|struct|isapnp_card_id
+r_struct
+id|isapnp_card_id
+(brace
+DECL|member|vendor
+DECL|member|device
+r_int
+r_int
+id|vendor
+comma
+id|device
+suffix:semicolon
+r_struct
+(brace
+DECL|member|vendor
+DECL|member|function
+r_int
+r_int
+id|vendor
+comma
+id|function
+suffix:semicolon
+DECL|member|devs
+)brace
+id|devs
+(braket
+id|ISAPNP_CARD_DEVS
+)braket
+suffix:semicolon
+multiline_comment|/* logical devices */
+DECL|member|driver_data
+r_int
+r_int
+id|driver_data
+suffix:semicolon
+multiline_comment|/* data private to the driver */
+)brace
+suffix:semicolon
 macro_line|#if defined(CONFIG_ISAPNP) || (defined(CONFIG_ISAPNP_MODULE) &amp;&amp; defined(MODULE))
 DECL|macro|__ISAPNP__
 mdefine_line|#define __ISAPNP__
@@ -565,6 +613,35 @@ r_struct
 id|pci_dev
 op_star
 id|from
+)paren
+suffix:semicolon
+r_int
+id|isapnp_probe_cards
+c_func
+(paren
+r_const
+r_struct
+id|isapnp_card_id
+op_star
+id|ids
+comma
+r_int
+(paren
+op_star
+id|probe
+)paren
+(paren
+r_struct
+id|pci_bus
+op_star
+id|card
+comma
+r_const
+r_struct
+id|isapnp_card_id
+op_star
+id|id
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* misc */
@@ -877,6 +954,43 @@ id|from
 (brace
 r_return
 l_int|NULL
+suffix:semicolon
+)brace
+DECL|function|isapnp_probe_cards
+r_extern
+r_inline
+r_int
+id|isapnp_probe_cards
+c_func
+(paren
+r_const
+r_struct
+id|isapnp_card_id
+op_star
+id|ids
+comma
+r_int
+(paren
+op_star
+id|probe
+)paren
+(paren
+r_struct
+id|pci_bus
+op_star
+id|card
+comma
+r_const
+r_struct
+id|isapnp_card_id
+op_star
+id|id
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 DECL|function|isapnp_resource_change

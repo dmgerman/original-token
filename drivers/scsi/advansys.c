@@ -8724,7 +8724,7 @@ macro_line|#endif /* ADVANSYS_DEBUG */
 macro_line|#ifdef ADVANSYS_ASSERT
 id|STATIC
 r_int
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 r_void
@@ -18360,7 +18360,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 )paren
@@ -18838,7 +18838,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 )paren
@@ -20137,7 +20137,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 )paren
@@ -20724,7 +20724,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 )paren
@@ -22967,7 +22967,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 )paren
@@ -23251,7 +23251,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 )paren
@@ -23444,7 +23444,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 )paren
@@ -23827,7 +23827,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 )paren
@@ -24151,7 +24151,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 )paren
@@ -24287,7 +24287,7 @@ suffix:semicolon
 id|ASC_ASSERT
 c_func
 (paren
-id|interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 )paren
@@ -33933,11 +33933,11 @@ suffix:semicolon
 )brace
 macro_line|#endif /* ADVANSYS_DEBUG */
 macro_line|#ifdef ADVANSYS_ASSERT
-multiline_comment|/*&n; * interrupts_enabled()&n; *&n; * Return 1 if interrupts are enabled, otherwise return 0.&n; */
+multiline_comment|/*&n; * advansys_interrupts_enabled()&n; *&n; * Return 1 if interrupts are enabled, otherwise return 0.&n; */
 id|STATIC
 r_int
-DECL|function|interrupts_enabled
-id|interrupts_enabled
+DECL|function|advansys_interrupts_enabled
+id|advansys_interrupts_enabled
 c_func
 (paren
 r_void
