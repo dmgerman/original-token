@@ -7307,7 +7307,8 @@ id|bitmap_size
 suffix:semicolon
 id|sun4c_kstack_vma.vm_mm
 op_assign
-id|init_task.mm
+op_amp
+id|init_mm
 suffix:semicolon
 id|sun4c_kstack_vma.vm_start
 op_assign

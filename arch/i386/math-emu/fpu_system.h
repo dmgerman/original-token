@@ -30,7 +30,7 @@ mdefine_line|#define SEG_WRITE_PERM(s)&t;(((s).b &amp; ((1 &lt;&lt; 11) | (1 &lt
 DECL|macro|SEG_EXPAND_DOWN
 mdefine_line|#define SEG_EXPAND_DOWN(s)&t;(((s).b &amp; ((1 &lt;&lt; 11) | (1 &lt;&lt; 10))) &bslash;&n;&t;&t;&t;&t; == (1 &lt;&lt; 10))
 DECL|macro|I387
-mdefine_line|#define I387&t;&t;&t;(current-&gt;tss.i387)
+mdefine_line|#define I387&t;&t;&t;(current-&gt;thread.i387)
 DECL|macro|FPU_info
 mdefine_line|#define FPU_info&t;&t;(I387.soft.info)
 DECL|macro|FPU_CS

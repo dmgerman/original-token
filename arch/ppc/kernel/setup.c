@@ -2052,11 +2052,11 @@ id|panic_timeout
 op_assign
 l_int|180
 suffix:semicolon
-id|init_task.mm-&gt;start_code
+id|init_mm.start_code
 op_assign
 id|PAGE_OFFSET
 suffix:semicolon
-id|init_task.mm-&gt;end_code
+id|init_mm.end_code
 op_assign
 (paren
 r_int
@@ -2064,7 +2064,7 @@ r_int
 )paren
 id|_etext
 suffix:semicolon
-id|init_task.mm-&gt;end_data
+id|init_mm.end_data
 op_assign
 (paren
 r_int
@@ -2072,7 +2072,7 @@ r_int
 )paren
 id|_edata
 suffix:semicolon
-id|init_task.mm-&gt;brk
+id|init_mm.brk
 op_assign
 (paren
 r_int

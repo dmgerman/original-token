@@ -2258,20 +2258,20 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;
 multiline_comment|/* Due to stack alignment restrictions and assumptions... */
-id|init_task.mm-&gt;mmap-&gt;vm_page_prot
+id|init_mm.mmap-&gt;vm_page_prot
 op_assign
 id|PAGE_SHARED
 suffix:semicolon
-id|init_task.mm-&gt;mmap-&gt;vm_start
+id|init_mm.mmap-&gt;vm_start
 op_assign
 id|PAGE_OFFSET
 suffix:semicolon
-id|init_task.mm-&gt;mmap-&gt;vm_end
+id|init_mm.mmap-&gt;vm_end
 op_assign
 op_star
 id|memory_end_p
 suffix:semicolon
-id|init_task.mm-&gt;context
+id|init_mm.context
 op_assign
 (paren
 r_int

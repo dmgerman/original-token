@@ -942,11 +942,11 @@ r_int
 op_amp
 id|_end
 suffix:semicolon
-id|init_task.mm-&gt;start_code
+id|init_mm.start_code
 op_assign
 id|PAGE_OFFSET
 suffix:semicolon
-id|init_task.mm-&gt;end_code
+id|init_mm.end_code
 op_assign
 (paren
 r_int
@@ -955,7 +955,7 @@ r_int
 op_amp
 id|_etext
 suffix:semicolon
-id|init_task.mm-&gt;end_data
+id|init_mm.end_data
 op_assign
 (paren
 r_int
@@ -964,7 +964,7 @@ r_int
 op_amp
 id|_edata
 suffix:semicolon
-id|init_task.mm-&gt;brk
+id|init_mm.brk
 op_assign
 (paren
 r_int
@@ -1180,7 +1180,7 @@ op_assign
 id|command_line
 suffix:semicolon
 DECL|macro|VMALLOC_RESERVE
-mdefine_line|#define VMALLOC_RESERVE&t;(64 &lt;&lt; 20)&t;/* 64MB for vmalloc */
+mdefine_line|#define VMALLOC_RESERVE&t;(128 &lt;&lt; 20)&t;/* 128MB for vmalloc and initrd */
 DECL|macro|MAXMEM
 mdefine_line|#define MAXMEM&t;((unsigned long)(-PAGE_OFFSET-VMALLOC_RESERVE))
 r_if

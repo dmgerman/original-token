@@ -5582,7 +5582,8 @@ op_assign
 id|srmmu_pgd_offset
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 comma
 id|virt_addr
 )paren
@@ -5693,7 +5694,8 @@ op_assign
 id|srmmu_pgd_offset
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 comma
 id|virt_addr
 )paren
@@ -9071,7 +9073,8 @@ op_assign
 id|srmmu_pgd_offset
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 comma
 id|start
 )paren
@@ -9340,7 +9343,8 @@ op_assign
 id|srmmu_pgd_offset
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 comma
 id|start
 )paren
@@ -9997,7 +10001,8 @@ op_assign
 id|srmmu_pgd_offset
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 comma
 id|vaddr
 )paren
@@ -11421,7 +11426,7 @@ l_string|&quot;success&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|init_task.mm-&gt;mmap-&gt;vm_start
+id|init_mm.mmap-&gt;vm_start
 op_assign
 id|page_offset
 op_assign

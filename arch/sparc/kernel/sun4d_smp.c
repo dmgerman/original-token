@@ -469,7 +469,7 @@ id|PAGE_OFFSET
 suffix:semicolon
 id|current-&gt;mm-&gt;mmap-&gt;vm_end
 op_assign
-id|init_task.mm-&gt;mmap-&gt;vm_end
+id|init_mm.mmap-&gt;vm_end
 suffix:semicolon
 id|local_flush_cache_all
 c_func

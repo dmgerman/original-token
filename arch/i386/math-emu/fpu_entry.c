@@ -1189,11 +1189,11 @@ suffix:semicolon
 multiline_comment|/* Point to current FPU instruction. */
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
-id|current-&gt;tss.trap_no
+id|current-&gt;thread.trap_no
 op_assign
 l_int|16
 suffix:semicolon
-id|current-&gt;tss.error_code
+id|current-&gt;thread.error_code
 op_assign
 l_int|0
 suffix:semicolon
@@ -2683,11 +2683,11 @@ id|FPU_EIP
 op_assign
 id|FPU_ORIG_EIP
 suffix:semicolon
-id|current-&gt;tss.trap_no
+id|current-&gt;thread.trap_no
 op_assign
 l_int|16
 suffix:semicolon
-id|current-&gt;tss.error_code
+id|current-&gt;thread.error_code
 op_assign
 l_int|0
 suffix:semicolon

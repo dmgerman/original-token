@@ -1049,11 +1049,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|init_task.mm-&gt;start_code
+id|init_mm.start_code
 op_assign
 id|TASK_SIZE
 suffix:semicolon
-id|init_task.mm-&gt;end_code
+id|init_mm.end_code
 op_assign
 id|TASK_SIZE
 op_plus
@@ -1064,7 +1064,7 @@ r_int
 op_amp
 id|_etext
 suffix:semicolon
-id|init_task.mm-&gt;end_data
+id|init_mm.end_data
 op_assign
 id|TASK_SIZE
 op_plus
@@ -1075,7 +1075,7 @@ r_int
 op_amp
 id|_edata
 suffix:semicolon
-id|init_task.mm-&gt;brk
+id|init_mm.brk
 op_assign
 id|TASK_SIZE
 op_plus

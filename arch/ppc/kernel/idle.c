@@ -697,7 +697,8 @@ op_assign
 id|find_pte
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 comma
 id|pageptr
 )paren
@@ -731,7 +732,8 @@ c_func
 id|find_vma
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 comma
 id|pageptr
 )paren
@@ -796,7 +798,8 @@ c_func
 id|find_vma
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 comma
 id|pageptr
 )paren

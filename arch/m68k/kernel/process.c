@@ -74,6 +74,10 @@ id|mm_struct
 id|init_mm
 op_assign
 id|INIT_MM
+c_func
+(paren
+id|init_mm
+)paren
 suffix:semicolon
 DECL|variable|init_task_union
 r_union

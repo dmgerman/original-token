@@ -1839,7 +1839,7 @@ multiline_comment|/* Do we have a page table? */
 r_if
 c_cond
 (paren
-id|init_task.mm-&gt;pgd
+id|init_mm.pgd
 op_eq
 l_int|NULL
 )paren
@@ -1854,7 +1854,7 @@ id|pmd_t
 op_star
 )paren
 (paren
-id|init_task.mm-&gt;pgd
+id|init_mm.pgd
 op_plus
 (paren
 id|addr

@@ -223,6 +223,9 @@ id|in_interrupt
 c_func
 (paren
 )paren
+op_logical_or
+op_logical_neg
+id|mm
 )paren
 (brace
 r_static

@@ -1561,7 +1561,8 @@ op_assign
 id|my_find_pte
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 comma
 id|address
 )paren
@@ -1604,7 +1605,8 @@ c_func
 id|find_vma
 c_func
 (paren
-id|init_task.mm
+op_amp
+id|init_mm
 comma
 id|address
 )paren

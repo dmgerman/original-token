@@ -3113,8 +3113,6 @@ r_struct
 id|vm_area_struct
 op_star
 id|vma
-op_assign
-id|mm-&gt;mmap
 suffix:semicolon
 r_int
 r_int
@@ -3135,6 +3133,13 @@ comma
 id|lib
 op_assign
 l_int|0
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -3273,6 +3278,13 @@ op_minus
 id|lib
 comma
 id|lib
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 )brace
