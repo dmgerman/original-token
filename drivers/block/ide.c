@@ -7592,12 +7592,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|fsync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 id|drive-&gt;usage
 op_decrement
 suffix:semicolon

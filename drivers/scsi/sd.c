@@ -1784,12 +1784,6 @@ id|file
 r_int
 id|target
 suffix:semicolon
-id|fsync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 id|target
 op_assign
 id|DEVICE_NR

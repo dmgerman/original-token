@@ -4779,12 +4779,6 @@ id|dsk
 )paren
 )paren
 suffix:semicolon
-id|fsync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 id|hba
 (braket
 id|ctlr

@@ -9257,13 +9257,6 @@ id|O_NONBLOCK
 r_goto
 id|ModuleOnly
 suffix:semicolon
-multiline_comment|/*&n;    Force any buffered data to be written.&n;  */
-id|fsync_dev
-c_func
-(paren
-id|Inode-&gt;i_rdev
-)paren
-suffix:semicolon
 multiline_comment|/*&n;    Decrement the Logical Drive and Controller Usage Counts.&n;  */
 id|Controller-&gt;LogicalDriveUsageCount
 (braket

@@ -1648,6 +1648,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Filp may be NULL when we are called by an msync of a vma&n; *&t;since the vma has no handle.&n; */
 DECL|function|block_fsync
+r_static
 r_int
 id|block_fsync
 c_func
@@ -3182,6 +3183,23 @@ multiline_comment|/* syncing will go here */
 r_if
 c_cond
 (paren
+id|kind
+op_eq
+id|BDEV_FILE
+op_logical_or
+id|kind
+op_eq
+id|BDEV_FS
+)paren
+id|sync_dev
+c_func
+(paren
+id|rdev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|atomic_dec_and_test
 c_func
 (paren
@@ -3191,6 +3209,12 @@ id|bdev-&gt;bd_openers
 )paren
 (brace
 multiline_comment|/* invalidating buffers will go here */
+id|invalidate_buffers
+c_func
+(paren
+id|rdev
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond

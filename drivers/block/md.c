@@ -2879,11 +2879,6 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
-id|sync_dev
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 id|md_dev
 (braket
 id|minor

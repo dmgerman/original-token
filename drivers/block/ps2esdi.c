@@ -5364,12 +5364,6 @@ OL
 id|ps2esdi_drives
 )paren
 (brace
-id|sync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 id|access_count
 (braket
 id|dev

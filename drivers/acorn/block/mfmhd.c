@@ -5296,12 +5296,6 @@ op_star
 id|file
 )paren
 (brace
-id|fsync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 id|mfm_info
 (braket
 id|DEVICE_NR

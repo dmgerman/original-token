@@ -2369,12 +2369,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|sync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 id|dev
 op_assign
 op_amp

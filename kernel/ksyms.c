@@ -1216,13 +1216,6 @@ c_func
 id|block_write
 )paren
 suffix:semicolon
-DECL|variable|block_fsync
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|block_fsync
-)paren
-suffix:semicolon
 DECL|variable|wait_for_request
 id|EXPORT_SYMBOL
 c_func

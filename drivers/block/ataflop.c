@@ -7723,8 +7723,6 @@ id|filp
 (brace
 r_int
 id|drive
-suffix:semicolon
-id|drive
 op_assign
 id|MINOR
 c_func
@@ -7733,13 +7731,6 @@ id|inode-&gt;i_rdev
 )paren
 op_amp
 l_int|3
-suffix:semicolon
-id|block_fsync
-(paren
-id|filp
-comma
-id|filp-&gt;f_dentry
-)paren
 suffix:semicolon
 r_if
 c_cond

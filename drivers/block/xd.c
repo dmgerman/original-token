@@ -1758,8 +1758,6 @@ id|file
 (brace
 r_int
 id|target
-suffix:semicolon
-id|target
 op_assign
 id|DEVICE_NR
 c_func
@@ -1775,12 +1773,6 @@ OL
 id|xd_drives
 )paren
 (brace
-id|sync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 id|xd_access
 (braket
 id|target

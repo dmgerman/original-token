@@ -5454,12 +5454,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|sync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 id|check_drive_status
 c_func
 (paren

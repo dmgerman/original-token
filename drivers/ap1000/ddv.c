@@ -565,12 +565,6 @@ l_string|&quot;ddv_release started&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|sync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 macro_line|#if DEBUG
 id|printk
 c_func

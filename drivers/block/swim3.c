@@ -4590,13 +4590,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|block_fsync
-(paren
-id|filp
-comma
-id|filp-&gt;f_dentry
-)paren
-suffix:semicolon
 id|fs
 op_assign
 op_amp

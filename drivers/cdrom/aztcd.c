@@ -6873,21 +6873,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
-multiline_comment|/*??? isn&squot;t it a read only dev?*/
-id|invalidate_buffers
-c_func
-(paren
-id|inode
-op_member_access_from_pointer
-id|i_rdev
-)paren
-suffix:semicolon
 id|aztUnlockDoor
 c_func
 (paren

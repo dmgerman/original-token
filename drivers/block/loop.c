@@ -2850,14 +2850,6 @@ id|max_loop
 r_return
 l_int|0
 suffix:semicolon
-id|err
-op_assign
-id|fsync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 id|lo
 op_assign
 op_amp

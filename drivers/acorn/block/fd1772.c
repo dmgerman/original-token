@@ -5365,8 +5365,6 @@ id|filp
 (brace
 r_int
 id|drive
-suffix:semicolon
-id|drive
 op_assign
 id|MINOR
 c_func
@@ -5375,14 +5373,6 @@ id|inode-&gt;i_rdev
 )paren
 op_amp
 l_int|3
-suffix:semicolon
-id|block_fsync
-c_func
-(paren
-id|inode
-comma
-id|filp
-)paren
 suffix:semicolon
 r_if
 c_cond

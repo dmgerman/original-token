@@ -1074,12 +1074,6 @@ l_int|1
 r_return
 l_int|0
 suffix:semicolon
-id|sync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
 multiline_comment|/*&n;     * FIXME: unmap memory&n;     */
 id|MOD_DEC_USE_COUNT
 suffix:semicolon

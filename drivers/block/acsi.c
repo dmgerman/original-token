@@ -4745,14 +4745,6 @@ id|file
 (brace
 r_int
 id|device
-suffix:semicolon
-id|sync_dev
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
-id|device
 op_assign
 id|DEVICE_NR
 c_func
