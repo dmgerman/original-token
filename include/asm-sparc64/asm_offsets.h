@@ -454,6 +454,10 @@ DECL|macro|AOFF_thread_cwp
 mdefine_line|#define AOFF_thread_cwp&t;0x00000120
 DECL|macro|ASIZ_thread_cwp
 mdefine_line|#define ASIZ_thread_cwp&t;0x00000008
+DECL|macro|AOFF_thread_ctx
+mdefine_line|#define AOFF_thread_ctx&t;0x00000128
+DECL|macro|ASIZ_thread_ctx
+mdefine_line|#define ASIZ_thread_ctx&t;0x00000008
 DECL|macro|AOFF_thread_reg_window
 mdefine_line|#define AOFF_thread_reg_window&t;0x00000130
 DECL|macro|ASIZ_thread_reg_window

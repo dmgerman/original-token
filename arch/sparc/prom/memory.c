@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: memory.c,v 1.10 1997/03/18 17:58:27 jj Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: memory.c,v 1.12 1997/05/27 06:45:57 davem Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -651,6 +651,10 @@ id|iter
 dot
 id|start_adr
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|prom_reg_memlist
 (braket
 id|iter
@@ -758,6 +762,10 @@ id|iter
 dot
 id|start_adr
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|prom_reg_memlist
 (braket
 id|iter
@@ -884,6 +892,10 @@ id|iter
 dot
 id|start_adr
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|prom_reg_memlist
 (braket
 id|iter
@@ -1155,6 +1167,8 @@ id|prom_phys_avail
 )paren
 suffix:semicolon
 macro_line|#endif
+r_default
+suffix:colon
 r_break
 suffix:semicolon
 )brace

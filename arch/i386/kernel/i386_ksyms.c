@@ -59,6 +59,13 @@ id|drive_info
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* platform dependent support */
+DECL|variable|x86
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|x86
+)paren
+suffix:semicolon
 DECL|variable|EISA_bus
 id|EXPORT_SYMBOL
 c_func

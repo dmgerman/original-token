@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 006&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_in.c&n; *&t;NET/ROM 003&t;Jonathan(G4KLX)&t;Added NET/ROM fragment reception.&n; *&t;&t;&t;Darryl(G7LED)&t;Added missing INFO with NAK case, optimized&n; *&t;&t;&t;&t;&t;INFOACK handling, removed reconnect on error.&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 006&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_in.c&n; *&t;NET/ROM 003&t;Jonathan(G4KLX)&t;Added NET/ROM fragment reception.&n; *&t;&t;&t;Darryl(G7LED)&t;Added missing INFO with NAK case, optimized&n; *&t;&t;&t;&t;&t;INFOACK handling, removed reconnect on error.&n; *&t;NET/ROM 006&t;Jonathan(G4KLX)&t;Hdrincl removal changes.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -52,6 +52,16 @@ op_star
 id|skbn
 op_assign
 id|skb
+suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|NR_NETWORK_LEN
+op_plus
+id|NR_TRANSPORT_LEN
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -125,39 +135,6 @@ id|skbn-&gt;h.raw
 op_assign
 id|skbn-&gt;data
 suffix:semicolon
-id|skbo
-op_assign
-id|skb_dequeue
-c_func
-(paren
-op_amp
-id|sk-&gt;protinfo.nr-&gt;frag_queue
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|skb_put
-c_func
-(paren
-id|skbn
-comma
-id|skbo-&gt;len
-)paren
-comma
-id|skbo-&gt;data
-comma
-id|skbo-&gt;len
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skbo
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -175,16 +152,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb_pull
-c_func
-(paren
-id|skbo
-comma
-id|NR_NETWORK_LEN
-op_plus
-id|NR_TRANSPORT_LEN
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren

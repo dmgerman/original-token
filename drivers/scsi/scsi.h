@@ -6,6 +6,7 @@ multiline_comment|/*&n; * Some of the public constants are being moved to this f
 macro_line|#include &lt;scsi/scsi.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * Some defs, in case these are not defined elsewhere.&n; */
 macro_line|#ifndef TRUE
 DECL|macro|TRUE
@@ -408,7 +409,7 @@ macro_line|#include &lt;asm/scatterlist.h&gt;
 macro_line|#ifdef __mc68000__
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|CONTIGUOUS_BUFFERS
-mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) &bslash;&n;&t;(VTOP((X)-&gt;b_data+(X)-&gt;b_size-1)+1 == VTOP((Y)-&gt;b_data))
+mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) &bslash;&n;&t;(virt_to_phys((X)-&gt;b_data+(X)-&gt;b_size-1)+1==virt_to_phys((Y)-&gt;b_data))
 macro_line|#else
 DECL|macro|CONTIGUOUS_BUFFERS
 mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) ((X-&gt;b_data+X-&gt;b_size) == Y-&gt;b_data)

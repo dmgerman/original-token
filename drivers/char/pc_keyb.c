@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 multiline_comment|/*&n; * On non-x86 hardware we do a full keyboard controller&n; * initialization, in case the bootup software hasn&squot;t done&n; * it. On a x86, the BIOS will already have initialized the&n; * keyboard.&n; */

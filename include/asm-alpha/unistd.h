@@ -642,7 +642,7 @@ r_int
 id|sys_setup
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 DECL|function|setup
@@ -652,13 +652,15 @@ r_int
 id|setup
 c_func
 (paren
-r_void
+r_int
+id|magic
 )paren
 (brace
 r_return
 id|sys_setup
 c_func
 (paren
+id|magic
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&quot;LAPB via ethernet&quot; driver release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly &n; *&t;fail to work with new releases, misbehave and/or generally screw up. &n; *&t;It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a &quot;pseudo&quot; network driver to allow LAPB over Ethernet.&n; *&n; *&t;This driver can use any ethernet destination address, and can be &n; *&t;limited to accept frames from one dedicated ethernet card only.&n; *&n; *&t;History&n; *&t;LAPBETH 001&t;Jonathan Naylor&t;&t;Cloned from bpqether.c&n; */
+multiline_comment|/*&n; *&t;&quot;LAPB via ethernet&quot; driver release 001&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a &quot;pseudo&quot; network driver to allow LAPB over Ethernet.&n; *&n; *&t;This driver can use any ethernet destination address, and can be &n; *&t;limited to accept frames from one dedicated ethernet card only.&n; *&n; *&t;History&n; *&t;LAPBETH 001&t;Jonathan Naylor&t;&t;Cloned from bpqether.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -691,7 +691,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|kfree_skb
 c_func
 (paren
 id|skb
@@ -1535,11 +1535,6 @@ c_cond
 (paren
 id|lapbeth
 op_assign
-(paren
-r_struct
-id|lapbethdev
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -1611,11 +1606,6 @@ id|lapbeth-&gt;axdev
 suffix:semicolon
 id|buf
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -1768,7 +1758,6 @@ op_assign
 id|lapbeth_ioctl
 suffix:semicolon
 multiline_comment|/* preset with reasonable values */
-macro_line|#if CONFIG_INET
 id|dev-&gt;flags
 op_assign
 l_int|0
@@ -1777,17 +1766,30 @@ id|dev-&gt;family
 op_assign
 id|AF_INET
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 id|dev-&gt;pa_addr
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;192.168.0.1&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_brdaddr
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;192.168.0.255&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_mask
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;255.255.255.0&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_alen
 op_assign
@@ -2059,6 +2061,18 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Jonathan Naylor &lt;g4klx@g4klx.demon.co.uk&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;The unofficial LAPB over Ethernet driver&quot;
+)paren
 suffix:semicolon
 DECL|function|init_module
 r_int

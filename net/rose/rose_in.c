@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Rose release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new&n; *&t;releases, misbehave and/or generally screw up. It might even work.&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;Rose 001&t;Jonathan(G4KLX)&t;Cloned from nr_in.c&n; */
+multiline_comment|/*&n; *&t;ROSE release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;ROSE 001&t;Jonathan(G4KLX)&t;Cloned from nr_in.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -356,16 +356,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* XXX */
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;rose: unknown %02X in state 1&bslash;n&quot;
-comma
-id|frametype
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -458,16 +448,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* XXX */
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;rose: unknown %02X in state 2&bslash;n&quot;
-comma
-id|frametype
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -875,7 +855,7 @@ c_cond
 (paren
 id|sk-&gt;protinfo.rose-&gt;vl
 op_plus
-id|ROSE_MAX_WINDOW_SIZE
+id|sysctl_rose_window_size
 )paren
 op_mod
 id|ROSE_MODULUS
@@ -919,7 +899,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;rose: unknown %02X in state 3&bslash;n&quot;
+l_string|&quot;ROSE: unknown %02X in state 3&bslash;n&quot;
 comma
 id|frametype
 )paren
@@ -1061,16 +1041,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* XXX */
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;rose: unknown %02X in state 4&bslash;n&quot;
-comma
-id|frametype
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.84 1997/05/08 17:45:16 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.85 1997/05/27 06:45:54 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -155,14 +155,6 @@ r_int
 id|prom_tbr
 comma
 id|flags
-suffix:semicolon
-r_int
-id|cpu
-op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
 id|global_irq_holder

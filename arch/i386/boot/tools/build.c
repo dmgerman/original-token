@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch/i386/boot/tools/build.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1997 Martin Mares&n; */
+multiline_comment|/*&n; *  $Id: build.c,v 1.5 1997/05/19 12:29:58 mj Exp $&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1997 Martin Mares&n; */
 multiline_comment|/*&n; * This file builds a disk-image from three different files:&n; *&n; * - bootsect: exactly 512 bytes of 8086 machine code, loads the rest&n; * - setup: 8086 machine code, sets up system parm&n; * - system: 80386 code for actual system&n; *&n; * It does some checking that all files are of the correct type, and&n; * just writes the result to stdout, removing headers and padding to&n; * the right amount. It also writes some system data to stderr.&n; */
 multiline_comment|/*&n; * Changes by tytso to allow root device specification&n; * High loaded stuff by Hans Lermen &amp; Werner Almesberger, Feb. 1996&n; * Cross compiling fixes by Gertjan van Wingerde, July 1996&n; * Rewritten by Martin Mares, April 1997&n; */
 macro_line|#include &lt;stdio.h&gt;
@@ -937,7 +937,14 @@ id|DEF_SYSSIZE
 id|die
 c_func
 (paren
-l_string|&quot;System is too big&quot;
+l_string|&quot;System is too big. Try using %smodules.&quot;
+comma
+id|is_big_kernel
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;bzImage or &quot;
 )paren
 suffix:semicolon
 r_while

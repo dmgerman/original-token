@@ -14,6 +14,19 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+r_extern
+r_int
+id|do_munmap
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
 DECL|function|get_one_pte
 r_static
 r_inline
@@ -759,9 +772,11 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-id|lock_kernel
+id|down
 c_func
 (paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if
@@ -1056,9 +1071,11 @@ id|ENOMEM
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
+id|up
 c_func
 (paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return

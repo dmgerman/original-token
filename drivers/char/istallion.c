@@ -11051,7 +11051,7 @@ op_star
 )paren
 l_int|NULL
 )paren
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp

@@ -541,6 +541,12 @@ id|NET_ROSE_ROUTING_CONTROL
 comma
 DECL|enumerator|NET_ROSE_LINK_FAIL_TIMEOUT
 id|NET_ROSE_LINK_FAIL_TIMEOUT
+comma
+DECL|enumerator|NET_ROSE_MAX_VCS
+id|NET_ROSE_MAX_VCS
+comma
+DECL|enumerator|NET_ROSE_WINDOW_SIZE
+id|NET_ROSE_WINDOW_SIZE
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/x25 */

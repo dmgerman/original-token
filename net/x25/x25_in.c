@@ -263,10 +263,6 @@ id|source_addr
 comma
 id|dest_addr
 suffix:semicolon
-r_struct
-id|x25_facilities
-id|facilities
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -346,11 +342,11 @@ c_func
 id|skb
 comma
 op_amp
-id|facilities
+id|sk-&gt;protinfo.x25-&gt;facilities
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;Facilities XXX&n;&t;&t;&t; *&t;Copy any Call User Data.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Copy any Call User Data.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -445,15 +441,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;x25: unknown %02X in state 1&bslash;n&quot;
-comma
-id|frametype
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -546,15 +533,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;x25: unknown %02X in state 2&bslash;n&quot;
-comma
-id|frametype
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -1271,15 +1249,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;x25: unknown %02X in state 4&bslash;n&quot;
-comma
-id|frametype
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace

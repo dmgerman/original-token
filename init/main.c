@@ -1009,22 +1009,6 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_TELES
-r_extern
-r_void
-id|teles_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN_DRV_HISAX
 r_extern
 r_void
@@ -2111,14 +2095,6 @@ macro_line|#ifdef CONFIG_ISDN_DRV_ICN
 l_string|&quot;icn=&quot;
 comma
 id|icn_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_TELES
-(brace
-l_string|&quot;teles=&quot;
-comma
-id|teles_setup
 )brace
 comma
 macro_line|#endif
@@ -4346,6 +4322,7 @@ macro_line|#endif
 id|setup
 c_func
 (paren
+l_int|0
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
@@ -4491,6 +4468,12 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+id|setup
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1457,7 +1457,7 @@ op_amp
 id|port-&gt;event
 )paren
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -1874,7 +1874,7 @@ suffix:semicolon
 id|tty-&gt;flip.count
 op_increment
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -2018,7 +2018,7 @@ id|tty-&gt;flip.count
 op_increment
 suffix:semicolon
 )brace
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -2538,7 +2538,7 @@ id|ASYNC_CALLOUT_NOHUP
 )paren
 )paren
 )paren
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp

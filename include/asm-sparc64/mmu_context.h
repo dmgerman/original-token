@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.8 1997/05/18 20:44:23 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.10 1997/05/23 09:35:55 jj Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -18,8 +18,6 @@ r_int
 r_int
 id|tlb_context_cache
 suffix:semicolon
-DECL|macro|MAX_CTX
-mdefine_line|#define MAX_CTX&t;&t;&t;PAGE_SIZE
 DECL|macro|CTX_VERSION_SHIFT
 mdefine_line|#define CTX_VERSION_SHIFT&t;PAGE_SHIFT
 DECL|macro|CTX_VERSION_MASK
@@ -50,10 +48,12 @@ c_cond
 id|ctx
 op_amp
 op_complement
+(paren
 id|CTX_VERSION_MASK
 )paren
-OG
-id|MAX_CTX
+)paren
+op_eq
+l_int|0
 )paren
 (brace
 r_int
@@ -260,10 +260,23 @@ id|ctx
 )paren
 suffix:semicolon
 )brace
+id|tsk-&gt;tss.ctx
+op_assign
+(paren
+id|mm-&gt;context
+op_amp
+l_int|0x1fff
+)paren
+suffix:semicolon
 id|spitfire_set_secondary_context
 c_func
 (paren
+id|tsk-&gt;tss.current_ds
+ques
+c_cond
 id|mm-&gt;context
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 id|paddr

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.12 1997/05/14 20:48:04 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.13 1997/05/27 06:47:16 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
@@ -643,6 +643,68 @@ id|word
 r_int
 r_int
 id|result
+suffix:semicolon
+macro_line|#ifdef ULTRA_HAS_POPULATION_COUNT&t;/* Thanks for nothing Sun... */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+"&quot;"
+id|brz
+comma
+id|pn
+op_mod
+l_int|0
+comma
+l_float|1f
+id|neg
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|g1
+id|xnor
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|g1
+comma
+op_mod
+op_mod
+id|g2
+id|popc
+op_mod
+op_mod
+id|g2
+comma
+op_mod
+l_int|0
+l_int|1
+suffix:colon
+l_string|&quot; : &quot;
+op_assign
+op_amp
+id|r
+"&quot;"
+(paren
+id|result
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|word
+)paren
+suffix:colon
+l_string|&quot;g1&quot;
+comma
+l_string|&quot;g2&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|result
 op_assign
 l_int|0
 suffix:semicolon
@@ -662,6 +724,7 @@ op_rshift_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 r_return
 id|result
 suffix:semicolon

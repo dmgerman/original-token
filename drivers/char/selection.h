@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * selection.h&n; *&n; * Interface between console.c, tty_io.c, vt.c, vc_screen.c and selection.c&n; */
+macro_line|#include &lt;linux/config.h&gt;
 r_extern
 r_int
 id|sel_cons
@@ -80,6 +81,48 @@ r_int
 id|mry
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_CONSOLE
+r_extern
+r_int
+r_int
+id|get_video_num_columns
+c_func
+(paren
+r_int
+r_int
+id|console
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|get_video_num_lines
+c_func
+(paren
+r_int
+r_int
+id|console
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|get_video_size_row
+c_func
+(paren
+r_int
+r_int
+id|console
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|get_video_num_columns
+mdefine_line|#define get_video_num_columns(dummy) video_num_columns
+DECL|macro|get_video_num_lines
+mdefine_line|#define get_video_num_lines(dummy) video_num_lines
+DECL|macro|get_video_size_row
+mdefine_line|#define get_video_size_row(dummy) video_size_row
+macro_line|#endif
 r_extern
 r_int
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.h,v 1.7 1997/03/04 16:27:32 jj Exp $ */
+multiline_comment|/* $Id: ptrace.h,v 1.8 1997/05/27 19:30:27 jj Exp $ */
 macro_line|#ifndef _SPARC64_PTRACE_H
 DECL|macro|_SPARC64_PTRACE_H
 mdefine_line|#define _SPARC64_PTRACE_H
@@ -601,5 +601,32 @@ DECL|macro|SF_XARG5
 mdefine_line|#define SF_XARG5  0x58
 DECL|macro|SF_XXARG
 mdefine_line|#define SF_XXARG  0x5c
+multiline_comment|/* Stuff for the ptrace system call */
+DECL|macro|PTRACE_SUNATTACH
+mdefine_line|#define PTRACE_SUNATTACH          10
+DECL|macro|PTRACE_SUNDETACH
+mdefine_line|#define PTRACE_SUNDETACH          11
+DECL|macro|PTRACE_GETREGS
+mdefine_line|#define PTRACE_GETREGS            12
+DECL|macro|PTRACE_SETREGS
+mdefine_line|#define PTRACE_SETREGS            13
+DECL|macro|PTRACE_GETFPREGS
+mdefine_line|#define PTRACE_GETFPREGS          14
+DECL|macro|PTRACE_SETFPREGS
+mdefine_line|#define PTRACE_SETFPREGS          15
+DECL|macro|PTRACE_READDATA
+mdefine_line|#define PTRACE_READDATA           16
+DECL|macro|PTRACE_WRITEDATA
+mdefine_line|#define PTRACE_WRITEDATA          17
+DECL|macro|PTRACE_READTEXT
+mdefine_line|#define PTRACE_READTEXT           18
+DECL|macro|PTRACE_WRITETEXT
+mdefine_line|#define PTRACE_WRITETEXT          19
+DECL|macro|PTRACE_GETFPAREGS
+mdefine_line|#define PTRACE_GETFPAREGS         20
+DECL|macro|PTRACE_SETFPAREGS
+mdefine_line|#define PTRACE_SETFPAREGS         21
+DECL|macro|PTRACE_GETUCODE
+mdefine_line|#define PTRACE_GETUCODE           29  /* stupid bsd-ism */
 macro_line|#endif /* !(_SPARC64_PTRACE_H) */
 eof

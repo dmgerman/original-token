@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Rose release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;Rose 001&t;Jonathan(G4KLX)&t;Cloned from nr_subr.c&n; */
+multiline_comment|/*&n; *&t;ROSE release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;ROSE 001&t;Jonathan(G4KLX)&t;Cloned from nr_subr.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -607,7 +607,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;rose_write_internal: invalid frametype %02X&bslash;n&quot;
+l_string|&quot;ROSE: rose_write_internal - invalid frametype %02X&bslash;n&quot;
 comma
 id|frametype
 )paren
@@ -912,9 +912,10 @@ r_char
 op_star
 id|p
 comma
-id|rose_cb
+r_struct
+id|rose_facilities
 op_star
-id|rose
+id|facilities
 comma
 r_int
 id|len
@@ -967,7 +968,7 @@ id|p
 op_eq
 id|FAC_NATIONAL_RAND
 )paren
-id|rose-&gt;rand
+id|facilities-&gt;rand
 op_assign
 (paren
 (paren
@@ -1049,7 +1050,7 @@ id|memcpy
 c_func
 (paren
 op_amp
-id|rose-&gt;source_digi
+id|facilities-&gt;source_digi
 comma
 id|p
 op_plus
@@ -1058,7 +1059,7 @@ comma
 id|AX25_ADDR_LEN
 )paren
 suffix:semicolon
-id|rose-&gt;source_ndigis
+id|facilities-&gt;source_ndigis
 op_assign
 l_int|1
 suffix:semicolon
@@ -1076,7 +1077,7 @@ id|memcpy
 c_func
 (paren
 op_amp
-id|rose-&gt;dest_digi
+id|facilities-&gt;dest_digi
 comma
 id|p
 op_plus
@@ -1085,7 +1086,7 @@ comma
 id|AX25_ADDR_LEN
 )paren
 suffix:semicolon
-id|rose-&gt;dest_ndigis
+id|facilities-&gt;dest_ndigis
 op_assign
 l_int|1
 suffix:semicolon
@@ -1140,9 +1141,10 @@ r_char
 op_star
 id|p
 comma
-id|rose_cb
+r_struct
+id|rose_facilities
 op_star
-id|rose
+id|facilities
 comma
 r_int
 id|len
@@ -1247,7 +1249,7 @@ id|memcpy
 c_func
 (paren
 op_amp
-id|rose-&gt;source_addr
+id|facilities-&gt;source_addr
 comma
 id|p
 op_plus
@@ -1279,7 +1281,7 @@ l_int|10
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|rose-&gt;source_call
+id|facilities-&gt;source_call
 op_assign
 op_star
 id|asc2ax
@@ -1302,7 +1304,7 @@ id|memcpy
 c_func
 (paren
 op_amp
-id|rose-&gt;dest_addr
+id|facilities-&gt;dest_addr
 comma
 id|p
 op_plus
@@ -1334,7 +1336,7 @@ l_int|10
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|rose-&gt;dest_call
+id|facilities-&gt;dest_call
 op_assign
 op_star
 id|asc2ax
@@ -1393,9 +1395,10 @@ id|sk_buff
 op_star
 id|skb
 comma
-id|rose_cb
+r_struct
+id|rose_facilities
 op_star
-id|rose
+id|facilities
 )paren
 (brace
 r_int
@@ -1411,13 +1414,14 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|rose
+id|facilities
 comma
 l_int|0x00
 comma
 r_sizeof
 (paren
-id|rose_cb
+r_struct
+id|rose_facilities
 )paren
 )paren
 suffix:semicolon
@@ -1530,7 +1534,7 @@ id|p
 op_plus
 l_int|1
 comma
-id|rose
+id|facilities
 comma
 id|facilities_len
 op_minus
@@ -1564,7 +1568,7 @@ id|p
 op_plus
 l_int|1
 comma
-id|rose
+id|facilities
 comma
 id|facilities_len
 op_minus
@@ -1591,7 +1595,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;rose_parse_facilities: unknown facilities family %02X&bslash;n&quot;
+l_string|&quot;ROSE: rose_parse_facilities - unknown facilities family %02X&bslash;n&quot;
 comma
 op_star
 id|p

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 006&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new&n; *&t;releases, misbehave and/or generally screw up. It might even work.&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from loopback.c&n; *&t;NET/ROM 002&t;Steve Whitehouse(GW7RRM) fixed the set_mac_address&n; *&t;NET/ROM 003&t;Jonathan(G4KLX)&t;Put nr_rebuild_header into line with&n; *&t;&t;&t;&t;&t;ax25_rebuild_header&n; *&t;NET/ROM 004&t;Jonathan(G4KLX)&t;Callsign registration with AX.25.&n; *&t;NET/ROM 006&t;Hans(PE1AYX)&t;Fixed interface to IP layer.&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 006&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from loopback.c&n; *&t;NET/ROM 002&t;Steve Whitehouse(GW7RRM) fixed the set_mac_address&n; *&t;NET/ROM 003&t;Jonathan(G4KLX)&t;Put nr_rebuild_header into line with&n; *&t;&t;&t;&t;&t;ax25_rebuild_header&n; *&t;NET/ROM 004&t;Jonathan(G4KLX)&t;Callsign registration with AX.25.&n; *&t;NET/ROM 006&t;Hans(PE1AYX)&t;Fixed interface to IP layer.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 DECL|macro|__NO_VERSION__
@@ -351,7 +351,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|arp_find
 c_func
 (paren
@@ -704,7 +703,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;netrom: xmit call when iface is down&bslash;n&quot;
+l_string|&quot;NET/ROM: nr_xmit - called when iface is down&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -863,26 +862,36 @@ id|dev-&gt;family
 op_assign
 id|AF_INET
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 id|dev-&gt;pa_addr
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;192.168.0.1&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_brdaddr
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;192.168.0.255&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_mask
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;255.255.255.0&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_alen
 op_assign
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+l_int|4
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

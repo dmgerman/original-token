@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new&n; *&t;releases, misbehave and/or generally screw up. It might even work.&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from af_ax25.c.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from af_ax25.c.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -226,7 +226,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;AX.25 wrong protocol type 0x%x2.2&bslash;n&quot;
+l_string|&quot;AX.25: ax25_encapsulate - wrong protocol type 0x%x2.2&bslash;n&quot;
 comma
 id|type
 )paren
@@ -394,7 +394,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|dev_kfree_skb
+id|kfree_skb
 c_func
 (paren
 id|skb
@@ -525,6 +525,12 @@ l_int|14
 op_or_assign
 id|AX25_SSSID_SPARE
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ourskb
+op_assign
 id|ax25_dg_build_path
 c_func
 (paren
@@ -542,19 +548,35 @@ l_int|1
 comma
 id|dev
 )paren
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
 suffix:semicolon
-id|skb-&gt;dev
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|ourskb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-id|skb-&gt;priority
+id|ourskb-&gt;priority
 op_assign
 id|SOPRI_NORMAL
 suffix:semicolon
 id|ax25_queue_xmit
 c_func
 (paren
-id|skb
+id|ourskb
 )paren
 suffix:semicolon
 r_return

@@ -289,6 +289,9 @@ macro_line|#ifdef CONFIG_SOUNDMODEM_SBC
 op_amp
 id|sm_hw_sbc
 comma
+op_amp
+id|sm_hw_sbcfdx
+comma
 macro_line|#endif /* CONFIG_SOUNDMODEM_SBC */
 macro_line|#ifdef CONFIG_SOUNDMODEM_WSS
 op_amp

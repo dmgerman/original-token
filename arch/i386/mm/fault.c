@@ -247,7 +247,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; *&n; * error_code:&n; *&t;bit 0 == 0 means no page found, 1 means protection fault&n; *&t;bit 1 == 0 means read, 1 means write&n; *&t;bit 2 == 0 means kernel, 1 means user-mode&n; */
+multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; *&n; * error_code:&n; *&t;bit 0 == 0 means no page found, 1 means protection fault&n; *&t;bit 1 == 0 means read, 1 means write&n; *&t;bit 2 == 0 means kernel, 1 means user-mode&n; *&n; * NOTE! This all needs to be SMP-safe. Happily, we&squot;re only really touching&n; * per-thread data that we can know is valid (except for the &quot;mm&quot; structure&n; * that is shared - which is protected by the mm-&gt;mmap_sem semaphore).&n; */
 DECL|function|do_page_fault
 id|asmlinkage
 r_void
@@ -297,11 +297,6 @@ id|fixup
 suffix:semicolon
 r_int
 id|write
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/* get the address */
 id|__asm__
@@ -543,8 +538,7 @@ op_lshift
 id|bit
 suffix:semicolon
 )brace
-r_goto
-id|out
+r_return
 suffix:semicolon
 multiline_comment|/*&n; * Something tried to access memory that isn&squot;t in our memory map..&n; * Fix it, but check if it&squot;s kernel or user first..&n; */
 id|bad_area
@@ -590,8 +584,7 @@ id|regs-&gt;eip
 op_assign
 id|fixup
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 r_if
@@ -622,8 +615,7 @@ comma
 id|tsk
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n; * terminate things with extreme prejudice.&n; *&n; * First we check if it was the bootup rw-test, though..&n; */
@@ -671,8 +663,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 r_if
@@ -835,13 +826,6 @@ id|do_exit
 c_func
 (paren
 id|SIGKILL
-)paren
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

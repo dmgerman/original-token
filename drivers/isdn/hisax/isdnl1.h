@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnl1.h,v 1.3 1996/12/08 19:41:55 keil Exp $&n; *&n; * $Log: isdnl1.h,v $&n; * Revision 1.3  1996/12/08 19:41:55  keil&n; * L2FRAME_DEBUG&n; *&n; * Revision 1.2  1996/10/27 22:26:27  keil&n; * ISAC/HSCX version functions&n; *&n; * Revision 1.1  1996/10/13 20:03:47  keil&n; * Initial revision&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: isdnl1.h,v 1.4 1997/04/06 22:55:52 keil Exp $&n; *&n; * $Log: isdnl1.h,v $&n; * Revision 1.4  1997/04/06 22:55:52  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.3  1996/12/08 19:41:55  keil&n; * L2FRAME_DEBUG&n; *&n; * Revision 1.2  1996/10/27 22:26:27  keil&n; * ISAC/HSCX version functions&n; *&n; * Revision 1.1  1996/10/13 20:03:47  keil&n; * Initial revision&n; *&n; *&n; *&n; */
 DECL|macro|L2FRAME_DEBUG
 mdefine_line|#define L2FRAME_DEBUG
 multiline_comment|/* DEBUG Level */
@@ -47,7 +47,7 @@ op_star
 id|HscxVersion
 c_func
 (paren
-id|byte
+id|u_char
 id|v
 )paren
 suffix:semicolon
@@ -57,7 +57,7 @@ op_star
 id|ISACVersion
 c_func
 (paren
-id|byte
+id|u_char
 id|v
 )paren
 suffix:semicolon
@@ -112,6 +112,7 @@ op_star
 id|routine
 )paren
 suffix:semicolon
+macro_line|#ifdef L2FRAME_DEBUG
 r_extern
 r_void
 id|Logl2Frame
@@ -123,9 +124,9 @@ op_star
 id|sp
 comma
 r_struct
-id|BufHeader
+id|sk_buff
 op_star
-id|ibh
+id|skb
 comma
 r_char
 op_star
@@ -135,4 +136,5 @@ r_int
 id|dir
 )paren
 suffix:semicolon
+macro_line|#endif
 eof

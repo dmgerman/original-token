@@ -7,6 +7,8 @@ DECL|macro|REJ
 mdefine_line|#define REJ    0x09
 DECL|macro|SABME
 mdefine_line|#define SABME  0x6f
+DECL|macro|SABM
+mdefine_line|#define SABM   0x2f
 DECL|macro|DM
 mdefine_line|#define DM     0x0f
 DECL|macro|UI

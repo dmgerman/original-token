@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.28 1997/05/18 04:16:53 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.29 1997/05/27 06:28:13 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
@@ -1281,6 +1281,14 @@ op_decrement
 suffix:semicolon
 )brace
 )brace
+DECL|variable|sfmmuinfo
+r_static
+r_char
+id|sfmmuinfo
+(braket
+l_int|512
+)braket
+suffix:semicolon
 DECL|function|mmu_info
 r_char
 op_star
@@ -1290,9 +1298,17 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* XXX */
+multiline_comment|/* We&squot;ll do the rest later to make it nice... -DaveM */
+id|sprintf
+c_func
+(paren
+id|sfmmuinfo
+comma
+l_string|&quot;MMU Type&bslash;t: Spitfire&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
-l_string|&quot;MMU Type: Spitfire&bslash;n&bslash;tFIXME: Write this&bslash;n&quot;
+id|sfmmuinfo
 suffix:semicolon
 )brace
 DECL|variable|mempool

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hisax.h,v 1.11 1997/02/11 01:36:02 keil Exp $&n;&n; *   Basic declarations, defines and prototypes&n; *&n; * $Log: hisax.h,v $&n; * Revision 1.11  1997/02/11 01:36:02  keil&n; * New Param structure&n; *&n; * Revision 1.10  1997/02/09 00:23:52  keil&n; * new interface handling, one interface per card&n; *&n; * Revision 1.9  1997/01/27 23:18:44  keil&n; * prototype for releasestack_isdnl3&n; *&n; * Revision 1.8  1997/01/27 16:02:37  keil&n; * new cards, callc timers, HZDELAY macro, HiSax_getrev prototype&n; *&n; * Revision 1.7  1997/01/21 22:22:14  keil&n; * changes for 2.0; Elsa Quickstep support&n; *&n; * Revision 1.6  1997/01/04 13:48:28  keil&n; * primitiv for MDL_REMOVE added&n; *&n; * Revision 1.5  1996/12/08 19:49:19  keil&n; * Monitor channel support&n; *&n; * Revision 1.4  1996/11/18 15:35:39  keil&n; * some changes for ELSA cards&n; *&n; * Revision 1.3  1996/11/05 19:37:23  keil&n; * using config.h&n; *&n; * Revision 1.2  1996/10/27 22:21:52  keil&n; * CallFlags for broadcast messages&n; *&n; * Revision 1.1  1996/10/13 20:03:46  keil&n; * Initial revision&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: hisax.h,v 1.13 1997/04/06 22:54:12 keil Exp $&n;&n; *   Basic declarations, defines and prototypes&n; *&n; * $Log: hisax.h,v $&n; * Revision 1.13  1997/04/06 22:54:12  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.12  1997/03/23 21:45:45  keil&n; * Add support for ELSA PCMCIA&n; *&n; * Revision 1.11  1997/02/11 01:36:02  keil&n; * New Param structure&n; *&n; * Revision 1.10  1997/02/09 00:23:52  keil&n; * new interface handling, one interface per card&n; *&n; * Revision 1.9  1997/01/27 23:18:44  keil&n; * prototype for releasestack_isdnl3&n; *&n; * Revision 1.8  1997/01/27 16:02:37  keil&n; * new cards, callc timers, HZDELAY macro, HiSax_getrev prototype&n; *&n; * Revision 1.7  1997/01/21 22:22:14  keil&n; * changes for 2.0; Elsa Quickstep support&n; *&n; * Revision 1.6  1997/01/04 13:48:28  keil&n; * primitiv for MDL_REMOVE added&n; *&n; * Revision 1.5  1996/12/08 19:49:19  keil&n; * Monitor channel support&n; *&n; * Revision 1.4  1996/11/18 15:35:39  keil&n; * some changes for ELSA cards&n; *&n; * Revision 1.3  1996/11/05 19:37:23  keil&n; * using config.h&n; *&n; * Revision 1.2  1996/10/27 22:21:52  keil&n; * CallFlags for broadcast messages&n; *&n; * Revision 1.1  1996/10/13 20:03:46  keil&n; * Initial revision&n; *&n; *&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -216,71 +216,18 @@ suffix:semicolon
 macro_line|#ifdef __KERNEL__
 DECL|macro|DEBUG_MAGIC
 macro_line|#undef DEBUG_MAGIC
-DECL|macro|HSCX_SBUF_ORDER
-mdefine_line|#define HSCX_SBUF_ORDER     1
-DECL|macro|HSCX_SBUF_BPPS
-mdefine_line|#define HSCX_SBUF_BPPS      2
-DECL|macro|HSCX_SBUF_MAXPAGES
-mdefine_line|#define HSCX_SBUF_MAXPAGES  3
-DECL|macro|HSCX_RBUF_ORDER
-mdefine_line|#define HSCX_RBUF_ORDER     1
-DECL|macro|HSCX_RBUF_BPPS
-mdefine_line|#define HSCX_RBUF_BPPS      2
-DECL|macro|HSCX_RBUF_MAXPAGES
-mdefine_line|#define HSCX_RBUF_MAXPAGES  3
-DECL|macro|HSCX_SMALLBUF_ORDER
-mdefine_line|#define HSCX_SMALLBUF_ORDER     0
-DECL|macro|HSCX_SMALLBUF_BPPS
-mdefine_line|#define HSCX_SMALLBUF_BPPS      40
-DECL|macro|HSCX_SMALLBUF_MAXPAGES
-mdefine_line|#define HSCX_SMALLBUF_MAXPAGES  1
-DECL|macro|ISAC_SBUF_ORDER
-mdefine_line|#define ISAC_SBUF_ORDER     0
-DECL|macro|ISAC_SBUF_BPPS
-mdefine_line|#define ISAC_SBUF_BPPS      16
-DECL|macro|ISAC_SBUF_MAXPAGES
-mdefine_line|#define ISAC_SBUF_MAXPAGES  1
-DECL|macro|ISAC_RBUF_ORDER
-mdefine_line|#define ISAC_RBUF_ORDER     0
-DECL|macro|ISAC_RBUF_BPPS
-mdefine_line|#define ISAC_RBUF_BPPS      16
-DECL|macro|ISAC_RBUF_MAXPAGES
-mdefine_line|#define ISAC_RBUF_MAXPAGES  1
-DECL|macro|ISAC_SMALLBUF_ORDER
-mdefine_line|#define ISAC_SMALLBUF_ORDER     0
-DECL|macro|ISAC_SMALLBUF_BPPS
-mdefine_line|#define ISAC_SMALLBUF_BPPS      40
-DECL|macro|ISAC_SMALLBUF_MAXPAGES
-mdefine_line|#define ISAC_SMALLBUF_MAXPAGES  1
-DECL|macro|byte
-mdefine_line|#define byte unsigned char
+DECL|macro|MAX_DFRAME_LEN
+mdefine_line|#define MAX_DFRAME_LEN&t;3072
+DECL|macro|HSCX_BUFMAX
+mdefine_line|#define HSCX_BUFMAX&t;4096
+DECL|macro|MAX_DATA_SIZE
+mdefine_line|#define MAX_DATA_SIZE&t;(HSCX_BUFMAX - 4)
+DECL|macro|MAX_DATA_MEM
+mdefine_line|#define MAX_DATA_MEM    (HSCX_BUFMAX * 2)
+DECL|macro|MAX_HEADER_LEN
+mdefine_line|#define MAX_HEADER_LEN&t;4
 DECL|macro|MAX_WINDOW
-mdefine_line|#define MAX_WINDOW 8
-id|byte
-op_star
-id|Smalloc
-c_func
-(paren
-r_int
-id|size
-comma
-r_int
-id|pr
-comma
-r_char
-op_star
-id|why
-)paren
-suffix:semicolon
-r_void
-id|Sfree
-c_func
-(paren
-id|byte
-op_star
-id|ptr
-)paren
-suffix:semicolon
+mdefine_line|#define MAX_WINDOW&t;8
 multiline_comment|/*&n; * Statemachine&n; */
 DECL|struct|Fsm
 r_struct
@@ -432,124 +379,6 @@ id|event
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|BufHeader
-r_struct
-id|BufHeader
-(brace
-macro_line|#ifdef DEBUG_MAGIC
-DECL|member|magic
-r_int
-id|magic
-suffix:semicolon
-macro_line|#endif
-DECL|member|next
-r_struct
-id|BufHeader
-op_star
-id|next
-suffix:semicolon
-DECL|member|bp
-r_struct
-id|BufPool
-op_star
-id|bp
-suffix:semicolon
-DECL|member|datasize
-r_int
-id|datasize
-suffix:semicolon
-DECL|member|primitive
-DECL|member|where
-id|byte
-id|primitive
-comma
-id|where
-suffix:semicolon
-DECL|member|heldby
-r_void
-op_star
-id|heldby
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|Pages
-r_struct
-id|Pages
-(brace
-DECL|member|next
-r_struct
-id|Pages
-op_star
-id|next
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|BufPool
-r_struct
-id|BufPool
-(brace
-macro_line|#ifdef DEBUG_MAGIC
-DECL|member|magic
-r_int
-id|magic
-suffix:semicolon
-macro_line|#endif
-DECL|member|freelist
-r_struct
-id|BufHeader
-op_star
-id|freelist
-suffix:semicolon
-DECL|member|pageslist
-r_struct
-id|Pages
-op_star
-id|pageslist
-suffix:semicolon
-DECL|member|pageorder
-r_int
-id|pageorder
-suffix:semicolon
-DECL|member|pagescount
-r_int
-id|pagescount
-suffix:semicolon
-DECL|member|bpps
-r_int
-id|bpps
-suffix:semicolon
-DECL|member|bufsize
-r_int
-id|bufsize
-suffix:semicolon
-DECL|member|maxpages
-r_int
-id|maxpages
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|BufQueue
-r_struct
-id|BufQueue
-(brace
-macro_line|#ifdef DEBUG_MAGIC
-DECL|member|magic
-r_int
-id|magic
-suffix:semicolon
-macro_line|#endif
-DECL|member|head
-DECL|member|tail
-r_struct
-id|BufHeader
-op_star
-id|head
-comma
-op_star
-id|tail
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|struct|Layer1
 r_struct
 id|Layer1
@@ -562,20 +391,6 @@ suffix:semicolon
 DECL|member|hscx
 r_int
 id|hscx
-suffix:semicolon
-DECL|member|sbufpool
-DECL|member|rbufpool
-DECL|member|smallpool
-r_struct
-id|BufPool
-op_star
-id|sbufpool
-comma
-op_star
-id|rbufpool
-comma
-op_star
-id|smallpool
 suffix:semicolon
 DECL|member|stlistp
 r_struct
@@ -601,8 +416,7 @@ op_star
 comma
 r_int
 comma
-r_struct
-id|BufHeader
+r_void
 op_star
 )paren
 suffix:semicolon
@@ -675,7 +489,7 @@ id|vr
 suffix:semicolon
 DECL|member|i_queue
 r_struct
-id|BufQueue
+id|sk_buff_head
 id|i_queue
 suffix:semicolon
 DECL|member|window
@@ -695,7 +509,7 @@ id|debug
 suffix:semicolon
 DECL|member|windowar
 r_struct
-id|BufHeader
+id|sk_buff
 op_star
 id|windowar
 (braket
@@ -724,8 +538,7 @@ op_star
 comma
 r_int
 comma
-r_struct
-id|BufHeader
+r_void
 op_star
 )paren
 suffix:semicolon
@@ -850,8 +663,7 @@ op_star
 comma
 r_int
 comma
-r_struct
-id|BufHeader
+r_void
 op_star
 )paren
 suffix:semicolon
@@ -1132,17 +944,6 @@ id|init
 comma
 id|active
 suffix:semicolon
-DECL|member|sbufpool
-DECL|member|rbufpool
-DECL|member|smallpool
-r_struct
-id|BufPool
-id|sbufpool
-comma
-id|rbufpool
-comma
-id|smallpool
-suffix:semicolon
 DECL|member|sp
 r_struct
 id|IsdnCardState
@@ -1156,30 +957,46 @@ id|hscx
 comma
 id|mode
 suffix:semicolon
-DECL|member|transbufsize
-DECL|member|receive
-r_int
-id|transbufsize
-comma
-id|receive
+DECL|member|rcvbuf
+id|u_char
+op_star
+id|rcvbuf
 suffix:semicolon
-DECL|member|rcvibh
-DECL|member|xmtibh
+multiline_comment|/* B-Channel receive Buffer */
+DECL|member|rcvidx
+r_int
+id|rcvidx
+suffix:semicolon
+multiline_comment|/* B-Channel receive Buffer Index */
+DECL|member|tx_skb
 r_struct
-id|BufHeader
+id|sk_buff
 op_star
-id|rcvibh
-comma
-op_star
-id|xmtibh
+id|tx_skb
 suffix:semicolon
-DECL|member|rcvptr
-DECL|member|sendptr
+multiline_comment|/* B-Channel transmit Buffer */
+DECL|member|tx_cnt
 r_int
-id|rcvptr
-comma
-id|sendptr
+id|tx_cnt
 suffix:semicolon
+multiline_comment|/* B-Channel transmit counter */
+DECL|member|count
+r_int
+id|count
+suffix:semicolon
+multiline_comment|/* Current skb sent count */
+DECL|member|rqueue
+r_struct
+id|sk_buff_head
+id|rqueue
+suffix:semicolon
+multiline_comment|/* B-Channel receive Queue */
+DECL|member|squeue
+r_struct
+id|sk_buff_head
+id|squeue
+suffix:semicolon
+multiline_comment|/* B-Channel receive Queue */
 DECL|member|st
 r_struct
 id|PStack
@@ -1194,18 +1011,6 @@ suffix:semicolon
 DECL|member|event
 r_int
 id|event
-suffix:semicolon
-DECL|member|rq
-DECL|member|sq
-r_struct
-id|BufQueue
-id|rq
-comma
-id|sq
-suffix:semicolon
-DECL|member|releasebuf
-r_int
-id|releasebuf
 suffix:semicolon
 macro_line|#ifdef DEBUG_MAGIC
 DECL|member|magic
@@ -1450,44 +1255,24 @@ id|isdn_if
 id|iif
 suffix:semicolon
 DECL|member|status_buf
-id|byte
+id|u_char
 op_star
 id|status_buf
 suffix:semicolon
 DECL|member|status_read
-id|byte
+id|u_char
 op_star
 id|status_read
 suffix:semicolon
 DECL|member|status_write
-id|byte
+id|u_char
 op_star
 id|status_write
 suffix:semicolon
 DECL|member|status_end
-id|byte
+id|u_char
 op_star
 id|status_end
-suffix:semicolon
-DECL|member|mon_rx
-DECL|member|mon_tx
-r_struct
-id|BufHeader
-op_star
-id|mon_rx
-comma
-op_star
-id|mon_tx
-suffix:semicolon
-DECL|member|mon_rxp
-DECL|member|mon_txp
-DECL|member|mon_flg
-r_int
-id|mon_rxp
-comma
-id|mon_txp
-comma
-id|mon_flg
 suffix:semicolon
 DECL|member|ph_command
 r_void
@@ -1544,17 +1329,6 @@ id|IsdnCardState
 op_star
 )paren
 suffix:semicolon
-DECL|member|sbufpool
-DECL|member|rbufpool
-DECL|member|smallpool
-r_struct
-id|BufPool
-id|sbufpool
-comma
-id|rbufpool
-comma
-id|smallpool
-suffix:semicolon
 DECL|member|channel
 r_struct
 id|Channel
@@ -1569,22 +1343,24 @@ id|PStack
 op_star
 id|stlist
 suffix:semicolon
-DECL|member|xmtibh
-DECL|member|rcvibh
-r_struct
-id|BufHeader
+DECL|member|rcvbuf
+id|u_char
 op_star
-id|xmtibh
-comma
-op_star
-id|rcvibh
+id|rcvbuf
 suffix:semicolon
-DECL|member|rcvptr
-DECL|member|sendptr
+DECL|member|rcvidx
 r_int
-id|rcvptr
-comma
-id|sendptr
+id|rcvidx
+suffix:semicolon
+DECL|member|tx_skb
+r_struct
+id|sk_buff
+op_star
+id|tx_skb
+suffix:semicolon
+DECL|member|tx_cnt
+r_int
+id|tx_cnt
 suffix:semicolon
 DECL|member|event
 r_int
@@ -1602,11 +1378,12 @@ suffix:semicolon
 DECL|member|rq
 DECL|member|sq
 r_struct
-id|BufQueue
+id|sk_buff_head
 id|rq
 comma
 id|sq
 suffix:semicolon
+multiline_comment|/* D-channel queues */
 DECL|member|cardnr
 r_int
 id|cardnr
@@ -1641,10 +1418,6 @@ suffix:semicolon
 DECL|member|debug
 r_int
 id|debug
-suffix:semicolon
-DECL|member|releasebuf
-r_int
-id|releasebuf
 suffix:semicolon
 DECL|member|CallFlags
 r_int
@@ -1709,6 +1482,16 @@ macro_line|#else
 DECL|macro|CARD_ELSA
 mdefine_line|#define  CARD_ELSA  0
 macro_line|#endif
+macro_line|#ifdef&t;CONFIG_HISAX_ELSA_PCMCIA
+macro_line|#if CARD_ELSA
+macro_line|#error &quot;You can&squot;t use a ELSA ISA card and a ELSA PCMCIA card with the same driver&quot;
+macro_line|#else
+DECL|macro|CARD_ELSA
+macro_line|#undef CARD_ELSA
+DECL|macro|CARD_ELSA
+mdefine_line|#define CARD_ELSA (1&lt;&lt; ISDN_CTYPE_ELSA_QS1000)
+macro_line|#endif
+macro_line|#endif
 macro_line|#ifdef&t;CONFIG_HISAX_IX1MICROR2
 DECL|macro|CARD_IX1MICROR2
 mdefine_line|#define&t;CARD_IX1MICROR2 (1 &lt;&lt; ISDN_CTYPE_IX1MICROR2)
@@ -1747,186 +1530,10 @@ id|sp
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|DATAPTR
-mdefine_line|#define DATAPTR(x) ((byte *)x+sizeof(struct BufHeader))
 DECL|macro|LAPD
 mdefine_line|#define LAPD 0
 DECL|macro|LAPB
 mdefine_line|#define LAPB 1
-r_void
-id|BufPoolInit
-c_func
-(paren
-r_struct
-id|BufPool
-op_star
-id|bp
-comma
-r_int
-id|order
-comma
-r_int
-id|bpps
-comma
-r_int
-id|maxpages
-)paren
-suffix:semicolon
-r_int
-id|BufPoolAdd
-c_func
-(paren
-r_struct
-id|BufPool
-op_star
-id|bp
-comma
-r_int
-id|priority
-)paren
-suffix:semicolon
-r_void
-id|BufPoolFree
-c_func
-(paren
-r_struct
-id|BufPool
-op_star
-id|bp
-)paren
-suffix:semicolon
-r_int
-id|BufPoolGet
-c_func
-(paren
-r_struct
-id|BufHeader
-op_star
-op_star
-id|bh
-comma
-r_struct
-id|BufPool
-op_star
-id|bp
-comma
-r_int
-id|priority
-comma
-r_void
-op_star
-id|heldby
-comma
-r_int
-id|where
-)paren
-suffix:semicolon
-r_void
-id|BufPoolRelease
-c_func
-(paren
-r_struct
-id|BufHeader
-op_star
-id|bh
-)paren
-suffix:semicolon
-r_void
-id|BufQueueLink
-c_func
-(paren
-r_struct
-id|BufQueue
-op_star
-id|bq
-comma
-r_struct
-id|BufHeader
-op_star
-id|bh
-)paren
-suffix:semicolon
-r_int
-id|BufQueueUnlink
-c_func
-(paren
-r_struct
-id|BufHeader
-op_star
-op_star
-id|bh
-comma
-r_struct
-id|BufQueue
-op_star
-id|bq
-)paren
-suffix:semicolon
-r_void
-id|BufQueueInit
-c_func
-(paren
-r_struct
-id|BufQueue
-op_star
-id|bq
-)paren
-suffix:semicolon
-r_void
-id|BufQueueRelease
-c_func
-(paren
-r_struct
-id|BufQueue
-op_star
-id|bq
-)paren
-suffix:semicolon
-r_void
-id|BufQueueDiscard
-c_func
-(paren
-r_struct
-id|BufQueue
-op_star
-id|q
-comma
-r_int
-id|pr
-comma
-r_void
-op_star
-id|heldby
-comma
-r_int
-id|releasetoo
-)paren
-suffix:semicolon
-r_int
-id|BufQueueLength
-c_func
-(paren
-r_struct
-id|BufQueue
-op_star
-id|bq
-)paren
-suffix:semicolon
-r_void
-id|BufQueueLinkFront
-c_func
-(paren
-r_struct
-id|BufQueue
-op_star
-id|bq
-comma
-r_struct
-id|BufHeader
-op_star
-id|bh
-)paren
-suffix:semicolon
 r_void
 id|l2down
 c_func
@@ -1936,13 +1543,13 @@ id|PStack
 op_star
 id|st
 comma
-id|byte
+id|u_char
 id|pr
 comma
 r_struct
-id|BufHeader
+id|sk_buff
 op_star
-id|ibh
+id|skb
 )paren
 suffix:semicolon
 r_void
@@ -1954,13 +1561,13 @@ id|PStack
 op_star
 id|st
 comma
-id|byte
+id|u_char
 id|pr
 comma
 r_struct
-id|BufHeader
+id|sk_buff
 op_star
-id|ibh
+id|skb
 )paren
 suffix:semicolon
 r_void
@@ -1973,9 +1580,9 @@ op_star
 id|st
 comma
 r_struct
-id|BufHeader
+id|sk_buff
 op_star
-id|ibh
+id|skb
 )paren
 suffix:semicolon
 r_void
@@ -2119,19 +1726,19 @@ op_star
 id|hs
 )paren
 suffix:semicolon
-id|byte
+id|u_char
 op_star
 id|findie
 c_func
 (paren
-id|byte
+id|u_char
 op_star
 id|p
 comma
 r_int
 id|size
 comma
-id|byte
+id|u_char
 id|ie
 comma
 r_int
@@ -2142,7 +1749,7 @@ r_int
 id|getcallref
 c_func
 (paren
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -2288,7 +1895,7 @@ id|ic
 )paren
 suffix:semicolon
 r_int
-id|HiSax_writebuf
+id|HiSax_writebuf_skb
 c_func
 (paren
 r_int
@@ -2297,16 +1904,10 @@ comma
 r_int
 id|chan
 comma
-r_const
-id|u_char
+r_struct
+id|sk_buff
 op_star
-id|buf
-comma
-r_int
-id|count
-comma
-r_int
-id|user
+id|skb
 )paren
 suffix:semicolon
 r_void
@@ -2332,16 +1933,6 @@ id|cardnr
 )paren
 suffix:semicolon
 r_int
-id|ListLength
-c_func
-(paren
-r_struct
-id|BufHeader
-op_star
-id|ibh
-)paren
-suffix:semicolon
-r_int
 id|QuickHex
 c_func
 (paren
@@ -2349,7 +1940,7 @@ r_char
 op_star
 id|txt
 comma
-id|byte
+id|u_char
 op_star
 id|p
 comma
@@ -2366,7 +1957,7 @@ id|IsdnCardState
 op_star
 id|sp
 comma
-id|byte
+id|u_char
 op_star
 id|p
 comma
@@ -2383,7 +1974,7 @@ id|IsdnCardState
 op_star
 id|sp
 comma
-id|byte
+id|u_char
 op_star
 id|p
 comma
@@ -2399,11 +1990,11 @@ r_void
 id|iecpy
 c_func
 (paren
-id|byte
+id|u_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|iestart
 comma
@@ -2450,10 +2041,6 @@ op_star
 id|st
 )paren
 suffix:semicolon
-DECL|macro|PART_SIZE
-mdefine_line|#define PART_SIZE(order,bpps) (( (PAGE_SIZE&lt;&lt;order) -&bslash;&n;  sizeof(void *))/bpps)
-DECL|macro|BUFFER_SIZE
-mdefine_line|#define BUFFER_SIZE(order,bpps) (PART_SIZE(order,bpps)-&bslash;&n;  sizeof(struct BufHeader))
 macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 DECL|macro|HZDELAY
 mdefine_line|#define HZDELAY(jiffs) {int tout = jiffs; while (tout--) udelay(1000000/HZ);}

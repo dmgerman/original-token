@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal32.c,v 1.8 1997/05/18 08:42:15 davem Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: signal32.c,v 1.10 1997/05/27 06:28:07 davem Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -1915,12 +1915,48 @@ suffix:semicolon
 multiline_comment|/* Flush instruction space. */
 id|__asm__
 id|__volatile__
+c_func
 (paren
-l_string|&quot;flush %0; flush %0 + 4&quot;
+"&quot;"
+id|membar
+macro_line|#StoreStore
+id|stxa
+op_mod
+op_mod
+id|g0
+comma
+(braket
+op_mod
+l_int|0
+)braket
+op_mod
+l_int|2
+id|stxa
+op_mod
+op_mod
+id|g0
+comma
+(braket
+op_mod
+l_int|1
+)braket
+op_mod
+l_int|2
+id|flush
+op_mod
+op_mod
+id|g4
+"&quot;"
 suffix:colon
+multiline_comment|/* no outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
+(paren
+(paren
+r_int
+r_int
+)paren
 op_amp
 (paren
 id|sf-&gt;insns
@@ -1928,6 +1964,43 @@ id|sf-&gt;insns
 l_int|0
 )braket
 )paren
+)paren
+op_amp
+op_complement
+(paren
+id|PAGE_MASK
+)paren
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+(paren
+id|sf-&gt;insns
+(braket
+l_int|0
+)braket
+)paren
+)paren
+op_amp
+op_complement
+(paren
+id|PAGE_MASK
+)paren
+)paren
+op_plus
+id|PAGE_SIZE
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_IC_TAG
 )paren
 )paren
 suffix:semicolon
@@ -3478,6 +3551,8 @@ id|clear_bit
 c_func
 (paren
 id|signr
+op_plus
+l_int|32
 comma
 op_amp
 id|current-&gt;signal

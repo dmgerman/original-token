@@ -2913,7 +2913,6 @@ id|PAGE_SIZE
 suffix:semicolon
 id|repeat
 suffix:colon
-multiline_comment|/* OK, we cannot grow the buffer cache, now try to get some&n;&t; * from the lru list.&n;&t; *&n;&t; * First set the candidate pointers to usable buffers.  This&n;&t; * should be quick nearly all of the time.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2925,6 +2924,7 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* OK, we cannot grow the buffer cache, now try to get some&n;&t; * from the lru list.&n;&t; *&n;&t; * First set the candidate pointers to usable buffers.  This&n;&t; * should be quick nearly all of the time.&n;&t; */
 r_for
 c_loop
 (paren
@@ -3181,26 +3181,8 @@ id|size
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|needed
-op_ge
-l_int|0
-)paren
 r_goto
 id|repeat
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|needed
-op_le
-l_int|0
-)paren
-(brace
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Too bad, that was not enough. Try a little harder to grow some. */
@@ -3239,7 +3221,6 @@ multiline_comment|/* And repeat until we find something good. */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|grow_buffers
 c_func
 (paren
@@ -3248,15 +3229,16 @@ comma
 id|size
 )paren
 )paren
+id|needed
+op_sub_assign
+id|PAGE_SIZE
+suffix:semicolon
+r_else
 id|wakeup_bdflush
 c_func
 (paren
 l_int|1
 )paren
-suffix:semicolon
-id|needed
-op_sub_assign
-id|PAGE_SIZE
 suffix:semicolon
 r_goto
 id|repeat
@@ -4361,7 +4343,7 @@ id|buffer_wait
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n; * We can&squot;t put completed temporary IO buffer_heads directly onto the&n; * unused_list when they become unlocked, since the device driver&n; * end_request routines still expect access to the buffer_head&squot;s&n; * fields after the final unlock.  So, the device driver puts them on&n; * the reuse_list instead once IO completes, and we recover these to&n; * the unused_list here.&n; *&n; * The reuse_list receives buffers from interrupt routines, so we need&n; * to be IRQ-safe here (but note that interrupts only _add_ to the&n; * reuse_list, never take away. So we don&squot;t need to worry about the&n; * reuse_list magically emptying).&n; */
+multiline_comment|/* &n; * We can&squot;t put completed temporary IO buffer_heads directly onto the&n; * unused_list when they become unlocked, since the device driver&n; * end_request routines still expect access to the buffer_head&squot;s&n; * fields after the final unlock.  So, the device driver puts them on&n; * the reuse_list instead once IO completes, and we recover these to&n; * the unused_list here.&n; */
 DECL|function|recover_reusable_buffer_heads
 r_static
 r_inline
@@ -4370,12 +4352,6 @@ id|recover_reusable_buffer_heads
 c_func
 (paren
 r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|reuse_list
 )paren
 (brace
 r_struct
@@ -4394,7 +4370,11 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-r_do
+r_while
+c_loop
+(paren
+id|head
+)paren
 (brace
 r_struct
 id|buffer_head
@@ -4411,13 +4391,6 @@ id|put_unused_buffer_head
 c_func
 (paren
 id|bh
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|head
 )paren
 suffix:semicolon
 )brace
@@ -4736,7 +4709,14 @@ suffix:semicolon
 )brace
 id|tmp-&gt;b_next_free
 op_assign
+id|xchg
+c_func
+(paren
+op_amp
 id|reuse_list
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 id|reuse_list
 op_assign

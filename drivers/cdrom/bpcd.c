@@ -129,7 +129,7 @@ id|arg
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|bp_release
 (paren
 r_struct
@@ -704,7 +704,7 @@ suffix:semicolon
 )brace
 DECL|function|bp_release
 r_static
-r_void
+r_int
 id|bp_release
 (paren
 r_struct
@@ -760,6 +760,9 @@ c_func
 suffix:semicolon
 )brace
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE

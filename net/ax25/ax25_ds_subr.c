@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Cloned from ax25_out.c and ax25_subr.c.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Changed ax25_ds_enquiry_response(),&n; *&t;&t;&t;&t;&t;fixed ax25_dama_on() and ax25_dama_off().&n; */
+multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Cloned from ax25_out.c and ax25_subr.c.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Changed ax25_ds_enquiry_response(),&n; *&t;&t;&t;&t;&t;fixed ax25_dama_on() and ax25_dama_off().&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25_DAMA_SLAVE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -190,21 +190,9 @@ op_amp
 id|AX25_COND_PEER_RX_BUSY
 )paren
 op_logical_and
-(paren
 id|ax25o-&gt;state
 op_eq
 id|AX25_STATE_3
-op_logical_or
-(paren
-id|ax25o-&gt;state
-op_eq
-id|AX25_STATE_4
-op_logical_and
-id|ax25o-&gt;t1timer
-op_eq
-l_int|0
-)paren
-)paren
 )paren
 (brace
 id|ax25_requeue_frames
@@ -263,8 +251,8 @@ id|ax25
 )paren
 (brace
 id|ax25-&gt;condition
-op_assign
-l_int|0x00
+op_and_assign
+id|AX25_COND_DAMA_MODE
 suffix:semicolon
 id|ax25-&gt;n2count
 op_assign
@@ -289,7 +277,7 @@ id|ax25
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;:::FIXME:::&n; *&t;This is a kludge. Not all drivers recognize kiss commands. &n; *&t;We need a driver level  request to switch duplex mode, that does &n; *&t;either SCC changing, PI config or KISS as required. Currently&n; *&t;this request isn&squot;t reliable.&n; *&n; */
+multiline_comment|/*&n; *&t;:::FIXME:::&n; *&t;This is a kludge. Not all drivers recognize kiss commands. &n; *&t;We need a driver level  request to switch duplex mode, that does &n; *&t;either SCC changing, PI config or KISS as required. Currently&n; *&t;this request isn&squot;t reliable.&n; */
 DECL|function|ax25_kiss_cmd
 r_static
 r_void
@@ -434,7 +422,11 @@ id|ax25-&gt;ax25_dev
 op_eq
 id|ax25_dev
 op_logical_and
-id|ax25-&gt;dama_slave
+(paren
+id|ax25-&gt;condition
+op_amp
+id|AX25_COND_DAMA_MODE
+)paren
 op_logical_and
 id|ax25-&gt;state
 OG
@@ -564,9 +556,9 @@ c_func
 id|ax25-&gt;ax25_dev
 )paren
 suffix:semicolon
-id|ax25-&gt;dama_slave
-op_assign
-l_int|1
+id|ax25-&gt;condition
+op_or_assign
+id|AX25_COND_DAMA_MODE
 suffix:semicolon
 )brace
 DECL|function|ax25_dama_off
@@ -585,9 +577,10 @@ c_func
 id|ax25-&gt;ax25_dev
 )paren
 suffix:semicolon
-id|ax25-&gt;dama_slave
-op_assign
-l_int|0
+id|ax25-&gt;condition
+op_and_assign
+op_complement
+id|AX25_COND_DAMA_MODE
 suffix:semicolon
 )brace
 macro_line|#endif

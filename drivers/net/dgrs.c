@@ -2178,8 +2178,6 @@ id|ioc
 suffix:semicolon
 r_int
 id|i
-comma
-id|rc
 suffix:semicolon
 r_if
 c_cond

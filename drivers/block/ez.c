@@ -200,7 +200,7 @@ id|arg
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|ez_release
 (paren
 r_struct
@@ -1519,7 +1519,7 @@ suffix:semicolon
 )brace
 DECL|function|ez_release
 r_static
-r_void
+r_int
 id|ez_release
 (paren
 r_struct
@@ -1588,6 +1588,9 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|ez_check_media
 r_static

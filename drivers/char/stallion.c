@@ -15059,7 +15059,7 @@ op_amp
 id|portp-&gt;istate
 )paren
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -16064,7 +16064,7 @@ op_amp
 id|portp-&gt;istate
 )paren
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -19076,7 +19076,7 @@ op_amp
 id|portp-&gt;istate
 )paren
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -20107,7 +20107,7 @@ op_amp
 id|portp-&gt;istate
 )paren
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp

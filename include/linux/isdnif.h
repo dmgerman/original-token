@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnif.h,v 1.17 1997/02/10 21:12:53 fritz Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.17  1997/02/10 21:12:53  fritz&n; * More setup-interface changes.&n; *&n; * Revision 1.16  1997/02/10 19:42:57  fritz&n; * New interface for reporting incoming calls.&n; *&n; * Revision 1.15  1997/02/09 00:18:42  keil&n; * leased line support&n; *&n; * Revision 1.14  1997/02/03 23:43:00  fritz&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.13  1996/11/13 02:39:59  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.12  1996/11/06 17:38:48  keil&n; * more changes for 2.1.X&n; *&n; * Revision 1.11  1996/10/23 11:59:42  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.10  1996/10/22 23:14:19  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.9  1996/06/06 21:24:24  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdnif.h,v 1.20 1997/05/27 15:18:06 fritz Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.20  1997/05/27 15:18:06  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.19  1997/03/25 23:13:56  keil&n; * NI-1 US protocol&n; *&n; * Revision 1.18  1997/03/04 22:09:18  calle&n; * Change macros copy_from_user and copy_to_user in inline function.&n; * These are now correct replacements of the functions for 2.1.xx&n; *&n; * Revision 1.17  1997/02/10 21:12:53  fritz&n; * More setup-interface changes.&n; *&n; * Revision 1.16  1997/02/10 19:42:57  fritz&n; * New interface for reporting incoming calls.&n; *&n; * Revision 1.15  1997/02/09 00:18:42  keil&n; * leased line support&n; *&n; * Revision 1.14  1997/02/03 23:43:00  fritz&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.13  1996/11/13 02:39:59  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.12  1996/11/06 17:38:48  keil&n; * more changes for 2.1.X&n; *&n; * Revision 1.11  1996/10/23 11:59:42  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.10  1996/10/22 23:14:19  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.9  1996/06/06 21:24:24  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdnif_h
 DECL|macro|isdnif_h
 mdefine_line|#define isdnif_h
@@ -11,6 +11,8 @@ DECL|macro|ISDN_PTYPE_EURO
 mdefine_line|#define ISDN_PTYPE_EURO      2   /* EDSS1-protocol       */
 DECL|macro|ISDN_PTYPE_LEASED
 mdefine_line|#define ISDN_PTYPE_LEASED    3   /* for leased lines     */
+DECL|macro|ISDN_PTYPE_NI1
+mdefine_line|#define ISDN_PTYPE_NI1       4   /* US NI-1 protocol     */
 multiline_comment|/*&n; * Values for Layer-2-protocol-selection&n; */
 DECL|macro|ISDN_PROTO_L2_X75I
 mdefine_line|#define ISDN_PROTO_L2_X75I   0   /* X75/LAPB with I-Frames      */
@@ -117,6 +119,8 @@ DECL|macro|ISDN_FEATURE_P_1TR6
 mdefine_line|#define ISDN_FEATURE_P_1TR6     (0x1000 &lt;&lt; ISDN_PTYPE_1TR6)
 DECL|macro|ISDN_FEATURE_P_EURO
 mdefine_line|#define ISDN_FEATURE_P_EURO     (0x1000 &lt;&lt; ISDN_PTYPE_EURO)
+DECL|macro|ISDN_FEATURE_P_NI1
+mdefine_line|#define ISDN_FEATURE_P_NI1      (0x1000 &lt;&lt; ISDN_PTYPE_NI1)
 DECL|struct|setup_parm
 r_typedef
 r_struct
@@ -398,10 +402,128 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x020100)
 macro_line|#include &lt;linux/mm.h&gt;
-DECL|macro|copy_from_user
-mdefine_line|#define copy_from_user memcpy_fromfs
-DECL|macro|copy_to_user
-mdefine_line|#define copy_to_user memcpy_tofs
+DECL|function|copy_from_user
+r_static
+r_inline
+r_int
+r_int
+id|copy_from_user
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|n
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|i
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|from
+comma
+id|n
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+id|i
+suffix:semicolon
+id|memcpy_fromfs
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|n
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|copy_to_user
+r_static
+r_inline
+r_int
+r_int
+id|copy_to_user
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|n
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|i
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|to
+comma
+id|n
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+id|i
+suffix:semicolon
+id|memcpy_tofs
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|n
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|macro|GET_USER
 mdefine_line|#define GET_USER(x, addr) ( x = get_user(addr) )
 DECL|macro|RWTYPE
@@ -412,8 +534,6 @@ DECL|macro|RWARG
 mdefine_line|#define RWARG int
 DECL|macro|LSARG
 mdefine_line|#define LSARG off_t
-DECL|macro|SET_SKB_FREE
-mdefine_line|#define SET_SKB_FREE(x) ( x-&gt;free = 1 )
 macro_line|#else
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|GET_USER
@@ -428,6 +548,7 @@ DECL|macro|RWARG
 mdefine_line|#define RWARG unsigned long
 DECL|macro|LSARG
 mdefine_line|#define LSARG long long
+macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02010F)
 DECL|macro|SET_SKB_FREE
 mdefine_line|#define SET_SKB_FREE(x) ( x-&gt;free = 1 )
@@ -435,6 +556,22 @@ macro_line|#else
 DECL|macro|SET_SKB_FREE
 mdefine_line|#define SET_SKB_FREE(x)
 macro_line|#endif
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02011F)
+DECL|macro|CLOSETYPE
+mdefine_line|#define CLOSETYPE void
+DECL|macro|CLOSEVAL
+mdefine_line|#define CLOSEVAL
+macro_line|#else
+DECL|macro|CLOSETYPE
+mdefine_line|#define CLOSETYPE int
+DECL|macro|CLOSEVAL
+mdefine_line|#define CLOSEVAL (0)
+macro_line|#endif
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x020125)
+DECL|macro|test_and_clear_bit
+mdefine_line|#define test_and_clear_bit clear_bit
+DECL|macro|test_and_set_bit
+mdefine_line|#define test_and_set_bit set_bit
 macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* isdnif_h */

@@ -629,7 +629,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
-multiline_comment|/*&n; * The idea is to start moving to a newer struct gradualy&n; * &n; * IMHO the newer struct should have the following format:&n; * &n; *&t;struct sock {&n; *&t;&t;sockmem [mem, proto, callbacks]&n; *&n; *&t;&t;union or struct {&n; *&t;&t;&t;netrom;&n; *&t;&t;&t;ax_25;&n; *&t;&t;} ll_pinfo;&n; *&t;&n; *&t;&t;union {&n; *&t;&t;&t;ipv4;&n; *&t;&t;&t;ipv6;&n; *&t;&t;&t;ipx;&n; *&t;&t;} net_pinfo;&n; *&n; *&t;&t;union {&n; *&t;&t;&t;tcp;&n; *&t;&t;&t;udp;&n; *&t;&t;&t;spx;&n; *&t;&t;} tp_pinfo;&n; *&n; *&t;}&n; */
+multiline_comment|/*&n; * The idea is to start moving to a newer struct gradualy&n; * &n; * IMHO the newer struct should have the following format:&n; * &n; *&t;struct sock {&n; *&t;&t;sockmem [mem, proto, callbacks]&n; *&n; *&t;&t;union or struct {&n; *&t;&t;&t;ax25;&n; *&t;&t;} ll_pinfo;&n; *&t;&n; *&t;&t;union {&n; *&t;&t;&t;ipv4;&n; *&t;&t;&t;ipv6;&n; *&t;&t;&t;ipx;&n; *&t;&t;&t;netrom;&n; *&t;&t;&t;rose;&n; * &t;&t;&t;x25;&n; *&t;&t;} net_pinfo;&n; *&n; *&t;&t;union {&n; *&t;&t;&t;tcp;&n; *&t;&t;&t;udp;&n; *&t;&t;&t;spx;&n; *&t;&t;&t;netrom;&n; *&t;&t;} tp_pinfo;&n; *&n; *&t;}&n; */
 multiline_comment|/* Define this to get the sk-&gt;debug debugging facility. */
 DECL|macro|SOCK_DEBUGGING
 mdefine_line|#define SOCK_DEBUGGING

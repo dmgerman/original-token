@@ -60,10 +60,11 @@ DECL|macro|AX25_COND_PEER_RX_BUSY
 mdefine_line|#define&t;AX25_COND_PEER_RX_BUSY&t;&t;0x04
 DECL|macro|AX25_COND_OWN_RX_BUSY
 mdefine_line|#define&t;AX25_COND_OWN_RX_BUSY&t;&t;0x08
+DECL|macro|AX25_COND_DAMA_MODE
+mdefine_line|#define&t;AX25_COND_DAMA_MODE&t;&t;0x10
 macro_line|#ifndef _LINUX_NETDEVICE_H
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#endif
-multiline_comment|/*&n; * These headers are taken from the KA9Q package by Phil Karn. These specific&n; * files have been placed under the GPL (not the whole package) by Phil.&n; *&n; *&n; * Copyright 1991 Phil Karn, KA9Q&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; version 2 dated June, 1991.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program;  if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.&n; */
 multiline_comment|/* Upper sub-layer (LAPB) definitions */
 multiline_comment|/* Control field templates */
 DECL|macro|AX25_I
@@ -229,7 +230,7 @@ mdefine_line|#define&t;AX25_DEF_T3&t;&t;(300 * AX25_SLOWHZ)&t;/* T3=300s */
 DECL|macro|AX25_DEF_N2
 mdefine_line|#define&t;AX25_DEF_N2&t;&t;10&t;&t;&t;/* N2=10 */
 DECL|macro|AX25_DEF_IDLE
-mdefine_line|#define AX25_DEF_IDLE&t;&t;(20 * 60 * AX25_SLOWHZ)&t;/* Idle=20 mins */&t;&t;
+mdefine_line|#define AX25_DEF_IDLE&t;&t;(0 * 60 * AX25_SLOWHZ)&t;/* Idle=None */
 DECL|macro|AX25_DEF_PACLEN
 mdefine_line|#define AX25_DEF_PACLEN&t;&t;256&t;&t;&t;/* Paclen=256 */
 DECL|macro|AX25_DEF_PROTOCOL
@@ -436,14 +437,14 @@ id|iamdigi
 suffix:semicolon
 DECL|member|state
 DECL|member|modulus
-DECL|member|hdrincl
+DECL|member|pidincl
 r_int
 r_char
 id|state
 comma
 id|modulus
 comma
-id|hdrincl
+id|pidincl
 suffix:semicolon
 DECL|member|vs
 DECL|member|vr
@@ -472,13 +473,6 @@ id|n2
 comma
 id|n2count
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25_DAMA_SLAVE
-DECL|member|dama_slave
-r_int
-r_char
-id|dama_slave
-suffix:semicolon
-macro_line|#endif
 DECL|member|t1
 DECL|member|t2
 DECL|member|t3
@@ -511,14 +505,12 @@ comma
 id|idletimer
 suffix:semicolon
 DECL|member|paclen
-r_int
-r_int
-id|paclen
-suffix:semicolon
 DECL|member|fragno
 DECL|member|fraglen
 r_int
 r_int
+id|paclen
+comma
 id|fragno
 comma
 id|fraglen
@@ -723,7 +715,7 @@ id|sock
 op_star
 comma
 r_struct
-id|device
+id|ax25_dev
 op_star
 )paren
 suffix:semicolon
@@ -1444,7 +1436,9 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_struct
+id|sk_buff
+op_star
 id|ax25_dg_build_path
 c_func
 (paren

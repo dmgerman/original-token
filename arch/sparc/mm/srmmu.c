@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.146 1997/05/18 21:11:09 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.147 1997/05/20 07:58:42 jj Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -6722,24 +6722,10 @@ id|page
 suffix:semicolon
 r_extern
 r_void
-id|hypersparc_bzero_1page
+id|hypersparc_setup_blockops
 c_func
 (paren
 r_void
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|hypersparc_copy_1page
-c_func
-(paren
-r_void
-op_star
-comma
-r_const
-r_void
-op_star
 )paren
 suffix:semicolon
 DECL|function|srmmu_set_pte_nocache_hyper
@@ -13407,43 +13393,11 @@ id|poke_srmmu
 op_assign
 id|poke_hypersparc
 suffix:semicolon
-multiline_comment|/* High performance page copy/clear. */
-(brace
-r_extern
-r_void
+id|hypersparc_setup_blockops
+c_func
 (paren
-op_star
-id|__copy_1page
-)paren
-(paren
-r_void
-op_star
-comma
-r_const
-r_void
-op_star
 )paren
 suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|bzero_1page
-)paren
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
-id|__copy_1page
-op_assign
-id|hypersparc_copy_1page
-suffix:semicolon
-id|bzero_1page
-op_assign
-id|hypersparc_bzero_1page
-suffix:semicolon
-)brace
 )brace
 DECL|function|poke_cypress
 r_static

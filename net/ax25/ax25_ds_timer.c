@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Cloned from ax25_timer.c.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Added DAMA Slave Timeout timer&n; */
+multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Cloned from ax25_timer.c.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Added DAMA Slave Timeout timer&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25_DAMA_SLAVE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -225,7 +225,11 @@ op_ne
 id|ax25_dev
 op_logical_or
 op_logical_neg
-id|ax25-&gt;dama_slave
+(paren
+id|ax25-&gt;condition
+op_amp
+id|AX25_COND_DAMA_MODE
+)paren
 )paren
 r_continue
 suffix:semicolon
@@ -381,9 +385,6 @@ r_break
 suffix:semicolon
 r_case
 id|AX25_STATE_3
-suffix:colon
-r_case
-id|AX25_STATE_4
 suffix:colon
 multiline_comment|/*&n;&t;&t;&t; * Check the state of the receive buffer.&n;&t;&t;&t; */
 r_if
@@ -908,19 +909,6 @@ r_break
 suffix:semicolon
 r_case
 id|AX25_STATE_3
-suffix:colon
-id|ax25-&gt;n2count
-op_assign
-l_int|1
-suffix:semicolon
-id|ax25-&gt;state
-op_assign
-id|AX25_STATE_4
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|AX25_STATE_4
 suffix:colon
 r_if
 c_cond

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.11 1997/05/18 22:52:19 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.12 1997/05/23 09:35:43 jj Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -1731,6 +1731,11 @@ suffix:semicolon
 id|current-&gt;tss.current_ds
 op_assign
 id|USER_DS
+suffix:semicolon
+id|spitfire_set_secondary_context
+(paren
+id|current-&gt;mm-&gt;context
+)paren
 suffix:semicolon
 )brace
 DECL|function|copy_regs

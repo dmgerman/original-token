@@ -1316,6 +1316,8 @@ DECL|macro|CS_UNEXP_BUS_FREE
 mdefine_line|#define CS_UNEXP_BUS_FREE&t;&t;0x0014
 DECL|macro|CS_DATA_UNDERRUN
 mdefine_line|#define CS_DATA_UNDERRUN&t;&t;0x0015
+DECL|macro|CS_BUS_RESET
+mdefine_line|#define CS_BUS_RESET&t;&t;&t;0x001c
 multiline_comment|/* status entry state flag definitions */
 DECL|macro|SF_GOT_BUS
 mdefine_line|#define SF_GOT_BUS&t;&t;&t;0x0100

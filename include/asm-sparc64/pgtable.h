@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.31 1997/05/18 21:11:42 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.32 1997/05/26 23:39:20 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -2201,9 +2201,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tsk-&gt;mm
+id|tsk
 op_eq
-id|current-&gt;mm
+id|current
 )paren
 (brace
 id|__asm__

@@ -121,7 +121,6 @@ suffix:semicolon
 DECL|member|state
 DECL|member|condition
 DECL|member|bpqext
-DECL|member|hdrincl
 DECL|member|window
 r_int
 r_char
@@ -130,8 +129,6 @@ comma
 id|condition
 comma
 id|bpqext
-comma
-id|hdrincl
 comma
 id|window
 suffix:semicolon

@@ -14,6 +14,8 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -4278,6 +4280,7 @@ id|pte
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * By the time we get here, we already have the mm semaphore.&n; */
 DECL|function|handle_mm_fault
 r_void
 id|handle_mm_fault
@@ -4361,6 +4364,12 @@ id|pte
 r_goto
 id|no_memory
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Horrible */
 id|handle_pte_fault
 c_func
 (paren
@@ -4386,6 +4395,12 @@ op_star
 id|pte
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Horrible */
 r_return
 suffix:semicolon
 id|no_memory

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fsm.c,v 1.3 1997/02/16 01:04:08 fritz Exp $&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; * $Log: fsm.c,v $&n; * Revision 1.3  1997/02/16 01:04:08  fritz&n; * Bugfix: Changed timer handling caused hang with 2.1.X&n; *&n; * Revision 1.2  1997/01/09 20:57:27  keil&n; * cleanup &amp; FSM_TIMER_DEBUG&n; *&n; * Revision 1.1  1996/10/13 20:04:52  keil&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: fsm.c,v 1.4 1997/04/06 22:56:42 keil Exp $&n;&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; * $Log: fsm.c,v $&n; * Revision 1.4  1997/04/06 22:56:42  keil&n; * Some cosmetic changes&n; *&n; * Revision 1.3  1997/02/16 01:04:08  fritz&n; * Bugfix: Changed timer handling caused hang with 2.1.X&n; *&n; * Revision 1.2  1997/01/09 20:57:27  keil&n; * cleanup &amp; FSM_TIMER_DEBUG&n; *&n; * Revision 1.1  1996/10/13 20:04:52  keil&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -32,7 +32,7 @@ op_assign
 r_int
 op_star
 )paren
-id|Smalloc
+id|kmalloc
 c_func
 (paren
 l_int|4L
@@ -42,8 +42,6 @@ op_star
 id|fsm-&gt;event_count
 comma
 id|GFP_KERNEL
-comma
-l_string|&quot;Fsm jumpmatrix&quot;
 )paren
 suffix:semicolon
 id|memset
@@ -115,7 +113,7 @@ op_star
 id|fsm
 )paren
 (brace
-id|Sfree
+id|kfree
 c_func
 (paren
 (paren

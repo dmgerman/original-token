@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/nfs/nfsroot.c -- version 2.3&n; *&n; *  Copyright (C) 1995, 1996  Gero Kuhlmann &lt;gero@gkminix.han.de&gt;&n; *&n; *  For parts of this file:&n; *  Copyright (C) 1996  Martin Mares &lt;mj@k332.feld.cvut.cz&gt;&n; *&n; *  Allow an NFS filesystem to be mounted as root. The way this works is:&n; *     (1) Determine the local IP address via RARP or BOOTP or from the&n; *         kernel command line.&n; *     (2) Handle RPC negotiation with the system which replied to RARP or&n; *         was reported as a boot server by BOOTP or manually.&n; *     (3) The actual mounting is done later, when init() is running.&n; *&n; *&n; *&t;Changes:&n; *&n; *&t;Alan Cox&t;:&t;Removed get_address name clash with FPU.&n; *&t;Alan Cox&t;:&t;Reformatted a bit.&n; *&t;Gero Kuhlmann&t;:&t;Code cleanup&n; *&t;Michael Rausch  :&t;Fixed recognition of an incoming RARP answer.&n; *&t;Martin Mares&t;: (2.0)&t;Auto-configuration via BOOTP supported.&n; *&t;Martin Mares&t;:&t;Manual selection of interface &amp; BOOTP/RARP.&n; *&t;Martin Mares&t;:&t;Using network routes instead of host routes,&n; *&t;&t;&t;&t;allowing the default configuration to be used&n; *&t;&t;&t;&t;for normal operation of the host.&n; *&t;Martin Mares&t;:&t;Randomized timer with exponential backoff&n; *&t;&t;&t;&t;installed to minimize network congestion.&n; *&t;Martin Mares&t;:&t;Code cleanup.&n; *&t;Martin Mares&t;: (2.1)&t;BOOTP and RARP made configuration options.&n; *&t;Martin Mares&t;:&t;Server hostname generation fixed.&n; *&t;Gerd Knorr&t;:&t;Fixed wired inode handling&n; *&t;Martin Mares&t;: (2.2)&t;&quot;0.0.0.0&quot; addresses from command line ignored.&n; *&t;Martin Mares&t;:&t;RARP replies not tested for server address.&n; *&t;Gero Kuhlmann&t;: (2.3) Some bug fixes and code cleanup again (please&n; *&t;&t;&t;&t;send me your new patches _before_ bothering&n; *&t;&t;&t;&t;Linus so that I don&squot; always have to cleanup&n; *&t;&t;&t;&t;_afterwards_ - thanks)&n; *&t;Gero Kuhlmann&t;:&t;Last changes of Martin Mares undone.&n; *&t;Gero Kuhlmann&t;: &t;RARP replies are tested for specified server&n; *&t;&t;&t;&t;again. However, it&squot;s now possible to have&n; *&t;&t;&t;&t;different RARP and NFS servers.&n; *&t;Gero Kuhlmann&t;:&t;&quot;0.0.0.0&quot; addresses from command line are&n; *&t;&t;&t;&t;now mapped to INADDR_NONE.&n; *&t;Gero Kuhlmann&t;:&t;Fixed a bug which prevented BOOTP path name&n; *&t;&t;&t;&t;from being used (thanks to Leo Spiekman)&n; *&t;Andy Walker&t;:&t;Allow to specify the NFS server in nfs_root&n; *&t;&t;&t;&t;without giving a path name&n; *&t;Swen Th=FCmmler&t;:&t;Allow to specify the NFS options in nfs_root&n; *&t;&t;&t;&t;without giving a path name. Fix BOOTP request&n; *&t;&t;&t;&t;for domainname (domainname is NIS domain, not&n; *&t;&t;&t;&t;DNS domain!). Skip dummy devices for BOOTP.&n; *&t;Jacek Zapala&t;:&t;Fixed a bug which prevented server-ip address&n; *&t;&t;&t;&t;from nfsroot parameter from being used.&n; *&t;Olaf Kirch&t;:&t;Adapted to new NFS code.&n; *&n; */
+multiline_comment|/*&n; *  $Id: nfsroot.c,v 1.36 1997/05/27 15:57:47 mj Exp $&n; *&n; *  Copyright (C) 1995, 1996  Gero Kuhlmann &lt;gero@gkminix.han.de&gt;&n; *&n; *  For parts of this file:&n; *  Copyright (C) 1996, 1997  Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Allow an NFS filesystem to be mounted as root. The way this works is:&n; *     (1) Determine the local IP address via RARP or BOOTP or from the&n; *         kernel command line.&n; *     (2) Handle RPC negotiation with the system which replied to RARP or&n; *         was reported as a boot server by BOOTP or manually.&n; *     (3) The actual mounting is done later, when init() is running.&n; *&n; *&n; *&t;Changes:&n; *&n; *&t;Alan Cox&t;:&t;Removed get_address name clash with FPU.&n; *&t;Alan Cox&t;:&t;Reformatted a bit.&n; *&t;Gero Kuhlmann&t;:&t;Code cleanup&n; *&t;Michael Rausch  :&t;Fixed recognition of an incoming RARP answer.&n; *&t;Martin Mares&t;: (2.0)&t;Auto-configuration via BOOTP supported.&n; *&t;Martin Mares&t;:&t;Manual selection of interface &amp; BOOTP/RARP.&n; *&t;Martin Mares&t;:&t;Using network routes instead of host routes,&n; *&t;&t;&t;&t;allowing the default configuration to be used&n; *&t;&t;&t;&t;for normal operation of the host.&n; *&t;Martin Mares&t;:&t;Randomized timer with exponential backoff&n; *&t;&t;&t;&t;installed to minimize network congestion.&n; *&t;Martin Mares&t;:&t;Code cleanup.&n; *&t;Martin Mares&t;: (2.1)&t;BOOTP and RARP made configuration options.&n; *&t;Martin Mares&t;:&t;Server hostname generation fixed.&n; *&t;Gerd Knorr&t;:&t;Fixed wired inode handling&n; *&t;Martin Mares&t;: (2.2)&t;&quot;0.0.0.0&quot; addresses from command line ignored.&n; *&t;Martin Mares&t;:&t;RARP replies not tested for server address.&n; *&t;Gero Kuhlmann&t;: (2.3) Some bug fixes and code cleanup again (please&n; *&t;&t;&t;&t;send me your new patches _before_ bothering&n; *&t;&t;&t;&t;Linus so that I don&squot; always have to cleanup&n; *&t;&t;&t;&t;_afterwards_ - thanks)&n; *&t;Gero Kuhlmann&t;:&t;Last changes of Martin Mares undone.&n; *&t;Gero Kuhlmann&t;: &t;RARP replies are tested for specified server&n; *&t;&t;&t;&t;again. However, it&squot;s now possible to have&n; *&t;&t;&t;&t;different RARP and NFS servers.&n; *&t;Gero Kuhlmann&t;:&t;&quot;0.0.0.0&quot; addresses from command line are&n; *&t;&t;&t;&t;now mapped to INADDR_NONE.&n; *&t;Gero Kuhlmann&t;:&t;Fixed a bug which prevented BOOTP path name&n; *&t;&t;&t;&t;from being used (thanks to Leo Spiekman)&n; *&t;Andy Walker&t;:&t;Allow to specify the NFS server in nfs_root&n; *&t;&t;&t;&t;without giving a path name&n; *&t;Swen Th=FCmmler&t;:&t;Allow to specify the NFS options in nfs_root&n; *&t;&t;&t;&t;without giving a path name. Fix BOOTP request&n; *&t;&t;&t;&t;for domainname (domainname is NIS domain, not&n; *&t;&t;&t;&t;DNS domain!). Skip dummy devices for BOOTP.&n; *&t;Jacek Zapala&t;:&t;Fixed a bug which prevented server-ip address&n; *&t;&t;&t;&t;from nfsroot parameter from being used.&n; *&t;Olaf Kirch&t;:&t;Adapted to new NFS code.&n; *&t;Jakub Jelinek&t;:&t;Free used code segment.&n; *&t;Marko Kohtala&t;:&t;Fixed some bugs.&n; *&t;Martin Mares&t;:&t;Debug message cleanup&n; *&n; */
 multiline_comment|/* Define this to allow debugging output */
 DECL|macro|NFSROOT_DEBUG
 macro_line|#undef NFSROOT_DEBUG
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/param.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
@@ -80,102 +81,136 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|variable|open_base
+DECL|variable|__initdata
 r_static
 r_struct
 id|open_dev
 op_star
 id|open_base
+id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* IP configuration */
-DECL|variable|root_dev
+DECL|variable|__initdata
 r_static
 r_struct
 id|device
 op_star
 id|root_dev
+id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Device selected for booting */
-DECL|variable|user_dev_name
+DECL|variable|__initdata
 r_static
 r_char
 id|user_dev_name
 (braket
 id|IFNAMSIZ
 )braket
+id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 multiline_comment|/* Name of user-selected boot device */
-DECL|variable|myaddr
+DECL|variable|__initdata
 r_static
 id|__u32
 id|myaddr
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* My IP address */
-DECL|variable|servaddr
+DECL|variable|__initdata
 r_static
 id|__u32
 id|servaddr
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Server IP address */
-DECL|variable|gateway
+DECL|variable|__initdata
 r_static
 id|__u32
 id|gateway
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Gateway IP address */
-DECL|variable|netmask
+DECL|variable|__initdata
 r_static
 id|__u32
 id|netmask
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Netmask for local subnet */
 multiline_comment|/* BOOTP/RARP variables */
-DECL|variable|bootp_flag
+DECL|variable|__initdata
 r_static
 r_int
 id|bootp_flag
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* User said: Use BOOTP! */
-DECL|variable|rarp_flag
+DECL|variable|__initdata
 r_static
 r_int
 id|rarp_flag
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* User said: Use RARP! */
-DECL|variable|bootp_dev_count
+DECL|variable|__initdata
 r_static
 r_int
 id|bootp_dev_count
+id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Number of devices allowing BOOTP */
-DECL|variable|rarp_dev_count
+DECL|variable|__initdata
 r_static
 r_int
 id|rarp_dev_count
+id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Number of devices allowing RARP */
-DECL|variable|rarp_serv
+DECL|variable|__initdata
 r_static
 id|__u32
 id|rarp_serv
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* IP address of RARP server */
 macro_line|#if defined(CONFIG_RNFS_BOOTP) || defined(CONFIG_RNFS_RARP)
 DECL|macro|CONFIG_RNFS_DYNAMIC
-mdefine_line|#define CONFIG_RNFS_DYNAMIC&t;&t;/* Enable dynamic IP config */
-DECL|variable|pkt_arrived
+mdefine_line|#define CONFIG_RNFS_DYNAMIC&t;&t;&t;/* Enable dynamic IP config */
+DECL|variable|__initdata
 r_static
 r_volatile
 r_int
 id|pkt_arrived
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* BOOTP/RARP packet detected */
 DECL|macro|ARRIVED_BOOTP
@@ -184,32 +219,50 @@ DECL|macro|ARRIVED_RARP
 mdefine_line|#define ARRIVED_RARP&t;2
 macro_line|#endif
 multiline_comment|/* NFS-related data */
-DECL|variable|nfs_data
+DECL|variable|__initdata
 r_static
 r_struct
 id|nfs_mount_data
 id|nfs_data
+id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 multiline_comment|/* NFS mount info */
-DECL|variable|nfs_path
+DECL|variable|__initdata
 r_static
 r_char
 id|nfs_path
 (braket
 id|NFS_MAXPATHLEN
 )braket
+id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 multiline_comment|/* Name of directory to mount */
-DECL|variable|nfs_port
+DECL|variable|__initdata
 r_static
 r_int
 id|nfs_port
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Port to connect to for NFS */
-DECL|variable|mount_port
+DECL|variable|__initdata
 r_static
 r_int
 id|mount_port
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Mount daemon port number */
 multiline_comment|/* Yes, we use sys_socket, but there&squot;s no include file for it */
@@ -231,13 +284,17 @@ id|protocol
 suffix:semicolon
 multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;Device Handling Subroutines&n;&n; ***************************************************************************/
 multiline_comment|/*&n; * Setup and initialize all network devices. If there is a user-preferred&n; * interface, ignore all other interfaces.&n; */
-DECL|function|root_dev_open
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_dev_open
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -505,9 +562,12 @@ op_assign
 id|port
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|root_dev_chg_route
 id|root_dev_chg_route
 c_func
 (paren
@@ -527,6 +587,7 @@ id|mask
 comma
 id|__u32
 id|gw
+)paren
 )paren
 (brace
 r_struct
@@ -685,6 +746,7 @@ c_func
 id|oldfs
 )paren
 suffix:semicolon
+macro_line|#ifdef NFSROOT_DEBUG
 multiline_comment|/* in_ntoa in ipv4/utils.c uses a single static buffer, so&n;&t; * must make multiple printk calls, one for each in_ntoa&n;&t; * invocation...&n;&t; */
 id|printk
 c_func
@@ -698,7 +760,7 @@ op_eq
 id|SIOCADDRT
 ques
 c_cond
-l_string|&quot;addr&quot;
+l_string|&quot;add&quot;
 suffix:colon
 l_string|&quot;del&quot;
 )paren
@@ -742,13 +804,17 @@ comma
 id|err
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|err
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|root_dev_add_route
 id|root_dev_add_route
 c_func
 (paren
@@ -765,6 +831,7 @@ id|mask
 comma
 id|__u32
 id|gateway
+)paren
 )paren
 (brace
 r_return
@@ -783,9 +850,12 @@ id|gateway
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|root_dev_del_route
 id|root_dev_del_route
 c_func
 (paren
@@ -802,6 +872,7 @@ id|mask
 comma
 id|__u32
 id|gateway
+)paren
 )paren
 (brace
 r_return
@@ -821,13 +892,17 @@ id|gateway
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Restore the state of all devices. However, keep the root device open&n; *  for the upcoming mount.&n; */
-DECL|function|root_dev_close
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_dev_close
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -972,11 +1047,12 @@ op_star
 id|pt
 )paren
 suffix:semicolon
-DECL|variable|rarp_packet_type
+DECL|variable|__initdata
 r_static
 r_struct
 id|packet_type
 id|rarp_packet_type
+id|__initdata
 op_assign
 (brace
 l_int|0
@@ -993,13 +1069,17 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *  Register the packet type for RARP&n; */
-DECL|function|root_rarp_open
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_rarp_open
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|rarp_packet_type.type
@@ -1019,13 +1099,17 @@ id|rarp_packet_type
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Deregister the RARP packet type&n; */
-DECL|function|root_rarp_close
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_rarp_close
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|rarp_packet_type.type
@@ -1045,7 +1129,10 @@ id|rarp_packet_type
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Receive RARP packets.&n; */
-DECL|function|root_rarp_recv
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_rarp_recv
@@ -1065,6 +1152,7 @@ r_struct
 id|packet_type
 op_star
 id|pt
+)paren
 )paren
 (brace
 r_struct
@@ -1392,13 +1480,17 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Send RARP request packet over all devices which allow RARP.&n; */
-DECL|function|root_rarp_send
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_rarp_send
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -1476,30 +1568,37 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;     BOOTP Subroutines&n;&n; ***************************************************************************/
 macro_line|#ifdef CONFIG_RNFS_BOOTP
-DECL|variable|bootp_dev
+DECL|variable|__initdata
 r_static
 r_struct
 id|device
 op_star
 id|bootp_dev
+id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Device selected as best BOOTP target */
-DECL|variable|bootp_xmit_sock
+DECL|variable|__initdata
 r_static
 r_struct
 id|socket
 op_star
 id|bootp_xmit_sock
+id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* BOOTP send socket */
-DECL|variable|bootp_recv_sock
+DECL|variable|__initdata
 r_static
 r_struct
 id|socket
 op_star
 id|bootp_recv_sock
+id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* BOOTP receive socket */
 DECL|struct|bootp_pkt
@@ -1600,38 +1699,49 @@ DECL|macro|BOOTP_REQUEST
 mdefine_line|#define BOOTP_REQUEST 1
 DECL|macro|BOOTP_REPLY
 mdefine_line|#define BOOTP_REPLY 2
-DECL|variable|xmit_bootp
+DECL|variable|__initdata
 r_static
 r_struct
 id|bootp_pkt
 op_star
 id|xmit_bootp
+id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* Packet being transmitted */
-DECL|variable|recv_bootp
+DECL|variable|__initdata
 r_static
 r_struct
 id|bootp_pkt
 op_star
 id|recv_bootp
+id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* Packet being received */
-DECL|variable|bootp_have_route
+DECL|variable|__initdata
 r_static
 r_int
 id|bootp_have_route
+id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* BOOTP route installed */
 multiline_comment|/*&n; *  Free BOOTP packet buffers&n; */
-DECL|function|root_free_bootp
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_free_bootp
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if
@@ -1733,7 +1843,8 @@ id|GFP_KERNEL
 id|printk
 c_func
 (paren
-l_string|&quot;BOOTP: Out of memory!&quot;
+id|KERN_ERR
+l_string|&quot;BOOTP: Out of memory!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1746,13 +1857,17 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Create default route for BOOTP sending&n; */
-DECL|function|root_add_bootp_route
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_add_bootp_route
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if
@@ -1794,13 +1909,17 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Delete default route for BOOTP sending&n; */
-DECL|function|root_del_bootp_route
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_del_bootp_route
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if
@@ -1844,7 +1963,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Open UDP socket.&n; */
-DECL|function|root_open_udp_sock
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_open_udp_sock
@@ -1855,6 +1977,7 @@ id|socket
 op_star
 op_star
 id|sock
+)paren
 )paren
 (brace
 r_int
@@ -1893,7 +2016,10 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Connect UDP socket.&n; */
-DECL|function|root_connect_udp_sock
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_connect_udp_sock
@@ -1909,6 +2035,7 @@ id|addr
 comma
 id|u16
 id|port
+)paren
 )paren
 (brace
 r_struct
@@ -1930,7 +2057,7 @@ c_func
 id|addr
 )paren
 comma
-id|htonl
+id|htons
 c_func
 (paren
 id|port
@@ -1987,7 +2114,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Bind UDP socket.&n; */
-DECL|function|root_bind_udp_sock
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_bind_udp_sock
@@ -2003,6 +2133,7 @@ id|addr
 comma
 id|u16
 id|port
+)paren
 )paren
 (brace
 r_struct
@@ -2024,7 +2155,7 @@ c_func
 id|addr
 )paren
 comma
-id|htonl
+id|htons
 c_func
 (paren
 id|port
@@ -2299,7 +2430,10 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Initialize BOOTP extension fields in the request.&n; */
-DECL|function|root_bootp_init_ext
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_bootp_init_ext
@@ -2308,6 +2442,7 @@ c_func
 id|u8
 op_star
 id|e
+)paren
 )paren
 (brace
 op_star
@@ -2428,13 +2563,17 @@ suffix:semicolon
 multiline_comment|/* End of the list */
 )brace
 multiline_comment|/*&n; *  Deinitialize the BOOTP mechanism.&n; */
-DECL|function|root_bootp_close
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_bootp_close
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if
@@ -2471,13 +2610,17 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Initialize the BOOTP mechanism.&n; */
-DECL|function|root_bootp_open
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_bootp_open
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -2789,7 +2932,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Send BOOTP request.&n; */
-DECL|function|root_bootp_send
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_bootp_send
@@ -2797,6 +2943,7 @@ c_func
 (paren
 id|u32
 id|jiffies
+)paren
 )paren
 (brace
 id|xmit_bootp-&gt;secs
@@ -2826,7 +2973,10 @@ id|bootp_pkt
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Copy BOOTP-supplied string if not already set.&n; */
-DECL|function|root_bootp_string
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_bootp_string
@@ -2845,6 +2995,7 @@ id|len
 comma
 r_int
 id|max
+)paren
 )paren
 (brace
 r_if
@@ -2896,7 +3047,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Process BOOTP extension.&n; */
-DECL|function|root_do_bootp_ext
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_do_bootp_ext
@@ -2905,6 +3059,7 @@ c_func
 id|u8
 op_star
 id|ext
+)paren
 )paren
 (brace
 macro_line|#ifdef NFSROOT_BOOTP_DEBUG
@@ -2915,6 +3070,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;BOOTP: Got extension %02x&quot;
 comma
 op_star
@@ -3088,13 +3244,17 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *  Receive BOOTP request.&n; */
-DECL|function|root_bootp_recv
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_bootp_recv
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3332,13 +3492,17 @@ macro_line|#endif
 multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;Dynamic configuration of IP.&n;&n; ***************************************************************************/
 macro_line|#ifdef CONFIG_RNFS_DYNAMIC
 multiline_comment|/*&n; *  Determine client and server IP numbers and appropriate device by using&n; *  the RARP and BOOTP protocols.&n; */
-DECL|function|root_auto_config
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_auto_config
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3646,8 +3810,16 @@ c_cond
 (paren
 id|pkt_arrived
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; OK&bslash;n&quot;
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3719,12 +3891,6 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; OK&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 id|KERN_NOTICE
 l_string|&quot;Root-NFS: Got %s answer from %s, &quot;
 comma
@@ -3765,6 +3931,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Get default netmask - used to be exported from net/ipv4 */
 r_static
+r_inline
 r_int
 r_int
 DECL|function|ip_get_mask
@@ -3862,11 +4029,12 @@ r_int
 op_star
 id|val
 suffix:semicolon
-DECL|variable|root_int_opts
+DECL|variable|__initdata
 )brace
 id|root_int_opts
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -3958,11 +4126,12 @@ DECL|member|or_mask
 r_int
 id|or_mask
 suffix:semicolon
-DECL|variable|root_bool_opts
+DECL|variable|__initdata
 )brace
 id|root_bool_opts
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -4065,7 +4234,10 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *  Prepare the NFS data structure and parse any options. This tries to&n; *  set as many values in the nfs_data structure as known right now.&n; */
-DECL|function|root_nfs_name
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_nfs_name
@@ -4074,6 +4246,7 @@ c_func
 r_char
 op_star
 id|name
+)paren
 )paren
 (brace
 r_char
@@ -4257,6 +4430,14 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+id|nfs_data.namlen
+op_assign
+id|strlen
+c_func
+(paren
+id|nfs_data.hostname
+)paren
+suffix:semicolon
 multiline_comment|/* Set the name of the directory to mount */
 r_if
 c_cond
@@ -4403,7 +4584,7 @@ l_int|1
 suffix:semicolon
 id|nfs_data.version
 op_assign
-id|NFS_MNT_VERSION
+id|NFS_MOUNT_VERSION
 suffix:semicolon
 id|nfs_data.flags
 op_assign
@@ -4596,14 +4777,18 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Tell the user what&squot;s going on.&n; */
-macro_line|#ifdef NFSROOT_BOOTP
-DECL|function|root_nfs_print
+macro_line|#ifdef NFSROOT_DEBUG
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_nfs_print
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 DECL|macro|IN_NTOA
@@ -4753,7 +4938,10 @@ macro_line|#undef IN_NTOA
 )brace
 macro_line|#endif
 multiline_comment|/*&n; *  Decode any IP configuration options in the &quot;nfsaddrs&quot; kernel command&n; *  line parameter. It consists of option fields separated by colons in&n; *  the following order:&n; *&n; *  &lt;client-ip&gt;:&lt;server-ip&gt;:&lt;gw-ip&gt;:&lt;netmask&gt;:&lt;host name&gt;:&lt;device&gt;:&lt;bootp|rarp&gt;&n; *&n; *  Any of the fields can be empty which means to use a default value:&n; *&t;&lt;client-ip&gt;&t;- address given by BOOTP or RARP&n; *&t;&lt;server-ip&gt;&t;- address of host returning BOOTP or RARP packet&n; *&t;&lt;gw-ip&gt;&t;&t;- none, or the address returned by BOOTP&n; *&t;&lt;netmask&gt;&t;- automatically determined from &lt;client-ip&gt;, or the&n; *&t;&t;&t;  one returned by BOOTP&n; *&t;&lt;host name&gt;&t;- &lt;client-ip&gt; in ASCII notation, or the name returned&n; *&t;&t;&t;  by BOOTP&n; *&t;&lt;device&gt;&t;- use all available devices for RARP and the first&n; *&t;&t;&t;  one for BOOTP&n; *&t;&lt;bootp|rarp&gt;&t;- use both protocols to determine my own address&n; */
-DECL|function|root_nfs_addrs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|root_nfs_addrs
@@ -4762,6 +4950,7 @@ c_func
 r_char
 op_star
 id|addrs
+)paren
 )paren
 (brace
 r_char
@@ -5199,13 +5388,17 @@ id|servaddr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Set the interface address and configure a route to the server.&n; */
-DECL|function|root_nfs_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_nfs_setup
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/* Set the default system name in case none was previously found */
@@ -5387,7 +5580,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Get the necessary IP addresses and prepare for mounting the required&n; *  NFS filesystem.&n; */
-DECL|function|nfs_root_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|nfs_root_init
 c_func
@@ -5399,6 +5595,7 @@ comma
 r_char
 op_star
 id|nfsaddrs
+)paren
 )paren
 (brace
 macro_line|#ifdef NFSROOT_DEBUG
@@ -5568,7 +5765,10 @@ suffix:semicolon
 )brace
 multiline_comment|/***************************************************************************&n;&n;&t;       Routines to actually mount the root directory&n;&n; ***************************************************************************/
 multiline_comment|/*&n; *  Query server portmapper for the port of a daemon program&n; */
-DECL|function|root_nfs_getport
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_nfs_getport
@@ -5579,6 +5779,7 @@ id|program
 comma
 r_int
 id|version
+)paren
 )paren
 (brace
 r_struct
@@ -5629,13 +5830,17 @@ id|IPPROTO_UDP
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Get portnumbers for mountd and nfsd from server&n; *  The RPC layer does support portmapper queries; the only reason to&n; *  keep this code is that we may want to use fallback ports. But is there&n; *  actually someone who does not run portmap?&n; */
-DECL|function|root_nfs_ports
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_nfs_ports
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -5682,7 +5887,11 @@ suffix:semicolon
 )brace
 id|nfs_port
 op_assign
+id|htons
+c_func
+(paren
 id|port
+)paren
 suffix:semicolon
 id|dprintk
 c_func
@@ -5747,13 +5956,17 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Get a file handle from the server for the directory which is to be&n; *  mounted&n; */
-DECL|function|root_nfs_get_handle
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_nfs_get_handle
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -5812,7 +6025,10 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Now actually mount the given directory&n; */
-DECL|function|root_nfs_do_mount
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|root_nfs_do_mount
@@ -5822,6 +6038,7 @@ r_struct
 id|super_block
 op_star
 id|sb
+)paren
 )paren
 (brace
 multiline_comment|/* Pass the server address to NFS */
@@ -5867,7 +6084,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Get the NFS port numbers and file handle, and then read the super-&n; *  block for mounting.&n; */
-DECL|function|nfs_root_mount
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|nfs_root_mount
 c_func
@@ -5876,6 +6096,7 @@ r_struct
 id|super_block
 op_star
 id|sb
+)paren
 )paren
 (brace
 r_if

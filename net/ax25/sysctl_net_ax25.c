@@ -1,4 +1,5 @@
 multiline_comment|/* -*- linux-c -*-&n; * sysctl_net_ax25.c: sysctl interface to net AX.25 subsystem.&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ax25 directory entry (empty =) ). [MS]&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1078,12 +1079,10 @@ c_func
 id|ax25_table_header
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|ax25_table
-comma
-id|ax25_table_size
 )paren
 suffix:semicolon
 id|ax25_dir_table

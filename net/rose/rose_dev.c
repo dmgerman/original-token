@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Rose release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new&n; *&t;releases, misbehave and/or generally screw up. It might even work.&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;Rose 001&t;Jonathan(G4KLX)&t;Cloned from nr_dev.c.&n; *&t;&t;&t;Hans(PE1AYX)&t;Fixed interface to IP layer.&n; */
+multiline_comment|/*&n; *&t;ROSE release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;ROSE 001&t;Jonathan(G4KLX)&t;Cloned from nr_dev.c.&n; *&t;&t;&t;Hans(PE1AYX)&t;Fixed interface to IP layer.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 DECL|macro|__NO_VERSION__
@@ -29,7 +29,7 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#include &lt;net/rose.h&gt;
-multiline_comment|/*&n; *&t;Only allow IP over Rose frames through if the netrom device is up.&n; */
+multiline_comment|/*&n; *&t;Only allow IP over ROSE frames through if the netrom device is up.&n; */
 DECL|function|rose_rx_ip
 r_int
 id|rose_rx_ip
@@ -567,7 +567,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;rose: xmit call when iface is down&bslash;n&quot;
+l_string|&quot;ROSE: rose_xmit - called when iface is down&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -726,26 +726,36 @@ id|dev-&gt;family
 op_assign
 id|AF_INET
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 id|dev-&gt;pa_addr
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;192.168.0.1&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_brdaddr
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;192.168.0.255&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_mask
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;255.255.255.0&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_alen
 op_assign
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+l_int|4
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnl3.h,v 1.2 1997/01/21 22:31:28 keil Exp $&n; *&n; * $Log: isdnl3.h,v $&n; * Revision 1.2  1997/01/21 22:31:28  keil&n; * new statemachine; L3 timers&n; *&n; * Revision 1.1  1996/10/13 20:03:47  keil&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: isdnl3.h,v 1.3 1997/04/06 22:54:17 keil Exp $&n; *&n; * $Log: isdnl3.h,v $&n; * Revision 1.3  1997/04/06 22:54:17  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.2  1997/01/21 22:31:28  keil&n; * new statemachine; L3 timers&n; *&n; * Revision 1.1  1996/10/13 20:03:47  keil&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|SBIT
 mdefine_line|#define SBIT(state) (1&lt;&lt;state)
 DECL|macro|ALL_STATES
@@ -22,7 +22,7 @@ r_int
 id|state
 suffix:semicolon
 DECL|member|primitive
-id|byte
+id|u_char
 id|primitive
 suffix:semicolon
 DECL|member|rout
@@ -36,7 +36,7 @@ r_struct
 id|PStack
 op_star
 comma
-id|byte
+id|u_char
 comma
 r_void
 op_star
@@ -126,6 +126,17 @@ r_struct
 id|PStack
 op_star
 id|st
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|sk_buff
+op_star
+id|l3_alloc_skb
+c_func
+(paren
+r_int
+id|len
 )paren
 suffix:semicolon
 eof

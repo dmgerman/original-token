@@ -45,15 +45,10 @@ op_star
 id|lapb
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|lapb
-comma
-r_sizeof
-(paren
-id|lapb_cb
-)paren
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -269,10 +264,6 @@ c_cond
 (paren
 id|lapb
 op_assign
-(paren
-id|lapb_cb
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -1362,6 +1353,18 @@ l_string|&quot;LAPB for Linux. Version 0.01 for Linux NET3.038 (Linux 2.1)&bslas
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Jonathan Naylor &lt;g4klx@g4klx.demon.co.uk&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;The X.25 Link Access Procedure B link layer protocol&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module

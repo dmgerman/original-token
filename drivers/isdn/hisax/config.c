@@ -1,15 +1,21 @@
-multiline_comment|/* $Id: config.c,v 1.11 1997/02/14 12:23:12 fritz Exp $&n;&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&n; * $Log: config.c,v $&n; * Revision 1.11  1997/02/14 12:23:12  fritz&n; * Added support for new insmod parameter handling.&n; *&n; * Revision 1.10  1997/02/14 09:22:09  keil&n; * Final 2.0 version&n; *&n; * Revision 1.9  1997/02/10 11:45:09  fritz&n; * More changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.8  1997/02/09 00:28:05  keil&n; * new interface handling, one interface per card&n; * default protocol now works again&n; *&n; * Revision 1.7  1997/01/27 15:56:57  keil&n; * Teles PCMCIA ITK ix1 micro added&n; *&n; * Revision 1.6  1997/01/21 22:17:56  keil&n; * new module load syntax&n; *&n; * Revision 1.5  1997/01/09 18:28:20  keil&n; * cosmetic cleanups&n; *&n; * Revision 1.4  1996/11/05 19:35:17  keil&n; * using config.h; some spelling fixes&n; *&n; * Revision 1.3  1996/10/23 17:23:28  keil&n; * default config changes&n; *&n; * Revision 1.2  1996/10/23 11:58:48  fritz&n; * Changed default setup to reflect user&squot;s selection of supported&n; * cards/protocols.&n; *&n; * Revision 1.1  1996/10/13 20:04:51  keil&n; * Initial revision&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: config.c,v 1.15 1997/04/06 22:57:24 keil Exp $&n;&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&n; * $Log: config.c,v $&n; * Revision 1.15  1997/04/06 22:57:24  keil&n; * Hisax version 2.1&n; *&n; * Revision 1.14  1997/03/25 23:11:22  keil&n; * US NI-1 protocol&n; *&n; * Revision 1.13  1997/03/23 21:45:49  keil&n; * Add support for ELSA PCMCIA&n; *&n; * Revision 1.12  1997/03/11 21:01:43  keil&n; * nzproto is only used with modules&n; *&n; * Revision 1.11  1997/02/14 12:23:12  fritz&n; * Added support for new insmod parameter handling.&n; *&n; * Revision 1.10  1997/02/14 09:22:09  keil&n; * Final 2.0 version&n; *&n; * Revision 1.9  1997/02/10 11:45:09  fritz&n; * More changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.8  1997/02/09 00:28:05  keil&n; * new interface handling, one interface per card&n; * default protocol now works again&n; *&n; * Revision 1.7  1997/01/27 15:56:57  keil&n; * Teles PCMCIA ITK ix1 micro added&n; *&n; * Revision 1.6  1997/01/21 22:17:56  keil&n; * new module load syntax&n; *&n; * Revision 1.5  1997/01/09 18:28:20  keil&n; * cosmetic cleanups&n; *&n; * Revision 1.4  1996/11/05 19:35:17  keil&n; * using config.h; some spelling fixes&n; *&n; * Revision 1.3  1996/10/23 17:23:28  keil&n; * default config changes&n; *&n; * Revision 1.2  1996/10/23 11:58:48  fritz&n; * Changed default setup to reflect user&squot;s selection of supported&n; * cards/protocols.&n; *&n; * Revision 1.1  1996/10/13 20:04:51  keil&n; * Initial revision&n; *&n; *&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;hisax.h&quot;
-multiline_comment|/*&n; * This structure array contains one entry per card. An entry looks&n; * like this:&n; *&n; * { type, protocol, p0, p1, p2, NULL }&n; *&n; * type&n; *    1 Teles 16.0      p0=irq p1=membase p2=iobase&n; *    2 Teles  8.0      p0=irq p1=membase&n; *    3 Teles 16.3      p0=irq p1=iobase&n; *    4 Creatix PNP     p0=irq p1=IO0 (ISAC)  p2=IO1 (HSCX)&n; *    5 AVM A1 (Fritz)  p0=irq p1=iobase&n; *    6 ELSA PC         [p0=iobase] or nothing (autodetect)&n; *    7 ELSA Quickstep  p0=irq p1=iobase&n; *    8 Teles PCMCIA    p0=irq p1=iobase&n; *    9 ITK ix1-micro   p0=irq p1=iobase&n; *&n; *&n; * protocol can be either ISDN_PTYPE_EURO or ISDN_PTYPE_1TR6&n; *&n; *&n; */
+multiline_comment|/*&n; * This structure array contains one entry per card. An entry looks&n; * like this:&n; *&n; * { type, protocol, p0, p1, p2, NULL }&n; *&n; * type&n; *    1 Teles 16.0      p0=irq p1=membase p2=iobase&n; *    2 Teles  8.0      p0=irq p1=membase&n; *    3 Teles 16.3      p0=irq p1=iobase&n; *    4 Creatix PNP     p0=irq p1=IO0 (ISAC)  p2=IO1 (HSCX)&n; *    5 AVM A1 (Fritz)  p0=irq p1=iobase&n; *    6 ELSA PC         [p0=iobase] or nothing (autodetect)&n; *    7 ELSA Quickstep  p0=irq p1=iobase&n; *      ELSA PCMCIA     p0=irq p1=iobase&n; *    8 Teles PCMCIA    p0=irq p1=iobase&n; *    9 ITK ix1-micro   p0=irq p1=iobase&n; *&n; *&n; * protocol can be either ISDN_PTYPE_EURO or ISDN_PTYPE_1TR6 or ISDN_PTYPE_NI1&n; *&n; *&n; */
 macro_line|#ifdef CONFIG_HISAX_ELSA_PCC
 DECL|macro|DEFAULT_CARD
 mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_ELSA
 DECL|macro|DEFAULT_CFG
 mdefine_line|#define DEFAULT_CFG {0,0,0}
+macro_line|#endif
+macro_line|#ifdef CONFIG_HISAX_ELSA_PCMCIA
+DECL|macro|DEFAULT_CARD
+mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_ELSA_QS1000
+DECL|macro|DEFAULT_CFG
+mdefine_line|#define DEFAULT_CFG {3,0x2f8,0}
 macro_line|#endif
 macro_line|#ifdef CONFIG_HISAX_AVM_A1
 DECL|macro|DEFAULT_CARD
@@ -66,6 +72,16 @@ DECL|macro|DEFAULT_PROTO_NAME
 macro_line|#undef DEFAULT_PROTO_NAME
 DECL|macro|DEFAULT_PROTO_NAME
 mdefine_line|#define DEFAULT_PROTO_NAME &quot;EURO&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_HISAX_NI1
+DECL|macro|DEFAULT_PROTO
+macro_line|#undef DEFAULT_PROTO
+DECL|macro|DEFAULT_PROTO
+mdefine_line|#define DEFAULT_PROTO ISDN_PTYPE_NI1
+DECL|macro|DEFAULT_PROTO_NAME
+macro_line|#undef DEFAULT_PROTO_NAME
+DECL|macro|DEFAULT_PROTO_NAME
+mdefine_line|#define DEFAULT_PROTO_NAME &quot;NI1&quot;
 macro_line|#endif
 macro_line|#ifndef DEFAULT_PROTO
 DECL|macro|DEFAULT_PROTO
@@ -888,11 +904,13 @@ id|r
 op_assign
 id|rev
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_int
 id|nzproto
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|nrcards
 op_assign
 l_int|0
@@ -1028,7 +1046,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;HiSax: Version 2.0&bslash;n&quot;
+l_string|&quot;HiSax: Version 2.1&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

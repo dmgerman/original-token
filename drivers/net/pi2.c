@@ -1263,27 +1263,6 @@ id|RES_EXT_INT
 )paren
 suffix:semicolon
 )brace
-DECL|function|free_p
-r_static
-r_void
-id|free_p
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-(brace
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-)brace
 DECL|function|a_txint
 r_static
 r_void
@@ -1651,10 +1630,12 @@ id|lp-&gt;tstate
 r_case
 id|ACTIVE
 suffix:colon
-id|free_p
+id|kfree_skb
 c_func
 (paren
 id|lp-&gt;sndbuf
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;sndbuf
@@ -3095,10 +3076,12 @@ multiline_comment|/* stuffing a char satisfies Interrupt condition */
 r_else
 (brace
 multiline_comment|/* No more to send */
-id|free_p
+id|kfree_skb
 c_func
 (paren
 id|lp-&gt;sndbuf
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;sndbuf
@@ -3319,10 +3302,12 @@ r_case
 id|ACTIVE
 suffix:colon
 multiline_comment|/* Unexpected underrun */
-id|free_p
+id|kfree_skb
 c_func
 (paren
 id|lp-&gt;sndbuf
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;sndbuf
@@ -7157,10 +7142,12 @@ id|lp-&gt;sndq
 op_ne
 l_int|NULL
 )paren
-id|free_p
+id|kfree_skb
 c_func
 (paren
 id|ptr
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|restore_flags
@@ -7565,6 +7552,18 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;David Perry &lt;dp@hydra.carleton.ca&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;AX.25 driver for the Ottawa PI and PI/2 HDLC cards&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -7650,5 +7649,4 @@ id|pi0b
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c skeleton.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
 eof

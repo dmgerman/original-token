@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Only poll when window is full.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added fragmentation to ax25_output.&n; *&t;&t;&t;&t;&t;Added support for extended AX.25.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;Joerg(DL1BKE)&t;Modified fragmenter to fragment vanilla &n; *&t;&t;&t;&t;&t;AX.25 I-Frames. Added PACLEN parameter.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed a problem with buffer allocation&n; *&t;&t;&t;&t;&t;for fragments.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Only poll when window is full.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added fragmentation to ax25_output.&n; *&t;&t;&t;&t;&t;Added support for extended AX.25.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;Joerg(DL1BKE)&t;Modified fragmenter to fragment vanilla &n; *&t;&t;&t;&t;&t;AX.25 I-Frames. Added PACLEN parameter.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed a problem with buffer allocation&n; *&t;&t;&t;&t;&t;for fragments.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -479,8 +479,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;ax25_output: alloc_skb returned NULL&bslash;n&quot;
+id|KERN_CRIT
+l_string|&quot;AX.25: ax25_output - out of memory&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1182,10 +1182,18 @@ r_int
 id|type
 )paren
 (brace
+r_struct
+id|sk_buff
+op_star
+id|skbn
+suffix:semicolon
 r_int
 r_char
 op_star
 id|ptr
+suffix:semicolon
+r_int
+id|headroom
 suffix:semicolon
 r_if
 c_cond
@@ -1237,6 +1245,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|headroom
+op_assign
+id|ax25_addr_size
+c_func
+(paren
+id|ax25-&gt;digipeat
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1246,18 +1262,32 @@ c_func
 id|skb
 )paren
 OL
-id|ax25_addr_size
+id|headroom
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|skbn
+op_assign
+id|skb_realloc_headroom
 c_func
 (paren
-id|ax25-&gt;digipeat
+id|skb
+comma
+id|headroom
 )paren
+)paren
+op_eq
+l_int|NULL
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;ax25_transmit_buffer: not enough room for digi-peaters&bslash;n&quot;
+l_string|&quot;AX.25: ax25_transmit_buffer - out of memory&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree_skb
@@ -1271,6 +1301,34 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|skb-&gt;sk
+op_ne
+l_int|NULL
+)paren
+id|skb_set_owner_w
+c_func
+(paren
+id|skbn
+comma
+id|skb-&gt;sk
+)paren
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+id|skb
+op_assign
+id|skbn
+suffix:semicolon
+)brace
 id|ptr
 op_assign
 id|skb_push
@@ -1278,11 +1336,7 @@ c_func
 (paren
 id|skb
 comma
-id|ax25_addr_size
-c_func
-(paren
-id|ax25-&gt;digipeat
-)paren
+id|headroom
 )paren
 suffix:semicolon
 id|ax25_addr_build
@@ -1356,7 +1410,7 @@ op_ne
 id|FW_ACCEPT
 )paren
 (brace
-id|dev_kfree_skb
+id|kfree_skb
 c_func
 (paren
 id|skb

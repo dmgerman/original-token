@@ -20,6 +20,7 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
 macro_line|#include &lt;net/inet_common.h&gt;
+macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 r_extern
@@ -562,6 +563,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|inet_family_ops
+)paren
+suffix:semicolon
+DECL|variable|in_aton
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|in_aton
+)paren
+suffix:semicolon
+DECL|variable|in_ntoa
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|in_ntoa
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_IPV6_MODULE

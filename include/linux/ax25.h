@@ -20,8 +20,8 @@ DECL|macro|AX25_BACKOFF
 mdefine_line|#define&t;AX25_BACKOFF&t;6
 DECL|macro|AX25_EXTSEQ
 mdefine_line|#define&t;AX25_EXTSEQ&t;7
-DECL|macro|AX25_HDRINCL
-mdefine_line|#define&t;AX25_HDRINCL&t;8
+DECL|macro|AX25_PIDINCL
+mdefine_line|#define&t;AX25_PIDINCL&t;8
 DECL|macro|AX25_IDLE
 mdefine_line|#define AX25_IDLE&t;9
 DECL|macro|AX25_PACLEN

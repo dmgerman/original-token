@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.32 1997/04/11 00:42:23 davem Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.33 1997/05/21 10:21:55 jj Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
@@ -552,12 +552,16 @@ id|pause
 )paren
 r_static
 id|__inline__
-id|_syscall0
+id|_syscall1
 c_func
 (paren
 r_int
 comma
 id|setup
+comma
+r_int
+comma
+id|magic
 )paren
 r_static
 id|__inline__

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Rose release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;Rose 001&t;Jonathan(G4KLX)&t;Cloned from rose_timer.c&n; */
+multiline_comment|/*&n; *&t;ROSE release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;ROSE 001&t;Jonathan(G4KLX)&t;Cloned from rose_timer.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -103,7 +103,7 @@ id|neigh-&gt;timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Rose Link Timer&n; *&n; *&t;This routine is called every 100ms. Decrement timer by this&n; *&t;amount - if expired then process the event.&n; */
+multiline_comment|/*&n; *&t;ROSE Link Timer&n; *&n; *&t;This routine is called every 100ms. Decrement timer by this&n; *&t;amount - if expired then process the event.&n; */
 DECL|function|rose_link_timer
 r_static
 r_void
@@ -161,6 +161,10 @@ c_func
 (paren
 id|neigh
 )paren
+suffix:semicolon
+id|neigh-&gt;dce_mode
+op_assign
+l_int|0
 suffix:semicolon
 id|neigh-&gt;t0timer
 op_assign
@@ -368,6 +372,17 @@ id|neigh-&gt;restarted
 op_assign
 l_int|1
 suffix:semicolon
+id|neigh-&gt;dce_mode
+op_assign
+(paren
+id|skb-&gt;data
+(braket
+l_int|3
+)braket
+op_eq
+l_int|0x00
+)paren
+suffix:semicolon
 id|del_timer
 c_func
 (paren
@@ -410,11 +425,26 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;rose: diagnostic #%d&bslash;n&quot;
+l_string|&quot;ROSE: received diagnostic #%d - %02X %02X %02X&bslash;n&quot;
 comma
 id|skb-&gt;data
 (braket
 l_int|3
+)braket
+comma
+id|skb-&gt;data
+(braket
+l_int|4
+)braket
+comma
+id|skb-&gt;data
+(braket
+l_int|5
+)braket
+comma
+id|skb-&gt;data
+(braket
+l_int|6
 )braket
 )paren
 suffix:semicolon
@@ -426,7 +456,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;rose: received unknown %02X with LCI 000&bslash;n&quot;
+l_string|&quot;ROSE: received unknown %02X with LCI 000&bslash;n&quot;
 comma
 id|frametype
 )paren
@@ -1063,8 +1093,18 @@ id|skb
 op_ne
 id|FW_ACCEPT
 )paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1146,6 +1186,10 @@ c_func
 (paren
 id|neigh
 )paren
+suffix:semicolon
+id|neigh-&gt;dce_mode
+op_assign
+l_int|0
 suffix:semicolon
 id|neigh-&gt;t0timer
 op_assign

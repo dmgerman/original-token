@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;MKISS Driver&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * &t;&t;This module implements the AX.25 protocol for kernel-based&n; *&t;&t;devices like TTYs. It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s AX.25 protocol layers, just like slip.c.&n; *&t;&t;AX.25 needs to be seperated from slip.c while slip.c is no&n; *&t;&t;longer a static kernel device since it is a module.&n; *&t;&t;This method clears the way to implement other kiss protocols&n; *&t;&t;like mkiss smack g8bpq ..... so far only mkiss is implemented.&n; *&n; * Hans Alblas Hansa@cuci.nl&n; *&n; *&t;History&n; *&t;Jonathan (G4KLX)&t;Fixed to match Linux networking changes - 2.1.15.&n; */
+multiline_comment|/*&n; *&t;MKISS Driver&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * &t;&t;This module implements the AX.25 protocol for kernel-based&n; *&t;&t;devices like TTYs. It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s AX.25 protocol layers, just like slip.c.&n; *&t;&t;AX.25 needs to be seperated from slip.c while slip.c is no&n; *&t;&t;longer a static kernel device since it is a module.&n; *&t;&t;This method clears the way to implement other kiss protocols&n; *&t;&t;like mkiss smack g8bpq ..... so far only mkiss is implemented.&n; *&n; * Hans Alblas &lt;hans@esrac.ele.tue.nl&gt;&n; *&n; *&t;History&n; *&t;Jonathan (G4KLX)&t;Fixed to match Linux networking changes - 2.1.15.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -105,14 +106,6 @@ op_assign
 id|AX25_MAXDEV
 suffix:semicolon
 multiline_comment|/* Can be overridden with insmod! */
-id|MODULE_PARM
-c_func
-(paren
-id|ax25_maxdev
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
 DECL|variable|ax_ldisc
 r_static
 r_struct
@@ -339,10 +332,6 @@ id|ax25_ctrls
 id|i
 )braket
 op_assign
-(paren
-id|ax25_ctrl_t
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -495,7 +484,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ax_alloc() - register_netdev() failure.&bslash;n&quot;
+l_string|&quot;mkiss: ax_alloc() - register_netdev() failure.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -566,7 +555,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: ax_free for already free unit.&bslash;n&quot;
+l_string|&quot;mkiss: %s: ax_free for already free unit.&bslash;n&quot;
 comma
 id|ax-&gt;dev-&gt;name
 )paren
@@ -636,11 +625,6 @@ l_int|2
 suffix:semicolon
 id|xbuff
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -653,11 +637,6 @@ id|GFP_ATOMIC
 suffix:semicolon
 id|rbuff
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -684,7 +663,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: unable to grow ax25 buffers, MTU change cancelled.&bslash;n&quot;
+l_string|&quot;mkiss: %s: unable to grow ax25 buffers, MTU change cancelled.&bslash;n&quot;
 comma
 id|ax-&gt;dev-&gt;name
 )paren
@@ -911,7 +890,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: trying to lock already locked device!&bslash;n&quot;
+l_string|&quot;mkiss: %s: trying to lock already locked device!&bslash;n&quot;
 comma
 id|ax-&gt;dev-&gt;name
 )paren
@@ -952,7 +931,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: trying to unlock already unlocked device!&bslash;n&quot;
+l_string|&quot;mkiss: %s: trying to unlock already unlocked device!&bslash;n&quot;
 comma
 id|ax-&gt;dev-&gt;name
 )paren
@@ -1053,7 +1032,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: memory squeeze, dropping packet.&bslash;n&quot;
+l_string|&quot;mkiss: %s: memory squeeze, dropping packet.&bslash;n&quot;
 comma
 id|ax-&gt;dev-&gt;name
 )paren
@@ -1177,7 +1156,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: truncating oversized transmit packet!&bslash;n&quot;
+l_string|&quot;mkiss: %s: truncating oversized transmit packet!&bslash;n&quot;
 comma
 id|ax-&gt;dev-&gt;name
 )paren
@@ -1557,7 +1536,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: xmit call when iface is down&bslash;n&quot;
+l_string|&quot;mkiss: %s: xmit call when iface is down&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -1636,7 +1615,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: transmit timed out, %s?&bslash;n&quot;
+l_string|&quot;mkiss: %s: transmit timed out, %s?&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1716,7 +1695,7 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|kfree_skb
 c_func
 (paren
 id|skb
@@ -1893,11 +1872,6 @@ c_cond
 (paren
 id|ax-&gt;rbuff
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -1920,11 +1894,6 @@ c_cond
 (paren
 id|ax-&gt;xbuff
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -3323,11 +3292,6 @@ c_cond
 (paren
 id|ax25_ctrls
 op_assign
-(paren
-id|ax25_ctrl_t
-op_star
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -3725,22 +3689,36 @@ id|dev-&gt;family
 op_assign
 id|AF_INET
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 id|dev-&gt;pa_addr
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;192.168.0.1&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_brdaddr
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;192.168.0.255&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_mask
 op_assign
-l_int|0
+id|in_aton
+c_func
+(paren
+l_string|&quot;255.255.255.0&quot;
+)paren
 suffix:semicolon
 id|dev-&gt;pa_alen
 op_assign
 l_int|4
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4362,7 +4340,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Couldn&squot;t register Mkiss device&bslash;n&quot;
+l_string|&quot;mkiss: couldn&squot;t register Mkiss device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4383,6 +4361,34 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|ax25_maxdev
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|ax25_maxdev
+comma
+l_string|&quot;number of MKISS devices&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Hans Albas PE1AYX &lt;hans@esrac.ele.tue.nl&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;KISS driver for AX.25 over TTYs&quot;
+)paren
 suffix:semicolon
 DECL|function|init_module
 r_int

@@ -1303,6 +1303,12 @@ r_extern
 r_const
 r_struct
 id|hardware_info
+id|sm_hw_sbcfdx
+suffix:semicolon
+r_extern
+r_const
+r_struct
+id|hardware_info
 id|sm_hw_wss
 suffix:semicolon
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.19 1997/05/08 20:57:39 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.20 1997/05/28 05:25:07 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
@@ -55,6 +55,10 @@ id|cpu
 comma
 r_int
 id|irq
+comma
+r_void
+op_star
+id|regs
 )paren
 (brace
 r_register
@@ -208,9 +212,9 @@ suffix:semicolon
 macro_line|#endif /* DEBUG_IRQLOCK */
 macro_line|#else
 DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(local_irq_count[cpu]++)
+mdefine_line|#define irq_enter(cpu, irq, regs)&t;(local_irq_count[cpu]++)
 DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(local_irq_count[cpu]--)
+mdefine_line|#define irq_exit(cpu, irq)&t;&t;(local_irq_count[cpu]--)
 macro_line|#endif
 multiline_comment|/* Dave Redman (djhr@tadpole.co.uk)&n; * changed these to function pointers.. it saves cycles and will allow&n; * the irq dependencies to be split into different files at a later date&n; * sun4c_irq.c, sun4m_irq.c etc so we could reduce the kernel size.&n; */
 r_extern

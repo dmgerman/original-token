@@ -5084,6 +5084,9 @@ suffix:semicolon
 r_case
 id|CS_RESET_OCCURRED
 suffix:colon
+r_case
+id|CS_BUS_RESET
+suffix:colon
 id|host_status
 op_assign
 id|DID_RESET
@@ -5580,7 +5583,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_EMERG
+id|KERN_WARNING
 l_string|&quot;qlogicpti : Aborting cmd for tgt[%d] lun[%d]&bslash;n&quot;
 comma
 (paren
@@ -5752,7 +5755,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_EMERG
+id|KERN_WARNING
 l_string|&quot;qlogicpti : Resetting SCSI bus!&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.6 1997/05/04 07:21:04 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.7 1997/05/20 07:58:56 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -908,6 +909,14 @@ id|reboot_command
 l_int|256
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_ROOT_NFS
+r_extern
+r_char
+id|nfs_root_addrs
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 DECL|variable|phys_base
 r_int
 r_int
@@ -1430,6 +1439,157 @@ op_assign
 op_amp
 id|fake_swapper_regs
 suffix:semicolon
+macro_line|#ifdef CONFIG_ROOT_NFS&t;
+r_if
+c_cond
+(paren
+op_logical_neg
+op_star
+id|nfs_root_addrs
+)paren
+(brace
+r_int
+id|chosen
+op_assign
+id|prom_finddevice
+(paren
+l_string|&quot;/chosen&quot;
+)paren
+suffix:semicolon
+id|u32
+id|cl
+comma
+id|sv
+comma
+id|gw
+suffix:semicolon
+r_char
+op_star
+id|p
+op_assign
+id|nfs_root_addrs
+suffix:semicolon
+id|cl
+op_assign
+id|prom_getintdefault
+(paren
+id|chosen
+comma
+l_string|&quot;client-ip&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|sv
+op_assign
+id|prom_getintdefault
+(paren
+id|chosen
+comma
+l_string|&quot;server-ip&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|gw
+op_assign
+id|prom_getintdefault
+(paren
+id|chosen
+comma
+l_string|&quot;gateway-ip&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cl
+op_logical_and
+id|sv
+)paren
+(brace
+id|strcpy
+(paren
+id|p
+comma
+id|in_ntoa
+(paren
+id|cl
+)paren
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|strlen
+(paren
+id|p
+)paren
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+l_char|&squot;:&squot;
+suffix:semicolon
+id|strcpy
+(paren
+id|p
+comma
+id|in_ntoa
+(paren
+id|sv
+)paren
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|strlen
+(paren
+id|p
+)paren
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+l_char|&squot;:&squot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|gw
+)paren
+(brace
+id|strcpy
+(paren
+id|p
+comma
+id|in_ntoa
+(paren
+id|gw
+)paren
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|strlen
+(paren
+id|p
+)paren
+suffix:semicolon
+)brace
+id|strcpy
+(paren
+id|p
+comma
+l_string|&quot;::::none&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_SERIAL
 op_star
 id|memory_start_p

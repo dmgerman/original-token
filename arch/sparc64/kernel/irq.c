@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.12 1997/04/16 05:56:20 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.c,v 1.13 1997/05/27 07:54:28 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1756,23 +1756,19 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
+macro_line|#ifndef __SMP__
 DECL|variable|__sparc64_bh_counter
-id|atomic_t
+r_int
 id|__sparc64_bh_counter
 op_assign
-id|ATOMIC_INIT
-c_func
-(paren
 l_int|0
-)paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
-macro_line|#error SMP not supported on sparc64 just yet
-macro_line|#else
 DECL|macro|irq_enter
 mdefine_line|#define irq_enter(cpu, irq)&t;(local_irq_count[cpu]++)
 DECL|macro|irq_exit
 mdefine_line|#define irq_exit(cpu, irq)&t;(local_irq_count[cpu]--)
+macro_line|#else
+macro_line|#error SMP not supported on sparc64 just yet
 macro_line|#endif /* __SMP__ */
 DECL|function|report_spurious_ivec
 r_void

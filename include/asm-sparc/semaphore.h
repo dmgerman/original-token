@@ -13,7 +13,7 @@ id|atomic_t
 id|count
 suffix:semicolon
 DECL|member|waking
-id|atomic_t
+r_int
 id|waking
 suffix:semicolon
 DECL|member|wait
@@ -25,9 +25,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), ATOMIC_INIT(0), NULL })
+mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), 0, NULL })
 DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), ATOMIC_INIT(0), NULL })
+mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), 0, NULL })
 r_extern
 r_void
 id|__down
@@ -64,10 +64,9 @@ suffix:semicolon
 DECL|macro|sema_init
 mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), val)
 DECL|macro|wake_one_more
-mdefine_line|#define wake_one_more(sem)&t;atomic_inc(&amp;sem-&gt;waking);
-multiline_comment|/* XXX Put this in raw assembler for SMP case so that the atomic_t&n; * XXX spinlock can allow this to be done without grabbing the IRQ&n; * XXX global lock.&n; */
+mdefine_line|#define wake_one_more(sem)&t;&bslash;&n;do {&t;&t;&t;&t;&bslash;&n;&t;unsigned long flags;&t;&bslash;&n;&t;save_and_cli(flags);&t;&bslash;&n;&t;sem-&gt;waking++;&t;&t;&bslash;&n;&t;restore_flags(flags);&t;&bslash;&n;} while(0)
 DECL|macro|waking_non_zero
-mdefine_line|#define waking_non_zero(sem) &bslash;&n;({&t;unsigned long flags; &bslash;&n;&t;int ret = 0; &bslash;&n;&t;save_flags(flags); &bslash;&n;&t;cli(); &bslash;&n;&t;if (atomic_read(&amp;sem-&gt;waking) &gt; 0) { &bslash;&n;&t;&t;atomic_dec(&amp;sem-&gt;waking); &bslash;&n;&t;&t;ret = 1; &bslash;&n;&t;} &bslash;&n;&t;restore_flags(flags); &bslash;&n;&t;ret; &bslash;&n;})
+mdefine_line|#define waking_non_zero(sem)&t;&bslash;&n;({&t;unsigned long flags;&t;&bslash;&n;&t;int ret = 0;&t;&t;&bslash;&n;&t;save_and_cli(flags);&t;&bslash;&n;&t;if (sem-&gt;waking &gt; 0) {&t;&bslash;&n;&t;&t;sem-&gt;waking--;&t;&bslash;&n;&t;&t;ret = 1;&t;&bslash;&n;&t;}&t;&t;&t;&bslash;&n;&t;restore_flags(flags);&t;&bslash;&n;&t;ret;&t;&t;&t;&bslash;&n;})
 multiline_comment|/* This isn&squot;t quite as clever as the x86 side, I&squot;ll be fixing this&n; * soon enough.&n; */
 DECL|function|down
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new&n; *&t;releases, misbehave and/or generally screw up. It might even work.&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from af_ax25.c.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from af_ax25.c.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -358,15 +358,10 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|ax25_uid
-comma
-r_sizeof
-(paren
-id|ax25_uid_assoc
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -403,15 +398,10 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|ax25_uid
-comma
-r_sizeof
-(paren
-id|ax25_uid_assoc
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -650,15 +640,10 @@ id|ax25_uid
 op_assign
 id|ax25_uid-&gt;next
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|s
-comma
-r_sizeof
-(paren
-id|ax25_uid_assoc
-)paren
 )paren
 suffix:semicolon
 )brace

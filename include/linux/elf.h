@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_ELF_H
 DECL|macro|_LINUX_ELF_H
 mdefine_line|#define _LINUX_ELF_H
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
 multiline_comment|/* 32-bit ELF base types. */
 DECL|typedef|Elf32_Addr

@@ -1,22 +1,22 @@
-multiline_comment|/* $Id: q931.c,v 1.4 1997/02/09 00:29:11 keil Exp $&n;&n; * q931.c       code to decode ITU Q.931 call control messages&n; *&n; * Author       Jan den Ouden&n; *&n; * Changelog&n; *&n; * Pauline Middelink    general improvements&n; *&n; * Beat Doebeli         cause texts, display information element&n; *&n; * Karsten Keil         cause texts, display information element for 1TR6&n; *&n; *&n; * $Log: q931.c,v $&n; * Revision 1.4  1997/02/09 00:29:11  keil&n; * new interface handling, one interface per card&n; *&n; * Revision 1.3  1997/01/21 22:24:59  keil&n; * cleanups&n; *&n; * Revision 1.2  1996/10/27 22:12:45  keil&n; * reporting unknown level 3 protocol ids&n; *&n; * Revision 1.1  1996/10/13 20:04:56  keil&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: q931.c,v 1.5 1997/04/06 22:56:43 keil Exp $&n;&n; * q931.c       code to decode ITU Q.931 call control messages&n; *&n; * Author       Jan den Ouden&n; *&n; * Changelog&n; *&n; * Pauline Middelink    general improvements&n; *&n; * Beat Doebeli         cause texts, display information element&n; *&n; * Karsten Keil         cause texts, display information element for 1TR6&n; *&n; *&n; * $Log: q931.c,v $&n; * Revision 1.5  1997/04/06 22:56:43  keil&n; * Some cosmetic changes&n; *&n; * Revision 1.4  1997/02/09 00:29:11  keil&n; * new interface handling, one interface per card&n; *&n; * Revision 1.3  1997/01/21 22:24:59  keil&n; * cleanups&n; *&n; * Revision 1.2  1996/10/27 22:12:45  keil&n; * reporting unknown level 3 protocol ids&n; *&n; * Revision 1.1  1996/10/13 20:04:56  keil&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;l3_1tr6.h&quot;
-id|byte
+id|u_char
 op_star
 DECL|function|findie
 id|findie
 c_func
 (paren
-id|byte
+id|u_char
 op_star
 id|p
 comma
 r_int
 id|size
 comma
-id|byte
+id|u_char
 id|ie
 comma
 r_int
@@ -30,7 +30,7 @@ id|codeset
 comma
 id|maincodeset
 suffix:semicolon
-id|byte
+id|u_char
 op_star
 id|pend
 op_assign
@@ -190,11 +190,11 @@ DECL|function|iecpy
 id|iecpy
 c_func
 (paren
-id|byte
+id|u_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|iestart
 comma
@@ -202,7 +202,7 @@ r_int
 id|ieoffset
 )paren
 (brace
-id|byte
+id|u_char
 op_star
 id|p
 suffix:semicolon
@@ -252,7 +252,7 @@ DECL|function|getcallref
 id|getcallref
 c_func
 (paren
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -280,7 +280,7 @@ r_struct
 id|MessageType
 (brace
 DECL|member|nr
-id|byte
+id|u_char
 id|nr
 suffix:semicolon
 DECL|member|descr
@@ -899,7 +899,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 id|b
 comma
 r_int
@@ -968,13 +968,13 @@ id|dest
 suffix:semicolon
 )brace
 r_static
-id|byte
+id|u_char
 op_star
 DECL|function|skipext
 id|skipext
 c_func
 (paren
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -1005,7 +1005,7 @@ r_struct
 id|CauseValue
 (brace
 DECL|member|nr
-id|byte
+id|u_char
 id|nr
 suffix:semicolon
 DECL|member|edescr
@@ -1575,12 +1575,12 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
 (brace
-id|byte
+id|u_char
 op_star
 id|end
 suffix:semicolon
@@ -2037,7 +2037,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -2251,7 +2251,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -2315,7 +2315,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -2420,7 +2420,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -2576,7 +2576,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -2898,7 +2898,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -3027,7 +3027,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -3127,7 +3127,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -3199,7 +3199,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -3327,7 +3327,7 @@ r_char
 op_star
 id|dest
 comma
-id|byte
+id|u_char
 op_star
 id|p
 )paren
@@ -3518,7 +3518,7 @@ r_struct
 id|InformationElement
 (brace
 DECL|member|nr
-id|byte
+id|u_char
 id|nr
 suffix:semicolon
 DECL|member|descr
@@ -3536,7 +3536,7 @@ id|f
 r_char
 op_star
 comma
-id|byte
+id|u_char
 op_star
 )paren
 suffix:semicolon
@@ -4016,7 +4016,7 @@ r_char
 op_star
 id|txt
 comma
-id|byte
+id|u_char
 op_star
 id|p
 comma
@@ -4036,7 +4036,7 @@ op_assign
 id|txt
 suffix:semicolon
 r_register
-id|byte
+id|u_char
 id|w
 suffix:semicolon
 r_for
@@ -4159,7 +4159,7 @@ id|IsdnCardState
 op_star
 id|sp
 comma
-id|byte
+id|u_char
 op_star
 id|buf
 comma
@@ -4263,7 +4263,7 @@ id|IsdnCardState
 op_star
 id|sp
 comma
-id|byte
+id|u_char
 op_star
 id|buf
 comma
@@ -4275,7 +4275,7 @@ op_star
 id|comment
 )paren
 (brace
-id|byte
+id|u_char
 op_star
 id|bend
 op_assign

@@ -349,9 +349,6 @@ comma
 DECL|enumerator|PROC_NET_CL2LLC
 id|PROC_NET_CL2LLC
 comma
-DECL|enumerator|PROC_NET_X25_LINKS
-id|PROC_NET_X25_LINKS
-comma
 DECL|enumerator|PROC_NET_X25_ROUTES
 id|PROC_NET_X25_ROUTES
 comma

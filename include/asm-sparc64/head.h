@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: head.h,v 1.19 1997/05/18 08:42:18 davem Exp $ */
+multiline_comment|/* $Id: head.h,v 1.21 1997/05/27 06:28:17 davem Exp $ */
 macro_line|#ifndef _SPARC64_HEAD_H
 DECL|macro|_SPARC64_HEAD_H
 mdefine_line|#define _SPARC64_HEAD_H
@@ -62,7 +62,7 @@ mdefine_line|#define BTRAP(lvl) TRAP_ARG(bad_trap, lvl)
 DECL|macro|BTRAPTL1
 mdefine_line|#define BTRAPTL1(lvl) TRAPTL1_ARG(bad_trap_tl1, lvl)
 DECL|macro|FLUSH_WINDOW_TRAP
-mdefine_line|#define FLUSH_WINDOW_TRAP&t;&t;&t;&t;&t;&bslash;&n;&t;flushw;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;done; nop; nop; nop; nop; nop; nop;
+mdefine_line|#define FLUSH_WINDOW_TRAP&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;flushw;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ldx&t;[%sp + STACK_BIAS + REGWIN_SZ + PT_V9_TNPC], %l1;&t;&bslash;&n;&t;add&t;%l1, 4, %l2;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;stx&t;%l1, [%sp + STACK_BIAS + REGWIN_SZ + PT_V9_TPC];&t;&bslash;&n;&t;ba,pt&t;%xcc, rtrap;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; stx&t;%l2, [%sp + STACK_BIAS + REGWIN_SZ + PT_V9_TNPC];
 multiline_comment|/* Before touching these macros, you owe it to yourself to go and&n; * see how arch/sparc64/kernel/winfixup.S works... -DaveM&n; */
 multiline_comment|/* Normal kernel spill */
 DECL|macro|SPILL_0_NORMAL

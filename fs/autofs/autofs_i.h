@@ -1,7 +1,6 @@
 multiline_comment|/* -*- linux-c -*- ------------------------------------------------------- *&n; *   &n; * linux/fs/autofs/autofs_i.h&n; *&n; *   Copyright 1997 Transmeta Corporation - All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ----------------------------------------------------------------------- */
 multiline_comment|/* Internal header file for autofs */
-DECL|macro|DEBUG_WAITLIST
-mdefine_line|#define DEBUG_WAITLIST 1
+multiline_comment|/* #define DEBUG_WAITLIST 1 */
 macro_line|#include &lt;linux/auto_fs.h&gt;
 multiline_comment|/* This is the range of ioctl() numbers we claim as ours */
 DECL|macro|AUTOFS_IOC_FIRST

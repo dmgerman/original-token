@@ -561,12 +561,16 @@ id|pause
 multiline_comment|/* needs to be inline */
 r_static
 r_inline
-id|_syscall0
+id|_syscall1
 c_func
 (paren
 r_int
 comma
 id|setup
+comma
+r_int
+comma
+id|magic
 )paren
 multiline_comment|/* called in init before execve */
 r_static
