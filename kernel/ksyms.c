@@ -26,6 +26,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#ifdef __alpha__
 macro_line|# include &lt;asm/io.h&gt;
 macro_line|# include &lt;asm/hwrpb.h&gt;
@@ -823,6 +824,12 @@ c_func
 id|aout_core_dump
 )paren
 comma
+id|X
+c_func
+(paren
+id|add_blkdev_randomness
+)paren
+comma
 multiline_comment|/* device registration */
 id|X
 c_func
@@ -1473,6 +1480,12 @@ id|X
 c_func
 (paren
 id|ip_rt_route
+)paren
+comma
+id|X
+c_func
+(paren
+id|ip_rt_put
 )paren
 comma
 id|X
@@ -2213,6 +2226,18 @@ id|X
 c_func
 (paren
 id|proc_scsi_inode_operations
+)paren
+comma
+id|X
+c_func
+(paren
+id|proc_net_inode_operations
+)paren
+comma
+id|X
+c_func
+(paren
+id|proc_net
 )paren
 comma
 macro_line|#endif

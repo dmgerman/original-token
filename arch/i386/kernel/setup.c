@@ -721,6 +721,8 @@ comma
 l_string|&quot;DX/2-WB&quot;
 comma
 l_string|&quot;DX/4&quot;
+comma
+l_string|&quot;DX/4-WB&quot;
 )brace
 suffix:semicolon
 r_if

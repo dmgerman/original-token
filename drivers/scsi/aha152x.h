@@ -1,7 +1,7 @@
 macro_line|#ifndef _AHA152X_H
 DECL|macro|_AHA152X_H
 mdefine_line|#define _AHA152X_H
-multiline_comment|/*&n; * $Id: aha152x.h,v 1.11 1995/12/07 01:03:20 fischer Exp root $&n; */
+multiline_comment|/*&n; * $Id: aha152x.h,v 1.12 1995/12/07 01:03:48 fischer Exp fischer $&n; */
 macro_line|#if defined(__KERNEL__)
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
@@ -99,7 +99,7 @@ multiline_comment|/* number of queueable commands&n;   (unless we support more t
 DECL|macro|AHA152X_MAXQUEUE
 mdefine_line|#define AHA152X_MAXQUEUE&t;7&t;&t;
 DECL|macro|AHA152X_REVID
-mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.11 $&quot;
+mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.12 $&quot;
 r_extern
 r_struct
 id|proc_dir_entry

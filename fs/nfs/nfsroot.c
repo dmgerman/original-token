@@ -30,15 +30,15 @@ macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
-macro_line|#include &lt;netinet/in.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 multiline_comment|/* Range of privileged ports */
 DECL|macro|STARTPORT
-mdefine_line|#define STARTPORT 600
+mdefine_line|#define STARTPORT&t;600
 DECL|macro|ENDPORT
-mdefine_line|#define ENDPORT (IPPORT_RESERVED - 1)
+mdefine_line|#define ENDPORT&t;&t;1023
 DECL|macro|NPORTS
-mdefine_line|#define NPORTS&t;(ENDPORT - STARTPORT + 1)
+mdefine_line|#define NPORTS&t;&t;(ENDPORT - STARTPORT + 1)
 DECL|struct|open_dev
 r_struct
 id|open_dev

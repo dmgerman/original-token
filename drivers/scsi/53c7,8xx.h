@@ -1,33 +1,16 @@
-multiline_comment|/*&n; * NCR 53c{7,8}0x0 driver, header file&n; *&n; * Sponsored by&n; *      iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&t;&n; *&n; * Copyright 1993, Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@Colorado.EDU&n; *&t;+1 (303) 786-7975&n; *&n; * TolerANT and SCSI SCRIPTS are registered trademarks of NCR Corporation.&n; * &n; * PRE-ALPHA&n; *&n; * For more information, please consult &n; *&n; * NCR 53C700/53C700-66&n; * SCSI I/O Processor&n; * Data Manual&n; *&n; * NCR 53C810&n; * PCI-SCSI I/O Processor &n; * Data Manual&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * +1 (719) 578-3400&n; *&n; * Toll free literature number&n; * +1 (800) 334-5454&n; *&n; */
+multiline_comment|/*&n; * NCR 53c{7,8}0x0 driver, header file&n; *&n; * Sponsored by&n; *      iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&t;&n; *&n; * Copyright 1993, 1994, 1995 Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@PoohSticks.ORG&n; *&t;+1 (303) 786-7975&n; *&n; * TolerANT and SCSI SCRIPTS are registered trademarks of NCR Corporation.&n; * &n; * PRE-ALPHA&n; *&n; * For more information, please consult &n; *&n; * NCR 53C700/53C700-66&n; * SCSI I/O Processor&n; * Data Manual&n; *&n; * NCR 53C810&n; * PCI-SCSI I/O Processor &n; * Data Manual&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * +1 (719) 578-3400&n; *&n; * Toll free literature number&n; * +1 (800) 334-5454&n; *&n; */
 macro_line|#ifndef NCR53c7x0_H
 DECL|macro|NCR53c7x0_H
 mdefine_line|#define NCR53c7x0_H
-macro_line|#ifdef __alpha__
-DECL|macro|ncr_readb
-macro_line|# define ncr_readb(a)&t;&t;((unsigned int)readb((unsigned long)(a)))
-DECL|macro|ncr_readw
-macro_line|# define ncr_readw(a)&t;&t;((unsigned int)readw((unsigned long)(a)))
-DECL|macro|ncr_readl
-macro_line|# define ncr_readl(a)&t;&t;((unsigned int)readl((unsigned long)(a)))
-DECL|macro|ncr_writeb
-macro_line|# define ncr_writeb(v,a)&t;(writeb((v), (unsigned long)(a)))
-DECL|macro|ncr_writew
-macro_line|# define ncr_writew(v,a)&t;(writew((v), (unsigned long)(a)))
-DECL|macro|ncr_writel
-macro_line|# define ncr_writel(v,a)&t;(writel((v), (unsigned long)(a)))
+macro_line|#if !defined(LINUX_1_2) &amp;&amp; !defined(LINUX_1_3)
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt; 65536 + 3 * 256
+DECL|macro|LINUX_1_3
+mdefine_line|#define LINUX_1_3
 macro_line|#else
-DECL|macro|ncr_readb
-macro_line|# define ncr_readb(a)&t;&t;(*(unsigned char*)(a))
-DECL|macro|ncr_readw
-macro_line|# define ncr_readw(a)&t;&t;(*(unsigned short*)(a))
-DECL|macro|ncr_readl
-macro_line|# define ncr_readl(a)&t;&t;(*(unsigned int*)(a))
-DECL|macro|ncr_writeb
-macro_line|# define ncr_writeb(v,a)&t;(*(unsigned char*)(a) = (v))
-DECL|macro|ncr_writew
-macro_line|# define ncr_writew(v,a)&t;(*(unsigned short*)(a) = (v))
-DECL|macro|ncr_writel
-macro_line|# define ncr_writel(v,a)&t;(*(unsigned int*)(a) = (v))
+DECL|macro|LINUX_1_2
+mdefine_line|#define LINUX_1_2
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* &n; * Prevent name space pollution in hosts.c, and only provide the &n; * define we need to get the NCR53c7x0 driver into the host template&n; * array.&n; */
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
@@ -94,10 +77,81 @@ macro_line|#else
 DECL|macro|NCR53c7xx_release
 mdefine_line|#define NCR53c7xx_release NULL
 macro_line|#endif
+macro_line|#ifdef LINUX_1_2
 DECL|macro|NCR53c7xx
-mdefine_line|#define NCR53c7xx {NULL, NULL, NULL, NULL,     &bslash;&n;        &quot;NCR53c{7,8}xx (rel 4)&quot;, NCR53c7xx_detect,                      &bslash;&n;        NULL, /* info */ NULL, /* command, deprecated */ NULL,          &bslash;&n;        NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,      &bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ 1, &bslash;&n;        /* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 1 ,         &bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+mdefine_line|#define NCR53c7xx {NULL, NULL, &quot;NCR53c{7,8}xx (rel 13)&quot;, NCR53c7xx_detect,&bslash;&n;&t;NULL, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 24, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 3, &t;&t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+macro_line|#else
+DECL|macro|NCR53c7xx
+mdefine_line|#define NCR53c7xx {NULL, NULL, NULL, NULL, &bslash;&n;        &quot;NCR53c{7,8}xx (rel 13)&quot;, NCR53c7xx_detect,&bslash;&n;        NULL, /* info */ NULL, /* command, deprecated */ NULL,&t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 24, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 3, &t;&t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+macro_line|#endif
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
+macro_line|#ifdef LINUX_1_2
+multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; * These are trivial on the 1:1 Linux/i386 mapping (but if we ever&n; * make the kernel segment mapped at 0, we need to do translation&n; * on the i386 as well)&n; */
+DECL|function|virt_to_phys
+r_extern
+r_inline
+r_int
+r_int
+id|virt_to_phys
+c_func
+(paren
+r_volatile
+r_void
+op_star
+id|address
+)paren
+(brace
+r_return
+(paren
+r_int
+r_int
+)paren
+id|address
+suffix:semicolon
+)brace
+DECL|function|phys_to_virt
+r_extern
+r_inline
+r_void
+op_star
+id|phys_to_virt
+c_func
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+r_return
+(paren
+r_void
+op_star
+)paren
+id|address
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * IO bus memory addresses are also 1:1 with the physical address&n; */
+DECL|macro|virt_to_bus
+mdefine_line|#define virt_to_bus virt_to_phys
+DECL|macro|bus_to_virt
+mdefine_line|#define bus_to_virt phys_to_virt
+multiline_comment|/*&n; * readX/writeX() are used to access memory mapped devices. On some&n; * architectures the memory mapped IO stuff needs to be accessed&n; * differently. On the x86 architecture, we just read/write the&n; * memory location directly.&n; */
+DECL|macro|readb
+mdefine_line|#define readb(addr) (*(volatile unsigned char *) (addr))
+DECL|macro|readw
+mdefine_line|#define readw(addr) (*(volatile unsigned short *) (addr))
+DECL|macro|readl
+mdefine_line|#define readl(addr) (*(volatile unsigned int *) (addr))
+DECL|macro|writeb
+mdefine_line|#define writeb(b,addr) ((*(volatile unsigned char *) (addr)) = (b))
+DECL|macro|writew
+mdefine_line|#define writew(b,addr) ((*(volatile unsigned short *) (addr)) = (b))
+DECL|macro|writel
+mdefine_line|#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
+DECL|macro|mb
+mdefine_line|#define mb()
+macro_line|#endif /* def LINUX_1_2 */
 multiline_comment|/* Register addresses, ordered numerically */
 multiline_comment|/* SCSI control 0 rw, default = 0xc0 */
 DECL|macro|SCNTL0_REG
@@ -133,7 +187,7 @@ mdefine_line|#define SCNTL1_DHP_800&t;&t;0x20&t;/* Disable halt on parity error 
 DECL|macro|SCNTL1_CON
 mdefine_line|#define SCNTL1_CON&t;&t;0x10&t;/* Connected */
 DECL|macro|SCNTL1_RST
-mdefine_line|#define SCNTL1_RST&t;&t;0x08&t;/*  SCSI RST/ */
+mdefine_line|#define SCNTL1_RST&t;&t;0x08&t;/* SCSI RST/ */
 DECL|macro|SCNTL1_AESP
 mdefine_line|#define SCNTL1_AESP&t;&t;0x04&t;/* Force bad parity */
 DECL|macro|SCNTL1_SND_700
@@ -233,24 +287,25 @@ DECL|macro|SXFER_TP0
 mdefine_line|#define SXFER_TP0&t;&t;0x10&t;/* lsb */
 DECL|macro|SXFER_TP_MASK
 mdefine_line|#define SXFER_TP_MASK&t;&t;0x70
+multiline_comment|/* FIXME : SXFER_TP_SHIFT == 5 is right for &squot;8xx chips */
 DECL|macro|SXFER_TP_SHIFT
-mdefine_line|#define SXFER_TP_SHIFT&t;&t;4
+mdefine_line|#define SXFER_TP_SHIFT&t;&t;5
 DECL|macro|SXFER_TP_4
 mdefine_line|#define SXFER_TP_4&t;&t;0x00&t;/* Divisors */
 DECL|macro|SXFER_TP_5
-mdefine_line|#define SXFER_TP_5&t;&t;0x10
+mdefine_line|#define SXFER_TP_5&t;&t;0x10&lt;&lt;1
 DECL|macro|SXFER_TP_6
-mdefine_line|#define SXFER_TP_6&t;&t;0x20
+mdefine_line|#define SXFER_TP_6&t;&t;0x20&lt;&lt;1
 DECL|macro|SXFER_TP_7
-mdefine_line|#define SXFER_TP_7&t;&t;0x30
+mdefine_line|#define SXFER_TP_7&t;&t;0x30&lt;&lt;1
 DECL|macro|SXFER_TP_8
-mdefine_line|#define SXFER_TP_8&t;&t;0x40
+mdefine_line|#define SXFER_TP_8&t;&t;0x40&lt;&lt;1
 DECL|macro|SXFER_TP_9
-mdefine_line|#define SXFER_TP_9&t;&t;0x50
+mdefine_line|#define SXFER_TP_9&t;&t;0x50&lt;&lt;1
 DECL|macro|SXFER_TP_10
-mdefine_line|#define SXFER_TP_10&t;&t;0x60
+mdefine_line|#define SXFER_TP_10&t;&t;0x60&lt;&lt;1
 DECL|macro|SXFER_TP_11
-mdefine_line|#define SXFER_TP_11&t;&t;0x70
+mdefine_line|#define SXFER_TP_11&t;&t;0x70&lt;&lt;1
 DECL|macro|SXFER_MO3
 mdefine_line|#define SXFER_MO3&t;&t;0x08&t;/* Max offset msb */
 DECL|macro|SXFER_MO2
@@ -368,6 +423,7 @@ DECL|macro|DSTAT_OPC
 mdefine_line|#define DSTAT_OPC&t;&t;0x01&t;/* Illegal instruction */
 DECL|macro|DSTAT_800_IID
 mdefine_line|#define DSTAT_800_IID&t;&t;0x01&t;/* Same thing, different name */
+multiline_comment|/* NCR53c800 moves this stuff into SIST0 */
 DECL|macro|SSTAT0_REG
 mdefine_line|#define SSTAT0_REG&t;&t;0x0d&t;/* SCSI status 0 ro */
 DECL|macro|SIST0_REG_800
@@ -392,6 +448,7 @@ DECL|macro|SSTAT0_RST
 mdefine_line|#define SSTAT0_RST&t;&t;0x02&t;/* SCSI RST/ received */
 DECL|macro|SSTAT0_PAR
 mdefine_line|#define SSTAT0_PAR&t;&t;0x01&t;/* Parity error */
+multiline_comment|/* And uses SSTAT0 for what was SSTAT1 */
 DECL|macro|SSTAT1_REG
 mdefine_line|#define SSTAT1_REG&t;&t;0x0e&t;/* SCSI status 1 ro */
 DECL|macro|SSTAT1_ILF
@@ -422,6 +479,8 @@ DECL|macro|SSTAT2_FF0
 mdefine_line|#define SSTAT2_FF0&t;&t;0x10
 DECL|macro|SSTAT2_FF_MASK
 mdefine_line|#define SSTAT2_FF_MASK&t;&t;0xf0
+DECL|macro|SSTAT2_FF_SHIFT
+mdefine_line|#define SSTAT2_FF_SHIFT&t;&t;4
 multiline_comment|/* &n; * Latched signals, latched on the leading edge of REQ/ for initiators,&n; * ACK/ for targets.&n; */
 DECL|macro|SSTAT2_SDP
 mdefine_line|#define SSTAT2_SDP&t;&t;0x08&t;/* SDP */
@@ -431,6 +490,20 @@ DECL|macro|SSTAT2_CD
 mdefine_line|#define SSTAT2_CD&t;&t;0x02&t;/* C/D */
 DECL|macro|SSTAT2_IO
 mdefine_line|#define SSTAT2_IO&t;&t;0x01&t;/* I/O */
+DECL|macro|SSTAT2_PHASE_CMDOUT
+mdefine_line|#define SSTAT2_PHASE_CMDOUT&t;SSTAT2_CD
+DECL|macro|SSTAT2_PHASE_DATAIN
+mdefine_line|#define SSTAT2_PHASE_DATAIN&t;SSTAT2_IO
+DECL|macro|SSTAT2_PHASE_DATAOUT
+mdefine_line|#define SSTAT2_PHASE_DATAOUT&t;0
+DECL|macro|SSTAT2_PHASE_MSGIN
+mdefine_line|#define SSTAT2_PHASE_MSGIN&t;(SSTAT2_CD|SSTAT2_IO|SSTAT2_MSG)
+DECL|macro|SSTAT2_PHASE_MSGOUT
+mdefine_line|#define SSTAT2_PHASE_MSGOUT&t;(SSTAT2_CD|SSTAT2_MSG)
+DECL|macro|SSTAT2_PHASE_STATIN
+mdefine_line|#define SSTAT2_PHASE_STATIN&t;(SSTAT2_CD|SSTAT2_IO)
+DECL|macro|SSTAT2_PHASE_MASK
+mdefine_line|#define SSTAT2_PHASE_MASK&t;(SSTAT2_CD|SSTAT2_IO|SSTAT2_MSG)
 multiline_comment|/* NCR53c700-66 only */
 DECL|macro|SCRATCHA_REG_00
 mdefine_line|#define SCRATCHA_REG_00&t;&t;0x10    /* through  0x13 Scratch A rw */
@@ -975,7 +1048,7 @@ mdefine_line|#define STIME1_REG_800&t;&t;0x49
 DECL|macro|STIME1_800_GEN_MASK
 mdefine_line|#define STIME1_800_GEN_MASK&t;0x0f&t;/* General purpose timer */
 DECL|macro|RESPID_REG_800
-mdefine_line|#define RESPID_REG_800&t;&t;0x4a&t;/* Response ID, bit fielded */
+mdefine_line|#define RESPID_REG_800&t;&t;0x4a&t;/* Response ID, bit fielded.  8&n;&t;&t;&t;&t;&t;   bits on narrow chips, 16 on WIDE */
 DECL|macro|STEST0_REG_800
 mdefine_line|#define STEST0_REG_800&t;&t;0x4c&t;
 DECL|macro|STEST0_800_SLT
@@ -1043,11 +1116,11 @@ mdefine_line|#define OPTION_SYNCHRONOUS&t;0x400&t;/* Enable sync SCSI.  */
 DECL|macro|OPTION_MEMORY_MAPPED
 mdefine_line|#define OPTION_MEMORY_MAPPED&t;0x800&t;/* NCR registers have valid &n;&t;&t;&t;&t;&t;   memory mapping */
 DECL|macro|OPTION_IO_MAPPED
-mdefine_line|#define OPTION_IO_MAPPED&t;0x1000  /* NCR registers have valid&n;&t;&t;&t;&t;&t;   I/O mapping */
+mdefine_line|#define OPTION_IO_MAPPED&t;0x1000  /* NCR registers have valid&n;&t;&t;&t;&t;&t;     I/O mapping */
 DECL|macro|OPTION_DEBUG_PROBE_ONLY
-mdefine_line|#define OPTION_DEBUG_PROBE_ONLY&t;0x2000&t;/* Probe only, don&squot;t even init */
+mdefine_line|#define OPTION_DEBUG_PROBE_ONLY&t;0x2000  /* Probe only, don&squot;t even init */
 DECL|macro|OPTION_DEBUG_TESTS_ONLY
-mdefine_line|#define OPTION_DEBUG_TESTS_ONLY&t;0x4000&t;/* Probe, init, run selected tests */
+mdefine_line|#define OPTION_DEBUG_TESTS_ONLY&t;0x4000  /* Probe, init, run selected tests */
 DECL|macro|OPTION_DEBUG_TEST0
 mdefine_line|#define OPTION_DEBUG_TEST0&t;0x08000 /* Run test 0 */
 DECL|macro|OPTION_DEBUG_TEST1
@@ -1068,6 +1141,28 @@ DECL|macro|OPTION_DEBUG_DSA
 mdefine_line|#define OPTION_DEBUG_DSA 0x800000
 DECL|macro|OPTION_DEBUG_CORRUPTION
 mdefine_line|#define OPTION_DEBUG_CORRUPTION&t;0x1000000&t;/* Detect script corruption */
+DECL|macro|OPTION_DEBUG_SDTR
+mdefine_line|#define OPTION_DEBUG_SDTR       0x2000000&t;/* Debug SDTR problem */
+DECL|macro|OPTION_DEBUG_MISMATCH
+mdefine_line|#define OPTION_DEBUG_MISMATCH &t;0x4000000 &t;/* Debug phase mismatches */
+DECL|macro|OPTION_DISCONNECT
+mdefine_line|#define OPTION_DISCONNECT&t;0x8000000&t;/* Allow disconect */
+DECL|macro|OPTION_DEBUG_DISCONNECT
+mdefine_line|#define OPTION_DEBUG_DISCONNECT 0x10000000&t;
+DECL|macro|OPTION_ALWAYS_SYNCHRONOUS
+mdefine_line|#define OPTION_ALWAYS_SYNCHRONOUS 0x20000000&t;/* Negotiate sync. transfers&n;&t;&t;&t;&t;&t;&t;   on power up */
+DECL|macro|OPTION_SCSI_MALLOC
+mdefine_line|#define OPTION_SCSI_MALLOC&t;0x40000000&t;/* Use scsi_malloc instead of&n;&t;&t;&t;&t;&t;&t;   kmalloc() to allocate NCR&n;&t;&t;&t;&t;&t;&t;   command structures after &n;&t;&t;&t;&t;&t;&t;   boot */
+DECL|macro|OPTION_DEBUG_QUEUES
+mdefine_line|#define OPTION_DEBUG_QUEUES&t;0x80000000&t;
+DECL|macro|OPTION_DEBUG_ALLOCATION
+mdefine_line|#define OPTION_DEBUG_ALLOCATION 0x100000000LL
+DECL|macro|OPTION_DEBUG_SYNCHRONOUS
+mdefine_line|#define OPTION_DEBUG_SYNCHRONOUS 0x200000000LL&t;/* Sanity check SXFER and &n;&t;&t;&t;&t;&t;&t;   SCNTL3 registers */
+DECL|macro|OPTION_NO_ASYNC
+mdefine_line|#define OPTION_NO_ASYNC&t;0x400000000LL&t;&t;/* Don&squot;t automagically send&n;&t;&t;&t;&t;&t;&t;   SDTR for async transfers when&n;&t;&t;&t;&t;&t;&t;   we haven&squot;t been told to do&n;&t;&t;&t;&t;&t;&t;   a synchronous transfer. */
+DECL|macro|OPTION_NO_PRINT_RACE
+mdefine_line|#define OPTION_NO_PRINT_RACE 0x800000000LL&t;/* Don&squot;t print message when&n;&t;&t;&t;&t;&t;&t;   the reselect/WAIT DISCONNECT&n;&t;&t;&t;&t;&t;&t;   race condition hits */
 macro_line|#if !defined(PERM_OPTIONS)
 DECL|macro|PERM_OPTIONS
 mdefine_line|#define PERM_OPTIONS 0
@@ -1085,17 +1180,28 @@ DECL|member|script
 id|u32
 id|script
 (braket
-l_int|6
+l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* Size ?? Script used when target is &n;&t;&t;&t;&t;&t;&t;reselected */
-DECL|member|renegotiate
+DECL|member|synchronous_want
 r_int
-id|renegotiate
-suffix:colon
-l_int|1
+r_char
+id|synchronous_want
+(braket
+l_int|5
+)braket
 suffix:semicolon
-multiline_comment|/* Force renegotiation on next   &n;&t;&t;&t;&t;&t;   select */
+multiline_comment|/* Per target desired SDTR */
+multiline_comment|/* &n; * Set_synchronous programs these, select_indirect and current settings after&n; * int_debug_should show a match.&n; */
+DECL|member|sxfer_sanity
+DECL|member|scntl3_sanity
+r_int
+r_char
+id|sxfer_sanity
+comma
+id|scntl3_sanity
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|CMD_FLAG_SDTR
@@ -1104,6 +1210,8 @@ DECL|macro|CMD_FLAG_WDTR
 mdefine_line|#define CMD_FLAG_WDTR&t;&t;2&t;/* Initiating wide transfer&n;&t;&t;&t;&t;&t;   negotiation */
 DECL|macro|CMD_FLAG_DID_SDTR
 mdefine_line|#define CMD_FLAG_DID_SDTR&t;4&t;/* did SDTR */
+DECL|macro|CMD_FLAG_DID_WDTR
+mdefine_line|#define CMD_FLAG_DID_WDTR&t;8&t;/* did WDTR */
 DECL|struct|NCR53c7x0_table_indirect
 r_struct
 id|NCR53c7x0_table_indirect
@@ -1119,6 +1227,104 @@ id|address
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|enum|ncr_event
+r_enum
+id|ncr_event
+(brace
+DECL|enumerator|EVENT_NONE
+id|EVENT_NONE
+op_assign
+l_int|0
+comma
+multiline_comment|/* &n; * Order is IMPORTANT, since these must correspond to the event interrupts&n; * in 53c7,8xx.scr &n; */
+DECL|enumerator|EVENT_ISSUE_QUEUE
+id|EVENT_ISSUE_QUEUE
+op_assign
+l_int|0x5000000
+comma
+multiline_comment|/* Command was added to issue queue */
+DECL|enumerator|EVENT_START_QUEUE
+id|EVENT_START_QUEUE
+comma
+multiline_comment|/* Command moved to start queue */
+DECL|enumerator|EVENT_SELECT
+id|EVENT_SELECT
+comma
+multiline_comment|/* Command completed selection */
+DECL|enumerator|EVENT_DISCONNECT
+id|EVENT_DISCONNECT
+comma
+multiline_comment|/* Command disconnected */
+DECL|enumerator|EVENT_RESELECT
+id|EVENT_RESELECT
+comma
+multiline_comment|/* Command reselected */
+DECL|enumerator|EVENT_COMPLETE
+id|EVENT_COMPLETE
+comma
+multiline_comment|/* Command completed */
+DECL|enumerator|EVENT_IDLE
+id|EVENT_IDLE
+comma
+DECL|enumerator|EVENT_SELECT_FAILED
+id|EVENT_SELECT_FAILED
+comma
+DECL|enumerator|EVENT_BEFORE_SELECT
+id|EVENT_BEFORE_SELECT
+comma
+DECL|enumerator|EVENT_RESELECT_FAILED
+id|EVENT_RESELECT_FAILED
+)brace
+suffix:semicolon
+DECL|struct|NCR53c7x0_event
+r_struct
+id|NCR53c7x0_event
+(brace
+DECL|member|event
+r_enum
+id|ncr_event
+id|event
+suffix:semicolon
+multiline_comment|/* What type of event */
+DECL|member|target
+r_int
+r_char
+id|target
+suffix:semicolon
+DECL|member|lun
+r_int
+r_char
+id|lun
+suffix:semicolon
+DECL|member|time
+r_struct
+id|timeval
+id|time
+suffix:semicolon
+DECL|member|dsa
+id|u32
+op_star
+id|dsa
+suffix:semicolon
+multiline_comment|/* What&squot;s in the DSA register now (virt) */
+multiline_comment|/* &n; * A few things from that SCSI pid so we know what happened after &n; * the Scsi_Cmnd structure in question may have disappeared.&n; */
+DECL|member|pid
+r_int
+r_int
+id|pid
+suffix:semicolon
+multiline_comment|/* The SCSI PID which caused this &n;&t;&t;&t;&t;   event */
+DECL|member|cmnd
+r_int
+r_char
+id|cmnd
+(braket
+l_int|12
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Things in the NCR53c7x0_cmd structure are split into two parts :&n; *&n; * 1.  A fixed portion, for things which are not accessed directly by static NCR&n; *&t;code (ie, are referenced only by the Linux side of the driver,&n; *&t;or only by dynamically genreated code).  &n; *&n; * 2.  The DSA portion, for things which are accessed directly by static NCR&n; *&t;code.&n; *&n; * This is a little ugly, but it &n; * 1.  Avoids conflicts between the NCR code&squot;s picture of the structure, and &n; * &t;Linux code&squot;s idea of what it looks like.&n; *&n; * 2.  Minimizes the pain in the Linux side of the code needed &n; * &t;to calculate real dsa locations for things, etc.&n; * &n; */
 DECL|struct|NCR53c7x0_cmd
 r_struct
 id|NCR53c7x0_cmd
@@ -1128,7 +1334,7 @@ r_void
 op_star
 id|real
 suffix:semicolon
-multiline_comment|/* Real, unaligned address */
+multiline_comment|/* Real, unaligned address for&n;&t;&t;&t;&t;&t;   free function */
 DECL|member|free
 r_void
 (paren
@@ -1138,6 +1344,8 @@ id|free
 (paren
 r_void
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* Command to deallocate; NULL&n;&t;&t;&t;&t;&t;   for structures allocated with&n;&t;&t;&t;&t;&t;   scsi_register, etc. */
@@ -1156,6 +1364,8 @@ DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
+multiline_comment|/* CMD_* flags */
+multiline_comment|/*&n; * SDTR and WIDE messages are an either/or affair&n; * in this message, since we will go into message out and send&n; * _the whole mess_ without dropping out of message out to &n; * let the target go into message in after sending the first &n; * message.&n; */
 DECL|member|select
 r_int
 r_char
@@ -1166,22 +1376,13 @@ l_int|11
 suffix:semicolon
 multiline_comment|/* Select message, includes&n;&t;&t;&t;&t;&t;   IDENTIFY&n;&t;&t;&t;&t;&t;   (optional) QUEUE TAG&n; &t;&t;&t;&t; &t;   (optional) SDTR or WDTR&n;&t;&t;&t;&t;&t; */
 DECL|member|next
-DECL|member|prev
 r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
 id|next
-comma
-op_star
-id|prev
 suffix:semicolon
-multiline_comment|/* Linux maintained lists.  Note that&n;&t;&t;&t;&t;&t;   hostdata-&gt;free is a singly linked&n;&t;&t;&t;&t;&t;   list; the rest are doubly linked */
-DECL|member|dsa_size
-r_int
-id|dsa_size
-suffix:semicolon
-multiline_comment|/* Size of DSA structure */
+multiline_comment|/* Linux maintained lists (free,&n;&t;&t;&t;&t;&t;    running, eventually finished */
 DECL|member|data_transfer_start
 id|u32
 op_star
@@ -1194,14 +1395,39 @@ op_star
 id|data_transfer_end
 suffix:semicolon
 multiline_comment|/* Address after end of data transfer o&n;    &t;    &t;    &t;    &t;    &t;   routines */
+multiline_comment|/* &n; * The following three fields were moved from the DSA propper to here&n; * since only dynamically generated NCR code refers to them, meaning&n; * we don&squot;t need dsa_* absolutes, and it is simpler to let the &n; * host code refer to them directly.&n; */
+multiline_comment|/* &n; * HARD CODED : residual and saved_residual need to agree with the sizes&n; * used in NCR53c7,8xx.scr.  &n; * &n; * FIXME: we want to consider the case where we have odd-length &n; *&t;scatter/gather buffers and a WIDE transfer, in which case &n; *&t;we&squot;ll need to use the CHAIN MOVE instruction.  Ick.&n; */
 DECL|member|residual
 id|u32
 id|residual
 (braket
-l_int|8
+l_int|6
 )braket
 suffix:semicolon
-multiline_comment|/* Residual data transfer&n;&t;&t;&t;&t;&t;   shadow of data_transfer code.&n;&n;&t;&t;&t;&t;&t;   Has instruction with modified&n;&t;&t;&t;&t;&t;   DBC field followed by jump to &n;&t;&t;&t;&t;&t;   CALL routine following command.&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Residual data transfer which&n;&t;&t;&t;&t;&t;   allows pointer code to work&n;&t;&t;&t;&t;&t;   right.&n;&n;    &t;    &t;    &t;    &t;    &t;    [0-1] : Conditional call to &n;    &t;    &t;    &t;    &t;    &t;    &t;appropriate other transfer &n;    &t;    &t;    &t;    &t;    &t;    &t;routine.&n;    &t;    &t;    &t;    &t;    &t;    [2-3] : Residual block transfer&n;    &t;    &t;    &t;    &t;    &t;    &t;instruction.&n;    &t;    &t;    &t;    &t;    &t;    [4-5] : Jump to instruction&n;    &t;    &t;    &t;    &t;    &t;    &t;after splice.&n;&t;&t;&t;&t;&t; */
+DECL|member|saved_residual
+id|u32
+id|saved_residual
+(braket
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* Copy of old residual, so we &n;&t;&t;&t;&t;&t;   can get another partial &n;&t;&t;&t;&t;&t;   transfer and still recover &n;    &t;    &t;    &t;    &t;    &t; */
+DECL|member|saved_data_pointer
+id|u32
+id|saved_data_pointer
+suffix:semicolon
+multiline_comment|/* Saved data pointer */
+DECL|member|dsa_next_addr
+id|u32
+id|dsa_next_addr
+suffix:semicolon
+multiline_comment|/* _Address_ of dsa_next field  &n;&t;&t;&t;&t;&t;   in this dsa for RISCy &n;&t;&t;&t;&t;&t;   style constant. */
+DECL|member|dsa_addr
+id|u32
+id|dsa_addr
+suffix:semicolon
+multiline_comment|/* Address of dsa; RISCy style&n;&t;&t;&t;&t;&t;   constant */
 DECL|member|dsa
 id|u32
 id|dsa
@@ -1253,9 +1479,12 @@ mdefine_line|#define STATE_RUNNING&t;2&t;&t;
 multiline_comment|/* &n; * Indicates that the NCR was being aborted.&n; */
 DECL|macro|STATE_ABORTING
 mdefine_line|#define STATE_ABORTING&t;3
-multiline_comment|/* &n; * Indicates that the NCR was successfully aborted. */
+multiline_comment|/* Indicates that the NCR was successfully aborted. */
 DECL|macro|STATE_ABORTED
 mdefine_line|#define STATE_ABORTED 4
+multiline_comment|/* Indicates that the NCR has been disabled due to a fatal error */
+DECL|macro|STATE_DISABLED
+mdefine_line|#define STATE_DISABLED 5
 multiline_comment|/* &n; * Where knowledge of SCSI SCRIPT(tm) specified values are needed &n; * in an interrupt handler, an interrupt handler exists for each &n; * different SCSI script so we don&squot;t have name space problems.&n; * &n; * Return values of these handlers are as follows : &n; */
 DECL|macro|SPECIFIC_INT_NOTHING
 mdefine_line|#define SPECIFIC_INT_NOTHING &t;0&t;/* don&squot;t even restart */
@@ -1294,8 +1523,7 @@ DECL|member|chip
 r_int
 id|chip
 suffix:semicolon
-multiline_comment|/* set to chip type */
-multiline_comment|/*&n;  &t; * NCR53c700 = 700&n;&t; * NCR53c700-66 = 70066&n;&t; * NCR53c710 = 710&n;&t; * NCR53c720 = 720 &n;&t; * NCR53c810 = 810&n;&t; */
+multiline_comment|/* set to chip type; 700-66 is&n;&t;&t;&t;&t;&t;   700-66, rest are last three&n;&t;&t;&t;&t;&t;   digits of part number */
 multiline_comment|/*&n;     * PCI bus, device, function, only for NCR53c8x0 chips.&n;     * pci_valid indicates that the PCI configuration information&n;     * is valid, and we can twiddle MAX_LAT, etc. as recommended&n;     * for maximum performance in the NCR documentation.&n;     */
 DECL|member|pci_bus
 DECL|member|pci_device_fn
@@ -1435,9 +1663,9 @@ op_star
 id|cmd
 )paren
 suffix:semicolon
-DECL|member|dsa_size
+DECL|member|dsa_len
 r_int
-id|dsa_size
+id|dsa_len
 suffix:semicolon
 multiline_comment|/* Size of DSA structure */
 multiline_comment|/*&n;     * Location of DSA fields for the SCSI SCRIPT corresponding to this &n;     * chip.  &n;     */
@@ -1497,10 +1725,6 @@ DECL|member|dsa_write_resume
 id|s32
 id|dsa_write_resume
 suffix:semicolon
-DECL|member|dsa_jump_resume
-id|s32
-id|dsa_jump_resume
-suffix:semicolon
 DECL|member|dsa_check_reselect
 id|s32
 id|dsa_check_reselect
@@ -1509,10 +1733,26 @@ DECL|member|dsa_status
 id|s32
 id|dsa_status
 suffix:semicolon
+DECL|member|dsa_saved_pointer
+id|s32
+id|dsa_saved_pointer
+suffix:semicolon
+DECL|member|dsa_jump_dest
+id|s32
+id|dsa_jump_dest
+suffix:semicolon
 multiline_comment|/* &n;     * Important entry points that generic fixup code needs&n;     * to know about, fixed up.&n;     */
 DECL|member|E_accept_message
 id|s32
 id|E_accept_message
+suffix:semicolon
+DECL|member|E_command_complete
+id|s32
+id|E_command_complete
+suffix:semicolon
+DECL|member|E_data_transfer
+id|s32
+id|E_data_transfer
 suffix:semicolon
 DECL|member|E_dsa_code_template
 id|s32
@@ -1522,9 +1762,9 @@ DECL|member|E_dsa_code_template_end
 id|s32
 id|E_dsa_code_template_end
 suffix:semicolon
-DECL|member|E_command_complete
+DECL|member|E_end_data_transfer
 id|s32
-id|E_command_complete
+id|E_end_data_transfer
 suffix:semicolon
 DECL|member|E_msg_in
 id|s32
@@ -1538,13 +1778,17 @@ DECL|member|E_other_transfer
 id|s32
 id|E_other_transfer
 suffix:semicolon
+DECL|member|E_other_in
+id|s32
+id|E_other_in
+suffix:semicolon
+DECL|member|E_other_out
+id|s32
+id|E_other_out
+suffix:semicolon
 DECL|member|E_target_abort
 id|s32
 id|E_target_abort
-suffix:semicolon
-DECL|member|E_schedule
-id|s32
-id|E_schedule
 suffix:semicolon
 DECL|member|E_debug_break
 id|s32
@@ -1586,11 +1830,20 @@ DECL|member|E_dsa_zero
 id|s32
 id|E_dsa_zero
 suffix:semicolon
-DECL|member|E_dsa_jump_resume
+DECL|member|E_cmdout_cmdout
 id|s32
-id|E_dsa_jump_resume
+id|E_cmdout_cmdout
+suffix:semicolon
+DECL|member|E_wait_reselect
+id|s32
+id|E_wait_reselect
+suffix:semicolon
+DECL|member|E_dsa_code_begin
+id|s32
+id|E_dsa_code_begin
 suffix:semicolon
 DECL|member|options
+r_int
 r_int
 id|options
 suffix:semicolon
@@ -1607,12 +1860,12 @@ id|test_running
 suffix:semicolon
 multiline_comment|/* Test currently running */
 DECL|member|test_source
-r_int
+id|s32
 id|test_source
 suffix:semicolon
 DECL|member|test_dest
 r_volatile
-r_int
+id|s32
 id|test_dest
 suffix:semicolon
 DECL|member|state
@@ -1644,6 +1897,12 @@ r_int
 id|intrs
 suffix:semicolon
 multiline_comment|/* Number of interrupts */
+DECL|member|resets
+r_volatile
+r_int
+id|resets
+suffix:semicolon
+multiline_comment|/* Number of SCSI resets */
 DECL|member|saved_dmode
 r_int
 r_char
@@ -1732,7 +1991,7 @@ r_int
 r_char
 id|debug_lun_limit
 (braket
-l_int|8
+l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* If OPTION_DEBUG_TARGET_LIMIT&n;&t;&t;&t;&t;&t;   set, puke if commands are sent&n;&t;&t;&t;&t;&t;   to other target/lun combinations */
@@ -1749,20 +2008,19 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* set to 1 if idle */
-multiline_comment|/* &n;     * Table of synchronous transfer parameters set on a per-target&n;     * basis.&n;     * &n;     * XXX - do we need to increase this to 16 for the WIDE-SCSI&n;     * flavors of the board?&n;     */
+multiline_comment|/* &n;     * Table of synchronous+wide transfer parameters set on a per-target&n;     * basis.&n;     */
 DECL|member|sync
 r_volatile
 r_struct
 id|NCR53c7x0_synchronous
 id|sync
 (braket
-l_int|8
+l_int|16
 )braket
 suffix:semicolon
 DECL|member|issue_queue
 r_volatile
-r_struct
-id|NCR53c7x0_cmd
+id|Scsi_Cmnd
 op_star
 id|issue_queue
 suffix:semicolon
@@ -1775,12 +2033,12 @@ op_star
 id|running_list
 suffix:semicolon
 multiline_comment|/* commands running, maintained&n;&t;&t;&t;&t;&t;&t;   by Linux driver */
-DECL|member|current_cmd
+DECL|member|current
 r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
-id|current_cmd
+id|current
 suffix:semicolon
 multiline_comment|/* currently connected &n;&t;&t;&t;&t;&t;&t;   nexus, ONLY valid for&n;&t;&t;&t;&t;&t;&t;   NCR53c700/NCR53c700-66&n;&t;&t;&t;&t;&t;&t; */
 DECL|member|spare
@@ -1809,13 +2067,18 @@ r_int
 id|num_cmds
 suffix:semicolon
 multiline_comment|/* Number of commands &n;&t;&t;&t;&t;&t;&t;   allocated */
+DECL|member|extra_allocate
+r_volatile
+r_int
+id|extra_allocate
+suffix:semicolon
 DECL|member|cmd_allocated
 r_volatile
 r_int
 r_char
 id|cmd_allocated
 (braket
-l_int|8
+l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* Have we allocated commands&n;&t;&t;&t;&t;&t;&t;   for this target yet?  If not,&n;&t;&t;&t;&t;&t;&t;   do so ASAP */
@@ -1825,7 +2088,7 @@ r_int
 r_char
 id|busy
 (braket
-l_int|8
+l_int|16
 )braket
 (braket
 l_int|8
@@ -1841,18 +2104,13 @@ op_star
 id|finished_queue
 suffix:semicolon
 multiline_comment|/* Shared variables between SCRIPT and host driver */
-DECL|member|issue_dsa_head
+DECL|member|schedule
 r_volatile
 id|u32
-id|issue_dsa_head
-suffix:semicolon
-multiline_comment|/* commands waiting to be &n;&t;&t;&t;&t;&t;&t;   issued, insertions are &n;&t;&t;&t;&t;&t;&t;   done by Linux driver,&n;&t;&t;&t;&t;&t;&t;   deletions are done by&n;&t;&t;&t;&t;&t;&t;   NCR */
-DECL|member|issue_dsa_tail
-id|u32
 op_star
-id|issue_dsa_tail
+id|schedule
 suffix:semicolon
-multiline_comment|/* issue queue tail pointer;&n;&t;&t;&t;&t;&t;&t;   used by Linux driver only */
+multiline_comment|/* Array of JUMPs to dsa_begin&n;&t;&t;&t;&t;&t;&t;   routines of various DSAs.  &n;&t;&t;&t;&t;&t;&t;   When not in use, replace&n;&t;&t;&t;&t;&t;&t;   with jump to next slot */
 DECL|member|msg_buf
 r_volatile
 r_int
@@ -1863,12 +2121,69 @@ l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* buffer for messages&n;&t;&t;&t;&t;&t;&t;   other than the command&n;&t;&t;&t;&t;&t;&t;   complete message */
+multiline_comment|/* Per-target default synchronous and WIDE messages */
+DECL|member|synchronous_want
+r_volatile
+r_int
+r_char
+id|synchronous_want
+(braket
+l_int|16
+)braket
+(braket
+l_int|5
+)braket
+suffix:semicolon
+DECL|member|wide_want
+r_volatile
+r_int
+r_char
+id|wide_want
+(braket
+l_int|16
+)braket
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* Bit fielded set of targets we want to speak synchronously with */
+DECL|member|initiate_sdtr
+r_volatile
+id|u16
+id|initiate_sdtr
+suffix:semicolon
+multiline_comment|/* Bit fielded set of targets we want to speak wide with */
+DECL|member|initiate_wdtr
+r_volatile
+id|u16
+id|initiate_wdtr
+suffix:semicolon
+multiline_comment|/* Bit fielded list of targets we&squot;ve talked to. */
+DECL|member|talked_to
+r_volatile
+id|u16
+id|talked_to
+suffix:semicolon
+multiline_comment|/* Array of bit-fielded lun lists that we need to request_sense */
+DECL|member|request_sense
+r_volatile
+r_int
+r_char
+id|request_sense
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|member|addr_reconnect_dsa_head
+id|u32
+id|addr_reconnect_dsa_head
+suffix:semicolon
+multiline_comment|/* RISCy style constant,&n;&t;&t;&t;&t;&t;&t;   address of following */
 DECL|member|reconnect_dsa_head
 r_volatile
 id|u32
 id|reconnect_dsa_head
 suffix:semicolon
-multiline_comment|/* disconnected commands,&n;&t;&t;&t;&t;&t;&t;   maintained by NCR */
 multiline_comment|/* Data identifying nexus we are trying to match during reselection */
 DECL|member|reselected_identify
 r_volatile
@@ -1893,6 +2208,10 @@ DECL|member|NCR53c7xx_sink
 id|s32
 id|NCR53c7xx_sink
 suffix:semicolon
+DECL|member|NOP_insn
+id|u32
+id|NOP_insn
+suffix:semicolon
 DECL|member|NCR53c7xx_msg_reject
 r_char
 id|NCR53c7xx_msg_reject
@@ -1904,6 +2223,27 @@ suffix:semicolon
 DECL|member|NCR53c7xx_msg_nop
 r_char
 id|NCR53c7xx_msg_nop
+suffix:semicolon
+DECL|member|event_size
+DECL|member|event_index
+r_volatile
+r_int
+id|event_size
+comma
+id|event_index
+suffix:semicolon
+DECL|member|events
+r_volatile
+r_struct
+id|NCR53c7x0_event
+op_star
+id|events
+suffix:semicolon
+multiline_comment|/* If we need to generate code to kill off the currently connected &n;       command, this is where we do it. Should have a BMI instruction&n;       to source or sink the current data, followed by a JUMP&n;       to abort_connected */
+DECL|member|abort_script
+id|u32
+op_star
+id|abort_script
 suffix:semicolon
 DECL|member|script_count
 r_int
@@ -1937,23 +2277,32 @@ mdefine_line|#define NCR53c7x0_local_declare()&t;&t;&t;&t;&t;&bslash;&n;    vola
 DECL|macro|NCR53c7x0_local_setup
 mdefine_line|#define NCR53c7x0_local_setup(host)&t;&t;&t;&t;&t;&bslash;&n;    NCR53c7x0_address_memory = (void *) (host)-&gt;base;&t;&t;&t;&bslash;&n;    NCR53c7x0_address_io = (unsigned int) (host)-&gt;io_port;&t;&t;&bslash;&n;    NCR53c7x0_memory_mapped = ((struct NCR53c7x0_hostdata *) &t;&t;&bslash;&n;&t;host-&gt;hostdata)-&gt; options &amp; OPTION_MEMORY_MAPPED 
 DECL|macro|NCR53c7x0_read8
-mdefine_line|#define NCR53c7x0_read8(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_readb(NCR53c7x0_address_memory + (address))  :&t;&t;&bslash;&n;&t;inb(NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_read8(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;(unsigned int)readb(NCR53c7x0_address_memory + (address)) :&t;&bslash;&n;&t;inb(NCR53c7x0_address_io + (address)))
 DECL|macro|NCR53c7x0_read16
-mdefine_line|#define NCR53c7x0_read16(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_readw(NCR53c7x0_address_memory + (address))  :&t;&t;&bslash;&n;&t;inw(NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_read16(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;(unsigned int)readw(NCR53c7x0_address_memory + (address)) :&t;&bslash;&n;&t;inw(NCR53c7x0_address_io + (address)))
 DECL|macro|NCR53c7x0_read32
-mdefine_line|#define NCR53c7x0_read32(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_readl(NCR53c7x0_address_memory + (address))  :&t;&t;&bslash;&n;&t;inl(NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_read32(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;(unsigned int) readl(NCR53c7x0_address_memory + (address)) : &t;&bslash;&n;&t;inl(NCR53c7x0_address_io + (address)))
 DECL|macro|NCR53c7x0_write8
-mdefine_line|#define NCR53c7x0_write8(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_writeb((value), NCR53c7x0_address_memory + (address)) :&t;&bslash;&n;&t;outb((value), NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_write8(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;     ({writeb((value), NCR53c7x0_address_memory + (address)); mb();}) :&t;&bslash;&n;&t;outb((value), NCR53c7x0_address_io + (address)))
 DECL|macro|NCR53c7x0_write16
-mdefine_line|#define NCR53c7x0_write16(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_writew((value), NCR53c7x0_address_memory + (address)) :&t;&bslash;&n;&t;outw((value), NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_write16(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;     ({writew((value), NCR53c7x0_address_memory + (address)); mb();}) :&t;&bslash;&n;&t;outw((value), NCR53c7x0_address_io + (address)))
 DECL|macro|NCR53c7x0_write32
-mdefine_line|#define NCR53c7x0_write32(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_writel((value), NCR53c7x0_address_memory + (address)) :&t;&bslash;&n;&t;outl((value), NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_write32(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;     ({writel((value), NCR53c7x0_address_memory + (address)); mb();}) :&t;&bslash;&n;&t;outl((value), NCR53c7x0_address_io + (address)))
+multiline_comment|/* Patch arbitrary 32 bit words in the script */
 DECL|macro|patch_abs_32
-mdefine_line|#define patch_abs_32(script, offset, symbol, value)&t;&t;&t;&bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (u32)); ++i) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;    (script)[A_##symbol##_used[i] - (offset)] += (value);&t;&bslash;&n;&t;    if (hostdata-&gt;options &amp; OPTION_DEBUG_FIXUP) &t;&t;&bslash;&n;&t;      printk(&quot;scsi%d : %s reference %d at 0x%x in %s is now 0x%x&bslash;n&quot;,&bslash;&n;&t;&t;host-&gt;host_no, #symbol, i, A_##symbol##_used[i] - &t;&bslash;&n;&t;&t;(int)(offset), #script, (script)[A_##symbol##_used[i] -&t;&bslash;&n;&t;&t;(offset)]);&t;&t;&t;&t;&t;&t;&bslash;&n;    &t;}
+mdefine_line|#define patch_abs_32(script, offset, symbol, value)&t;&t;&t;&bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (u32)); ++i) {&t;&t;&t;&t;&t;&bslash;&n;&t;    (script)[A_##symbol##_used[i] - (offset)] += (value);&t;&bslash;&n;&t;    if (hostdata-&gt;options &amp; OPTION_DEBUG_FIXUP) &t;&t;&bslash;&n;&t;      printk(&quot;scsi%d : %s reference %d at 0x%x in %s is now 0x%x&bslash;n&quot;,&bslash;&n;&t;&t;host-&gt;host_no, #symbol, i, A_##symbol##_used[i] - &t;&bslash;&n;&t;&t;(int)(offset), #script, (script)[A_##symbol##_used[i] -&t;&bslash;&n;&t;&t;(offset)]);&t;&t;&t;&t;&t;&t;&bslash;&n;    &t;}
+multiline_comment|/* Patch read/write instruction immediate field */
 DECL|macro|patch_abs_rwri_data
-mdefine_line|#define patch_abs_rwri_data(script, offset, symbol, value)&t;&t;&bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (u32)); ++i)&t;&t;&t;&t;&t;&t;&bslash;&n;    &t;    (script)[A_##symbol##_used[i] - (offset)] =&t;&t;&t;&bslash;&n;&t;    &t;((script)[A_##symbol##_used[i] - (offset)] &amp; &t;&t;&bslash;&n;&t;    &t;~DBC_RWRI_IMMEDIATE_MASK) | &t;&t;&t;&t;&bslash;&n;    &t;    &t;(((value) &lt;&lt; DBC_RWRI_IMMEDIATE_SHIFT) &amp;&t;&t;&bslash;&n;&t;&t; DBC_RWRI_IMMEDIATE_MASK)
+mdefine_line|#define patch_abs_rwri_data(script, offset, symbol, value)&t;&t;&bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (u32)); ++i)&t;&t;&t;&t;&t;&bslash;&n;    &t;    (script)[A_##symbol##_used[i] - (offset)] =&t;&t;&t;&bslash;&n;&t;    &t;((script)[A_##symbol##_used[i] - (offset)] &amp; &t;&t;&bslash;&n;&t;    &t;~DBC_RWRI_IMMEDIATE_MASK) | &t;&t;&t;&t;&bslash;&n;    &t;    &t;(((value) &lt;&lt; DBC_RWRI_IMMEDIATE_SHIFT) &amp;&t;&t;&bslash;&n;&t;&t; DBC_RWRI_IMMEDIATE_MASK)
+multiline_comment|/* Patch transfer control instruction data field */
+DECL|macro|patch_abs_tci_data
+mdefine_line|#define patch_abs_tci_data(script, offset, symbol, value)&t;        &bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (u32)); ++i)&t;&t;&t;&t;&t;&bslash;&n;    &t;    (script)[A_##symbol##_used[i] - (offset)] =&t;&t;&t;&bslash;&n;&t;    &t;((script)[A_##symbol##_used[i] - (offset)] &amp; &t;&t;&bslash;&n;&t;    &t;~DBC_TCI_DATA_MASK) | &t;&t;&t;&t;&t;&bslash;&n;    &t;    &t;(((value) &lt;&lt; DBC_TCI_DATA_SHIFT) &amp;&t;&t;&t;&bslash;&n;&t;&t; DBC_TCI_DATA_MASK)
+multiline_comment|/* Patch field in dsa structure (assignment should be +=?) */
 DECL|macro|patch_dsa_32
-mdefine_line|#define patch_dsa_32(dsa, symbol, word, value)&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(dsa)[(hostdata-&gt;##symbol - hostdata-&gt;dsa_start) / sizeof(u32)&t;&bslash;&n;&t;&t;+ (word)] = (value);&t;&t;&t;&t;&t;&bslash;&n;&t;if (hostdata-&gt;options &amp; OPTION_DEBUG_DSA)&t;&t;&t;&bslash;&n;&t;    printk(&quot;scsi : dsa %s symbol %s(%d) word %d now 0x%x&bslash;n&quot;,&t;&bslash;&n;&t;&t;#dsa, #symbol, hostdata-&gt;##symbol,&t; &t;&t;&bslash;&n;&t;&t;(word), (u32)(value));&t;&t;&t;&t;&bslash;&n;&t;}
+mdefine_line|#define patch_dsa_32(dsa, symbol, word, value)&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(dsa)[(hostdata-&gt;##symbol - hostdata-&gt;dsa_start) / sizeof(u32)&t;&bslash;&n;&t;    + (word)] = (value);&t;&t;&t;&t;&t;&bslash;&n;&t;if (hostdata-&gt;options &amp; OPTION_DEBUG_DSA)&t;&t;&t;&bslash;&n;&t;    printk(&quot;scsi : dsa %s symbol %s(%d) word %d now 0x%x&bslash;n&quot;,&t;&bslash;&n;&t;&t;#dsa, #symbol, hostdata-&gt;##symbol, &t;&t;&t;&bslash;&n;&t;&t;(word), (u32) (value));&t;&t;&t;&t;&t;&bslash;&n;&t;}
+multiline_comment|/* Paranoid people could use panic() here. */
+DECL|macro|FATAL
+mdefine_line|#define FATAL(host) shutdown((host));
 macro_line|#endif /* NCR53c7x0_C */
 macro_line|#endif /* NCR53c7x0_H */
 eof

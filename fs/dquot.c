@@ -10,7 +10,6 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mount.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;sys/sysmacros.h&gt;
 DECL|macro|__DQUOT_VERSION__
 mdefine_line|#define __DQUOT_VERSION__&t;&quot;dquot_5.6.0&quot;
 DECL|variable|quotamessage

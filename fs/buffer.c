@@ -3374,6 +3374,12 @@ c_cond
 (paren
 id|bh-&gt;b_count
 op_logical_or
+id|buffer_protected
+c_func
+(paren
+id|bh
+)paren
+op_logical_or
 id|bh-&gt;b_size
 op_ne
 id|size
@@ -4143,25 +4149,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;Aieee... bforget(): shared buffer&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|buffer_protected
-c_func
-(paren
-id|buf
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Aieee... bforget(): protected buffer&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: scc.h,v 1.11 1995/08/24 21:06:24 jreuter Exp jreuter $ */
+multiline_comment|/* $Id: scc.h,v 1.15 1995/11/16 20:19:26 jreuter Exp jreuter $ */
 macro_line|#ifndef&t;_SCC_H
 DECL|macro|_SCC_H
 mdefine_line|#define&t;_SCC_H
@@ -15,31 +15,24 @@ DECL|macro|DRSI
 mdefine_line|#define DRSI&t;&t;0x08&t;/* hardware type for DRSI PC*Packet card */
 DECL|macro|BAYCOM
 mdefine_line|#define BAYCOM&t;&t;0x10&t;/* hardware type for BayCom (U)SCC */
-multiline_comment|/* Constants */
-DECL|macro|MAXSCC
-mdefine_line|#define MAXSCC&t;&t;4&t;/* number of max. supported chips */
-DECL|macro|MAX_IBUFS
-mdefine_line|#define MAX_IBUFS&t;200&t;/* change this if you run out of memory */
-DECL|macro|BUFSIZE
-mdefine_line|#define BUFSIZE&t;  &t;128&t;/* must not exceed 4096 */
-DECL|macro|TPS
-mdefine_line|#define TPS&t;&t;25&t;/* scc_timer():  Ticks Per Second */
-DECL|macro|SCC_TIMER
-mdefine_line|#define SCC_TIMER&t;3
+multiline_comment|/* Paranoia check... */
 DECL|macro|SCC_PARANOIA_CHECK
 mdefine_line|#define SCC_PARANOIA_CHECK&t;/* tell the user if something is going wrong */
 multiline_comment|/* ioctl() commands */
-multiline_comment|/* !!! NEW VALUES !!! */
+DECL|macro|TIOCSCCCFG
+mdefine_line|#define TIOCSCCCFG&t;0x2200&t;&t;/* set hardware parameters */
 DECL|macro|TIOCSCCINI
-mdefine_line|#define TIOCSCCINI&t;0x5470&t;&t;/* init driver */
+mdefine_line|#define TIOCSCCINI&t;0x2201&t;&t;/* init driver */
 DECL|macro|TIOCCHANINI
-mdefine_line|#define TIOCCHANINI&t;0x5471&t;&t;/* init channel */
+mdefine_line|#define TIOCCHANINI&t;0x2202&t;&t;/* init channel */
+DECL|macro|TIOCCHANMEM
+mdefine_line|#define TIOCCHANMEM&t;0x2210&t;&t;/* adjust buffer pools */
 DECL|macro|TIOCGKISS
-mdefine_line|#define TIOCGKISS&t;0x5472&t;&t;/* get kiss parameter */
+mdefine_line|#define TIOCGKISS&t;0x2282&t;&t;/* get kiss parameter */
 DECL|macro|TIOCSKISS
-mdefine_line|#define TIOCSKISS&t;0x5473&t;&t;/* set kiss parameter */
+mdefine_line|#define TIOCSKISS&t;0x2283&t;&t;/* set kiss parameter */
 DECL|macro|TIOCSCCSTAT
-mdefine_line|#define TIOCSCCSTAT&t;0x5474&t;&t;/* get scc status */
+mdefine_line|#define TIOCSCCSTAT&t;0x2284&t;&t;/* get scc status */
 multiline_comment|/* magic number */
 DECL|macro|SCC_MAGIC
 mdefine_line|#define SCC_MAGIC&t;0x8530&t;&t;/* ;-) */
@@ -137,10 +130,6 @@ DECL|macro|BT_RECEIVE
 mdefine_line|#define BT_RECEIVE  1&t;&t;/* buffer allocated by receive */
 DECL|macro|BT_TRANSMIT
 mdefine_line|#define BT_TRANSMIT 2&t;&t;/* buffer allocated by transmit */
-DECL|macro|QUEUE_THRES
-mdefine_line|#define QUEUE_THRES MAX_IBUFS/20&t;/* maximum amount of packets being queued */
-DECL|macro|QUEUE_HYST
-mdefine_line|#define QUEUE_HYST  3&t;&t;&t;/* leave QUEUE_HYST packets untouched */
 DECL|macro|NULLBUF
 mdefine_line|#define NULLBUF  (struct mbuf *)0
 DECL|macro|NULLBUFP
@@ -180,7 +169,6 @@ mdefine_line|#define Expired(k) (scc-&gt;k != TIMER_STOPPED) &amp;&amp; (!(scc-&
 DECL|macro|Stop_Timer
 mdefine_line|#define Stop_Timer(k) scc-&gt;k = TIMER_STOPPED
 multiline_comment|/* Basic message buffer structure */
-multiline_comment|/* looks familiar? Hmm, yes... */
 DECL|struct|mbuf
 r_struct
 id|mbuf
@@ -191,73 +179,35 @@ id|mbuf
 op_star
 id|next
 suffix:semicolon
-multiline_comment|/* Links mbufs belonging to single packets */
-DECL|member|anext
+multiline_comment|/* Link to next buffer */
+DECL|member|prev
 r_struct
 id|mbuf
 op_star
-id|anext
+id|prev
 suffix:semicolon
-multiline_comment|/* Links packets on queues */
-DECL|member|type
-r_char
-id|type
-suffix:semicolon
-multiline_comment|/* who allocated this buffer? */
-DECL|member|time_out
-r_int
-id|time_out
-suffix:semicolon
-multiline_comment|/* unimplemented yet */
-DECL|member|size
-r_int
-id|size
-suffix:semicolon
-multiline_comment|/* Size of associated data buffer */
-DECL|member|refcnt
-r_int
-id|refcnt
-suffix:semicolon
-multiline_comment|/* Reference count */
-DECL|member|dup
-r_struct
-id|mbuf
-op_star
-id|dup
-suffix:semicolon
-multiline_comment|/* Pointer to duplicated mbuf */
-DECL|member|data
-r_char
-id|data
-(braket
-id|BUFSIZE
-)braket
-suffix:semicolon
-multiline_comment|/* Active working pointers */
+multiline_comment|/* Link to previous buffer */
 DECL|member|cnt
 r_int
 id|cnt
 suffix:semicolon
-DECL|member|in_use
+multiline_comment|/* Number of bytes stored in buffer */
+DECL|member|rw_ptr
 r_int
-id|in_use
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|sccbuf
-r_struct
-id|sccbuf
-(brace
-DECL|member|bp
-r_struct
-id|mbuf
+r_char
 op_star
-id|bp
+id|rw_ptr
 suffix:semicolon
-DECL|member|inuse
+multiline_comment|/* read-write pointer */
+DECL|member|data
 r_int
-id|inuse
+r_char
+id|data
+(braket
+l_int|0
+)braket
 suffix:semicolon
+multiline_comment|/* anchor for allocated buffer */
 )brace
 suffix:semicolon
 multiline_comment|/* SCC channel control structure for KISS */
@@ -440,24 +390,24 @@ r_int
 id|rx_queued
 suffix:semicolon
 multiline_comment|/* rx frames enqueued */
-DECL|member|rx_alloc
+DECL|member|rxbuffers
 r_int
 r_int
-id|rx_alloc
+id|rxbuffers
 suffix:semicolon
 multiline_comment|/* allocated rx_buffers */
-DECL|member|tx_alloc
+DECL|member|txbuffers
 r_int
 r_int
-id|tx_alloc
+id|txbuffers
 suffix:semicolon
 multiline_comment|/* allocated tx_buffers */
-DECL|member|used_buf
+DECL|member|bufsize
 r_int
 r_int
-id|used_buf
+id|bufsize
 suffix:semicolon
-multiline_comment|/* used buffers (should be rx_alloc+tx_alloc) */
+multiline_comment|/* used buffersize */
 )brace
 suffix:semicolon
 DECL|struct|scc_modem
@@ -497,6 +447,90 @@ suffix:semicolon
 multiline_comment|/* KISS-Param */
 )brace
 suffix:semicolon
+multiline_comment|/* currently unused */
+DECL|struct|scc_hw_config
+r_struct
+id|scc_hw_config
+(brace
+DECL|member|data_a
+id|io_port
+id|data_a
+suffix:semicolon
+multiline_comment|/* data port channel A */
+DECL|member|ctrl_a
+id|io_port
+id|ctrl_a
+suffix:semicolon
+multiline_comment|/* control port channel A */
+DECL|member|data_b
+id|io_port
+id|data_b
+suffix:semicolon
+multiline_comment|/* data port channel B */
+DECL|member|ctrl_b
+id|io_port
+id|ctrl_b
+suffix:semicolon
+multiline_comment|/* control port channel B */
+DECL|member|vector_latch
+id|io_port
+id|vector_latch
+suffix:semicolon
+multiline_comment|/* INTACK-Latch (#) */
+DECL|member|special
+id|io_port
+id|special
+suffix:semicolon
+multiline_comment|/* special function port */
+DECL|member|irq
+r_int
+id|irq
+suffix:semicolon
+multiline_comment|/* irq */
+DECL|member|clock
+r_int
+id|clock
+suffix:semicolon
+multiline_comment|/* clock */
+DECL|member|option
+r_char
+id|option
+suffix:semicolon
+multiline_comment|/* command for function port */
+DECL|member|brand
+r_char
+id|brand
+suffix:semicolon
+multiline_comment|/* hardware type */
+DECL|member|escc
+r_char
+id|escc
+suffix:semicolon
+multiline_comment|/* use ext. features of a 8580/85180/85280 */
+)brace
+suffix:semicolon
+DECL|struct|scc_mem_config
+r_struct
+id|scc_mem_config
+(brace
+DECL|member|rxbuffers
+r_int
+r_int
+id|rxbuffers
+suffix:semicolon
+DECL|member|txbuffers
+r_int
+r_int
+id|txbuffers
+suffix:semicolon
+DECL|member|bufsize
+r_int
+r_int
+id|bufsize
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* (#) only one INTACK latch allowed. */
 multiline_comment|/* SCC channel structure */
 DECL|struct|scc_channel
 r_struct
@@ -520,10 +554,25 @@ id|tty
 suffix:semicolon
 multiline_comment|/* link to tty control structure */
 DECL|member|tty_opened
-r_int
 r_char
 id|tty_opened
 suffix:semicolon
+multiline_comment|/* No. of open() calls... */
+DECL|member|throttled
+r_char
+id|throttled
+suffix:semicolon
+multiline_comment|/* driver is throttled  */
+DECL|member|brand
+r_char
+id|brand
+suffix:semicolon
+multiline_comment|/* manufacturer of the board */
+DECL|member|clock
+r_int
+id|clock
+suffix:semicolon
+multiline_comment|/* used clock */
 DECL|member|ctrl
 id|io_port
 id|ctrl
@@ -534,6 +583,15 @@ id|io_port
 id|data
 suffix:semicolon
 multiline_comment|/* I/O address of DATA register */
+DECL|member|special
+id|io_port
+id|special
+suffix:semicolon
+multiline_comment|/* I/O address of special function port */
+DECL|member|option
+r_char
+id|option
+suffix:semicolon
 DECL|member|enhanced
 r_char
 id|enhanced
@@ -572,56 +630,76 @@ id|scc_modem
 id|modem
 suffix:semicolon
 multiline_comment|/* modem information */
-DECL|member|rbp
+DECL|member|rx_buffer_pool
 r_struct
 id|mbuf
 op_star
-id|rbp
+id|rx_buffer_pool
 suffix:semicolon
-multiline_comment|/* rx: Head of mbuf chain being filled */
-DECL|member|rbp1
+multiline_comment|/* free buffers for rx/tx frames are */
+DECL|member|tx_buffer_pool
 r_struct
 id|mbuf
 op_star
-id|rbp1
+id|tx_buffer_pool
 suffix:semicolon
-multiline_comment|/* rx: Pointer to mbuf currently being written */
-DECL|member|rcvq
+multiline_comment|/* linked in these ring chains */
+DECL|member|rx_queue
 r_struct
 id|mbuf
 op_star
-id|rcvq
+id|rx_queue
 suffix:semicolon
-multiline_comment|/* Pointer to mbuf packets currently received */
-DECL|member|sndq
+multiline_comment|/* chain of received frames */
+DECL|member|tx_queue
 r_struct
 id|mbuf
 op_star
-id|sndq
+id|tx_queue
 suffix:semicolon
-multiline_comment|/* tx: Packets awaiting transmission */
-DECL|member|tbp
+multiline_comment|/* chain of frames due to transmit */
+DECL|member|rx_bp
 r_struct
 id|mbuf
 op_star
-id|tbp
+id|rx_bp
 suffix:semicolon
-multiline_comment|/* tx: Transmit mbuf being sent */
-DECL|member|sndq1
+multiline_comment|/* pointer to frame currently received */
+DECL|member|tx_bp
 r_struct
 id|mbuf
 op_star
-id|sndq1
+id|tx_bp
 suffix:semicolon
-multiline_comment|/* Pointer to mbuf currently under construction */
-DECL|member|sndq2
+multiline_comment|/* pointer to frame currently transmitted */
+DECL|member|kiss_decode_bp
 r_struct
 id|mbuf
 op_star
-id|sndq2
+id|kiss_decode_bp
 suffix:semicolon
-multiline_comment|/* Pointer to mbuf currently under construction */
+multiline_comment|/* frame we are receiving from tty */
+DECL|member|kiss_encode_bp
+r_struct
+id|mbuf
+op_star
+id|kiss_encode_bp
+suffix:semicolon
+multiline_comment|/* frame we are sending to tty */
 multiline_comment|/* Timer */
+DECL|member|tx_t
+r_struct
+id|timer_list
+id|tx_t
+suffix:semicolon
+multiline_comment|/* tx timer for this channel */
+DECL|member|rx_t
+r_struct
+id|timer_list
+id|rx_t
+suffix:semicolon
+multiline_comment|/* rx timer */
+multiline_comment|/* rx timer counters */
 DECL|member|t_dwait
 r_int
 r_int
@@ -670,28 +748,6 @@ r_int
 id|t_mbusy
 suffix:semicolon
 multiline_comment|/* time until defer if channel busy */
-)brace
-suffix:semicolon
-multiline_comment|/* some variables for scc_rx_timer() bound together in a struct */
-DECL|struct|rx_timer_CB
-r_struct
-id|rx_timer_CB
-(brace
-DECL|member|lock
-r_char
-id|lock
-suffix:semicolon
-DECL|member|expires
-r_int
-r_int
-id|expires
-suffix:semicolon
-DECL|member|scc
-r_struct
-id|scc_channel
-op_star
-id|scc
-suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* 8530 Serial Communications Controller Register definitions */
@@ -1118,6 +1174,17 @@ DECL|macro|FOY
 mdefine_line|#define FOY&t;0x80&t;&t;/* FIFO Overflow Status */
 macro_line|#endif&t;/* _SCC_H */
 multiline_comment|/* global functions */
+macro_line|#ifdef PREV_LINUX_1_3_33
+r_extern
+r_int
+id|scc_init
+c_func
+(paren
+r_int
+id|kmem_start
+)paren
+suffix:semicolon
+macro_line|#else
 r_extern
 r_int
 id|scc_init
@@ -1126,4 +1193,5 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif
 eof
