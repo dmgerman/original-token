@@ -2317,7 +2317,7 @@ id|FB_VMODE_MASK
 )paren
 op_ne
 id|FB_VMODE_NONINTERLACED
-macro_line|#if 0&t;
+macro_line|#if 0&t;/* fbmon not done.  uncomment for 2.5.x -brad */
 op_logical_or
 op_logical_neg
 id|fbmon_valid_timings

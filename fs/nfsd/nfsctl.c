@@ -492,12 +492,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*HACK*/
-id|res-&gt;fh_size
-op_assign
-id|NFS_FHSIZE
-suffix:semicolon
-multiline_comment|/* HACK until lockd handles var-length handles */
 r_return
 id|err
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  fs.c&n; *  NTFS driver for Linux 2.1&n; *&n; *  Copyright (C) 1995-1997, 1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996 Richard Russon&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; */
+multiline_comment|/*&n; *  fs.c&n; *  NTFS driver for Linux 2.3.x&n; *&n; *  Copyright (C) 2000, Anton Altaparmakov&n; *  Copyright (C) 1995-1997, 1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996 Richard Russon&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; */
 macro_line|#ifdef HAVE_CONFIG_H
 macro_line|#include &quot;config.h&quot;
 macro_line|#endif
@@ -120,17 +120,6 @@ id|copy_from_user
 id|dest
 comma
 id|p-&gt;user
-comma
-id|len
-)paren
-suffix:semicolon
-id|update_vm_cache
-(paren
-id|p-&gt;ino
-comma
-id|p-&gt;off
-comma
-id|dest
 comma
 id|len
 )paren

@@ -1187,7 +1187,7 @@ c_cond
 (paren
 id|inode-&gt;i_size
 op_amp
-l_int|0xFFFFFFFF00000000UL
+l_int|0xFFFFFFFF00000000ULL
 )paren
 op_logical_and
 op_logical_neg

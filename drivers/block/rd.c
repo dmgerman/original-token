@@ -1067,6 +1067,16 @@ l_int|NULL
 r_if
 c_cond
 (paren
+op_logical_neg
+id|inode-&gt;i_bdev
+)paren
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+r_if
+c_cond
+(paren
 (paren
 id|rd_inode
 (braket
@@ -1086,7 +1096,6 @@ id|inode
 op_ne
 l_int|NULL
 )paren
-(brace
 id|atomic_inc
 c_func
 (paren
@@ -1103,7 +1112,6 @@ op_member_access_from_pointer
 id|i_bdev-&gt;bd_openers
 )paren
 suffix:semicolon
-)brace
 )brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon

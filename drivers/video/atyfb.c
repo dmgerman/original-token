@@ -12773,7 +12773,7 @@ id|par-&gt;accel_flags
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if 0 /* fbmon is not done. uncomment for 2.5.x -brad */
 r_if
 c_cond
 (paren

@@ -3279,6 +3279,22 @@ id|cachep
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If this slab is the first slab with free objects&n;&t;&t; * (c_freep), and as we are walking the slab chain&n;&t;&t; * backwards, it is also the last slab with free&n;&t;&t; * objects.  After unlinking it, there will be no&n;&t;&t; * slabs with free objects, so point c_freep into the&n;&t;&t; * cache structure.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|cachep-&gt;c_freep
+op_eq
+id|slabp
+)paren
+id|cachep-&gt;c_freep
+op_assign
+id|kmem_slab_end
+c_func
+(paren
+id|cachep
+)paren
+suffix:semicolon
 id|kmem_slab_unlink
 c_func
 (paren

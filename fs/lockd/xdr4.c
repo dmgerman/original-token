@@ -267,7 +267,6 @@ id|f-&gt;data
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef NFS_MAXFHSIZE
 id|f-&gt;size
 op_assign
 id|ntohl
@@ -290,7 +289,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;lockd: bad fhandle size %x (should be %d)&bslash;n&quot;
+l_string|&quot;lockd: bad fhandle size %d (should be &lt;=%d)&bslash;n&quot;
 comma
 id|f-&gt;size
 comma
@@ -320,44 +319,6 @@ c_func
 id|f-&gt;size
 )paren
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|ntohl
-c_func
-(paren
-op_star
-id|p
-op_increment
-)paren
-op_ne
-id|NFS_FHSIZE
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* for now, all filehandles are 32 bytes */
-id|memcpy
-c_func
-(paren
-id|f-&gt;data
-comma
-id|p
-comma
-id|NFS_FHSIZE
-)paren
-suffix:semicolon
-r_return
-id|p
-op_plus
-id|XDR_QUADLEN
-c_func
-(paren
-id|NFS_FHSIZE
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_static
 id|u32
@@ -376,7 +337,6 @@ op_star
 id|f
 )paren
 (brace
-macro_line|#ifdef NFS_MAXFHSIZE
 op_star
 id|p
 op_increment
@@ -387,6 +347,25 @@ c_func
 id|f-&gt;size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|f-&gt;size
+)paren
+id|p
+(braket
+id|XDR_QUADLEN
+c_func
+(paren
+id|f-&gt;size
+)paren
+op_minus
+l_int|1
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* don&squot;t leak anything */
 id|memcpy
 c_func
 (paren
@@ -406,37 +385,6 @@ c_func
 id|f-&gt;size
 )paren
 suffix:semicolon
-macro_line|#else
-op_star
-id|p
-op_increment
-op_assign
-id|htonl
-c_func
-(paren
-id|NFS_FHSIZE
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|p
-comma
-id|f-&gt;data
-comma
-id|NFS_FHSIZE
-)paren
-suffix:semicolon
-r_return
-id|p
-op_plus
-id|XDR_QUADLEN
-c_func
-(paren
-id|NFS_FHSIZE
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Encode and decode owner handle&n; */
 r_static

@@ -4300,7 +4300,7 @@ id|config
 comma
 id|buffer
 comma
-id|USB_DT_INTERFACE_SIZE
+id|USB_DT_CONFIG_SIZE
 )paren
 suffix:semicolon
 id|le16_to_cpus
@@ -6438,6 +6438,21 @@ id|iface-&gt;act_altsetting
 op_assign
 id|alternate
 suffix:semicolon
+id|dev-&gt;toggle
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* 9.1.1.5 says to do this */
+id|dev-&gt;toggle
+(braket
+l_int|1
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 id|usb_set_maxpacket
 c_func
 (paren
@@ -8171,6 +8186,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|usb_new_device
+)paren
+suffix:semicolon
+DECL|variable|usb_reset_device
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|usb_reset_device
 )paren
 suffix:semicolon
 DECL|variable|usb_connect

@@ -2501,7 +2501,7 @@ c_cond
 id|INITRD_START
 op_plus
 id|INITRD_SIZE
-OL
+op_le
 (paren
 id|max_low_pfn
 op_lshift

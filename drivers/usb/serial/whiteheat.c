@@ -23,7 +23,7 @@ macro_line|#undef DEBUG
 macro_line|#endif
 macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;usb-serial.h&quot;
-macro_line|#include &quot;whiteheat.h&quot;&t;&t;/* firmware for the ConnectTech WhiteHEAT device */
+macro_line|#include &quot;whiteheat_fw.h&quot;&t;&t;/* firmware for the ConnectTech WhiteHEAT device */
 DECL|macro|CONNECT_TECH_VENDOR_ID
 mdefine_line|#define CONNECT_TECH_VENDOR_ID&t;&t;0x0710
 DECL|macro|CONNECT_TECH_FAKE_WHITE_HEAT_ID
@@ -652,7 +652,7 @@ id|record-&gt;data
 comma
 id|record-&gt;data_size
 comma
-l_int|0xa0
+l_int|0xa3
 )paren
 suffix:semicolon
 r_if

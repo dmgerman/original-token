@@ -1952,6 +1952,16 @@ id|dev
 )paren
 suffix:semicolon
 r_int
+id|usb_reset_device
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_int
 id|usb_set_address
 c_func
 (paren

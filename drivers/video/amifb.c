@@ -8341,6 +8341,7 @@ id|par-&gt;crsr.width
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 0&t;/* fbmon not done.  uncomment for 2.5.x -brad */
 r_if
 c_cond
 (paren
@@ -8373,6 +8374,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

@@ -1993,9 +1993,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0000
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-singleline_comment|// FIXME, use the bootmem.h interface.
 r_if
 c_cond
 (paren
@@ -2006,7 +2004,9 @@ id|initrd_below_start_ok
 op_logical_and
 id|initrd_start
 OL
-id|memory_start
+id|min_low_pfn
+op_lshift
+id|PAGE_SHIFT
 )paren
 (brace
 id|printk
@@ -2018,7 +2018,9 @@ l_string|&quot;disabling it.&bslash;n&quot;
 comma
 id|initrd_start
 comma
-id|memory_start
+id|min_low_pfn
+op_lshift
+id|PAGE_SHIFT
 )paren
 suffix:semicolon
 id|initrd_start
@@ -2027,7 +2029,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#endif /* 0000 */
 id|mem_init
 c_func
 (paren
@@ -2259,34 +2260,6 @@ id|envp_init
 )paren
 suffix:semicolon
 )brace
-DECL|function|no_initrd
-r_static
-r_int
-id|__init
-id|no_initrd
-c_func
-(paren
-r_char
-op_star
-id|s
-)paren
-(brace
-id|mount_initrd
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|__setup
-c_func
-(paren
-l_string|&quot;noinitrd&quot;
-comma
-id|no_initrd
-)paren
-suffix:semicolon
 macro_line|#endif
 DECL|variable|child_reaper
 r_struct

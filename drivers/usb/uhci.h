@@ -126,61 +126,6 @@ DECL|macro|UHCI_MAX_SOF_NUMBER
 mdefine_line|#define UHCI_MAX_SOF_NUMBER&t;2047&t;/* in an SOF packet */
 DECL|macro|CAN_SCHEDULE_FRAMES
 mdefine_line|#define CAN_SCHEDULE_FRAMES&t;1000&t;/* how far future frames can be scheduled */
-r_struct
-id|uhci_td
-suffix:semicolon
-DECL|struct|uhci_qh
-r_struct
-id|uhci_qh
-(brace
-multiline_comment|/* Hardware fields */
-DECL|member|link
-id|__u32
-id|link
-suffix:semicolon
-multiline_comment|/* Next queue */
-DECL|member|element
-id|__u32
-id|element
-suffix:semicolon
-multiline_comment|/* Queue element pointer */
-multiline_comment|/* Software fields */
-multiline_comment|/* Can&squot;t use list_head since we want a specific order */
-DECL|member|prevqh
-DECL|member|nextqh
-r_struct
-id|uhci_qh
-op_star
-id|prevqh
-comma
-op_star
-id|nextqh
-suffix:semicolon
-DECL|member|dev
-r_struct
-id|usb_device
-op_star
-id|dev
-suffix:semicolon
-multiline_comment|/* The owning device */
-DECL|member|remove_list
-r_struct
-id|list_head
-id|remove_list
-suffix:semicolon
-)brace
-id|__attribute__
-c_func
-(paren
-(paren
-id|aligned
-c_func
-(paren
-l_int|16
-)paren
-)paren
-)paren
-suffix:semicolon
 DECL|struct|uhci_framelist
 r_struct
 id|uhci_framelist
@@ -205,11 +150,68 @@ l_int|4096
 )paren
 )paren
 suffix:semicolon
+r_struct
+id|uhci_td
+suffix:semicolon
+DECL|struct|uhci_qh
+r_struct
+id|uhci_qh
+(brace
+multiline_comment|/* Hardware fields */
+DECL|member|link
+id|__u32
+id|link
+suffix:semicolon
+multiline_comment|/* Next queue */
+DECL|member|element
+id|__u32
+id|element
+suffix:semicolon
+multiline_comment|/* Queue element pointer */
+multiline_comment|/* Software fields */
+multiline_comment|/* Can&squot;t use list_head since we want a specific order */
+DECL|member|dev
+r_struct
+id|usb_device
+op_star
+id|dev
+suffix:semicolon
+multiline_comment|/* The owning device */
+DECL|member|prevqh
+DECL|member|nextqh
+r_struct
+id|uhci_qh
+op_star
+id|prevqh
+comma
+op_star
+id|nextqh
+suffix:semicolon
+DECL|member|remove_list
+r_struct
+id|list_head
+id|remove_list
+suffix:semicolon
+)brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+l_int|16
+)paren
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * for TD &lt;status&gt;:&n; */
 DECL|macro|TD_CTRL_SPD
 mdefine_line|#define TD_CTRL_SPD&t;&t;(1 &lt;&lt; 29)&t;/* Short Packet Detect */
 DECL|macro|TD_CTRL_C_ERR_MASK
 mdefine_line|#define TD_CTRL_C_ERR_MASK&t;(3 &lt;&lt; 27)&t;/* Error Counter bits */
+DECL|macro|TD_CTRL_C_ERR_SHIFT
+mdefine_line|#define TD_CTRL_C_ERR_SHIFT&t;27
 DECL|macro|TD_CTRL_LS
 mdefine_line|#define TD_CTRL_LS&t;&t;(1 &lt;&lt; 26)&t;/* Low Speed Device */
 DECL|macro|TD_CTRL_IOS
@@ -317,23 +319,9 @@ op_star
 id|urb
 suffix:semicolon
 multiline_comment|/* URB this TD belongs to */
-multiline_comment|/* We can&squot;t use list_head since we need a specific order */
-DECL|struct|ut_list
-r_struct
-id|ut_list
-(brace
-DECL|member|prev
-DECL|member|next
-r_struct
-id|uhci_td
-op_star
-id|prev
-comma
-op_star
-id|next
-suffix:semicolon
 DECL|member|list
-)brace
+r_struct
+id|list_head
 id|list
 suffix:semicolon
 )brace
@@ -632,6 +620,12 @@ DECL|struct|urb_priv
 r_struct
 id|urb_priv
 (brace
+DECL|member|urb
+r_struct
+id|urb
+op_star
+id|urb
+suffix:semicolon
 DECL|member|qh
 r_struct
 id|uhci_qh
@@ -642,8 +636,17 @@ multiline_comment|/* QH for this URB */
 DECL|member|fsbr
 r_int
 id|fsbr
+suffix:colon
+l_int|1
 suffix:semicolon
 multiline_comment|/* Did this URB turn on FSBR? */
+DECL|member|queued
+r_int
+id|queued
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* 0 if QH was linked in */
 DECL|member|short_control_packet
 r_char
 id|short_control_packet
@@ -657,28 +660,23 @@ r_int
 id|inserttime
 suffix:semicolon
 multiline_comment|/* In jiffies */
-DECL|struct|up_list
-r_struct
-id|up_list
-(brace
-DECL|member|begin
-DECL|member|end
-r_struct
-id|uhci_td
-op_star
-id|begin
-comma
-op_star
-id|end
-suffix:semicolon
 DECL|member|list
-)brace
+r_struct
+id|list_head
 id|list
 suffix:semicolon
+DECL|member|urb_queue_list
+r_struct
+id|list_head
+id|urb_queue_list
+suffix:semicolon
+multiline_comment|/* URB&squot;s linked together */
 )brace
 suffix:semicolon
 multiline_comment|/* -------------------------------------------------------------------------&n;   Virtual Root HUB&n;   ------------------------------------------------------------------------- */
 multiline_comment|/* destination of request */
+DECL|macro|RH_DEVICE
+mdefine_line|#define RH_DEVICE&t;&t;0x00
 DECL|macro|RH_INTERFACE
 mdefine_line|#define RH_INTERFACE&t;&t;0x01
 DECL|macro|RH_ENDPOINT

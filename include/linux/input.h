@@ -62,12 +62,18 @@ DECL|macro|EVIOCGVERSION
 mdefine_line|#define EVIOCGVERSION&t;&t;_IOR(&squot;E&squot;, 0x01, __u32)                  /* get driver version */
 DECL|macro|EVIOCGID
 mdefine_line|#define EVIOCGID&t;&t;_IOR(&squot;E&squot;, 0x02, struct input_id)&t;/* get device ID */
+DECL|macro|EVIOCGREP
+mdefine_line|#define EVIOCGREP&t;&t;_IOR(&squot;E&squot;, 0x03, int[2])&t;&t;&t;/* get repeat settings */
+DECL|macro|EVIOCSREP
+mdefine_line|#define EVIOCSREP&t;&t;_IOW(&squot;E&squot;, 0x03, int[2])&t;&t;&t;/* get repeat settings */
 DECL|macro|EVIOCGNAME
 mdefine_line|#define EVIOCGNAME(len)&t;&t;_IOC(_IOC_READ, &squot;E&squot;, 0x03, len)&t;&t;/* get device name */
 DECL|macro|EVIOCGBIT
 mdefine_line|#define EVIOCGBIT(ev,len)&t;_IOC(_IOC_READ, &squot;E&squot;, 0x20 + ev, len)&t;/* get event bits */
 DECL|macro|EVIOCGABSLIM
-mdefine_line|#define EVIOCGABSLIM(num)&t;_IOR(&squot;E&squot;, 0x40 + num, 4 * sizeof(int))&t;/* get abs event limits */ 
+mdefine_line|#define EVIOCGABSLIM(num)&t;_IOR(&squot;E&squot;, 0x40 + num, int[4])&t;&t;/* get abs event limits */ 
+DECL|macro|EVIOCGABS
+mdefine_line|#define EVIOCGABS(num)&t;&t;_IOR(&squot;E&squot;, 0x80 + num, int)&t;&t;/* get abs value */
 multiline_comment|/*&n; * Event types&n; */
 DECL|macro|EV_RST
 mdefine_line|#define EV_RST&t;&t;&t;0x00
@@ -494,16 +500,18 @@ DECL|macro|BTN_TOP
 mdefine_line|#define BTN_TOP&t;&t;&t;0x123
 DECL|macro|BTN_TOP2
 mdefine_line|#define BTN_TOP2&t;&t;0x124
+DECL|macro|BTN_PINKIE
+mdefine_line|#define BTN_PINKIE&t;&t;0x125
 DECL|macro|BTN_BASE
-mdefine_line|#define BTN_BASE&t;&t;0x125
+mdefine_line|#define BTN_BASE&t;&t;0x126
 DECL|macro|BTN_BASE2
-mdefine_line|#define BTN_BASE2&t;&t;0x126
+mdefine_line|#define BTN_BASE2&t;&t;0x127
 DECL|macro|BTN_BASE3
-mdefine_line|#define BTN_BASE3&t;&t;0x127
+mdefine_line|#define BTN_BASE3&t;&t;0x128
 DECL|macro|BTN_BASE4
-mdefine_line|#define BTN_BASE4&t;&t;0x128
+mdefine_line|#define BTN_BASE4&t;&t;0x129
 DECL|macro|BTN_BASE5
-mdefine_line|#define BTN_BASE5&t;&t;0x129
+mdefine_line|#define BTN_BASE5&t;&t;0x12a
 DECL|macro|BTN_GAMEPAD
 mdefine_line|#define BTN_GAMEPAD&t;&t;0x130
 DECL|macro|BTN_A
@@ -956,7 +964,9 @@ id|value
 )paren
 suffix:semicolon
 DECL|member|connect
-r_int
+r_struct
+id|input_handle
+op_star
 (paren
 op_star
 id|connect
@@ -1018,6 +1028,10 @@ DECL|member|private
 r_void
 op_star
 r_private
+suffix:semicolon
+DECL|member|open
+r_int
+id|open
 suffix:semicolon
 DECL|member|dev
 r_struct
@@ -1081,7 +1095,7 @@ id|input_handler
 op_star
 )paren
 suffix:semicolon
-r_void
+r_int
 id|input_open_device
 c_func
 (paren

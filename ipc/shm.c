@@ -189,6 +189,16 @@ DECL|macro|SHM_FMT
 mdefine_line|#define SHM_FMT &quot;.IPC_%08x&quot;
 DECL|macro|SHM_FMT_LEN
 mdefine_line|#define SHM_FMT_LEN 13
+multiline_comment|/* shm_mode upper byte flags */
+multiline_comment|/* SHM_DEST and SHM_LOCKED are used in ipcs(8) */
+DECL|macro|PRV_DEST
+mdefine_line|#define PRV_DEST&t;0010000&t;/* segment will be destroyed on last detach */
+DECL|macro|PRV_LOCKED
+mdefine_line|#define PRV_LOCKED&t;0020000&t;/* segment will not be swapped */
+DECL|macro|SHM_UNLK
+mdefine_line|#define SHM_UNLK&t;0040000&t;/* filename is unlinked */
+DECL|macro|SHM_SYSV
+mdefine_line|#define SHM_SYSV&t;0100000&t;/* It is a SYSV shm segment */
 DECL|struct|shmid_kernel
 r_struct
 id|shmid_kernel
@@ -253,10 +263,6 @@ DECL|member|lpid
 id|pid_t
 id|lpid
 suffix:semicolon
-DECL|member|unlinked
-r_int
-id|unlinked
-suffix:semicolon
 DECL|member|nlen
 r_int
 id|nlen
@@ -310,8 +316,8 @@ DECL|macro|shm_namelen
 mdefine_line|#define shm_namelen&t;permap.shmem.nlen
 DECL|macro|shm_name
 mdefine_line|#define shm_name&t;permap.shmem.nm
-DECL|macro|shm_unlinked
-mdefine_line|#define shm_unlinked&t;permap.shmem.unlinked
+DECL|macro|shm_flags
+mdefine_line|#define shm_flags&t;shm_perm.mode
 DECL|macro|zsem
 mdefine_line|#define zsem&t;&t;permap.zero.sema
 DECL|macro|zero_list
@@ -332,8 +338,6 @@ DECL|macro|shm_unlockall
 mdefine_line|#define shm_unlockall()&t;ipc_unlockall(&amp;shm_ids)
 DECL|macro|shm_get
 mdefine_line|#define shm_get(id)&t;((struct shmid_kernel*)ipc_get(&amp;shm_ids,id))
-DECL|macro|shm_checkid
-mdefine_line|#define shm_checkid(s, id)&t;&bslash;&n;&t;ipc_checkid(&amp;shm_ids,&amp;s-&gt;shm_perm,id)
 DECL|macro|shm_buildid
 mdefine_line|#define shm_buildid(id, seq) &bslash;&n;&t;ipc_buildid(&amp;shm_ids, id, seq)
 r_static
@@ -1324,6 +1328,59 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|shm_checkid
+r_static
+r_inline
+r_int
+id|shm_checkid
+c_func
+(paren
+r_struct
+id|shmid_kernel
+op_star
+id|s
+comma
+r_int
+id|id
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|s-&gt;shm_flags
+op_amp
+id|SHM_SYSV
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ipc_checkid
+c_func
+(paren
+op_amp
+id|shm_ids
+comma
+op_amp
+id|s-&gt;shm_perm
+comma
+id|id
+)paren
+)paren
+r_return
+op_minus
+id|EIDRM
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|shm_rmid
 r_static
 r_inline
@@ -1691,7 +1748,11 @@ r_return
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
-id|shp-&gt;shm_perm.mode
+(paren
+id|shp-&gt;shm_flags
+op_amp
+id|S_IALLUGO
+)paren
 op_or
 id|S_IFREG
 suffix:semicolon
@@ -2051,7 +2112,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|shp-&gt;shm_unlinked
+id|shp-&gt;shm_flags
+op_amp
+id|SHM_UNLK
 )paren
 r_continue
 suffix:semicolon
@@ -2206,7 +2269,9 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|shp-&gt;shm_unlinked
+id|shp-&gt;shm_flags
+op_amp
+id|SHM_UNLK
 )paren
 op_logical_and
 id|dent-&gt;d_name.len
@@ -2376,13 +2441,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|shp-&gt;shm_unlinked
-op_assign
-l_int|1
-suffix:semicolon
-id|shp-&gt;shm_perm.mode
+id|shp-&gt;shm_flags
 op_or_assign
-id|SHM_DEST
+id|SHM_UNLK
+op_or
+id|PRV_DEST
 suffix:semicolon
 id|shp-&gt;shm_perm.key
 op_assign
@@ -3535,7 +3598,7 @@ id|shp-&gt;shm_perm.key
 op_assign
 id|key
 suffix:semicolon
-id|shp-&gt;shm_perm.mode
+id|shp-&gt;shm_flags
 op_assign
 (paren
 id|shmflg
@@ -3575,10 +3638,6 @@ comma
 id|shp-&gt;shm_perm.seq
 )paren
 suffix:semicolon
-id|shp-&gt;shm_unlinked
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3603,6 +3662,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|shp-&gt;shm_flags
+op_or_assign
+id|SHM_SYSV
+suffix:semicolon
 id|shp-&gt;shm_namelen
 op_assign
 id|sprintf
@@ -4175,7 +4238,7 @@ id|tbuf.shm_perm.gid
 suffix:semicolon
 id|out-&gt;mode
 op_assign
-id|tbuf.shm_perm.mode
+id|tbuf.shm_flags
 suffix:semicolon
 r_return
 l_int|0
@@ -4220,7 +4283,7 @@ id|tbuf_old.shm_perm.gid
 suffix:semicolon
 id|out-&gt;mode
 op_assign
-id|tbuf_old.shm_perm.mode
+id|tbuf_old.shm_flags
 suffix:semicolon
 r_return
 l_int|0
@@ -4696,6 +4759,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|shp-&gt;shm_flags
+op_amp
+id|SHM_SYSV
+)paren
+op_logical_or
 id|shmid
 OG
 id|shm_ids.max_id
@@ -4718,12 +4788,6 @@ r_else
 (brace
 id|err
 op_assign
-op_minus
-id|EIDRM
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|shm_checkid
 c_func
 (paren
@@ -4731,6 +4795,11 @@ id|shp
 comma
 id|shmid
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 r_goto
@@ -4770,6 +4839,45 @@ comma
 op_amp
 id|tbuf.shm_perm
 )paren
+suffix:semicolon
+multiline_comment|/* ugly hack to keep binary compatibility for ipcs */
+id|tbuf.shm_flags
+op_and_assign
+id|PRV_DEST
+op_or
+id|PRV_LOCKED
+op_or
+id|S_IRWXUGO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tbuf.shm_flags
+op_amp
+id|PRV_DEST
+)paren
+id|tbuf.shm_flags
+op_or_assign
+id|SHM_DEST
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tbuf.shm_flags
+op_amp
+id|PRV_LOCKED
+)paren
+id|tbuf.shm_flags
+op_or_assign
+id|SHM_LOCKED
+suffix:semicolon
+id|tbuf.shm_flags
+op_and_assign
+id|SHM_DEST
+op_or
+id|SHM_LOCKED
+op_or
+id|S_IRWXUGO
 suffix:semicolon
 id|tbuf.shm_segsz
 op_assign
@@ -4838,11 +4946,6 @@ suffix:colon
 multiline_comment|/* Allow superuser to lock segment in memory */
 multiline_comment|/* Should the pages be faulted in here or leave it to user? */
 multiline_comment|/* need to determine interaction with current-&gt;swappable */
-r_struct
-id|kern_ipc_perm
-op_star
-id|ipcp
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4895,12 +4998,6 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-op_minus
-id|EIDRM
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|shm_checkid
 c_func
 (paren
@@ -4908,17 +5005,17 @@ id|shp
 comma
 id|shmid
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 r_goto
 id|out_unlock
 suffix:semicolon
 )brace
-id|ipcp
-op_assign
-op_amp
-id|shp-&gt;shm_perm
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4927,48 +5024,17 @@ op_eq
 id|SHM_LOCK
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|ipcp-&gt;mode
-op_amp
-id|SHM_LOCKED
-)paren
-)paren
-(brace
-id|ipcp-&gt;mode
+id|shp-&gt;shm_flags
 op_or_assign
-id|SHM_LOCKED
+id|PRV_LOCKED
 suffix:semicolon
-id|err
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 )brace
 r_else
-(brace
-r_if
-c_cond
-(paren
-id|ipcp-&gt;mode
-op_amp
-id|SHM_LOCKED
-)paren
-(brace
-id|ipcp-&gt;mode
+id|shp-&gt;shm_flags
 op_and_assign
 op_complement
-id|SHM_LOCKED
+id|PRV_LOCKED
 suffix:semicolon
-id|err
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-)brace
 id|shm_unlock
 c_func
 (paren
@@ -5036,12 +5102,6 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-op_minus
-id|EIDRM
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|shm_checkid
 c_func
 (paren
@@ -5049,6 +5109,11 @@ id|shp
 comma
 id|shmid
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 op_eq
 l_int|0
 )paren
@@ -5059,6 +5124,13 @@ c_cond
 id|shp-&gt;shm_nattch
 op_eq
 l_int|0
+op_logical_and
+op_logical_neg
+(paren
+id|shp-&gt;shm_flags
+op_amp
+id|SHM_UNLK
+)paren
 )paren
 (brace
 r_int
@@ -5088,19 +5160,14 @@ id|id
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Do not find me any more */
-id|shp-&gt;shm_perm.mode
+id|shp-&gt;shm_flags
 op_or_assign
-id|SHM_DEST
+id|PRV_DEST
 suffix:semicolon
+multiline_comment|/* Do not find it any more */
 id|shp-&gt;shm_perm.key
 op_assign
 id|IPC_PRIVATE
-suffix:semicolon
-multiline_comment|/* Do not find it any more */
-id|err
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Unlock */
@@ -5193,12 +5260,6 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-op_minus
-id|EIDRM
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|shm_checkid
 c_func
 (paren
@@ -5206,6 +5267,11 @@ id|shp
 comma
 id|shmid
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 r_goto
@@ -5248,10 +5314,10 @@ id|shp-&gt;shm_perm.gid
 op_assign
 id|setbuf.gid
 suffix:semicolon
-id|shp-&gt;shm_perm.mode
+id|shp-&gt;shm_flags
 op_assign
 (paren
-id|shp-&gt;shm_perm.mode
+id|shp-&gt;shm_flags
 op_amp
 op_complement
 id|S_IRWXUGO
@@ -5924,14 +5990,36 @@ id|dentry
 )paren
 )paren
 (brace
-id|error
+multiline_comment|/*&n;&t;&t; * We have to do our own unlink to prevent the vfs&n;&t;&t; * permission check. The SYSV IPC layer has already&n;&t;&t; * checked the permissions which do not comply to the&n;&t;&t; * vfs rules.&n;&t;&t; */
+r_struct
+id|inode
+op_star
+id|inode
 op_assign
-id|vfs_unlink
+id|dir-&gt;d_inode
+suffix:semicolon
+id|down
 c_func
 (paren
-id|dir-&gt;d_inode
+op_amp
+id|inode-&gt;i_zombie
+)paren
+suffix:semicolon
+id|error
+op_assign
+id|shm_unlink
+c_func
+(paren
+id|inode
 comma
 id|dentry
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_zombie
 )paren
 suffix:semicolon
 id|dput
@@ -6018,9 +6106,16 @@ id|shp-&gt;shm_nattch
 op_eq
 l_int|0
 op_logical_and
-id|shp-&gt;shm_perm.mode
+id|shp-&gt;shm_flags
 op_amp
-id|SHM_DEST
+id|PRV_DEST
+op_logical_and
+op_logical_neg
+(paren
+id|shp-&gt;shm_flags
+op_amp
+id|SHM_UNLK
+)paren
 )paren
 (brace
 r_int
@@ -7026,7 +7121,7 @@ id|shp
 op_eq
 l_int|NULL
 op_logical_or
-id|shp-&gt;shm_perm.mode
+id|shp-&gt;shm_flags
 op_amp
 id|SHM_LOCKED
 )paren
@@ -7602,7 +7697,7 @@ comma
 id|shp-&gt;shm_perm.seq
 )paren
 comma
-id|shp-&gt;shm_perm.mode
+id|shp-&gt;shm_flags
 comma
 id|shp-&gt;shm_segsz
 comma
@@ -7630,7 +7725,9 @@ id|shp-&gt;shm_namelen
 comma
 id|shp-&gt;shm_name
 comma
-id|shp-&gt;shm_unlinked
+id|shp-&gt;shm_flags
+op_amp
+id|SHM_UNLK
 ques
 c_cond
 l_string|&quot; (deleted)&quot;

@@ -15,7 +15,7 @@ op_star
 id|version
 op_assign
 id|__FILE__
-l_string|&quot;: v0.3.8 2000/04/04 Written by Petko Manolov (petkan@spct.net)&bslash;n&quot;
+l_string|&quot;: v0.3.9 2000/04/11 Written by Petko Manolov (petkan@spct.net)&bslash;n&quot;
 suffix:semicolon
 DECL|macro|PEGASUS_MTU
 mdefine_line|#define&t;PEGASUS_MTU&t;&t;1500
@@ -944,17 +944,17 @@ op_logical_neg
 id|loopback
 )paren
 (brace
-id|err
+id|warn
 c_func
 (paren
-l_string|&quot;link NOT established - %x&quot;
+l_string|&quot;%s: link NOT established (0x%x), check the cable.&quot;
+comma
+id|dev-&gt;name
 comma
 id|temp
 )paren
 suffix:semicolon
-r_return
-l_int|3
-suffix:semicolon
+multiline_comment|/* return 3; FIXME */
 )brace
 r_if
 c_cond
@@ -1985,16 +1985,7 @@ comma
 id|net-&gt;name
 )paren
 suffix:semicolon
-id|pegasus_set_register
-c_func
-(paren
-id|pegasus-&gt;usb
-comma
-l_int|2
-comma
-l_int|0x04
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;pegasus_set_register(pegasus-&gt;usb, 2, 0x04); FIXME */
 )brace
 r_else
 r_if
@@ -2122,7 +2113,8 @@ op_increment
 suffix:semicolon
 )brace
 r_return
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|pegasus_probe
@@ -2158,7 +2150,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 (paren
 id|dev_indx
 op_assign
@@ -2170,6 +2161,9 @@ comma
 id|dev-&gt;descriptor.idProduct
 )paren
 )paren
+op_eq
+op_minus
+l_int|1
 )paren
 (brace
 r_return
@@ -2399,7 +2393,7 @@ c_func
 (paren
 id|dev
 comma
-l_int|0
+l_int|3
 )paren
 comma
 id|pegasus-&gt;intr_buff

@@ -8042,7 +8042,7 @@ op_amp
 id|ohci-&gt;regs-&gt;control
 )paren
 op_amp
-id|OHCI_CTRL_RWC
+id|OHCI_CTRL_IR
 )paren
 (brace
 multiline_comment|/* SMM owns the HC */
@@ -8070,7 +8070,7 @@ op_amp
 id|ohci-&gt;regs-&gt;control
 )paren
 op_amp
-id|OHCI_CTRL_RWC
+id|OHCI_CTRL_IR
 )paren
 (brace
 id|wait_ms

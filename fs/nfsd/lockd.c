@@ -62,7 +62,7 @@ id|fh.fh_handle.fh_base
 comma
 id|f-&gt;data
 comma
-id|NFS_FHSIZE
+id|f-&gt;size
 )paren
 suffix:semicolon
 id|fh.fh_export

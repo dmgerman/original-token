@@ -944,9 +944,8 @@ comma
 id|controller_count
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC_PBOOK
-macro_line|#ifdef CONFIG_DMASOUND_MODULE
-multiline_comment|/* On PowerBooks, we disable the sound chip when dmasound is a module */
+macro_line|#if defined(CONFIG_PMAC_PBOOK) &amp;&amp; !defined(CONFIG_DMASOUND_AWACS)
+multiline_comment|/* On PowerBooks, we disable the sound chip when dmasound is a module&n;&t; * or not used at all&n;&t; */
 r_if
 c_cond
 (paren
@@ -988,7 +987,6 @@ id|FEATURE_Sound_CLK_enable
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;
 macro_line|#endif
 )brace
 r_static

@@ -2,8 +2,8 @@ multiline_comment|/*&n; * drivers.c&n; * (C) Copyright 1999 Randy Dunlap.&n; * (
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
+macro_line|#include &lt;linux/usbdevice_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;usbdevice_fs.h&quot;
 multiline_comment|/*****************************************************************/
 multiline_comment|/*&n; * Dump usb_driver_list.&n; *&n; * We now walk the list of registered USB drivers.&n; */
 DECL|function|usb_driver_read

@@ -555,6 +555,8 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|ap
 op_assign
 id|kmalloc
@@ -569,6 +571,11 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+id|err
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -576,9 +583,8 @@ id|ap
 op_eq
 l_int|0
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* initialize the syncppp structure */
 id|memset
@@ -652,6 +658,11 @@ id|ap-&gt;chan.mtu
 op_assign
 id|PPP_MRU
 suffix:semicolon
+id|ap-&gt;chan.hdrlen
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* for A/C bytes */
 id|err
 op_assign
 id|ppp_register_channel
@@ -666,25 +677,30 @@ c_cond
 (paren
 id|err
 )paren
-(brace
+r_goto
+id|out_free
+suffix:semicolon
+id|tty-&gt;disc_data
+op_assign
+id|ap
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+id|out_free
+suffix:colon
 id|kfree
 c_func
 (paren
 id|ap
 )paren
 suffix:semicolon
+id|out
+suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|err
-suffix:semicolon
-)brace
-id|tty-&gt;disc_data
-op_assign
-id|ap
-suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called when the tty is put into another line discipline&n; * (or it hangs up).&n; */

@@ -3,6 +3,13 @@ macro_line|#ifndef _MD_U_H
 DECL|macro|_MD_U_H
 mdefine_line|#define _MD_U_H
 multiline_comment|/* ioctls */
+multiline_comment|/* compat */
+DECL|macro|REGISTER_DEV
+mdefine_line|#define REGISTER_DEV &t;&t;_IO (MD_MAJOR, 1)
+DECL|macro|START_MD
+mdefine_line|#define START_MD     &t;&t;_IO (MD_MAJOR, 2)
+DECL|macro|STOP_MD
+mdefine_line|#define STOP_MD      &t;&t;_IO (MD_MAJOR, 3)
 multiline_comment|/* status */
 DECL|macro|RAID_VERSION
 mdefine_line|#define RAID_VERSION&t;&t;_IOR (MD_MAJOR, 0x10, mdu_version_t)

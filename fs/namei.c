@@ -1990,8 +1990,9 @@ r_if
 c_cond
 (paren
 id|current-&gt;personality
+op_ne
+id|PER_LINUX
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -2009,7 +2010,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|nd-&gt;mnt
 op_assign
 id|mntget
@@ -2040,6 +2040,7 @@ r_char
 op_star
 id|name
 comma
+r_int
 r_int
 id|flags
 comma

@@ -21,16 +21,5 @@ mdefine_line|#define udf_debug(f, a...) /**/
 macro_line|#endif
 DECL|macro|udf_info
 mdefine_line|#define udf_info(f, a...) &bslash;&n;&t;&t;printk (KERN_INFO &quot;UDF-fs INFO &quot; ## f, ## a);
-macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * Function prototypes (all other prototypes included in udfdecl.h)&n; */
-r_extern
-r_int
-id|init_udf_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !defined(_LINUX_UDF_FS_H) */
 eof

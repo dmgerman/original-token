@@ -908,8 +908,7 @@ id|file_lock
 op_star
 id|fl
 suffix:semicolon
-r_int
-r_int
+id|loff_t
 id|rqstart
 comma
 id|rqend
@@ -5356,8 +5355,7 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
-r_int
-r_int
+id|loff_t
 id|start
 comma
 id|end
@@ -5414,8 +5412,7 @@ id|nfs_page
 op_star
 id|req
 suffix:semicolon
-r_int
-r_int
+id|loff_t
 id|rqstart
 comma
 id|rqend
@@ -5500,6 +5497,7 @@ id|end
 op_minus
 id|start
 suffix:semicolon
+multiline_comment|/* If &squot;len&squot; is not a 32-bit quantity, pass &squot;0&squot; in the COMMIT call */
 r_if
 c_cond
 (paren

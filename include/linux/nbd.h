@@ -18,6 +18,8 @@ DECL|macro|NBD_PRINT_DEBUG
 mdefine_line|#define NBD_PRINT_DEBUG&t;_IO( 0xab, 6 )
 DECL|macro|NBD_SET_SIZE_BLOCKS
 mdefine_line|#define NBD_SET_SIZE_BLOCKS&t;_IO( 0xab, 7 )
+DECL|macro|NBD_DISCONNECT
+mdefine_line|#define NBD_DISCONNECT  _IO( 0xab, 8 )
 macro_line|#ifdef MAJOR_NR
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
