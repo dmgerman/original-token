@@ -612,6 +612,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Map whole memory from 0xC0000000 */
+id|pg_dir
+op_add_assign
+l_int|768
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -645,7 +649,7 @@ l_int|1
 suffix:semicolon
 id|__pe
 op_assign
-id|_PAGE_TABLE
+id|_KERNPG_TABLE
 op_plus
 id|_PAGE_4M
 op_plus
@@ -678,10 +682,8 @@ suffix:semicolon
 id|pgd_val
 c_func
 (paren
+op_star
 id|pg_dir
-(braket
-l_int|768
-)braket
 )paren
 op_assign
 id|__pe
@@ -713,10 +715,8 @@ op_amp
 id|pgd_val
 c_func
 (paren
+op_star
 id|pg_dir
-(braket
-l_int|768
-)braket
 )paren
 )paren
 suffix:semicolon
@@ -747,10 +747,8 @@ suffix:semicolon
 id|pgd_val
 c_func
 (paren
+op_star
 id|pg_dir
-(braket
-l_int|768
-)braket
 )paren
 op_assign
 id|_PAGE_TABLE
