@@ -1089,13 +1089,6 @@ id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-id|down
-c_func
-(paren
-op_amp
-id|inode-&gt;i_sem
-)paren
-suffix:semicolon
 id|file-&gt;f_op
 op_member_access_from_pointer
 id|write
@@ -1118,13 +1111,6 @@ id|acct
 comma
 op_amp
 id|file-&gt;f_pos
-)paren
-suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 id|set_fs
