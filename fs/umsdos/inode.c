@@ -777,6 +777,7 @@ id|ATTR_ATIME
 op_or
 id|ATTR_CTIME
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;UMSDOS_notify_change is convenient to call here&n;&t;&t;to update the EMD entry associated with this inode.&n;&t;&t;But it has the side effect to re&quot;dirt&quot; the inode.&n;&t;*/
 id|UMSDOS_notify_change
 (paren
 id|inode
@@ -784,6 +785,10 @@ comma
 op_amp
 id|newattrs
 )paren
+suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|UMSDOS_notify_change
@@ -919,6 +924,10 @@ suffix:semicolon
 id|filp.f_pos
 op_assign
 id|inode-&gt;u.umsdos_i.pos
+suffix:semicolon
+id|filp.f_reada
+op_assign
+l_int|0
 suffix:semicolon
 id|PRINTK
 (paren

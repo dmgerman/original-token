@@ -1,8 +1,8 @@
-multiline_comment|/*&n; * linux/ipc/shm.c&n; * Copyright (C) 1992, 1993 Krishna Balasubramanian &n; *         Many improvements/fixes by Bruno Haible.&n; * assume user segments start at 0x0&n; */
+multiline_comment|/*&n; * linux/ipc/shm.c&n; * Copyright (C) 1992, 1993 Krishna Balasubramanian&n; *         Many improvements/fixes by Bruno Haible.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/ipc.h&gt; 
+macro_line|#include &lt;linux/ipc.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -16,14 +16,13 @@ op_star
 id|ipcp
 comma
 r_int
-id|semflg
+id|shmflg
 )paren
 suffix:semicolon
 r_extern
 r_int
 r_int
 id|get_swap_page
-c_func
 (paren
 r_void
 )paren
@@ -75,7 +74,6 @@ r_static
 r_int
 r_int
 id|shm_swap_in
-c_func
 (paren
 r_struct
 id|vm_area_struct
@@ -126,6 +124,7 @@ id|shm_lock
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* calling findkey() may need to wait */
 DECL|variable|shm_segs
 r_static
 r_struct
@@ -299,7 +298,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * allocate new shmid_ds and pgtable. protected by shm_segs[id] = NOID.&n; */
+multiline_comment|/*&n; * allocate new shmid_ds and pgtable. protected by shm_segs[id] = NOID.&n; */
 DECL|function|newseg
 r_static
 r_int
@@ -638,14 +637,15 @@ id|shm_lock
 )paren
 suffix:semicolon
 r_return
-id|id
-op_plus
 (paren
 r_int
+r_int
 )paren
-id|shm_seq
+id|shp-&gt;shm_perm.seq
 op_star
 id|SHMMNI
+op_plus
+id|id
 suffix:semicolon
 )brace
 DECL|function|sys_shmget
@@ -807,6 +807,10 @@ op_minus
 id|EACCES
 suffix:semicolon
 r_return
+(paren
+r_int
+r_int
+)paren
 id|shp-&gt;shm_perm.seq
 op_star
 id|SHMMNI
@@ -814,7 +818,7 @@ op_plus
 id|id
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Only called after testing nattch and SHM_DEST.&n; * Here pages, pgtable and shmid_ds are freed.&n; */
+multiline_comment|/*&n; * Only called after testing nattch and SHM_DEST.&n; * Here pages, pgtable and shmid_ds are freed.&n; */
 DECL|function|killseg
 r_static
 r_void
@@ -870,13 +874,28 @@ id|shp-&gt;shm_perm.seq
 op_increment
 suffix:semicolon
 multiline_comment|/* for shmat */
-id|numpages
-op_assign
-id|shp-&gt;shm_npages
-suffix:semicolon
 id|shm_seq
-op_increment
+op_assign
+(paren
+id|shm_seq
+op_plus
+l_int|1
+)paren
+op_mod
+(paren
+(paren
+r_int
+)paren
+(paren
+l_int|1
+op_lshift
+l_int|31
+)paren
+op_div
+id|SHMMNI
+)paren
 suffix:semicolon
+multiline_comment|/* increment, but avoid overflow */
 id|shm_segs
 (braket
 id|id
@@ -932,6 +951,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|numpages
+op_assign
+id|shp-&gt;shm_npages
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -967,7 +990,7 @@ c_cond
 (paren
 id|page
 op_amp
-l_int|1
+id|PAGE_PRESENT
 )paren
 (brace
 id|free_page
@@ -1030,10 +1053,12 @@ id|buf
 (brace
 r_struct
 id|shmid_ds
+id|tbuf
+suffix:semicolon
+r_struct
+id|shmid_ds
 op_star
 id|shp
-comma
-id|tbuf
 suffix:semicolon
 r_struct
 id|ipc_perm
@@ -1307,7 +1332,7 @@ comma
 r_sizeof
 (paren
 op_star
-id|shp
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -1369,22 +1394,59 @@ id|EACCES
 suffix:semicolon
 id|id
 op_assign
-id|shmid
-op_plus
+(paren
+r_int
+r_int
+)paren
 id|shp-&gt;shm_perm.seq
 op_star
 id|SHMMNI
+op_plus
+id|shmid
+suffix:semicolon
+id|tbuf.shm_perm
+op_assign
+id|shp-&gt;shm_perm
+suffix:semicolon
+id|tbuf.shm_segsz
+op_assign
+id|shp-&gt;shm_segsz
+suffix:semicolon
+id|tbuf.shm_atime
+op_assign
+id|shp-&gt;shm_atime
+suffix:semicolon
+id|tbuf.shm_dtime
+op_assign
+id|shp-&gt;shm_dtime
+suffix:semicolon
+id|tbuf.shm_ctime
+op_assign
+id|shp-&gt;shm_ctime
+suffix:semicolon
+id|tbuf.shm_cpid
+op_assign
+id|shp-&gt;shm_cpid
+suffix:semicolon
+id|tbuf.shm_lpid
+op_assign
+id|shp-&gt;shm_lpid
+suffix:semicolon
+id|tbuf.shm_nattch
+op_assign
+id|shp-&gt;shm_nattch
 suffix:semicolon
 id|memcpy_tofs
 (paren
 id|buf
 comma
-id|shp
+op_amp
+id|tbuf
 comma
 r_sizeof
 (paren
 op_star
-id|shp
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -1398,6 +1460,10 @@ id|shm_segs
 (braket
 id|id
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|shmid
 op_mod
 id|SHMMNI
@@ -1418,16 +1484,15 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|ipcp
-op_assign
-op_amp
-id|shp-&gt;shm_perm
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|ipcp-&gt;seq
+id|shp-&gt;shm_perm.seq
 op_ne
+(paren
+r_int
+r_int
+)paren
 id|shmid
 op_div
 id|SHMMNI
@@ -1435,6 +1500,11 @@ id|SHMMNI
 r_return
 op_minus
 id|EIDRM
+suffix:semicolon
+id|ipcp
+op_assign
+op_amp
+id|shp-&gt;shm_perm
 suffix:semicolon
 r_switch
 c_cond
@@ -1553,7 +1623,7 @@ comma
 r_sizeof
 (paren
 op_star
-id|shp
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -1565,16 +1635,49 @@ id|err
 r_return
 id|err
 suffix:semicolon
+id|tbuf.shm_perm
+op_assign
+id|shp-&gt;shm_perm
+suffix:semicolon
+id|tbuf.shm_segsz
+op_assign
+id|shp-&gt;shm_segsz
+suffix:semicolon
+id|tbuf.shm_atime
+op_assign
+id|shp-&gt;shm_atime
+suffix:semicolon
+id|tbuf.shm_dtime
+op_assign
+id|shp-&gt;shm_dtime
+suffix:semicolon
+id|tbuf.shm_ctime
+op_assign
+id|shp-&gt;shm_ctime
+suffix:semicolon
+id|tbuf.shm_cpid
+op_assign
+id|shp-&gt;shm_cpid
+suffix:semicolon
+id|tbuf.shm_lpid
+op_assign
+id|shp-&gt;shm_lpid
+suffix:semicolon
+id|tbuf.shm_nattch
+op_assign
+id|shp-&gt;shm_nattch
+suffix:semicolon
 id|memcpy_tofs
 (paren
 id|buf
 comma
-id|shp
+op_amp
+id|tbuf
 comma
 r_sizeof
 (paren
 op_star
-id|shp
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -1862,13 +1965,10 @@ id|GFP_KERNEL
 )paren
 )paren
 )paren
-(brace
-multiline_comment|/* clearing needed?  SRB. */
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 op_star
 id|page_table
 op_assign
@@ -2087,6 +2187,8 @@ id|vma-&gt;vm_flags
 op_assign
 id|VM_SHM
 op_or
+id|VM_SHARED
+op_or
 id|VM_MAYREAD
 op_or
 id|VM_MAYEXEC
@@ -2152,7 +2254,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Fix shmaddr, allocate descriptor, map shm, add attach descriptor to lists.&n; * raddr is needed to return addresses above 2Gig.&n; * Specific attaches are allowed over the executable....&n; */
+multiline_comment|/*&n; * Fix shmaddr, allocate descriptor, map shm, add attach descriptor to lists.&n; * raddr is needed to return addresses above 2Gig.&n; */
 DECL|function|sys_shmat
 r_int
 id|sys_shmat
@@ -2221,7 +2323,7 @@ id|raddr
 comma
 r_sizeof
 (paren
-r_int
+id|ulong
 )paren
 )paren
 suffix:semicolon
@@ -2240,6 +2342,10 @@ id|shm_segs
 (braket
 id|id
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|shmid
 op_mod
 id|SHMMNI
@@ -2477,6 +2583,10 @@ c_cond
 (paren
 id|shp-&gt;shm_perm.seq
 op_ne
+(paren
+r_int
+r_int
+)paren
 id|shmid
 op_div
 id|SHMMNI
@@ -2528,6 +2638,10 @@ op_logical_or
 (paren
 id|shp-&gt;shm_perm.seq
 op_ne
+(paren
+r_int
+r_int
+)paren
 id|shmid
 op_div
 id|SHMMNI
@@ -2920,7 +3034,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * detach all attached segments. &n; */
+multiline_comment|/*&n; * detach all attached segments.&n; */
 DECL|function|shm_exit
 r_void
 id|shm_exit
@@ -2943,7 +3057,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * copy the parent shm descriptors and update nattch&n; * parent is stuck in fork so an attach on each segment is assured.&n; * copy_page_tables does the mapping.&n; */
+multiline_comment|/*&n; * copy the parent shm descriptors and update nattch&n; * parent is stuck in fork so an attach on each segment is assured.&n; * copy_page_tables does the mapping.&n; */
 DECL|function|shm_fork
 r_int
 id|shm_fork
@@ -2980,7 +3094,7 @@ suffix:semicolon
 r_int
 id|id
 suffix:semicolon
-id|p2-&gt;semun
+id|p2-&gt;semundo
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -3471,7 +3585,7 @@ r_return
 id|page
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Goes through counter = (shm_rss &lt;&lt; prio) present shm pages. &n; */
+multiline_comment|/*&n; * Goes through counter = (shm_rss &lt;&lt; prio) present shm pages.&n; */
 DECL|variable|swap_id
 r_static
 r_int
@@ -3783,7 +3897,7 @@ op_logical_neg
 op_star
 id|pte
 op_amp
-l_int|1
+id|PAGE_PRESENT
 )paren
 )paren
 (brace

@@ -4684,12 +4684,6 @@ id|mcdPresent
 op_assign
 l_int|1
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|mem_start
 suffix:semicolon

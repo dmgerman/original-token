@@ -10449,10 +10449,6 @@ l_string|&quot;cdu31a&quot;
 )paren
 )paren
 (brace
-id|irq_used
-op_assign
-l_int|0
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -10460,6 +10456,10 @@ l_string|&quot;Unable to grab IRQ%d for the CDU31A driver&bslash;n&quot;
 comma
 id|irq_used
 )paren
+suffix:semicolon
+id|irq_used
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 )brace

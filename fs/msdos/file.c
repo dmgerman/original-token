@@ -516,9 +516,6 @@ c_func
 id|inode-&gt;i_dev
 comma
 id|sector
-comma
-op_amp
-id|data
 )paren
 )paren
 )paren
@@ -541,10 +538,6 @@ op_increment
 )braket
 op_assign
 l_int|NULL
-suffix:semicolon
-id|data
-op_assign
-id|bh-&gt;b_data
 suffix:semicolon
 id|wait_on_buffer
 c_func
@@ -569,6 +562,10 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|data
+op_assign
+id|bh-&gt;b_data
+suffix:semicolon
 id|offset
 op_assign
 id|filp-&gt;f_pos
@@ -832,10 +829,6 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-r_void
-op_star
-id|data
-suffix:semicolon
 r_int
 id|binary_mode
 op_assign
@@ -1028,13 +1021,22 @@ id|offset
 op_eq
 l_int|0
 op_logical_and
+(paren
 id|size
 op_eq
 id|SECTOR_SIZE
+op_logical_or
+id|filp-&gt;f_pos
+op_plus
+id|size
+op_ge
+id|inode-&gt;i_size
+)paren
 )paren
 (brace
 multiline_comment|/* No need to read the block first since we will */
 multiline_comment|/* completely overwrite it */
+multiline_comment|/* or at least write past the end of file */
 r_if
 c_cond
 (paren
@@ -1062,10 +1064,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|data
-op_assign
-id|bh-&gt;b_data
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -1081,9 +1079,6 @@ c_func
 id|inode-&gt;i_dev
 comma
 id|sector
-comma
-op_amp
-id|data
 )paren
 )paren
 )paren
@@ -1105,7 +1100,7 @@ id|binary_mode
 id|memcpy_fromfs
 c_func
 (paren
-id|data
+id|bh-&gt;b_data
 op_plus
 id|offset
 comma
@@ -1137,7 +1132,7 @@ op_assign
 r_char
 op_star
 )paren
-id|data
+id|bh-&gt;b_data
 op_plus
 (paren
 id|filp-&gt;f_pos

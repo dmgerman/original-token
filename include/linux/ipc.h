@@ -70,7 +70,7 @@ DECL|macro|IPC_UNUSED
 mdefine_line|#define IPC_UNUSED&t;((void *) -1)
 DECL|macro|IPC_NOID
 mdefine_line|#define IPC_NOID&t;((void *) -2)&t;&t;/* being allocated/destroyed */
-multiline_comment|/* &n; * These are used to wrap system calls. See ipc/util.c, libipc.c &n; */
+multiline_comment|/* &n; * These are used to wrap system calls. See ipc/util.c.&n; */
 DECL|struct|ipc_kludge
 r_struct
 id|ipc_kludge

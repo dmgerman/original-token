@@ -281,18 +281,9 @@ id|dev
 comma
 r_int
 id|sector
-comma
-r_void
-op_star
-op_star
-id|start
 )paren
 (brace
-r_struct
-id|buffer_head
-op_star
-id|bh
-op_assign
+r_return
 id|bread
 c_func
 (paren
@@ -300,26 +291,8 @@ id|dev
 comma
 id|sector
 comma
-l_int|512
+id|SECTOR_SIZE
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|bh
-op_ne
-l_int|NULL
-)paren
-(brace
-op_star
-id|start
-op_assign
-id|bh-&gt;b_data
-suffix:semicolon
-multiline_comment|/* From the time of 1024 bytes block */
-)brace
-r_return
-id|bh
 suffix:semicolon
 )brace
 multiline_comment|/* misc.c */

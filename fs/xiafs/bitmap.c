@@ -48,9 +48,6 @@ id|u_long
 op_star
 id|bmap
 suffix:semicolon
-r_char
-id|res
-suffix:semicolon
 id|bmap
 op_assign
 (paren

@@ -855,8 +855,11 @@ multiline_comment|/* read type-2 data (not suppt)&t;*/
 DECL|macro|CDROMREADMODE1
 mdefine_line|#define&t;CDROMREADMODE1&t;&t;0x530d&t;&t;/* (struct cdrom_read)&t;&t;*/
 multiline_comment|/* read type-1 data &t;&t;*/
-multiline_comment|/*&n; * preliminary extension for transferring audio frames&n; * currently used by sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
+multiline_comment|/*&n; * preliminary extension for transferring audio frames&n; * currently used by cdu31a.c and sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
 DECL|macro|CDROMREADAUDIO
 mdefine_line|#define&t;CDROMREADAUDIO&t;&t;0x530e&t;&t;/* (struct cdrom_read_audio)&t;*/
+multiline_comment|/*&n; * preliminary extension for enable (1) / disable (0) auto-ejecting&n; * currently used by sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
+DECL|macro|CDROMEJECT_SW
+mdefine_line|#define&t;CDROMEJECT_SW&t;&t;0x530f&t;&t;/* arg: 0 or 1 */
 macro_line|#endif  _LINUX_CDROM_H
 eof

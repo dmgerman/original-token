@@ -1972,7 +1972,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|current-&gt;semun
+id|current-&gt;semundo
 )paren
 id|sem_exit
 c_func

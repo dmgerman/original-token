@@ -7,35 +7,6 @@ DECL|macro|MSG_NOERROR
 mdefine_line|#define MSG_NOERROR     010000  /* no error if message is too big */
 DECL|macro|MSG_EXCEPT
 mdefine_line|#define MSG_EXCEPT      020000  /* recv any msg except of specified type.*/
-multiline_comment|/* one msg structure for each message */
-DECL|struct|msg
-r_struct
-id|msg
-(brace
-DECL|member|msg_next
-r_struct
-id|msg
-op_star
-id|msg_next
-suffix:semicolon
-multiline_comment|/* next message on queue */
-DECL|member|msg_type
-r_int
-id|msg_type
-suffix:semicolon
-DECL|member|msg_spot
-r_char
-op_star
-id|msg_spot
-suffix:semicolon
-multiline_comment|/* message text address */
-DECL|member|msg_ts
-r_int
-id|msg_ts
-suffix:semicolon
-multiline_comment|/* message text size */
-)brace
-suffix:semicolon
 multiline_comment|/* one msqid structure for each queue on the system */
 DECL|struct|msqid_ds
 r_struct
@@ -134,6 +105,7 @@ suffix:semicolon
 multiline_comment|/* message text */
 )brace
 suffix:semicolon
+multiline_comment|/* buffer for msgctl calls IPC_INFO, MSG_INFO */
 DECL|struct|msginfo
 r_struct
 id|msginfo
@@ -192,6 +164,35 @@ mdefine_line|#define __MSGSEG ((MSGPOOL*1024)/ MSGSSZ) /* max no. of segments */
 DECL|macro|MSGSEG
 mdefine_line|#define MSGSEG (__MSGSEG &lt;= 0xffff ? __MSGSEG : 0xffff)
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* one msg structure for each message */
+DECL|struct|msg
+r_struct
+id|msg
+(brace
+DECL|member|msg_next
+r_struct
+id|msg
+op_star
+id|msg_next
+suffix:semicolon
+multiline_comment|/* next message on queue */
+DECL|member|msg_type
+r_int
+id|msg_type
+suffix:semicolon
+DECL|member|msg_spot
+r_char
+op_star
+id|msg_spot
+suffix:semicolon
+multiline_comment|/* message text address */
+DECL|member|msg_ts
+r_int
+id|msg_ts
+suffix:semicolon
+multiline_comment|/* message text size */
+)brace
+suffix:semicolon
 multiline_comment|/* ipcs ctl commands */
 DECL|macro|MSG_STAT
 mdefine_line|#define MSG_STAT 11

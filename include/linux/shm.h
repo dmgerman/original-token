@@ -110,34 +110,28 @@ id|shmall
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* address range for shared memory attaches if no address passed to shmat() */
 DECL|macro|SHM_RANGE_START
 mdefine_line|#define SHM_RANGE_START&t;0x40000000
 DECL|macro|SHM_RANGE_END
 mdefine_line|#define SHM_RANGE_END&t;0x60000000
-multiline_comment|/* _SHM_ID_BITS is a variable you can adjust to */
-multiline_comment|/* tune the kernel.  It determines the value of */
-multiline_comment|/* SHMMNI, which specifies the maximum no. of */
-multiline_comment|/* shared segments (system wide).  SRB. */
-DECL|macro|_SHM_ID_BITS
-mdefine_line|#define _SHM_ID_BITS&t;7&t;&t;/* keep as low as possible */
-multiline_comment|/* a static array is declared */
-multiline_comment|/* using SHMMNI */
-DECL|macro|__SHM_IDX_BITS
-mdefine_line|#define __SHM_IDX_BITS&t;(BITS_PER_PTR-2-SHM_IDX_SHIFT)
-multiline_comment|/* !!!!!!!?????&n; * Why reserve the two (2) high bits of the signature (shm_sgn) field?&n; * Since, as far as I can see, only the high bit is used (SHM_READ_ONLY).&n; *&t;&t;&t;&t;&t;&t;SRB.&n; */
-DECL|macro|_SHM_IDX_BITS
-mdefine_line|#define _SHM_IDX_BITS&t;(__SHM_IDX_BITS+PAGE_SHIFT&gt;=BITS_PER_PTR?&bslash;&n; BITS_PER_PTR-PAGE_SHIFT-1:__SHM_IDX_BITS)&t;/* sanity check */
-multiline_comment|/* not present page table entry format bit 0 is 0, low byte defined in mm.h */
+multiline_comment|/* format of page table entries that correspond to shared memory pages&n;   currently out in swap space (see also mm/swap.c):&n;   bit 0 (PAGE_PRESENT) is  = 0&n;   bits 7..1 (SWP_TYPE) are = SHM_SWP_TYPE&n;   bits 31..8 are used like this:&n;   bits 14..8 (SHM_ID) the id of the shared memory segment&n;   bits 29..15 (SHM_IDX) the index of the page within the shared memory segment&n;                    (actually only bits 24..15 get used since SHMMAX is so low)&n;   bit 31 (SHM_READ_ONLY) flag whether the page belongs to a read-only attach&n;*/
 DECL|macro|SHM_ID_SHIFT
 mdefine_line|#define SHM_ID_SHIFT&t;8
+multiline_comment|/* Keep _SHM_ID_BITS as low as possible since SHMMNI depends on it and&n;   there is a static array of size SHMMNI. */
+DECL|macro|_SHM_ID_BITS
+mdefine_line|#define _SHM_ID_BITS&t;7
 DECL|macro|SHM_ID_MASK
 mdefine_line|#define SHM_ID_MASK&t;((1&lt;&lt;_SHM_ID_BITS)-1)
 DECL|macro|SHM_IDX_SHIFT
 mdefine_line|#define SHM_IDX_SHIFT&t;(SHM_ID_SHIFT+_SHM_ID_BITS)
+DECL|macro|_SHM_IDX_BITS
+mdefine_line|#define _SHM_IDX_BITS&t;15
 DECL|macro|SHM_IDX_MASK
 mdefine_line|#define SHM_IDX_MASK&t;((1&lt;&lt;_SHM_IDX_BITS)-1)
 DECL|macro|SHM_READ_ONLY
-mdefine_line|#define SHM_READ_ONLY&t;(1&lt;&lt;(BITS_PER_PTR-1))
+mdefine_line|#define SHM_READ_ONLY&t;(1&lt;&lt;31)
+multiline_comment|/* We must have SHM_ID_SHIFT + _SHM_ID_BITS + _SHM_IDX_BITS + 1 &lt;= 32&n;   and SHMMAX &lt;= (PAGE_SIZE &lt;&lt; _SHM_IDX_BITS). */
 DECL|macro|SHMMAX
 mdefine_line|#define SHMMAX 0x3fa000&t;&t;&t;&t;/* max shared seg size (bytes) */
 DECL|macro|SHMMIN

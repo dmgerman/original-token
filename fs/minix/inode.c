@@ -484,6 +484,14 @@ c_func
 id|s
 )paren
 suffix:semicolon
+id|set_blocksize
+c_func
+(paren
+id|dev
+comma
+id|BLOCK_SIZE
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

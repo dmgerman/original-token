@@ -77,7 +77,7 @@ suffix:semicolon
 r_int
 id|cluster_list
 (braket
-l_int|4
+l_int|8
 )braket
 suffix:semicolon
 r_struct
@@ -1020,7 +1020,7 @@ suffix:semicolon
 r_int
 id|cluster_list
 (braket
-l_int|4
+l_int|8
 )braket
 suffix:semicolon
 r_int

@@ -1,8 +1,6 @@
-multiline_comment|/* $Id: tpqic02.c,v 0.4.1.4 1994/07/21 02:15:45 root Exp root $&n; *&n; * Driver for tape drive support for Linux-i386 1.1.30&n; *&n; * Copyright (c) 1992, 1993, 1994 by H. H. Bergman. All rights reserved.&n; * Current e-mail address: hennus@sky.nl.mugnet.org [This is a UUCP link.]&n; * Secondary e-mail address: csg279@wing.rug.nl [IP connected, but flaky]&n; * [If you are unable to reach me directly, try the TAPE mailing list&n; * channel on linux-activists@niksula.hut.fi using &quot;X-Mn-Key: TAPE&quot; as&n; * the first line in your message.]&n; *&n; * Distribution of this program in executable form is only allowed if&n; * all of the corresponding source files are made available through the same&n; * medium at no extra cost.&n; *&n; * I will not accept any responsibility for damage caused directly or&n; * indirectly by this program, or code derived from this program.&n; *&n; * Use this code at your own risk. Don&squot;t blame me if it destroys your data!&n; * Make sure you have a backup before you try this code.&n; *&n; * If you make changes to my code and redistribute it in source or binary&n; * form you must make it clear to even casual users of your code that you&n; * have modified my code, clearly point out what the changes exactly are&n; * (preferably in the form of a context diff file), how to undo your changes,&n; * where the original can be obtained, and that complaints/requests about the&n; * modified code should be directed to you instead of me.&n; *&n; * This driver was partially inspired by the &squot;wt&squot; driver in the 386BSD&n; * source distribution, which carries the following copyright notice:&n; *&n; *  Copyright (c) 1991 The Regents of the University of California.&n; *  All rights reserved.&n; *&n; * You are not allowed to change this line nor the text above.&n; *&n; * $Log: tpqic02.c,v $&n; * Revision 0.4.1.4  1994/07/21  02:15:45  root&n; * ifdef&squot;d DDI. Exception masks.&n; *&n; * Revision 0.4.1.3  1994/05/03  01:49:09  root&n; * Initial attempt at Mountain support for the Mountain 7150.&n; * Based on patches provided by Erik Jacobson.&n; *&n; * Revision 0.4.1.2  1994/03/18  21:16:50  root&n; * Many driver messages can now be turned off (runtime selectable).&n; *&n; * Revision 0.4.1.1  1994/02/16  19:47:22  root&n; * First stab at runtime debug-variable.&n; *&n; * Revision 0.4  1994/02/15  01:53:16  root&n; * DYNCONF mark II.&n; * Minor cleanups.&n; *&n; * Revision 0.3  1994/02/07  01:23:16  root&n; * More improved DYNCONF.&n; * Archive changes &amp; some cleanups by Eddy Olk.&n; * Removed status_open, more cleanups, misc other.&n; *&n; * Revision 0.2.1.25  1994/01/24  02:01:33  root&n; * Changed tape_qic02 to QIC02_TAPE.&n; * Changes to prepare for DYNCONF.&n; *&n; * Revision 0.2.1.24  1994/01/23  07:27:18  root&n; * Attempt to remove compilation warnings, G++ bug,&n; * Linus changed TAPE_QIC02 to QIC02_TAPE.&n; *&n; * Revision 0.2.1.23  1994/01/20  23:49:28  root&n; * Changed some exception decoding stuff.&n; * TP_HAVE_SEEK, TP_HAVE_DENS. byte_swap_w() on arg, not global.&n; * Attempt to fix cartridge-changed-problem for 2150L.&n; * Release irq and dma reservations if initial reset fails.&n; *&n; * Revision 0.2.1.22  1994/01/19  20:56:55  root&n; * Speed measuring stuff moved from aperf.h to delay.h.&n; * BogoMips (tm) introduced by Linus.&n; *&n; * Revision 0.2.1.21  1993/06/18  19:04:33  root&n; * minor fixes for 0.99.10.&n; *&n; * Revision 0.2.1.20  1993/06/11  21:38:51  root&n; * Added exception code for status 0x8000 (Cypher weirdness).&n; *&n; * Revision 0.2.1.19  1993/04/19  23:13:59  root&n; * Cleanups. Changed to 0.99.8.&n; *&n; * Revision 0.2.1.18  1993/03/22  17:39:47  root&n; * Moved to 0.99.7. Added Archive MTSEEK and MTTELL support.&n; *&n; * Revision 0.2.1.17  1993/03/08  18:51:59  root&n; * Tried to `fix&squot; write-once bug in previous release.&n; *&n; * Revision 0.2.1.16  1993/03/01  00:06:16  root&n; * Use register_chrdev() for 0.99.6.&n; *&n; * Revision 0.2.1.15  1993/02/25  00:14:25  root&n; * minor cleanups.&n; *&n; * Revision 0.2.1.14  1993/01/25  00:06:14  root&n; * Kernel udelay. Eof fixups.&n; * Removed report_ read/write dummies; have strace(1) now.&n; *&n; * Revision 0.2.1.13  1993/01/10  02:24:43  root&n; * Rewrote wait_for_ready() to use newer schedule() features.&n; * This improves performance for rewinds etc.&n; *&n; * Revision 0.2.1.12  1993/01/05  18:44:09  root&n; * Changes for 0.99.1. Fixed `restartable reads&squot;.&n; *&n; * Revision 0.2.1.11  1992/11/28  01:19:10  root&n; * Changes to exception handling (significant).&n; * Changed returned error codes. Hopefully they&squot;re correct now.&n; * Changed declarations to please gcc-2.3.1.&n; * Patch to deal with bogus interrupts for Archive cards.&n; *&n; * Revision 0.2.1.10  1992/10/28  00:50:44  root&n; * underrun/error counter needed byte swapping.&n; *&n; * Revision 0.2.1.9  1992/10/15  17:06:01  root&n; * Removed online() stuff. Changed EOF handling.&n; *&n; * Revision 0.2.1.8  1992/10/02  22:25:48  root&n; * Removed `no_sleep&squot; parameters (got usleep() now),&n; * cleaned up some comments.&n; *&n; * Revision 0.2.1.7  1992/09/27  01:41:55  root&n; * Changed write() to do entire user buffer in one go, rather than just&n; * a kernel-buffer sized portion each time.&n; *&n; * Revision 0.2.1.6  1992/09/21  02:15:30  root&n; * Introduced udelay() function for microsecond-delays.&n; * Trying to use get_dma_residue rather than TC flags.&n; * Patch to fill entire user buffer on reads before&n; * returning.&n; *&n; * Revision 0.2.1.5  1992/09/19  02:31:28  root&n; * Some changes based on patches by Eddy Olk to&n; * support Archive SC402/SC499R controller cards.&n; *&n; * Revision 0.2.1.4  1992/09/07  01:37:37  root&n; * Minor changes&n; *&n; * Revision 0.2.1.3  1992/08/13  00:11:02  root&n; * Added some support for Archive SC402 and SC499 cards.&n; * (Untested.)&n; *&n; * Revision 0.2.1.2  1992/08/10  02:02:36  root&n; * Changed from linux/system.h macros to asm/dma.h inline functions.&n; *&n; * Revision 0.2.1.1  1992/08/08  01:12:39  root&n; * cleaned up a bit. added stuff for selftesting.&n; * preparing for asm/dma.h instead of linux/system.h&n; *&n; * Revision 0.2  1992/08/03  20:11:30  root&n; * Changed to use new IRQ allocation. Padding now done at runtime, pads to&n; * 512 bytes. Because of this the page regs must be re-programmed every&n; * block! Added hooks for selftest commands.&n; * Moved to linux-0.97.&n; *&n; * Revision 0.1.0.5  1992/06/22  22:20:30  root&n; * moved to Linux 0.96b&n; *&n; * Revision 0.1.0.4  1992/06/18  02:00:04  root&n; * Use minor bit-7 to enable/disable printing of extra debugging info&n; * when do tape access.&n; * Added semop stuff for DMA/IRQ allocation checking. Don&squot;t think this&n; * is the right way to do it though.&n; *&n; * Revision 0.1.0.3  1992/06/01  01:57:34  root&n; * changed DRQ to DMA. added TDEBUG ifdefs to reduce output.&n; *&n; * Revision 0.1.0.2  1992/05/31  14:02:38  root&n; * changed SET_DMA_PAGE handling slightly.&n; *&n; * Revision 0.1.0.1  1992/05/27  12:12:03  root&n; * Can now use multiple files on tape (sort of).&n; * First release.&n; *&n; * Revision 0.1  1992/05/26  01:16:31  root&n; * Initial version. Copyright H. H. Bergman 1992&n; *&n; */
+multiline_comment|/* $Id: tpqic02.c,v 0.4.1.5 1994/10/29 02:46:13 root Exp root $&n; *&n; * Driver for tape drive support for Linux-i386 1.1.58&n; *&n; * Copyright (c) 1992, 1993, 1994 by H. H. Bergman. All rights reserved.&n; * Current e-mail address: hennus@sky.ow.org [This is a UUCP link.]&n; * [If you are unable to reach me directly, try the TAPE mailing list&n; * channel on linux-activists@niksula.hut.fi using &quot;X-Mn-Key: TAPE&quot; as&n; * the first line in your message.]&n; *&n; * Distribution of this program in executable form is only allowed if&n; * all of the corresponding source files are made available through the same&n; * medium at no extra cost.&n; *&n; * I will not accept any responsibility for damage caused directly or&n; * indirectly by this program, or code derived from this program.&n; *&n; * Use this code at your own risk. Don&squot;t blame me if it destroys your data!&n; * Make sure you have a backup before you try this code.&n; *&n; * If you make changes to my code and redistribute it in source or binary&n; * form you must make it clear to even casual users of your code that you&n; * have modified my code, clearly point out what the changes exactly are&n; * (preferably in the form of a context diff file), how to undo your changes,&n; * where the original can be obtained, and that complaints/requests about the&n; * modified code should be directed to you instead of me.&n; *&n; * This driver was partially inspired by the &squot;wt&squot; driver in the 386BSD&n; * source distribution, which carries the following copyright notice:&n; *&n; *  Copyright (c) 1991 The Regents of the University of California.&n; *  All rights reserved.&n; *&n; * You are not allowed to change this line nor the text above.&n; *&n; * $Log: tpqic02.c,v $&n; * Revision 0.4.1.5  1994/10/29  02:46:13  root&n; * Minor cleanups.&n; *&n; * Revision 0.4.1.4  1994/07/21  02:15:45  root&n; * ifdef&squot;d DDI. Exception masks.&n; *&n; * Revision 0.4.1.3  1994/05/03  01:49:09  root&n; * Initial attempt at Mountain support for the Mountain 7150.&n; * Based on patches provided by Erik Jacobson.&n; *&n; * Revision 0.4.1.2  1994/03/18  21:16:50  root&n; * Many driver messages can now be turned off (runtime selectable).&n; *&n; * Revision 0.4.1.1  1994/02/16  19:47:22  root&n; * First stab at runtime debug-variable.&n; *&n; * Revision 0.4  1994/02/15  01:53:16  root&n; * DYNCONF mark II.&n; * Minor cleanups.&n; *&n; * Revision 0.3  1994/02/07  01:23:16  root&n; * More improved DYNCONF.&n; * Archive changes &amp; some cleanups by Eddy Olk.&n; * Removed status_open, more cleanups, misc other.&n; *&n; * Revision 0.2.1.25  1994/01/24  02:01:33  root&n; * Changed tape_qic02 to QIC02_TAPE.&n; * Changes to prepare for DYNCONF.&n; *&n; * Revision 0.2.1.24  1994/01/23  07:27:18  root&n; * Attempt to remove compilation warnings, G++ bug,&n; * Linus changed TAPE_QIC02 to QIC02_TAPE.&n; *&n; * Revision 0.2.1.23  1994/01/20  23:49:28  root&n; * Changed some exception decoding stuff.&n; * TP_HAVE_SEEK, TP_HAVE_DENS. byte_swap_w() on arg, not global.&n; * Attempt to fix cartridge-changed-problem for 2150L.&n; * Release irq and dma reservations if initial reset fails.&n; *&n; * Revision 0.2.1.22  1994/01/19  20:56:55  root&n; * Speed measuring stuff moved from aperf.h to delay.h.&n; * BogoMips (tm) introduced by Linus.&n; *&n; * Revision 0.2.1.21  1993/06/18  19:04:33  root&n; * minor fixes for 0.99.10.&n; *&n; * Revision 0.2.1.20  1993/06/11  21:38:51  root&n; * Added exception code for status 0x8000 (Cypher weirdness).&n; *&n; * Revision 0.2.1.19  1993/04/19  23:13:59  root&n; * Cleanups. Changed to 0.99.8.&n; *&n; * Revision 0.2.1.18  1993/03/22  17:39:47  root&n; * Moved to 0.99.7. Added Archive MTSEEK and MTTELL support.&n; *&n; * Revision 0.2.1.17  1993/03/08  18:51:59  root&n; * Tried to `fix&squot; write-once bug in previous release.&n; *&n; * Revision 0.2.1.16  1993/03/01  00:06:16  root&n; * Use register_chrdev() for 0.99.6.&n; *&n; * Revision 0.2.1.15  1993/02/25  00:14:25  root&n; * minor cleanups.&n; *&n; * Revision 0.2.1.14  1993/01/25  00:06:14  root&n; * Kernel udelay. Eof fixups.&n; * Removed report_ read/write dummies; have strace(1) now.&n; *&n; * Revision 0.2.1.13  1993/01/10  02:24:43  root&n; * Rewrote wait_for_ready() to use newer schedule() features.&n; * This improves performance for rewinds etc.&n; *&n; * Revision 0.2.1.12  1993/01/05  18:44:09  root&n; * Changes for 0.99.1. Fixed `restartable reads&squot;.&n; *&n; * Revision 0.2.1.11  1992/11/28  01:19:10  root&n; * Changes to exception handling (significant).&n; * Changed returned error codes. Hopefully they&squot;re correct now.&n; * Changed declarations to please gcc-2.3.1.&n; * Patch to deal with bogus interrupts for Archive cards.&n; *&n; * Revision 0.2.1.10  1992/10/28  00:50:44  root&n; * underrun/error counter needed byte swapping.&n; *&n; * Revision 0.2.1.9  1992/10/15  17:06:01  root&n; * Removed online() stuff. Changed EOF handling.&n; *&n; * Revision 0.2.1.8  1992/10/02  22:25:48  root&n; * Removed `no_sleep&squot; parameters (got usleep() now),&n; * cleaned up some comments.&n; *&n; * Revision 0.2.1.7  1992/09/27  01:41:55  root&n; * Changed write() to do entire user buffer in one go, rather than just&n; * a kernel-buffer sized portion each time.&n; *&n; * Revision 0.2.1.6  1992/09/21  02:15:30  root&n; * Introduced udelay() function for microsecond-delays.&n; * Trying to use get_dma_residue rather than TC flags.&n; * Patch to fill entire user buffer on reads before&n; * returning.&n; *&n; * Revision 0.2.1.5  1992/09/19  02:31:28  root&n; * Some changes based on patches by Eddy Olk to&n; * support Archive SC402/SC499R controller cards.&n; *&n; * Revision 0.2.1.4  1992/09/07  01:37:37  root&n; * Minor changes&n; *&n; * Revision 0.2.1.3  1992/08/13  00:11:02  root&n; * Added some support for Archive SC402 and SC499 cards.&n; * (Untested.)&n; *&n; * Revision 0.2.1.2  1992/08/10  02:02:36  root&n; * Changed from linux/system.h macros to asm/dma.h inline functions.&n; *&n; * Revision 0.2.1.1  1992/08/08  01:12:39  root&n; * cleaned up a bit. added stuff for selftesting.&n; * preparing for asm/dma.h instead of linux/system.h&n; *&n; * Revision 0.2  1992/08/03  20:11:30  root&n; * Changed to use new IRQ allocation. Padding now done at runtime, pads to&n; * 512 bytes. Because of this the page regs must be re-programmed every&n; * block! Added hooks for selftest commands.&n; * Moved to linux-0.97.&n; *&n; * Revision 0.1.0.5  1992/06/22  22:20:30  root&n; * moved to Linux 0.96b&n; *&n; * Revision 0.1.0.4  1992/06/18  02:00:04  root&n; * Use minor bit-7 to enable/disable printing of extra debugging info&n; * when do tape access.&n; * Added semop stuff for DMA/IRQ allocation checking. Don&squot;t think this&n; * is the right way to do it though.&n; *&n; * Revision 0.1.0.3  1992/06/01  01:57:34  root&n; * changed DRQ to DMA. added TDEBUG ifdefs to reduce output.&n; *&n; * Revision 0.1.0.2  1992/05/31  14:02:38  root&n; * changed SET_DMA_PAGE handling slightly.&n; *&n; * Revision 0.1.0.1  1992/05/27  12:12:03  root&n; * Can now use multiple files on tape (sort of).&n; * First release.&n; *&n; * Revision 0.1  1992/05/26  01:16:31  root&n; * Initial version. Copyright H. H. Bergman 1992&n; *&n; */
 multiline_comment|/* After the legalese, now the important bits:&n; * &n; * This is a driver for the Wangtek 5150 tape drive with &n; * a QIC-02 controller for ISA-PC type computers.&n; * Hopefully it will work with other QIC-02 tape drives as well.&n; *&n; * Make sure your setup matches the configuration parameters.&n; * Also, be careful to avoid IO conflicts with other devices!&n; */
-macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/* skip this driver if not required for this configuration */
-macro_line|#if CONFIG_QIC02_TAPE
+macro_line|#include &lt;linux/autoconf.h&gt;
 multiline_comment|/*&n;#define TDEBUG&n;*/
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO&t;&t;/* it sure is ... */
@@ -28,7 +26,7 @@ DECL|macro|TPQIC02_NAME
 mdefine_line|#define TPQIC02_NAME&t;&quot;tpqic02&quot;
 multiline_comment|/* Linux outb() commands have (value,port) as parameters.&n; * One might expect (port,value) instead, so beware!&n; */
 macro_line|#ifdef CONFIG_QIC02_DYNCONF
-multiline_comment|/* This may hold the dynamic configuration info for the interface&n; * card+drive info in future versions.&n; */
+multiline_comment|/* This holds the dynamic configuration info for the interface&n; * card+drive info if runtime configuration has been selected.&n; */
 DECL|variable|qic02_tape_dynconf
 r_struct
 id|mtconfiginfo
@@ -103,7 +101,7 @@ id|rcs_revision
 (braket
 )braket
 op_assign
-l_string|&quot;$Revision: 0.4.1.4 $&quot;
+l_string|&quot;$Revision: 0.4.1.5 $&quot;
 suffix:semicolon
 DECL|variable|rcs_date
 r_static
@@ -112,7 +110,7 @@ id|rcs_date
 (braket
 )braket
 op_assign
-l_string|&quot;$Date: 1994/07/21 02:15:45 $&quot;
+l_string|&quot;$Date: 1994/10/29 02:46:13 $&quot;
 suffix:semicolon
 multiline_comment|/* Flag bits for status and outstanding requests.&n; * (Could all be put in one bit-field-struct.)&n; * Some variables need `volatile&squot; because they may be modified&n; * by an interrupt.&n; */
 DECL|variable|status_dead
@@ -265,9 +263,13 @@ r_static
 id|dev_t
 id|current_tape_dev
 op_assign
+id|MKDEV
+c_func
+(paren
 id|QIC02_TAPE_MAJOR
-op_lshift
-l_int|8
+comma
+l_int|0
+)paren
 suffix:semicolon
 DECL|variable|extra_blocks_left
 r_static
@@ -1317,7 +1319,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* report_error */
 macro_line|#endif
-multiline_comment|/* perform appropriate action for certain exceptions */
+multiline_comment|/* Perform appropriate action for certain exceptions.&n; * should return a value to indicate stop/continue (in case of bad blocks)&n; */
 DECL|function|handle_exception
 r_static
 r_void
@@ -4524,8 +4526,6 @@ comma
 l_string|&quot;MTOFFL rewinding &amp; going offline&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*---*/
-multiline_comment|/******* What exactly are we supposed to do, to take it offline????&n;&t;&t;&t; *****/
 multiline_comment|/* Doing a drive select will clear (unlock) the current drive.&n;&t;&t;&t; * But that requires support for multiple drives and locking.&n;&t;&t;&t; */
 r_if
 c_cond
@@ -6369,6 +6369,7 @@ c_func
 id|current_tape_dev
 )paren
 )paren
+multiline_comment|/* can&squot;t print a ``long long&squot;&squot; (for filp-&gt;f_pos), so chop it */
 id|printk
 c_func
 (paren
@@ -6385,6 +6386,10 @@ id|buf
 comma
 id|count
 comma
+(paren
+r_int
+r_int
+)paren
 id|filp-&gt;f_pos
 comma
 id|flags
@@ -6913,6 +6918,7 @@ c_func
 id|current_tape_dev
 )paren
 )paren
+multiline_comment|/* can&squot;t print a ``long long&squot;&squot; (for filp-&gt;f_pos), so chop it */
 id|printk
 c_func
 (paren
@@ -6929,6 +6935,10 @@ id|buf
 comma
 id|count
 comma
+(paren
+r_int
+r_int
+)paren
 id|filp-&gt;f_pos
 comma
 id|flags
@@ -8744,7 +8754,7 @@ r_int
 suffix:semicolon
 id|c
 op_assign
-id|get_fs_long
+id|get_user_long
 c_func
 (paren
 (paren
@@ -8942,7 +8952,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_fs_byte
+id|put_user_byte
 c_func
 (paren
 op_star
@@ -9116,7 +9126,7 @@ op_star
 id|stp
 op_increment
 op_assign
-id|get_fs_byte
+id|get_user_byte
 c_func
 (paren
 id|argp
@@ -9299,7 +9309,7 @@ op_star
 id|stp
 op_increment
 op_assign
-id|get_fs_byte
+id|get_user_byte
 c_func
 (paren
 id|argp
@@ -9602,7 +9612,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_fs_byte
+id|put_user_byte
 c_func
 (paren
 op_star
@@ -9830,7 +9840,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_fs_byte
+id|put_user_byte
 c_func
 (paren
 op_star
@@ -9889,7 +9899,16 @@ id|qic02_tape_release
 comma
 multiline_comment|/* release */
 l_int|NULL
+comma
 multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+comma
+multiline_comment|/* check_media_change */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* align `a&squot; at `size&squot; bytes. `size&squot; must be a power of 2 */
@@ -10181,7 +10200,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* qic02_get_resources */
-multiline_comment|/* init() is called from chr_dev_init() in drivers/char/mem.c */
 DECL|function|qic02_tape_init
 r_int
 id|qic02_tape_init
@@ -10565,5 +10583,4 @@ id|kmem_start
 suffix:semicolon
 )brace
 multiline_comment|/* qic02_tape_init */
-macro_line|#endif /* CONFIG_QIC02_TAPE */
 eof

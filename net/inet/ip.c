@@ -361,21 +361,6 @@ r_int
 r_int
 id|src
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;If there is no &squot;from&squot; address as yet, then make it our loopback&n;&t; */
-r_if
-c_cond
-(paren
-id|saddr
-op_eq
-l_int|0
-)paren
-id|saddr
-op_assign
-id|ip_my_addr
-c_func
-(paren
-)paren
-suffix:semicolon
 id|buff
 op_assign
 id|skb-&gt;data
@@ -554,6 +539,18 @@ suffix:colon
 id|rt-&gt;rt_gateway
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;No source addr so make it our addr&n;&t; */
+r_if
+c_cond
+(paren
+id|saddr
+op_eq
+l_int|0
+)paren
+id|saddr
+op_assign
+id|src
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;No gateway so aim at the real destination&n;&t; */
 r_if
 c_cond

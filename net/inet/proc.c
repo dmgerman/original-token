@@ -248,11 +248,9 @@ r_int
 )paren
 id|sp-&gt;retransmits
 comma
-id|sp-&gt;dead
+id|sp-&gt;socket
 ques
 c_cond
-l_int|0
-suffix:colon
 id|SOCK_INODE
 c_func
 (paren
@@ -260,6 +258,8 @@ id|sp-&gt;socket
 )paren
 op_member_access_from_pointer
 id|i_uid
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 r_if

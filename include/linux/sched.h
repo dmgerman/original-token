@@ -924,11 +924,11 @@ id|shm_desc
 op_star
 id|shm
 suffix:semicolon
-DECL|member|semun
+DECL|member|semundo
 r_struct
 id|sem_undo
 op_star
-id|semun
+id|semundo
 suffix:semicolon
 multiline_comment|/* ldt for this task - used by Wine.  If NULL, default_ldt is used */
 DECL|member|ldt

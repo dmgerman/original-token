@@ -1370,7 +1370,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-l_int|1
+id|PAGE_PRESENT
 op_amp
 id|page
 )paren

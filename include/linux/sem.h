@@ -74,34 +74,7 @@ suffix:semicolon
 multiline_comment|/* no. of semaphores in array */
 )brace
 suffix:semicolon
-multiline_comment|/* One semaphore structure for each semaphore in the system. */
-DECL|struct|sem
-r_struct
-id|sem
-(brace
-DECL|member|sempid
-r_int
-id|sempid
-suffix:semicolon
-multiline_comment|/* pid of last operation */
-DECL|member|semval
-id|ushort
-id|semval
-suffix:semicolon
-multiline_comment|/* current value */
-DECL|member|semncnt
-id|ushort
-id|semncnt
-suffix:semicolon
-multiline_comment|/* num procs awaiting increase in semval */
-DECL|member|semzcnt
-id|ushort
-id|semzcnt
-suffix:semicolon
-multiline_comment|/* num procs awaiting semval = 0 */
-)brace
-suffix:semicolon
-multiline_comment|/* semop system calls takes an array of these.*/
+multiline_comment|/* semop system calls takes an array of these. */
 DECL|struct|sembuf
 r_struct
 id|sembuf
@@ -146,6 +119,18 @@ op_star
 id|array
 suffix:semicolon
 multiline_comment|/* array for GETALL &amp; SETALL */
+DECL|member|__buf
+r_struct
+id|seminfo
+op_star
+id|__buf
+suffix:semicolon
+multiline_comment|/* buffer for IPC_INFO */
+DECL|member|__pad
+r_void
+op_star
+id|__pad
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|seminfo
@@ -216,6 +201,33 @@ mdefine_line|#define SEMMAP  SEMMNS          /* # of entries in semaphore map */
 DECL|macro|SEMUSZ
 mdefine_line|#define SEMUSZ  20&t;&t;/* sizeof struct sem_undo */ 
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* One semaphore structure for each semaphore in the system. */
+DECL|struct|sem
+r_struct
+id|sem
+(brace
+DECL|member|sempid
+r_int
+id|sempid
+suffix:semicolon
+multiline_comment|/* pid of last operation */
+DECL|member|semval
+id|ushort
+id|semval
+suffix:semicolon
+multiline_comment|/* current value */
+DECL|member|semncnt
+id|ushort
+id|semncnt
+suffix:semicolon
+multiline_comment|/* num procs awaiting increase in semval */
+DECL|member|semzcnt
+id|ushort
+id|semzcnt
+suffix:semicolon
+multiline_comment|/* num procs awaiting semval = 0 */
+)brace
+suffix:semicolon
 multiline_comment|/* ipcs ctl cmds */
 DECL|macro|SEM_STAT
 mdefine_line|#define SEM_STAT 18&t;
