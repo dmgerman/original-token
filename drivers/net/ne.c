@@ -1,5 +1,3 @@
-DECL|macro|rw_bugfix
-mdefine_line|#define rw_bugfix
 multiline_comment|/* ne.c: A general non-shared-memory NS8390 ethernet driver for linux. */
 multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it support the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;*/
 multiline_comment|/* Routines for the NatSemi-based designs (NE[12]000). */
@@ -1713,6 +1711,7 @@ id|count
 suffix:semicolon
 )brace
 multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       encountering problems that it is still here.  If you see&n;       this message you either 1) have a slightly incompatible clone&n;       or 2) have noise/speed problems with your bus. */
+macro_line|#ifdef CONFIG_NE_SANITY
 r_if
 c_cond
 (paren
@@ -1814,6 +1813,7 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|ei_status.dmaing
 op_and_assign
 op_complement
@@ -1989,7 +1989,12 @@ suffix:semicolon
 id|SLOW_DOWN_IO
 suffix:semicolon
 macro_line|#endif  /* rw_bugfix */
-multiline_comment|/* Now the normal output. */
+multiline_comment|/*&n;    &t;Now the normal output. I believe that if we don&squot;t lock this, a&n;&t;race condition will munge the remote byte count values, and then&n;&t;the ne2k will hang the machine by holding I/O CH RDY because it&n;&t;expects more data. Hopefully fixes the lockups. -- Paul Gortmaker.&n;    */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -2082,6 +2087,12 @@ id|count
 )paren
 suffix:semicolon
 )brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_NE_SANITY
 multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       encountering problems that it is still here. */
 r_if
 c_cond
@@ -2199,6 +2210,7 @@ id|retry
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 id|ei_status.dmaing
 op_and_assign
 op_complement

@@ -2349,6 +2349,9 @@ suffix:colon
 r_case
 id|S_IFIFO
 suffix:colon
+r_case
+id|S_IFSOCK
+suffix:colon
 r_break
 suffix:semicolon
 r_default

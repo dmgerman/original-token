@@ -392,6 +392,10 @@ id|need_resched
 op_assign
 l_int|0
 suffix:semicolon
+id|nr_running
+op_assign
+l_int|0
+suffix:semicolon
 id|p
 op_assign
 op_amp
@@ -609,7 +613,14 @@ c_cond
 id|p-&gt;state
 op_eq
 id|TASK_RUNNING
-op_logical_and
+)paren
+(brace
+id|nr_running
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|p-&gt;counter
 OG
 id|c
@@ -622,6 +633,7 @@ id|next
 op_assign
 id|p
 suffix:semicolon
+)brace
 )brace
 id|confuse_gcc2
 suffix:colon

@@ -5155,6 +5155,17 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|target
+op_ge
+id|NR_HD
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
 r_while
 c_loop
 (paren

@@ -407,7 +407,7 @@ DECL|macro|BAD_MAGIC
 mdefine_line|#define BAD_MAGIC 0
 multiline_comment|/* The hotfix map is 4 sectors long.  It looks like&n;&n;       secno from[n_spares];&n;       secno to[n_spares];&n;&n;   The to[] list is initialized to point to n_spares preallocated empty&n;   sectors.  The from[] list contains the sector numbers of bad blocks&n;   which have been remapped to corresponding sectors in the to[] list.&n;   n_spares_used gives the length of the from[] list. */
 multiline_comment|/* Sectors 18 and 19 are preallocated and unused.&n;   Maybe they&squot;re spares for 16 and 17, but simple substitution fails. */
-multiline_comment|/* The code page info pointed to by the spare block consists of an index&n;   block and blocks containing character maps.  The following is pretty&n;   sketchy, but Linux doesn&squot;t use code pages so it doesn&squot;t matter. */
+multiline_comment|/* The code page info pointed to by the spare block consists of an index&n;   block and blocks containing uppercasing tables.  I don&squot;t know what&n;   these are for (CHKDSK, maybe?) -- OS/2 does not seem to use them&n;   itself.  Linux doesn&squot;t use them either. */
 multiline_comment|/* block pointed to by spareblock-&gt;code_page_dir */
 DECL|macro|CP_DIR_MAGIC
 mdefine_line|#define CP_DIR_MAGIC 0x494521f7
@@ -532,7 +532,7 @@ id|map
 l_int|128
 )braket
 suffix:semicolon
-multiline_comment|/* map for chars 80..ff */
+multiline_comment|/* upcase table for chars 80..ff */
 DECL|member|zero2
 r_int
 r_int
@@ -752,12 +752,12 @@ r_int
 r_char
 id|zero1
 suffix:semicolon
-DECL|member|locality
+DECL|member|ix
 r_int
 r_char
-id|locality
+id|ix
 suffix:semicolon
-multiline_comment|/* 0=unk 1=seq 2=random 3=both */
+multiline_comment|/* code page index (of filename), see&n;&t;&t;&t;&t;&t;   struct code_page_data */
 DECL|member|namelen
 DECL|member|name
 r_int

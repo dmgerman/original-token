@@ -1651,7 +1651,7 @@ id|schedule
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If the file is not being truncated to a block boundary, the&n;&t; * contents of the partial block following the end of the file must be&n;&t; * zero&squot;ed in case it ever become accessible again because of&n;&t; * subsequent file growth.&n;&t; */
+multiline_comment|/*&n;&t; * If the file is not being truncated to a block boundary, the&n;&t; * contents of the partial block following the end of the file must be&n;&t; * zeroed in case it ever becomes accessible again because of&n;&t; * subsequent file growth.&n;&t; */
 id|offset
 op_assign
 id|inode-&gt;i_size

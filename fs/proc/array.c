@@ -659,7 +659,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%d.%02d %d.%02d %d.%02d&bslash;n&quot;
+l_string|&quot;%d.%02d %d.%02d %d.%02d %d/%d&bslash;n&quot;
 comma
 id|LOAD_INT
 c_func
@@ -696,6 +696,10 @@ c_func
 (paren
 id|c
 )paren
+comma
+id|nr_running
+comma
+id|nr_tasks
 )paren
 suffix:semicolon
 )brace

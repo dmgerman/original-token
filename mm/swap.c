@@ -2288,7 +2288,7 @@ id|counter
 op_assign
 l_int|2
 op_star
-id|NR_TASKS
+id|nr_tasks
 op_rshift
 id|priority
 suffix:semicolon

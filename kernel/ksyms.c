@@ -27,8 +27,10 @@ macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &quot;../net/inet/protocol.h&quot;
 macro_line|#include &quot;../net/inet/arp.h&quot;
+macro_line|#include &quot;../drivers/net/slhc.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
@@ -1017,6 +1019,36 @@ id|X
 c_func
 (paren
 id|inet_del_protocol
+)paren
+comma
+id|X
+c_func
+(paren
+id|slhc_init
+)paren
+comma
+id|X
+c_func
+(paren
+id|slhc_free
+)paren
+comma
+id|X
+c_func
+(paren
+id|slhc_remember
+)paren
+comma
+id|X
+c_func
+(paren
+id|slhc_compress
+)paren
+comma
+id|X
+c_func
+(paren
+id|slhc_uncompress
 )paren
 comma
 macro_line|#endif

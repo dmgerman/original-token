@@ -517,7 +517,9 @@ id|swapper_pg_dir
 id|printk
 c_func
 (paren
-l_string|&quot;Trying to clear kernel page-directory: not good&bslash;n&quot;
+l_string|&quot;%s trying to clear kernel page-directory: not good&bslash;n&quot;
+comma
+id|tsk-&gt;comm
 )paren
 suffix:semicolon
 r_return
@@ -706,7 +708,9 @@ id|swapper_pg_dir
 id|printk
 c_func
 (paren
-l_string|&quot;Trying to free kernel page-directory: not good&bslash;n&quot;
+l_string|&quot;%s trying to free kernel page-directory: not good&bslash;n&quot;
+comma
+id|tsk-&gt;comm
 )paren
 suffix:semicolon
 r_return

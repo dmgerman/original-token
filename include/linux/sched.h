@@ -45,6 +45,12 @@ DECL|macro|CT_TO_SECS
 mdefine_line|#define CT_TO_SECS(x)&t;((x) / HZ)
 DECL|macro|CT_TO_USECS
 mdefine_line|#define CT_TO_USECS(x)&t;(((x) % HZ) * 1000000/HZ)
+r_extern
+r_int
+id|nr_running
+comma
+id|nr_tasks
+suffix:semicolon
 DECL|macro|FIRST_TASK
 mdefine_line|#define FIRST_TASK task[0]
 DECL|macro|LAST_TASK

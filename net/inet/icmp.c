@@ -462,7 +462,7 @@ r_struct
 id|iphdr
 )paren
 op_plus
-l_int|8
+l_int|32
 suffix:semicolon
 multiline_comment|/* amount of header to return */
 id|skb

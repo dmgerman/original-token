@@ -2814,7 +2814,7 @@ suffix:semicolon
 id|restore_flags
 c_func
 (paren
-id|flags
+id|processor_flags
 )paren
 suffix:semicolon
 r_if

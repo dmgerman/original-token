@@ -291,7 +291,7 @@ DECL|member|saddr
 id|u_char
 id|saddr
 suffix:semicolon
-multiline_comment|/* Source address - neccesary for IPX protocol */
+multiline_comment|/* Source address - necessary for IPX protocol */
 multiline_comment|/* data that IS part of real packet */
 DECL|member|protocol_id
 id|u_char

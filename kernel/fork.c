@@ -11,6 +11,18 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+DECL|variable|nr_tasks
+r_int
+id|nr_tasks
+op_assign
+l_int|1
+suffix:semicolon
+DECL|variable|nr_running
+r_int
+id|nr_running
+op_assign
+l_int|1
+suffix:semicolon
 DECL|variable|last_pid
 r_int
 id|last_pid
@@ -892,6 +904,9 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|nr_tasks
+op_increment
+suffix:semicolon
 multiline_comment|/* copy all the process information */
 id|copy_thread
 c_func
@@ -980,6 +995,9 @@ c_func
 (paren
 id|p
 )paren
+suffix:semicolon
+id|nr_tasks
+op_decrement
 suffix:semicolon
 id|bad_fork_free
 suffix:colon

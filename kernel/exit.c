@@ -459,6 +459,9 @@ op_eq
 id|p
 )paren
 (brace
+id|nr_tasks
+op_decrement
+suffix:semicolon
 id|task
 (braket
 id|i
