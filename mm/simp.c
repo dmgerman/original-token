@@ -157,22 +157,8 @@ DECL|member|lock
 id|spinlock_t
 id|lock
 suffix:semicolon
-DECL|member|fill
-r_char
-id|fill
-(braket
-r_sizeof
-(paren
-r_void
-op_star
-)paren
-op_minus
-r_sizeof
-(paren
-id|spinlock_t
-)paren
-)braket
-suffix:semicolon
+multiline_comment|/* This value is negative on Alpha SMP.  */
+multiline_comment|/* char fill[sizeof(void*) - sizeof(spinlock_t)]; */
 DECL|member|real_size
 r_int
 id|real_size

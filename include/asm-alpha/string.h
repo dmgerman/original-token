@@ -2,6 +2,32 @@ macro_line|#ifndef __ALPHA_STRING_H__
 DECL|macro|__ALPHA_STRING_H__
 mdefine_line|#define __ALPHA_STRING_H__
 macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * GCC of any recent vintage doesn&squot;t do stupid things with bcopy.  Of&n; * EGCS-devel vintage, it knows all about expanding memcpy inline.&n; * For things other than EGCS-devel but still recent, GCC will expand&n; * __builtin_memcpy as a simple call to memcpy.&n; *&n; * Similarly for a memset with data = 0.&n; */
+DECL|macro|__HAVE_ARCH_MEMCPY
+mdefine_line|#define __HAVE_ARCH_MEMCPY
+multiline_comment|/* For backward compatibility with modules.  Unused otherwise.  */
+r_extern
+r_void
+op_star
+id|__memcpy
+c_func
+(paren
+r_void
+op_star
+comma
+r_const
+r_void
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 8
+DECL|macro|memcpy
+mdefine_line|#define memcpy __builtin_memcpy
+macro_line|#endif
+DECL|macro|__HAVE_ARCH_MEMSET
+mdefine_line|#define __HAVE_ARCH_MEMSET
 r_extern
 r_void
 op_star
@@ -31,34 +57,13 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Ugh. Gcc uses &quot;bcopy()&quot; internally for structure assignments.&n; */
-DECL|macro|__HAVE_ARCH_BCOPY
-mdefine_line|#define __HAVE_ARCH_BCOPY
-multiline_comment|/*&n; * Define &quot;memcpy()&quot; to something else, otherwise gcc will&n; * corrupt that too into a &quot;bcopy&quot;.  Also, some day we might&n; * want to do a separate inlined constant-size memcpy (for 8&n; * and 16 byte user&lt;-&gt;kernel structure copying).&n; */
-DECL|macro|__HAVE_ARCH_MEMCPY
-mdefine_line|#define __HAVE_ARCH_MEMCPY
-r_extern
-r_void
-op_star
-id|__memcpy
-c_func
-(paren
-r_void
-op_star
-comma
-r_const
-r_void
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-DECL|macro|memcpy
-mdefine_line|#define memcpy __memcpy
-DECL|macro|__HAVE_ARCH_MEMSET
-mdefine_line|#define __HAVE_ARCH_MEMSET
+macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 8
 DECL|macro|memset
-mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? &bslash;&n; __constant_c_memset((s),(0x0101010101010101UL*(unsigned char)c),(count)) : &bslash;&n; __memset((s),(c),(count)))
+mdefine_line|#define memset(s, c, n)&t;&t;&t;&t;&t;&t;&t;    &bslash;&n;(__builtin_constant_p(c)&t;&t;&t;&t;&t;&t;    &bslash;&n; ? (__builtin_constant_p(n) &amp;&amp; (c) == 0&t;&t;&t;&t;&t;    &bslash;&n;    ? __builtin_memset((s),0,(n)) &t;&t;&t;&t;&t;    &bslash;&n;    : __constant_c_memset((s),0x0101010101010101UL*(unsigned char)(c),(n))) &bslash;&n; : __memset((s),(c),(n)))
+macro_line|#else
+DECL|macro|memset
+mdefine_line|#define memset(s, c, n)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;(__builtin_constant_p(c)&t;&t;&t;&t;&t;&t;&bslash;&n; ? __constant_c_memset((s),0x0101010101010101UL*(unsigned char)(c),(n)) &bslash;&n; : __memset((s),(c),(n)))
+macro_line|#endif
 DECL|macro|__HAVE_ARCH_STRCPY
 mdefine_line|#define __HAVE_ARCH_STRCPY
 DECL|macro|__HAVE_ARCH_STRNCPY

@@ -1627,7 +1627,7 @@ l_string|&quot;max. addr. space #&bslash;t: %ld&bslash;n&quot;
 l_string|&quot;BogoMIPS&bslash;t&bslash;t: %lu.%02lu&bslash;n&quot;
 l_string|&quot;kernel unaligned acc&bslash;t: %ld (pc=%lx,va=%lx)&bslash;n&quot;
 l_string|&quot;user unaligned acc&bslash;t: %ld (pc=%lx,va=%lx)&bslash;n&quot;
-l_string|&quot;platform string&bslash;t: %s&bslash;n&quot;
+l_string|&quot;platform string&bslash;t&bslash;t: %s&bslash;n&quot;
 macro_line|#ifdef __SMP__
 l_string|&quot;%s&quot;
 macro_line|#endif

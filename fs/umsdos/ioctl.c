@@ -167,6 +167,69 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+multiline_comment|/* forward non-umsdos ioctls - this hopefully doesn&squot;t cause conflicts */
+r_if
+c_cond
+(paren
+id|cmd
+op_ne
+id|UMSDOS_GETVERSION
+op_logical_and
+id|cmd
+op_ne
+id|UMSDOS_READDIR_DOS
+op_logical_and
+id|cmd
+op_ne
+id|UMSDOS_READDIR_EMD
+op_logical_and
+id|cmd
+op_ne
+id|UMSDOS_INIT_EMD
+op_logical_and
+id|cmd
+op_ne
+id|UMSDOS_CREAT_EMD
+op_logical_and
+id|cmd
+op_ne
+id|UMSDOS_RENAME_DOS
+op_logical_and
+id|cmd
+op_ne
+id|UMSDOS_UNLINK_EMD
+op_logical_and
+id|cmd
+op_ne
+id|UMSDOS_UNLINK_DOS
+op_logical_and
+id|cmd
+op_ne
+id|UMSDOS_RMDIR_DOS
+op_logical_and
+id|cmd
+op_ne
+id|UMSDOS_STAT_DOS
+op_logical_and
+id|cmd
+op_ne
+id|UMSDOS_DOS_SETUP
+)paren
+(brace
+r_return
+id|fat_dir_ioctl
+c_func
+(paren
+id|dir
+comma
+id|filp
+comma
+id|cmd
+comma
+id|data
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* #Specification: ioctl / acces&n;     Only root (effective id) is allowed to do IOCTL on directory&n;     in UMSDOS. EPERM is returned for other user.&n;  */
 multiline_comment|/*&n;    Well, not all cases require write access, but it simplifies&n;    the code, and let&squot;s face it, there is only one client (umssync)&n;    for all this.&n;  */
 r_if
@@ -476,11 +539,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|iput
-(paren
-id|emd_dir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (emd_dir); FIXME */
 )brace
 r_else
 (brace
@@ -524,11 +583,7 @@ id|emd_dir
 op_ne
 l_int|NULL
 suffix:semicolon
-id|iput
-(paren
-id|emd_dir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (emd_dir); FIXME */
 id|dir-&gt;i_op
 op_assign
 id|ret
@@ -643,8 +698,11 @@ comma
 id|data.dos_dirent.d_reclen
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: prolly should fill inode part */
 id|new_dentry
 op_assign
 id|creat_dentry
@@ -652,6 +710,8 @@ id|creat_dentry
 id|data.umsdos_dirent.name
 comma
 id|data.umsdos_dirent.name_len
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren
@@ -865,11 +925,7 @@ id|data.stat
 )paren
 )paren
 suffix:semicolon
-id|iput
-(paren
-id|inode
-)paren
-suffix:semicolon
+multiline_comment|/* iput (inode); FIXME */
 )brace
 )brace
 r_else

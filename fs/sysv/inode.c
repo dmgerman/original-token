@@ -2620,7 +2620,7 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-id|sb-&gt;sb_dev
+id|sb-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon

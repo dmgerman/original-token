@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound Blaster compatible cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound Blaster compatible cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
 macro_line|#if defined(CONFIG_SBDSP) || defined(MODULE)
@@ -174,12 +174,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|i
-OL
-l_int|500000
-op_logical_and
-id|jiffies
-OL
-id|limit
+template_param
+l_int|0
 suffix:semicolon
 id|i
 op_increment
@@ -220,7 +216,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;Sound Blaster: DSP Command(%x) Timeout.&bslash;n&quot;
+l_string|&quot;soundblaster: DSP Command(%x) Timeout.&bslash;n&quot;
 comma
 id|val
 )paren
@@ -255,6 +251,7 @@ suffix:semicolon
 id|i
 op_decrement
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -266,7 +263,6 @@ id|DSP_DATA_AVAIL
 op_amp
 l_int|0x80
 )paren
-(brace
 r_return
 id|inb
 c_func
@@ -881,7 +877,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;SB16: Invalid 8 bit DMA (%d)&bslash;n&quot;
+l_string|&quot;sb16: Invalid 8 bit DMA (%d)&bslash;n&quot;
 comma
 id|devc-&gt;dma8
 )paren
@@ -2627,42 +2623,16 @@ op_assign
 id|sb_devc
 op_star
 )paren
-(paren
-id|sound_mem_blocks
-(braket
-id|sound_nblocks
-)braket
-op_assign
-id|vmalloc
+id|kmalloc
 c_func
 (paren
 r_sizeof
 (paren
 id|sb_devc
 )paren
+comma
+id|GFP_KERNEL
 )paren
-)paren
-suffix:semicolon
-id|sound_mem_sizes
-(braket
-id|sound_nblocks
-)braket
-op_assign
-r_sizeof
-(paren
-id|sb_devc
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sound_nblocks
-OL
-l_int|1024
-)paren
-id|sound_nblocks
-op_increment
-suffix:semicolon
 suffix:semicolon
 r_if
 c_cond
@@ -2749,9 +2719,10 @@ r_extern
 r_int
 id|sb_be_quiet
 suffix:semicolon
-r_extern
 r_int
-id|mwave_bug
+id|mixer3c
+comma
+id|mixer4c
 suffix:semicolon
 multiline_comment|/*&n; * Check if we had detected a SB device earlier&n; */
 id|DDB
@@ -3050,7 +3021,6 @@ macro_line|#else
 r_if
 c_cond
 (paren
-(paren
 id|devc-&gt;major
 op_eq
 l_int|4
@@ -3058,9 +3028,6 @@ op_logical_and
 id|devc-&gt;minor
 op_le
 l_int|11
-)paren
-op_logical_or
-id|mwave_bug
 )paren
 multiline_comment|/* Won&squot;t work */
 id|devc-&gt;irq_ok
@@ -3256,6 +3223,87 @@ id|hw_config-&gt;card_subtype
 op_assign
 id|MDL_SB16
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;The ALS007 seems to return DSP version 4.2.  In addition it has 2&n;&t;&t;&t; *&t;output control registers (at 0x3c and 0x4c).  Both of these should&n;&t;&t;&t; *&t;be !=0 after a reset which forms the basis of the ALS007 test&n;&t;&t;&t; *&t;since a &quot;standard&quot; SoundBlaster does not have a register at 0x4c.&n;&t;&t;&t; */
+id|mixer3c
+op_assign
+id|sb_getmixer
+c_func
+(paren
+id|devc
+comma
+l_int|0x3c
+)paren
+suffix:semicolon
+id|mixer4c
+op_assign
+id|sb_getmixer
+c_func
+(paren
+id|devc
+comma
+l_int|0x4c
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|devc-&gt;minor
+op_eq
+l_int|2
+)paren
+op_logical_and
+(paren
+id|mixer3c
+op_ne
+l_int|0
+)paren
+op_logical_and
+(paren
+id|mixer4c
+op_ne
+l_int|0
+)paren
+)paren
+(brace
+id|sb_setmixer
+c_func
+(paren
+id|devc
+comma
+l_int|0x3c
+comma
+l_int|0x1f
+)paren
+suffix:semicolon
+multiline_comment|/* Enable all inputs */
+id|sb_setmixer
+c_func
+(paren
+id|devc
+comma
+l_int|0x4c
+comma
+l_int|0x1f
+)paren
+suffix:semicolon
+id|devc-&gt;submodel
+op_assign
+id|SUBMDL_ALS007
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hw_config-&gt;name
+op_eq
+l_int|NULL
+)paren
+id|hw_config-&gt;name
+op_assign
+l_string|&quot;Sound Blaster (ALS-007)&quot;
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -3548,6 +3596,7 @@ id|devc-&gt;dma16
 op_ne
 id|devc-&gt;dma8
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3559,12 +3608,11 @@ comma
 l_string|&quot;SoundBlaster16&quot;
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;SB: Can&squot;t allocate 16 bit DMA channel %d&bslash;n&quot;
+l_string|&quot;soundblaster: Can&squot;t allocate 16 bit DMA channel %d&bslash;n&quot;
 comma
 id|devc-&gt;dma16
 )paren
@@ -3587,7 +3635,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;sb: No audio devices found.&bslash;n&quot;
+l_string|&quot;soundblaster: No audio devices found.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -3751,6 +3799,19 @@ comma
 l_int|16
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|detected_devc
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|detected_devc
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *&t;Mixer access routines&n; */
 DECL|function|sb_setmixer

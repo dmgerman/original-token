@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/uart401.c&n; *&n; * MPU-401 UART driver (formerly uart401_midi.c)&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes:&n; *&t;Alan Cox&t;Reformatted, removed sound_mem usage, use normal Linux&n; *&t;&t;&t;interrupt allocation.&n; *&n; * Status:&n; *&t;&t;Untested&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes:&n; *&t;Alan Cox&t;Reformatted, removed sound_mem usage, use normal Linux&n; *&t;&t;&t;interrupt allocation. Protect against bogus unload&n; *&t;&t;&t;Fixed to allow IRQ &gt; 15&n; *&n; * Status:&n; *&t;&t;Untested&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -971,23 +971,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|devc-&gt;irq
-template_param
-l_int|15
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|devc
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 op_logical_neg
 id|devc-&gt;share_irq
 )paren
@@ -1540,6 +1523,15 @@ l_string|&quot;Entered probe_uart401()&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Default to &quot;not found&quot; */
+id|hw_config-&gt;slots
+(braket
+l_int|4
+)braket
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 id|detected_devc
 op_assign
 l_int|NULL
@@ -1643,6 +1635,35 @@ id|uart401_devc
 op_star
 id|devc
 suffix:semicolon
+r_int
+id|n
+op_assign
+id|hw_config-&gt;slots
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* Not set up */
+r_if
+c_cond
+(paren
+id|n
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|midi_devs
+(braket
+id|n
+)braket
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* Not allocated (erm ??) */
 id|devc
 op_assign
 id|midi_devs

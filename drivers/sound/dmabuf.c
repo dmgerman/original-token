@@ -471,6 +471,7 @@ dot
 id|flags
 )paren
 suffix:semicolon
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -509,6 +510,16 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dmap-&gt;mapping_flags
+op_amp
+id|DMA_MAP_MAPPED
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* Don&squot;t free mmapped buffer. Will use it next time */
 r_for
 c_loop
 (paren
@@ -598,11 +609,6 @@ suffix:semicolon
 id|dmap-&gt;raw_buf
 op_assign
 l_int|NULL
-suffix:semicolon
-multiline_comment|/* Remember the buffer is deleted so we dont Oops later */
-id|dmap-&gt;fragment_size
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Intel version !!!!!!!!! */
@@ -973,12 +979,6 @@ id|disable_dma
 c_func
 (paren
 id|dmap-&gt;dma
-)paren
-suffix:semicolon
-id|sound_free_dmap
-c_func
-(paren
-id|dmap
 )paren
 suffix:semicolon
 )brace
@@ -6309,6 +6309,56 @@ comma
 id|wait
 )paren
 suffix:semicolon
+)brace
+DECL|function|DMAbuf_deinit
+r_void
+id|DMAbuf_deinit
+c_func
+(paren
+r_int
+id|dev
+)paren
+(brace
+r_struct
+id|audio_operations
+op_star
+id|adev
+op_assign
+id|audio_devs
+(braket
+id|dev
+)braket
+suffix:semicolon
+multiline_comment|/* This routine is called when driver is being unloaded */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|adev
+)paren
+r_return
+suffix:semicolon
+macro_line|#ifdef RUNTIME_DMA_ALLOC
+id|sound_free_dmap
+c_func
+(paren
+id|adev-&gt;dmap_out
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|adev-&gt;flags
+op_amp
+id|DMA_DUPLEX
+)paren
+id|sound_free_dmap
+c_func
+(paren
+id|adev-&gt;dmap_in
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
 eof

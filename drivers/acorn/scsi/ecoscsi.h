@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * Cumana Generic NCR5380 driver defines&n; *&n; * Copyright 1995, Russell King&n; *&n; * ALPHA RELEASE 1.&n; *&n; * For more information, please consult&n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
-multiline_comment|/*&n; * $Log: ecoscsi_NCR5380.h,v $&n; */
+multiline_comment|/*&n; * $Log: ecoscsi.h,v $&n; * Revision 1.1  1998/02/23 02:45:24  davem&n; * Merge to 2.1.88&n; *&n; */
 macro_line|#ifndef ECOSCSI_NCR5380_H
 DECL|macro|ECOSCSI_NCR5380_H
 mdefine_line|#define ECOSCSI_NCR5380_H

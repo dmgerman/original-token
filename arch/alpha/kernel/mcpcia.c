@@ -4477,18 +4477,11 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|mcpcia_fixup
-r_int
-r_int
+r_void
 id|mcpcia_fixup
 c_func
 (paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
+r_void
 )paren
 (brace
 r_struct
@@ -4526,9 +4519,6 @@ id|memory_start
 )paren
 suffix:semicolon
 )brace
-r_return
-id|memory_start
-suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_ALPHA_MCPCIA */
 eof

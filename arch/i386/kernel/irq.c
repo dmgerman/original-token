@@ -94,6 +94,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+macro_line|#ifdef __SMP__
 DECL|variable|ipi_pending
 r_static
 r_int
@@ -107,6 +108,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Not all IRQs can be routed through the IO-APIC, eg. on certain (older)&n; * boards the timer interrupt and sometimes the keyboard interrupt is&n; * not connected to any IO-APIC pin, it&squot;s fed to the CPU ExtInt IRQ line&n; * directly.&n; *&n; * Any &squot;1&squot; bit in this mask means the IRQ is routed through the IO-APIC.&n; * this &squot;mixed mode&squot; IRQ handling costs us one more branch in do_IRQ,&n; * but we have _much_ higher compatibility and robustness this way.&n; */
 multiline_comment|/*&n; * Default to all normal IRQ&squot;s _not_ using the IO APIC.&n; *&n; * To get IO-APIC interrupts you should either:&n; *  - turn some of them into IO-APIC interrupts at runtime&n; *    with some magic system call interface.&n; *  - explicitly use irq 16-19 depending on which PCI irq&n; *    line your PCI controller uses.&n; */
 DECL|variable|io_apic_irqs

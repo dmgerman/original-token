@@ -673,6 +673,7 @@ id|EFBIG
 suffix:semicolon
 )brace
 macro_line|#else
+(brace
 id|off_t
 id|max
 op_assign
@@ -737,7 +738,7 @@ id|EXT2_FEATURE_RO_COMPAT_LARGE_FILE
 )paren
 )paren
 (brace
-multiline_comment|/* If this is the first large file created, add a flag&n;&t;&t;   to the superblock */
+multiline_comment|/* If this is the first large file created, add a flag&n;&t;&t;&t;   to the superblock */
 id|sb-&gt;u.ext2_sb.s_es-&gt;s_feature_ro_compat
 op_or_assign
 id|cpu_to_le32
@@ -754,6 +755,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 multiline_comment|/*&n;&t; * If a file has been opened in synchronous mode, we have to ensure&n;&t; * that meta-data will also be written synchronously.  Thus, we&n;&t; * set the i_osync field.  This field is tested by the allocation&n;&t; * routines.&n;&t; */

@@ -1,3 +1,4 @@
+macro_line|#include &quot;os.h&quot;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/fs.h&gt;
@@ -92,7 +93,7 @@ l_int|0
 op_logical_or
 id|l
 OG
-l_int|65535
+l_int|131072
 )paren
 (brace
 id|printk
@@ -126,12 +127,10 @@ l_int|0
 suffix:semicolon
 id|dp
 op_assign
-id|kmalloc
+id|vmalloc
 c_func
 (paren
 id|l
-comma
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -186,7 +185,7 @@ comma
 id|fn
 )paren
 suffix:semicolon
-id|kfree
+id|vfree
 c_func
 (paren
 id|dp

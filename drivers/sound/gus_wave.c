@@ -4122,8 +4122,8 @@ id|nbanks
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * This routine determines what kind of RAM is installed in each of the four&n; * SIMM banks and configures the DRAM address decode logic accordingly.&n; */
-multiline_comment|/*&n; *    Place the chip into enhanced mode&n; */
+multiline_comment|/*&n;&t; * This routine determines what kind of RAM is installed in each of the four&n;&t; * SIMM banks and configures the DRAM address decode logic accordingly.&n;&t; */
+multiline_comment|/*&n;&t; *    Place the chip into enhanced mode&n;&t; */
 id|gus_write8
 c_func
 (paren
@@ -4154,7 +4154,7 @@ l_int|0x02
 )paren
 suffix:semicolon
 multiline_comment|/* Select DRAM I/O access */
-multiline_comment|/*&n; * Set memory configuration to 4 DRAM banks of 4M in each (16M total).&n; */
+multiline_comment|/*&n;&t; * Set memory configuration to 4 DRAM banks of 4M in each (16M total).&n;&t; */
 id|gus_write16
 c_func
 (paren
@@ -4173,7 +4173,7 @@ op_or
 l_int|0x000c
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Perform the DRAM size detection for each bank individually.&n; */
+multiline_comment|/*&n;&t; * Perform the DRAM size detection for each bank individually.&n;&t; */
 r_for
 c_loop
 (paren

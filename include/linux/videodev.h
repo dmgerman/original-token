@@ -141,11 +141,12 @@ id|video_device
 op_star
 )paren
 suffix:semicolon
-DECL|member|private
+DECL|member|priv
 r_void
 op_star
-r_private
+id|priv
 suffix:semicolon
+multiline_comment|/* Used to be &squot;private&squot; but that upsets C++ */
 DECL|member|busy
 r_int
 id|busy
@@ -174,8 +175,19 @@ c_func
 r_struct
 id|video_device
 op_star
+comma
+r_int
+id|type
 )paren
 suffix:semicolon
+DECL|macro|VFL_TYPE_GRABBER
+mdefine_line|#define VFL_TYPE_GRABBER&t;0
+DECL|macro|VFL_TYPE_VBI
+mdefine_line|#define VFL_TYPE_VBI&t;&t;1
+DECL|macro|VFL_TYPE_RADIO
+mdefine_line|#define VFL_TYPE_RADIO&t;&t;2
+DECL|macro|VFL_TYPE_VTX
+mdefine_line|#define VFL_TYPE_VTX&t;&t;3
 r_extern
 r_void
 id|video_unregister_device
@@ -428,6 +440,18 @@ id|name
 l_int|16
 )braket
 suffix:semicolon
+DECL|macro|VIDEO_SOUND_MONO
+mdefine_line|#define VIDEO_SOUND_MONO&t;1
+DECL|macro|VIDEO_SOUND_STEREO
+mdefine_line|#define VIDEO_SOUND_STEREO&t;2
+DECL|macro|VIDEO_SOUND_LANG1
+mdefine_line|#define VIDEO_SOUND_LANG1&t;3
+DECL|macro|VIDEO_SOUND_LANG2
+mdefine_line|#define VIDEO_SOUND_LANG2&t;4
+DECL|member|mode
+id|__u16
+id|mode
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|video_clip
@@ -524,6 +548,30 @@ id|bytesperline
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|video_mmap
+r_struct
+id|video_mmap
+(brace
+DECL|member|frame
+r_int
+r_int
+id|frame
+suffix:semicolon
+multiline_comment|/* Frame (0 or 1) for double buffer */
+DECL|member|height
+DECL|member|width
+r_int
+id|height
+comma
+id|width
+suffix:semicolon
+DECL|member|format
+r_int
+r_int
+id|format
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|video_key
 r_struct
 id|video_key
@@ -575,6 +623,10 @@ DECL|macro|VIDIOCGAUDIO
 mdefine_line|#define VIDIOCGAUDIO&t;&t;_IOR(&squot;v&squot;,16, struct video_audio)&t;/* Get audio info */
 DECL|macro|VIDIOCSAUDIO
 mdefine_line|#define VIDIOCSAUDIO&t;&t;_IOW(&squot;v&squot;,17, struct video_audio)&t;/* Audio source, mute etc */
+DECL|macro|VIDIOCSYNC
+mdefine_line|#define VIDIOCSYNC&t;&t;_IO(&squot;v&squot;,18)&t;&t;&t;&t;/* Sync with mmap grabbing */
+DECL|macro|VIDIOCMCAPTURE
+mdefine_line|#define VIDIOCMCAPTURE&t;&t;_IOW(&squot;v&squot;,19, struct video_mmap)&t;&t;/* Grab frames */
 DECL|macro|BASE_VIDIOCPRIVATE
 mdefine_line|#define BASE_VIDIOCPRIVATE&t;192&t;&t;/* 192-255 are private */
 DECL|macro|VID_HARDWARE_BT848
@@ -585,6 +637,10 @@ DECL|macro|VID_HARDWARE_PMS
 mdefine_line|#define VID_HARDWARE_PMS&t;3
 DECL|macro|VID_HARDWARE_QCAM_C
 mdefine_line|#define VID_HARDWARE_QCAM_C&t;4
+DECL|macro|VID_HARDWARE_PSEUDO
+mdefine_line|#define VID_HARDWARE_PSEUDO&t;5
+DECL|macro|VID_HARDWARE_SAA5249
+mdefine_line|#define VID_HARDWARE_SAA5249&t;6
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

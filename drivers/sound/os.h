@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/param.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -37,7 +38,6 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
@@ -104,13 +104,6 @@ mdefine_line|#define USE_AUTOINIT_DMA
 r_extern
 id|caddr_t
 id|sound_mem_blocks
-(braket
-l_int|1024
-)braket
-suffix:semicolon
-r_extern
-r_int
-id|sound_mem_sizes
 (braket
 l_int|1024
 )braket

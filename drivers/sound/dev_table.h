@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Sound card numbers 27 to 999. (1 to 26 are defined in soundcard.h)&n; * Numbers 1000 to N are reserved for driver&squot;s internal use.&n; */
 DECL|macro|SNDCARD_DESKPROXL
 mdefine_line|#define SNDCARD_DESKPROXL&t;&t;27&t;/* Compaq Deskpro XL */
+DECL|macro|SNDCARD_VIDC
+mdefine_line|#define SNDCARD_VIDC&t;&t;&t;28&t;/* ARMs VIDC */
 DECL|macro|SNDCARD_SBPNP
 mdefine_line|#define SNDCARD_SBPNP&t;&t;&t;29
 DECL|macro|SNDCARD_OPL3SA1
@@ -2421,6 +2423,24 @@ id|unload_v_midi
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_VIDC_SOUND
+(brace
+l_string|&quot;VIDC&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_VIDC
+comma
+l_string|&quot;ARM VIDC 16-bit D/A&quot;
+comma
+id|attach_vidc
+comma
+id|probe_vidc
+comma
+id|unload_vidc
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|NULL
 comma
@@ -3067,6 +3087,24 @@ l_int|0
 comma
 op_minus
 l_int|1
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_VIDC_SOUND
+(brace
+id|SNDCARD_VIDC
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 )brace
 comma
 id|SND_DEFAULT_ENABLE

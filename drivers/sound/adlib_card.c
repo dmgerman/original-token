@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * sound/adlib_card.c&n; *&n; * Detection routine for the AdLib card.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * sound/adlib_card.c&n; *&n; * Detection routine for the AdLib card.&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -134,6 +133,8 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|variable|cfg
 r_struct
 id|address_info
@@ -159,6 +160,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;adlib: must specify I/O address.&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -3,6 +3,7 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Thomas Sailer   : moved several static variables into struct audio_operations&n; *                   (which is grossly misnamed btw.) because they have the same&n; *                   lifetime as the rest in there and dynamic allocation saves&n; *                   12k or so&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_AUDIO) || defined(MODULE)
 macro_line|#include &quot;ulaw.h&quot;
@@ -633,7 +634,6 @@ id|mode
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(NO_INLINE_ASM) || !defined(i386)
 DECL|function|translate_bytes
 r_static
 r_void
@@ -696,88 +696,6 @@ id|i
 )braket
 suffix:semicolon
 )brace
-macro_line|#else
-r_extern
-r_inline
-r_void
-DECL|function|translate_bytes
-id|translate_bytes
-c_func
-(paren
-r_const
-r_void
-op_star
-id|table
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|n
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|n
-OG
-l_int|0
-)paren
-(brace
-id|__asm__
-c_func
-(paren
-l_string|&quot;cld&bslash;n&quot;
-l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
-l_string|&quot;xlatb&bslash;n&bslash;t&quot;
-l_string|&quot;stosb&bslash;n&bslash;t&quot;
-l_string|&quot;loop 1b&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;b&quot;
-(paren
-(paren
-r_int
-)paren
-id|table
-)paren
-comma
-l_string|&quot;c&quot;
-(paren
-id|n
-)paren
-comma
-l_string|&quot;D&quot;
-(paren
-(paren
-r_int
-)paren
-id|buff
-)paren
-comma
-l_string|&quot;S&quot;
-(paren
-(paren
-r_int
-)paren
-id|buff
-)paren
-suffix:colon
-l_string|&quot;bx&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;si&quot;
-comma
-l_string|&quot;ax&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 DECL|function|audio_write
 r_int
 id|audio_write
@@ -4081,6 +3999,7 @@ id|enable_bits
 op_assign
 id|bits
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -4115,6 +4034,7 @@ op_member_access_from_pointer
 id|go
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;
 id|restore_flags
 c_func
 (paren

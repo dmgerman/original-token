@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTrix AudioTrix Pro&n; * (MT-0002-PC Control Chip)&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTrix AudioTrix Pro&n; * (MT-0002-PC Control Chip)&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes&n; *&t;Alan Cox&t;&t;Modularisation, cleanup.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -63,10 +62,10 @@ id|trix_osp
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|function|trix_read
 r_static
 r_int
 r_char
-DECL|function|trix_read
 id|trix_read
 c_func
 (paren
@@ -98,9 +97,9 @@ l_int|0x391
 suffix:semicolon
 multiline_comment|/* MT-0002-PC ASIC data */
 )brace
+DECL|function|trix_write
 r_static
 r_void
-DECL|function|trix_write
 id|trix_write
 c_func
 (paren
@@ -142,9 +141,9 @@ l_int|0x391
 suffix:semicolon
 multiline_comment|/* MT-0002-PC ASIC data */
 )brace
+DECL|function|download_boot
 r_static
 r_void
-DECL|function|download_boot
 id|download_boot
 c_func
 (paren
@@ -307,9 +306,9 @@ l_int|0x390
 suffix:semicolon
 multiline_comment|/* ?????? */
 )brace
+DECL|function|trix_set_wss_port
 r_static
 r_int
-DECL|function|trix_set_wss_port
 id|trix_set_wss_port
 c_func
 (paren
@@ -374,6 +373,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;No AudioTrix ASIC signature found&bslash;n&quot;
 )paren
 )paren
@@ -403,7 +403,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Configure the ASIC to place the codec to the proper I/O location&n;&t; */
+multiline_comment|/*&n;&t; * Configure the ASIC to place the codec to the proper I/O location&n;&t; */
 r_switch
 c_cond
 (paren
@@ -475,8 +475,8 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Probe and attach routines for the Windows Sound System mode of&n; *      AudioTrix Pro&n; */
-r_int
 DECL|function|probe_trix_wss
+r_int
 id|probe_trix_wss
 c_func
 (paren
@@ -489,7 +489,7 @@ id|hw_config
 r_int
 id|ret
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Check if the IO port returns valid signature. The original MS Sound&n;&t;   * system returns 0x04 while some cards (AudioTrix Pro for example)&n;&t;   * return 0x00.&n;&t; */
+multiline_comment|/*&n;&t; * Check if the IO port returns valid signature. The original MS Sound&n;&t; * system returns 0x04 while some cards (AudioTrix Pro for example)&n;&t; * return 0x00.&n;&t; */
 r_if
 c_cond
 (paren
@@ -505,6 +505,7 @@ l_int|8
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AudioTrix: MSS I/O port conflict (%x)&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
@@ -555,6 +556,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;No MSS signature detected on port 0x%x&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
@@ -576,6 +578,7 @@ l_int|11
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AudioTrix: Bad WSS IRQ %d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
@@ -604,6 +607,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AudioTrix: Bad WSS DMA %d&bslash;n&quot;
 comma
 id|hw_config-&gt;dma
@@ -644,6 +648,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AudioTrix: Bad capture DMA %d&bslash;n&quot;
 comma
 id|hw_config-&gt;dma2
@@ -653,7 +658,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;   * Check that DMA0 is not in use with a 8 bit board.&n;&t; */
+multiline_comment|/*&n;&t; * Check that DMA0 is not in use with a 8 bit board.&n;&t; */
 r_if
 c_cond
 (paren
@@ -675,6 +680,7 @@ l_int|0x80
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AudioTrix: Can&squot;t use DMA0 with a 8 bit card slot&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -707,6 +713,7 @@ l_int|0x80
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AudioTrix: Can&squot;t use IRQ%d with a 8 bit card slot&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
@@ -872,7 +879,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;   * Set the IRQ and DMA addresses.&n;&t; */
+multiline_comment|/*&n;&t; * Set the IRQ and DMA addresses.&n;&t; */
 id|bits
 op_assign
 id|interrupt_bits
@@ -1089,8 +1096,8 @@ suffix:semicolon
 multiline_comment|/* SB */
 )brace
 )brace
-r_int
 DECL|function|probe_trix_sb
+r_int
 id|probe_trix_sb
 c_func
 (paren
@@ -1179,6 +1186,7 @@ l_int|16
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AudioTrix: SB I/O port conflict (%x)&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
@@ -1314,8 +1322,8 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-r_void
 DECL|function|attach_trix_sb
+r_void
 id|attach_trix_sb
 c_func
 (paren
@@ -1362,8 +1370,8 @@ id|old_quiet
 suffix:semicolon
 macro_line|#endif
 )brace
-r_void
 DECL|function|attach_trix_mpu
+r_void
 id|attach_trix_mpu
 c_func
 (paren
@@ -1386,8 +1394,8 @@ id|hw_config
 suffix:semicolon
 macro_line|#endif
 )brace
-r_int
 DECL|function|probe_trix_mpu
+r_int
 id|probe_trix_mpu
 c_func
 (paren
@@ -1513,6 +1521,7 @@ l_int|4
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AudioTrix: MPU I/O port conflict (%x)&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
@@ -1533,6 +1542,7 @@ l_int|9
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AudioTrix: Bad MPU IRQ %d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
@@ -1557,6 +1567,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AudioTrix: Bad MPU IRQ %d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
@@ -1659,8 +1670,8 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-r_void
 DECL|function|unload_trix_wss
+r_void
 id|unload_trix_wss
 c_func
 (paren
@@ -1729,8 +1740,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|unload_trix_mpu
+r_void
 id|unload_trix_mpu
 c_func
 (paren
@@ -1749,8 +1760,8 @@ id|hw_config
 suffix:semicolon
 macro_line|#endif
 )brace
-r_void
 DECL|function|unload_trix_sb
+r_void
 id|unload_trix_sb
 c_func
 (paren
@@ -1834,6 +1845,80 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma2
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sb_io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sb_dma
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sb_irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mpu_io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mpu_irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|config
 r_struct
 id|address_info
@@ -1868,8 +1953,8 @@ r_static
 r_int
 id|fw_load
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -1879,6 +1964,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;MediaTrix audio driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2127,8 +2213,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren
@@ -2142,7 +2228,7 @@ id|fw_load
 op_logical_and
 id|trix_boot
 )paren
-id|kfree
+id|vfree
 c_func
 (paren
 id|trix_boot

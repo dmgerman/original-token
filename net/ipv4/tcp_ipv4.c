@@ -6086,7 +6086,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;TCPv4 bad checksum from %d.%d.%d.%d:%04x to %d.%d.%d.%d:%04x, &quot;
+l_string|&quot;TCPv4 bad checksum from %ld.%ld.%ld.%ld:%04x to %ld.%ld.%ld.%ld:%04x, &quot;
 l_string|&quot;len=%d/%d/%d&bslash;n&quot;
 comma
 id|NIPQUAD

@@ -54,7 +54,6 @@ suffix:semicolon
 macro_line|#if defined(__KERNEL__) || defined(__DEBUGVAR__)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* Kernel includes */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * sound/sb_mixer.c&n; *&n; * The low level mixer driver for the Sound Blaster compatible cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SBDSP) || defined(MODULE)
@@ -25,8 +24,8 @@ op_star
 id|devc
 )paren
 suffix:semicolon
-r_void
 DECL|function|sb_mixer_set_stereo
+r_void
 id|sb_mixer_set_stereo
 c_func
 (paren
@@ -71,9 +70,9 @@ id|MONO_DAC
 )paren
 suffix:semicolon
 )brace
+DECL|function|detect_mixer
 r_static
 r_int
-DECL|function|detect_mixer
 id|detect_mixer
 c_func
 (paren
@@ -87,9 +86,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|change_bits
 r_static
 r_void
-DECL|function|change_bits
 id|change_bits
 c_func
 (paren
@@ -212,9 +211,9 @@ id|shift
 suffix:semicolon
 multiline_comment|/* Set the new value */
 )brace
+DECL|function|sb_mixer_get
 r_static
 r_int
-DECL|function|sb_mixer_get
 id|sb_mixer_get
 c_func
 (paren
@@ -251,8 +250,8 @@ id|dev
 )braket
 suffix:semicolon
 )brace
-r_void
 DECL|function|smw_mixer_init
+r_void
 id|smw_mixer_init
 c_func
 (paren
@@ -347,9 +346,9 @@ id|devc
 )paren
 suffix:semicolon
 )brace
+DECL|function|smw_mixer_set
 r_static
 r_int
-DECL|function|smw_mixer_set
 id|smw_mixer_set
 c_func
 (paren
@@ -717,9 +716,9 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
+DECL|function|sb_mixer_set
 r_static
 r_int
-DECL|function|sb_mixer_set
 id|sb_mixer_set
 c_func
 (paren
@@ -966,7 +965,7 @@ comma
 id|regoffs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;   * Read the new one&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Read the new one&n;&t;&t;&t;&t;&t;&t;&t; */
 )brace
 id|change_bits
 c_func
@@ -1016,9 +1015,9 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
+DECL|function|set_recsrc
 r_static
 r_void
-DECL|function|set_recsrc
 id|set_recsrc
 c_func
 (paren
@@ -1058,9 +1057,9 @@ l_int|0x7
 )paren
 suffix:semicolon
 )brace
+DECL|function|set_recmask
 r_static
 r_int
-DECL|function|set_recmask
 id|set_recmask
 c_func
 (paren
@@ -1123,7 +1122,7 @@ op_ne
 id|SOUND_MASK_CD
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * More than one devices selected. Drop the *&n;&t;&t;&t;&t; * previous selection&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * More than one device selected. Drop the&n;&t;&t;&t;&t; * previous selection&n;&t;&t;&t;&t; */
 id|devmask
 op_and_assign
 op_complement
@@ -1146,7 +1145,7 @@ op_ne
 id|SOUND_MASK_CD
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * More than one devices selected. Default to&n;&t;&t;&t;&t; * * mic&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * More than one device selected. Default to&n;&t;&t;&t;&t; * mic&n;&t;&t;&t;&t; */
 id|devmask
 op_assign
 id|SOUND_MASK_MIC
@@ -1159,7 +1158,7 @@ id|devmask
 op_xor
 id|devc-&gt;recmask
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * Input source changed&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; *&t;Input source changed&n;&t;&t;&t;&t;&t;&t;&t; */
 (brace
 r_switch
 c_cond
@@ -1233,6 +1232,84 @@ id|devmask
 op_assign
 id|SOUND_MASK_MIC
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|devc-&gt;submodel
+op_eq
+id|SUBMDL_ALS007
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|devmask
+)paren
+(brace
+r_case
+id|SOUND_MASK_LINE
+suffix:colon
+id|sb_setmixer
+c_func
+(paren
+id|devc
+comma
+id|ALS007_RECORD_SRC
+comma
+id|ALS007_LINE
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SOUND_MASK_CD
+suffix:colon
+id|sb_setmixer
+c_func
+(paren
+id|devc
+comma
+id|ALS007_RECORD_SRC
+comma
+id|ALS007_CD
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SOUND_MASK_SYNTH
+suffix:colon
+id|sb_setmixer
+c_func
+(paren
+id|devc
+comma
+id|ALS007_RECORD_SRC
+comma
+id|ALS007_SYNTH
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+multiline_comment|/* Also takes care of SOUND_MASK_MIC case */
+id|sb_setmixer
+c_func
+(paren
+id|devc
+comma
+id|ALS007_RECORD_SRC
+comma
+id|ALS007_MIC
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
 id|regimageL
 op_assign
 id|regimageR
@@ -1253,6 +1330,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1281,7 +1359,6 @@ id|i
 suffix:semicolon
 )brace
 id|sb_setmixer
-c_func
 (paren
 id|devc
 comma
@@ -1291,7 +1368,6 @@ id|regimageL
 )paren
 suffix:semicolon
 id|sb_setmixer
-c_func
 (paren
 id|devc
 comma
@@ -1300,6 +1376,8 @@ comma
 id|regimageR
 )paren
 suffix:semicolon
+)brace
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -1610,9 +1688,23 @@ comma
 id|sb_mixer_ioctl
 )brace
 suffix:semicolon
+DECL|variable|als007_mixer_operations
+r_static
+r_struct
+id|mixer_operations
+id|als007_mixer_operations
+op_assign
+(brace
+l_string|&quot;ALS007&quot;
+comma
+l_string|&quot;Avance ALS-007&quot;
+comma
+id|sb_mixer_ioctl
+)brace
+suffix:semicolon
+DECL|function|sb_mixer_reset
 r_static
 r_void
-DECL|function|sb_mixer_reset
 id|sb_mixer_reset
 c_func
 (paren
@@ -1710,8 +1802,8 @@ id|SOUND_MASK_MIC
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|sb_mixer_init
+r_int
 id|sb_mixer_init
 c_func
 (paren
@@ -1857,19 +1949,40 @@ id|devc-&gt;mixer_caps
 op_assign
 l_int|0
 suffix:semicolon
-id|devc-&gt;supported_devices
-op_assign
-id|SB16_MIXER_DEVICES
-suffix:semicolon
 id|devc-&gt;supported_rec_devices
 op_assign
 id|SB16_RECORDING_DEVICES
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|devc-&gt;submodel
+op_ne
+id|SUBMDL_ALS007
+)paren
+(brace
+id|devc-&gt;supported_devices
+op_assign
+id|SB16_MIXER_DEVICES
 suffix:semicolon
 id|devc-&gt;iomap
 op_assign
 op_amp
 id|sb16_mix
 suffix:semicolon
+)brace
+r_else
+(brace
+id|devc-&gt;supported_devices
+op_assign
+id|ALS007_MIXER_DEVICES
+suffix:semicolon
+id|devc-&gt;iomap
+op_assign
+op_amp
+id|als007_mix
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_default
@@ -1877,7 +1990,8 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;SB Warning: Unsupported mixer type %d&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;sb_mixer: Unsupported mixer type %d&bslash;n&quot;
 comma
 id|devc-&gt;model
 )paren
@@ -1914,13 +2028,7 @@ r_struct
 id|mixer_operations
 op_star
 )paren
-(paren
-id|sound_mem_blocks
-(braket
-id|sound_nblocks
-)braket
-op_assign
-id|vmalloc
+id|kmalloc
 c_func
 (paren
 r_sizeof
@@ -1928,30 +2036,9 @@ r_sizeof
 r_struct
 id|mixer_operations
 )paren
+comma
+id|GFP_KERNEL
 )paren
-)paren
-suffix:semicolon
-id|sound_mem_sizes
-(braket
-id|sound_nblocks
-)braket
-op_assign
-r_sizeof
-(paren
-r_struct
-id|mixer_operations
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sound_nblocks
-OL
-l_int|1024
-)paren
-id|sound_nblocks
-op_increment
-suffix:semicolon
 suffix:semicolon
 r_if
 c_cond
@@ -1981,8 +2068,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|devc-&gt;submodel
+op_ne
+id|SUBMDL_ALS007
+)paren
 id|memcpy
-c_func
 (paren
 (paren
 r_char
@@ -1999,6 +2092,32 @@ op_star
 )paren
 op_amp
 id|sb_mixer_operations
+comma
+r_sizeof
+(paren
+r_struct
+id|mixer_operations
+)paren
+)paren
+suffix:semicolon
+r_else
+id|memcpy
+(paren
+(paren
+r_char
+op_star
+)paren
+id|mixer_devs
+(braket
+id|m
+)braket
+comma
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|als007_mixer_operations
 comma
 r_sizeof
 (paren

@@ -1554,19 +1554,13 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+r_void
+id|__init
 DECL|function|pcibios_init
-r_int
-r_int
 id|pcibios_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 (brace
 id|printk
@@ -1587,9 +1581,6 @@ l_string|&quot;...NOT modifying existing (SRM) PCI configuration&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * The SRM console *disables* the IDE interface, this code ensures it&squot;s&n; * enabled.&n; *&n; * This code bangs on a control register of the 87312 Super I/O chip&n; * that implements parallel port/serial ports/IDE/FDI.  Depending on&n; * the motherboard, the Super I/O chip can be configured through a&n; * pair of registers that are located either at I/O ports 0x26e/0x26f&n; * or 0x398/0x399.  Unfortunately, autodetecting which base address is&n; * in use works only once (right after a reset).  The Super I/O chip&n; * has the additional quirk that configuration register data must be&n; * written twice (I believe this is a safety feature to prevent&n; * accidental modification---fun, isn&squot;t it?).&n; */
 DECL|function|enable_ide
@@ -6817,20 +6808,13 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_TGA_CONSOLE */
-r_int
-r_int
+r_void
 id|__init
 DECL|function|pcibios_fixup
 id|pcibios_fixup
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 (brace
 r_struct
@@ -6848,20 +6832,15 @@ l_string|&quot;pcibios_fixup: calling mcpcia_fixup()...&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|mem_start
-op_assign
 id|mcpcia_fixup
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif /* MCPCIA */
 macro_line|#ifdef CONFIG_ALPHA_TSUNAMI
 multiline_comment|/* must do massive setup for multiple PCI busses here... */
-multiline_comment|/*&t;mem_start = tsunami_fixup(mem_start, mem_end); */
+multiline_comment|/* tsunami_fixup(); */
 macro_line|#endif /* TSUNAMI */
 macro_line|#if PCI_MODIFY &amp;&amp; !defined(CONFIG_ALPHA_RUFFIAN)
 multiline_comment|/*&n;&t; * Scan the tree, allocating PCI memory and I/O space.&n;&t; */
@@ -7010,9 +6989,6 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 DECL|function|sys_pciconfig_read
 id|asmlinkage

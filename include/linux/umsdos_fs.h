@@ -353,6 +353,11 @@ suffix:semicolon
 r_extern
 r_struct
 id|inode_operations
+id|umsdos_file_inode_operations_readpage
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
 id|umsdos_symlink_inode_operations
 suffix:semicolon
 r_extern

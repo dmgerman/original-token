@@ -135,13 +135,11 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|mca_init
 c_func
 (paren
-r_int
-comma
-r_int
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -4325,6 +4323,7 @@ c_func
 id|command_line
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * HACK ALERT! This is early. We&squot;re enabling the console before&n;&t; * we&squot;ve done PCI setups etc, and console_init() must be aware of&n;&t; * this. But we do want output early, in case something goes wrong.&n;&t; */
 id|memory_start
 op_assign
 id|console_init
@@ -4406,19 +4405,6 @@ r_int
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-multiline_comment|/*&n; * HACK ALERT! This is early. We&squot;re enabling the console before&n; * we&squot;ve done PCI setups etc, and console_init() must be aware of&n; * this. But we do want output early, in case something goes wrong.&n; */
-macro_line|#if HACK
-id|memory_start
-op_assign
-id|console_init
-c_func
-(paren
-id|memory_start
-comma
-id|memory_end
-)paren
-suffix:semicolon
 macro_line|#endif
 id|memory_start
 op_assign

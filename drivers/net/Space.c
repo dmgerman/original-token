@@ -559,6 +559,17 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|epic100_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Detachable devices (&quot;pocket adaptors&quot;) */
 r_extern
 r_int
@@ -1110,6 +1121,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ARM_AM79C961A
 op_logical_and
 id|am79c961_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_EPIC100
+op_logical_and
+id|epic100_probe
 c_func
 (paren
 id|dev

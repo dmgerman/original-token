@@ -1050,32 +1050,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;IO APIC ID: %d&bslash;n&quot;
-comma
-op_star
-(paren
-r_int
-op_star
-)paren
-l_int|0xFEC00000
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;APIC ID: %d&bslash;n&quot;
-comma
-op_star
-(paren
-r_int
-op_star
-)paren
-l_int|0xFEE00000
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif
 id|local_flush_tlb

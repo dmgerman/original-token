@@ -6,34 +6,147 @@ DECL|macro|TEST_VBI
 mdefine_line|#define TEST_VBI
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#include &quot;i2c.h&quot;
+macro_line|#include &quot;msp3400.h&quot;
 macro_line|#include &quot;bt848.h&quot;
-DECL|typedef|dword
-r_typedef
-r_int
-r_int
-id|dword
-suffix:semicolon
+macro_line|#include &lt;linux/videodev.h&gt;
+DECL|macro|MAX_CLIPRECS
+mdefine_line|#define MAX_CLIPRECS&t;100
+DECL|macro|RISCMEM_LEN
+mdefine_line|#define RISCMEM_LEN&t;(32744*2)
+DECL|macro|MAX_FBUF
+mdefine_line|#define MAX_FBUF&t;0x144000
 DECL|struct|riscprog
 r_struct
 id|riscprog
 (brace
 DECL|member|length
-id|uint
+r_int
+r_int
 id|length
 suffix:semicolon
 DECL|member|busadr
-id|dword
+id|u32
 op_star
 id|busadr
 suffix:semicolon
 DECL|member|prog
-id|dword
+id|u32
 op_star
 id|prog
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* values that can be set by user programs */
+multiline_comment|/* clipping rectangle */
+DECL|struct|cliprec
+r_struct
+id|cliprec
+(brace
+DECL|member|x
+DECL|member|y
+DECL|member|x2
+DECL|member|y2
+r_int
+id|x
+comma
+id|y
+comma
+id|x2
+comma
+id|y2
+suffix:semicolon
+DECL|member|next
+r_struct
+id|cliprec
+op_star
+id|next
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* grab buffer */
+DECL|struct|gbuffer
+r_struct
+id|gbuffer
+(brace
+DECL|member|next
+r_struct
+id|gbuffer
+op_star
+id|next
+suffix:semicolon
+DECL|member|next_active
+r_struct
+id|gbuffer
+op_star
+id|next_active
+suffix:semicolon
+DECL|member|adr
+r_void
+op_star
+id|adr
+suffix:semicolon
+DECL|member|x
+DECL|member|y
+r_int
+id|x
+comma
+id|y
+suffix:semicolon
+DECL|member|width
+DECL|member|height
+r_int
+id|width
+comma
+id|height
+suffix:semicolon
+DECL|member|bpl
+r_int
+r_int
+id|bpl
+suffix:semicolon
+DECL|member|fmt
+r_int
+r_int
+id|fmt
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|macro|GBUF_ODD
+mdefine_line|#define GBUF_ODD  1
+DECL|macro|GBUF_EVEN
+mdefine_line|#define GBUF_EVEN 2
+DECL|macro|GBUF_LFB
+mdefine_line|#define GBUF_LFB  4
+DECL|macro|GBUF_INT
+mdefine_line|#define GBUF_INT  8
+DECL|member|length
+r_int
+r_int
+id|length
+suffix:semicolon
+DECL|member|ro
+r_void
+op_star
+id|ro
+suffix:semicolon
+DECL|member|re
+r_void
+op_star
+id|re
+suffix:semicolon
+DECL|member|bro
+id|u32
+id|bro
+suffix:semicolon
+DECL|member|bre
+id|u32
+id|bre
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#ifdef __KERNEL__
 DECL|struct|bttv_window
 r_struct
 id|bttv_window
@@ -82,6 +195,7 @@ id|cropheight
 suffix:semicolon
 DECL|member|vidadr
 r_int
+r_int
 id|vidadr
 suffix:semicolon
 DECL|member|freq
@@ -102,7 +216,6 @@ id|color_fmt
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* private data that can only be read (or set indirectly) by user program */
 DECL|struct|bttv
 r_struct
 id|bttv
@@ -111,6 +224,16 @@ DECL|member|video_dev
 r_struct
 id|video_device
 id|video_dev
+suffix:semicolon
+DECL|member|radio_dev
+r_struct
+id|video_device
+id|radio_dev
+suffix:semicolon
+DECL|member|vbi_dev
+r_struct
+id|video_device
+id|vbi_dev
 suffix:semicolon
 DECL|member|picture
 r_struct
@@ -124,46 +247,72 @@ id|video_audio
 id|audio_dev
 suffix:semicolon
 multiline_comment|/* Current audio params */
+DECL|member|i2c
+r_struct
+id|i2c_bus
+id|i2c
+suffix:semicolon
+DECL|member|have_msp3400
+r_int
+id|have_msp3400
+suffix:semicolon
+DECL|member|have_tuner
+r_int
+id|have_tuner
+suffix:semicolon
+DECL|member|id
+r_int
+r_int
+id|id
+suffix:semicolon
 DECL|member|bus
-id|u_char
+r_int
+r_char
 id|bus
 suffix:semicolon
 multiline_comment|/* PCI bus the Bt848 is on */
 DECL|member|devfn
-id|u_char
+r_int
+r_char
 id|devfn
 suffix:semicolon
 DECL|member|revision
-id|u_char
+r_int
+r_char
 id|revision
 suffix:semicolon
 DECL|member|irq
-id|u_char
+r_int
+r_char
 id|irq
 suffix:semicolon
 multiline_comment|/* IRQ used by Bt848 card */
 DECL|member|bt848_adr
-id|uint
+r_int
+r_int
 id|bt848_adr
 suffix:semicolon
 multiline_comment|/* bus address of IO mem returned by PCI BIOS */
 DECL|member|bt848_mem
-id|u_char
+r_int
+r_char
 op_star
 id|bt848_mem
 suffix:semicolon
 multiline_comment|/* pointer to mapped IO memory */
 DECL|member|busriscmem
-id|ulong
+r_int
+r_int
 id|busriscmem
 suffix:semicolon
 DECL|member|riscmem
-id|dword
+id|u32
 op_star
 id|riscmem
 suffix:semicolon
 DECL|member|vbibuf
-id|u_char
+r_int
+r_char
 op_star
 id|vbibuf
 suffix:semicolon
@@ -186,39 +335,35 @@ DECL|member|user
 r_int
 id|user
 suffix:semicolon
-DECL|member|tuner
-r_int
-id|tuner
-suffix:semicolon
-DECL|member|tuneradr
-r_int
-id|tuneradr
-suffix:semicolon
 DECL|member|dbx
 r_int
 id|dbx
 suffix:semicolon
+DECL|member|radio
+r_int
+id|radio
+suffix:semicolon
 DECL|member|risc_jmp
-id|dword
+id|u32
 op_star
 id|risc_jmp
 suffix:semicolon
 DECL|member|vbi_odd
-id|dword
+id|u32
 op_star
 id|vbi_odd
 suffix:semicolon
 DECL|member|vbi_even
-id|dword
+id|u32
 op_star
 id|vbi_even
 suffix:semicolon
 DECL|member|bus_vbi_even
-id|dword
+id|u32
 id|bus_vbi_even
 suffix:semicolon
 DECL|member|bus_vbi_odd
-id|dword
+id|u32
 id|bus_vbi_odd
 suffix:semicolon
 DECL|member|vbiq
@@ -233,17 +378,29 @@ id|wait_queue
 op_star
 id|capq
 suffix:semicolon
+DECL|member|capqo
+r_struct
+id|wait_queue
+op_star
+id|capqo
+suffix:semicolon
+DECL|member|capqe
+r_struct
+id|wait_queue
+op_star
+id|capqe
+suffix:semicolon
 DECL|member|vbip
 r_int
 id|vbip
 suffix:semicolon
 DECL|member|risc_odd
-id|dword
+id|u32
 op_star
 id|risc_odd
 suffix:semicolon
 DECL|member|risc_even
-id|dword
+id|u32
 op_star
 id|risc_even
 suffix:semicolon
@@ -251,8 +408,82 @@ DECL|member|cap
 r_int
 id|cap
 suffix:semicolon
+DECL|member|cliprecs
+r_struct
+id|cliprec
+op_star
+id|cliprecs
+suffix:semicolon
+DECL|member|ncr
+r_int
+id|ncr
+suffix:semicolon
+multiline_comment|/* number of clipping rectangles */
+DECL|member|ogbuffers
+r_struct
+id|gbuffer
+op_star
+id|ogbuffers
+suffix:semicolon
+DECL|member|egbuffers
+r_struct
+id|gbuffer
+op_star
+id|egbuffers
+suffix:semicolon
+DECL|member|gwidth
+DECL|member|gheight
+DECL|member|gfmt
+id|u16
+id|gwidth
+comma
+id|gheight
+comma
+id|gfmt
+suffix:semicolon
+DECL|member|grisc
+id|u32
+op_star
+id|grisc
+suffix:semicolon
+DECL|member|gro
+r_int
+r_int
+id|gro
+suffix:semicolon
+DECL|member|gre
+r_int
+r_int
+id|gre
+suffix:semicolon
+DECL|member|fbuffer
+r_char
+op_star
+id|fbuffer
+suffix:semicolon
+DECL|member|gmode
+r_int
+id|gmode
+suffix:semicolon
+DECL|member|grabbing
+r_int
+id|grabbing
+suffix:semicolon
+DECL|member|lastgrab
+r_int
+id|lastgrab
+suffix:semicolon
+DECL|member|grab
+r_int
+id|grab
+suffix:semicolon
+DECL|member|grabcount
+r_int
+id|grabcount
+suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*The following should be done in more portable way. It depends on define&n;  of _ALPHA_BTTV in the Makefile.*/
 macro_line|#ifdef _ALPHA_BTTV
 DECL|macro|btwrite
@@ -272,52 +503,12 @@ mdefine_line|#define btor(dat,adr)       btwrite((dat) | btread(adr), adr)
 DECL|macro|btaor
 mdefine_line|#define btaor(dat,mask,adr) btwrite((dat) | ((mask) &amp; btread(adr)), adr)
 multiline_comment|/* bttv ioctls */
-DECL|macro|BTTV_WRITE_BTREG
-mdefine_line|#define BTTV_WRITE_BTREG   0x00
-DECL|macro|BTTV_READ_BTREG
-mdefine_line|#define BTTV_READ_BTREG    0x01
-DECL|macro|BTTV_SET_BTREG
-mdefine_line|#define BTTV_SET_BTREG     0x02
-DECL|macro|BTTV_SETRISC
-mdefine_line|#define BTTV_SETRISC       0x03
-DECL|macro|BTTV_SETWTW
-mdefine_line|#define BTTV_SETWTW        0x04
-DECL|macro|BTTV_GETWTW
-mdefine_line|#define BTTV_GETWTW        0x05
-DECL|macro|BTTV_DMA
-mdefine_line|#define BTTV_DMA           0x06
-DECL|macro|BTTV_CAP_OFF
-mdefine_line|#define BTTV_CAP_OFF       0x07
-DECL|macro|BTTV_CAP_ON
-mdefine_line|#define BTTV_CAP_ON        0x08
-DECL|macro|BTTV_GETBTTV
-mdefine_line|#define BTTV_GETBTTV       0x09
-DECL|macro|BTTV_SETFREQ
-mdefine_line|#define BTTV_SETFREQ       0x0a
-DECL|macro|BTTV_SETCHAN
-mdefine_line|#define BTTV_SETCHAN       0x0b
-DECL|macro|BTTV_INPUT
-mdefine_line|#define BTTV_INPUT         0x0c
 DECL|macro|BTTV_READEE
-mdefine_line|#define BTTV_READEE        0x0d
-DECL|macro|BTTV_WRITEEE
-mdefine_line|#define BTTV_WRITEEE       0x0e
-DECL|macro|BTTV_BRIGHT
-mdefine_line|#define BTTV_BRIGHT        0x0f
-DECL|macro|BTTV_HUE
-mdefine_line|#define BTTV_HUE           0x10
-DECL|macro|BTTV_COLOR
-mdefine_line|#define BTTV_COLOR         0x11
-DECL|macro|BTTV_CONTRAST
-mdefine_line|#define BTTV_CONTRAST      0x12
-DECL|macro|BTTV_SET_FFREQ
-mdefine_line|#define BTTV_SET_FFREQ     0x13
-DECL|macro|BTTV_MUTE
-mdefine_line|#define BTTV_MUTE          0x14
+mdefine_line|#define BTTV_READEE&t;&t;_IOW(&squot;v&squot;,  BASE_VIDIOCPRIVATE+0, char [256])
+DECL|macro|BTTV_WRITEE
+mdefine_line|#define BTTV_WRITEE&t;&t;_IOR(&squot;v&squot;,  BASE_VIDIOCPRIVATE+1, char [256])
 DECL|macro|BTTV_GRAB
-mdefine_line|#define BTTV_GRAB          0x20
-DECL|macro|BTTV_TESTM
-mdefine_line|#define BTTV_TESTM         0x20
+mdefine_line|#define BTTV_GRAB&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+2, struct gbuf)
 DECL|macro|BTTV_UNKNOWN
 mdefine_line|#define BTTV_UNKNOWN       0x00
 DECL|macro|BTTV_MIRO
@@ -330,16 +521,20 @@ DECL|macro|BTTV_INTEL
 mdefine_line|#define BTTV_INTEL         0x04
 DECL|macro|BTTV_DIAMOND
 mdefine_line|#define BTTV_DIAMOND       0x05 
+DECL|macro|BTTV_AVERMEDIA
+mdefine_line|#define BTTV_AVERMEDIA     0x06 
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
+DECL|macro|AUDIO_RADIO
+mdefine_line|#define AUDIO_RADIO        0x01
 DECL|macro|AUDIO_EXTERN
-mdefine_line|#define AUDIO_EXTERN       0x01
+mdefine_line|#define AUDIO_EXTERN       0x02
 DECL|macro|AUDIO_INTERN
-mdefine_line|#define AUDIO_INTERN       0x02
+mdefine_line|#define AUDIO_INTERN       0x03
 DECL|macro|AUDIO_OFF
-mdefine_line|#define AUDIO_OFF          0x03 
+mdefine_line|#define AUDIO_OFF          0x04 
 DECL|macro|AUDIO_ON
-mdefine_line|#define AUDIO_ON           0x04
+mdefine_line|#define AUDIO_ON           0x05
 DECL|macro|AUDIO_MUTE
 mdefine_line|#define AUDIO_MUTE         0x80
 DECL|macro|AUDIO_UNMUTE

@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * sound/sb_card.c&n; *&n; * Detection routine for the Sound Blaster cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * sound/sb_card.c&n; *&n; * Detection routine for the Sound Blaster cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -7,8 +6,8 @@ macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#if defined(CONFIG_SBDSP) || defined (MODULE)
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
-r_void
 DECL|function|attach_sb_card
+r_void
 id|attach_sb_card
 c_func
 (paren
@@ -27,8 +26,8 @@ id|hw_config
 suffix:semicolon
 macro_line|#endif
 )brace
-r_int
 DECL|function|probe_sb
+r_int
 id|probe_sb
 c_func
 (paren
@@ -53,7 +52,8 @@ l_int|16
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;nsb_card.c: I/O port %x is already in use&bslash;n&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;sb_card: I/O port %x is already in use&bslash;n&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
 )paren
@@ -70,8 +70,8 @@ id|hw_config
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|unload_sb
+r_void
 id|unload_sb
 c_func
 (paren
@@ -88,6 +88,12 @@ id|hw_config
 )paren
 suffix:semicolon
 )brace
+DECL|variable|sb_be_quiet
+r_int
+id|sb_be_quiet
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|variable|config
 r_static
@@ -179,13 +185,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do acer notebook init */
-DECL|variable|mwave_bug
-r_int
-id|mwave_bug
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Using the dreadful mwave sb emulation */
 id|MODULE_PARM
 c_func
 (paren
@@ -262,14 +261,6 @@ id|MODULE_PARM
 c_func
 (paren
 id|sm_games
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|mwave_bug
 comma
 l_string|&quot;i&quot;
 )paren
@@ -448,7 +439,7 @@ c_cond
 (paren
 id|smw_free
 )paren
-id|kfree
+id|vfree
 c_func
 (paren
 id|smw_free
@@ -519,21 +510,6 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SB_MWAVE
-DECL|variable|mwave_bug
-r_int
-id|mwave_bug
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#else
-DECL|variable|mwave_bug
-r_int
-id|mwave_bug
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 DECL|variable|sb_dsp_init
@@ -583,6 +559,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|unload_sb
+)paren
+suffix:semicolon
+DECL|variable|sb_be_quiet
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sb_be_quiet
 )paren
 suffix:semicolon
 eof

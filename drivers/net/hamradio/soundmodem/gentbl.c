@@ -4885,8 +4885,10 @@ c_func
 id|f
 )paren
 suffix:semicolon
-r_return
+m_exit
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* -------------------------------------------------------------------- */

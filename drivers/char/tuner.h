@@ -36,57 +36,11 @@ DECL|macro|TEMIC
 mdefine_line|#define TEMIC   2
 DECL|macro|Sony
 mdefine_line|#define Sony    3
-DECL|struct|tunertype
-r_struct
-id|tunertype
-(brace
-DECL|member|name
-r_char
-op_star
-id|name
-suffix:semicolon
-DECL|member|Vendor
-id|unchar
-id|Vendor
-suffix:semicolon
-DECL|member|Type
-id|unchar
-id|Type
-suffix:semicolon
-DECL|member|thresh1
-id|ushort
-id|thresh1
-suffix:semicolon
-multiline_comment|/* frequency Range for UHF,VHF-L, VHF_H */
-DECL|member|thresh2
-id|ushort
-id|thresh2
-suffix:semicolon
-DECL|member|VHF_L
-id|unchar
-id|VHF_L
-suffix:semicolon
-DECL|member|VHF_H
-id|unchar
-id|VHF_H
-suffix:semicolon
-DECL|member|UHF
-id|unchar
-id|UHF
-suffix:semicolon
-DECL|member|config
-id|unchar
-id|config
-suffix:semicolon
-DECL|member|I2C
-id|unchar
-id|I2C
-suffix:semicolon
-DECL|member|IFPCoff
-id|ushort
-id|IFPCoff
-suffix:semicolon
-)brace
-suffix:semicolon
+DECL|macro|TUNER_SET_TYPE
+mdefine_line|#define TUNER_SET_TYPE               _IOW(&squot;t&squot;,1,int)    /* set tuner type */
+DECL|macro|TUNER_SET_TVFREQ
+mdefine_line|#define TUNER_SET_TVFREQ             _IOW(&squot;t&squot;,2,int)    /* set tv freq */
+DECL|macro|TUNER_SET_RADIOFREQ
+mdefine_line|#define TUNER_SET_RADIOFREQ          _IOW(&squot;t&squot;,3,int)    /* set radio freq */
 macro_line|#endif
 eof

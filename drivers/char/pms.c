@@ -4925,22 +4925,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Module stuff&n; */
 macro_line|#ifdef MODULE
-id|MODULE_PARM
-c_func
-(paren
-id|io_port
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|mem_base
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -4948,6 +4932,14 @@ c_func
 (paren
 r_void
 )paren
+macro_line|#else
+r_void
+id|init_pms_cards
+c_func
+(paren
+r_void
+)paren
+macro_line|#endif
 (brace
 id|printk
 c_func
@@ -5031,9 +5023,28 @@ op_star
 )paren
 op_amp
 id|pms_device
+comma
+id|VFL_TYPE_GRABBER
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+id|MODULE_PARM
+c_func
+(paren
+id|io_port
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mem_base
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|function|cleanup_module
 r_void
 id|cleanup_module

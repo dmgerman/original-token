@@ -334,8 +334,8 @@ DECL|enumerator|syncneg_sent
 id|syncneg_sent
 comma
 multiline_comment|/* Sync Xfer negociation sent&t;&t;*/
-DECL|enumerator|syncnsg_complete
-id|syncnsg_complete
+DECL|enumerator|syncneg_complete
+id|syncneg_complete
 multiline_comment|/* Sync Xfer complete&t;&t;&t;*/
 DECL|typedef|syncneg_t
 )brace
@@ -691,7 +691,7 @@ DECL|typedef|FAS216_Info
 )brace
 id|FAS216_Info
 suffix:semicolon
-multiline_comment|/*&n; * Function: int fas216_init (struct Scsi_Host *instance)&n; *&n; * Purpose : initialise FAS/NCR/AMD SCSI ic.&n; *&n; * Params  : instance - a driver-specific filled-out structure&n; *&n; * Returns : 0 on success&n; */
+multiline_comment|/* Function: int fas216_init (struct Scsi_Host *instance)&n; * Purpose : initialise FAS/NCR/AMD SCSI ic.&n; * Params  : instance - a driver-specific filled-out structure&n; * Returns : 0 on success&n; */
 r_extern
 r_int
 id|fas216_init
@@ -702,7 +702,7 @@ op_star
 id|instance
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function: int fas216_abort (Scsi_Cmnd *SCpnt)&n; *&n; * Purpose : abort a command if something horrible happens.&n; *&n; * Params  : SCpnt - Command that is believed to be causing a problem.&n; *&n; * Returns : one of SCSI_ABORT_ macros.&n; */
+multiline_comment|/* Function: int fas216_abort (Scsi_Cmnd *SCpnt)&n; * Purpose : abort a command if something horrible happens.&n; * Params  : SCpnt - Command that is believed to be causing a problem.&n; * Returns : one of SCSI_ABORT_ macros.&n; */
 r_extern
 r_int
 id|fas216_abort
@@ -711,7 +711,7 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function: int fas216_reset (Scsi_Cmnd *SCpnt, unsigned int reset_flags)&n; *&n; * Purpose : resets the adapter if something horrible happens.&n; *&n; * Params  : SCpnt - Command that is believed to be causing a problem.&n; *&t;     reset_flags - flags indicating reset type that is believed to be required.&n; *&n; * Returns : one of SCSI_RESET_ macros, or&squot;d with the SCSI_RESET_*_RESET macros.&n; */
+multiline_comment|/* Function: int fas216_reset (Scsi_Cmnd *SCpnt, unsigned int reset_flags)&n; * Purpose : resets the adapter if something horrible happens.&n; * Params  : SCpnt - Command that is believed to be causing a problem.&n; *&t;     reset_flags - flags indicating reset type that is believed to be required.&n; * Returns : one of SCSI_RESET_ macros, or&squot;d with the SCSI_RESET_*_RESET macros.&n; */
 r_extern
 r_int
 id|fas216_reset
@@ -723,7 +723,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function: int fas216_queue_command (Scsi_Cmnd *SCpnt, void (*done)(Scsi_Cmnd *))&n; *&n; * Purpose : queue a command for adapter to process.&n; *&n; * Params  : SCpnt - Command to queue&n; *&t;     done  - done function to call once command is complete&n; *&n; * Returns : 0 - success, else error&n; */
+multiline_comment|/* Function: int fas216_queue_command (Scsi_Cmnd *SCpnt, void (*done)(Scsi_Cmnd *))&n; * Purpose : queue a command for adapter to process.&n; * Params  : SCpnt - Command to queue&n; *&t;     done  - done function to call once command is complete&n; * Returns : 0 - success, else error&n; */
 r_extern
 r_int
 id|fas216_queue_command
@@ -742,7 +742,7 @@ op_star
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function: int fas216_command (Scsi_Cmnd *SCpnt)&n; *&n; * Purpose : queue a command for adapter to process.&n; *&n; * Params  : SCpnt - Command to queue&n; *&n; * Returns : scsi result code&n; */
+multiline_comment|/* Function: int fas216_command (Scsi_Cmnd *SCpnt)&n; * Purpose : queue a command for adapter to process.&n; * Params  : SCpnt - Command to queue&n; * Returns : scsi result code&n; */
 r_extern
 r_int
 id|fas216_command
@@ -751,7 +751,7 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function: void fas216_intr (struct Scsi_Host *instance)&n; *&n; * Purpose : handle interrupts from the interface to progress a command&n; *&n; * Params  : instance - interface to service&n; */
+multiline_comment|/* Function: void fas216_intr (struct Scsi_Host *instance)&n; * Purpose : handle interrupts from the interface to progress a command&n; * Params  : instance - interface to service&n; */
 r_extern
 r_void
 id|fas216_intr
@@ -762,7 +762,7 @@ op_star
 id|instance
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function: int fas216_release (struct Scsi_Host *instance)&n; *&n; * Purpose : release all resources and put everything to bed for FAS/NCR/AMD SCSI ic.&n; *&n; * Params  : instance - a driver-specific filled-out structure&n; *&n; * Returns : 0 on success&n; */
+multiline_comment|/* Function: int fas216_release (struct Scsi_Host *instance)&n; * Purpose : release all resources and put everything to bed for FAS/NCR/AMD SCSI ic.&n; * Params  : instance - a driver-specific filled-out structure&n; * Returns : 0 on success&n; */
 r_extern
 r_int
 id|fas216_release
@@ -771,6 +771,50 @@ r_struct
 id|Scsi_Host
 op_star
 id|instance
+)paren
+suffix:semicolon
+multiline_comment|/* Function: int fas216_eh_abort(Scsi_Cmnd *SCpnt)&n; * Purpose : abort this command&n; * Params  : SCpnt - command to abort&n; * Returns : FAILED if unable to abort&n; */
+r_extern
+r_int
+id|fas216_eh_abort
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+suffix:semicolon
+multiline_comment|/* Function: int fas216_eh_device_reset(Scsi_Cmnd *SCpnt)&n; * Purpose : Reset the device associated with this command&n; * Params  : SCpnt - command specifing device to reset&n; * Returns : FAILED if unable to reset&n; */
+r_extern
+r_int
+id|fas216_eh_device_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+suffix:semicolon
+multiline_comment|/* Function: int fas216_eh_bus_reset(Scsi_Cmnd *SCpnt)&n; * Purpose : Reset the complete bus associated with this command&n; * Params  : SCpnt - command specifing bus to reset&n; * Returns : FAILED if unable to reset&n; */
+r_extern
+r_int
+id|fas216_eh_bus_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+suffix:semicolon
+multiline_comment|/* Function: int fas216_eh_host_reset(Scsi_Cmnd *SCpnt)&n; * Purpose : Reset the host associated with this command&n; * Params  : SCpnt - command specifing host to reset&n; * Returns : FAILED if unable to reset&n; */
+r_extern
+r_int
+id|fas216_eh_host_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
 )paren
 suffix:semicolon
 macro_line|#endif /* FAS216_H */

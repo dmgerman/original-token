@@ -12,14 +12,15 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
 DECL|macro|__ETHER1_C
 mdefine_line|#define __ETHER1_C
@@ -32,8 +33,6 @@ id|net_debug
 op_assign
 id|NET_DEBUG
 suffix:semicolon
-DECL|macro|struct
-mdefine_line|#define &t;struct ether1_priv *priv = (struct ether1_priv *)dev-&gt;priv &bslash;&n;&t;struct ether1_priv *priv = (struct ether1_priv *)dev-&gt;priv
 DECL|macro|BUFFER_SIZE
 mdefine_line|#define BUFFER_SIZE&t;0x10000
 DECL|macro|TX_AREA_START
@@ -90,11 +89,11 @@ DECL|macro|ether1_inw
 mdefine_line|#define ether1_inw(dev, addr, type, offset, svflgs) ether1_inw_p (dev, addr + (int)(&amp;((type *)0)-&gt;offset), svflgs)
 DECL|macro|ether1_outw
 mdefine_line|#define ether1_outw(dev, val, addr, type, offset, svflgs) ether1_outw_p (dev, val, addr + (int)(&amp;((type *)0)-&gt;offset), svflgs)
-DECL|function|ether1_inw_p
 r_static
 r_inline
 r_int
 r_int
+DECL|function|ether1_inw_p
 id|ether1_inw_p
 (paren
 r_struct
@@ -169,10 +168,10 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|ether1_outw_p
 r_static
 r_inline
 r_void
+DECL|function|ether1_outw_p
 id|ether1_outw_p
 (paren
 r_struct
@@ -245,11 +244,11 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Some inline assembler to allow fast transfers on to/off of the card.&n; * Since this driver depends on some features presented by the ARM&n; * specific architecture, and that you can&squot;t configure this driver&n; * without specifiing ARM mode, this is not a problem.&n; *&n; * This routine is essentially an optimised memcpy from the card&squot;s&n; * onboard RAM to kernel memory.&n; */
-DECL|function|ether1_inswb
 r_static
 r_inline
 r_void
 op_star
+DECL|function|ether1_inswb
 id|ether1_inswb
 (paren
 r_int
@@ -560,11 +559,11 @@ r_return
 id|data
 suffix:semicolon
 )brace
-DECL|function|ether1_outswb
 r_static
 r_inline
 r_void
 op_star
+DECL|function|ether1_outswb
 id|ether1_outswb
 (paren
 r_int
@@ -883,9 +882,9 @@ r_return
 id|data
 suffix:semicolon
 )brace
-DECL|function|ether1_writebuffer
 r_static
 r_void
+DECL|function|ether1_writebuffer
 id|ether1_writebuffer
 (paren
 r_struct
@@ -999,9 +998,9 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-DECL|function|ether1_readbuffer
 r_static
 r_void
+DECL|function|ether1_readbuffer
 id|ether1_readbuffer
 (paren
 r_struct
@@ -1115,7 +1114,10 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-DECL|function|ether1_ramtest
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ether1_ramtest
@@ -1128,6 +1130,7 @@ comma
 r_int
 r_char
 id|byte
+)paren
 )paren
 (brace
 r_int
@@ -1375,9 +1378,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|ether1_reset
 r_static
 r_int
+DECL|function|ether1_reset
 id|ether1_reset
 (paren
 r_struct
@@ -1399,7 +1402,10 @@ r_return
 id|BUS_16
 suffix:semicolon
 )brace
-DECL|function|ether1_init_2
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ether1_init_2
@@ -1408,6 +1414,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -1739,9 +1746,9 @@ DECL|macro|TX_SIZE
 mdefine_line|#define TX_SIZE&t;&t;(0x08)
 DECL|macro|TBD_SIZE
 mdefine_line|#define TBD_SIZE&t;(0x08)
-DECL|function|ether1_init_for_open
 r_static
 r_int
+DECL|function|ether1_init_for_open
 id|ether1_init_for_open
 (paren
 r_struct
@@ -2208,10 +2215,8 @@ r_if
 c_cond
 (paren
 id|jiffies
-op_minus
+OG
 id|i
-OL
-l_int|0
 )paren
 r_break
 suffix:semicolon
@@ -2348,10 +2353,8 @@ r_if
 c_cond
 (paren
 id|jiffies
-op_minus
+OG
 id|i
-OL
-l_int|0
 )paren
 r_break
 suffix:semicolon
@@ -2488,10 +2491,8 @@ r_if
 c_cond
 (paren
 id|jiffies
-op_minus
+OG
 id|i
-OL
-l_int|0
 )paren
 r_break
 suffix:semicolon
@@ -2626,10 +2627,8 @@ r_if
 c_cond
 (paren
 id|jiffies
-op_minus
+OG
 id|i
-OL
-l_int|0
 )paren
 r_break
 suffix:semicolon
@@ -2810,7 +2809,7 @@ op_mod
 l_int|10
 )paren
 suffix:semicolon
-macro_line|#else&t;
+macro_line|#else
 id|printk
 (paren
 id|KERN_WARNING
@@ -2856,7 +2855,10 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|ether1_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ether1_probe1
@@ -2865,6 +2867,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_static
@@ -3124,7 +3127,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------- */
-DECL|function|ether1_addr
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ether1_addr
@@ -3133,6 +3139,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -3165,7 +3172,10 @@ id|i
 )paren
 suffix:semicolon
 )brace
-DECL|function|ether1_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ether1_probe
 (paren
@@ -3173,6 +3183,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 macro_line|#ifndef MODULE
@@ -3257,9 +3268,9 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------- */
-DECL|function|ether1_txalloc
 r_static
 r_int
+DECL|function|ether1_txalloc
 id|ether1_txalloc
 (paren
 r_struct
@@ -3374,9 +3385,9 @@ r_return
 id|start
 suffix:semicolon
 )brace
-DECL|function|ether1_restart
 r_static
 r_void
+DECL|function|ether1_restart
 id|ether1_restart
 (paren
 r_struct
@@ -3459,9 +3470,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|ether1_open
 r_static
 r_int
+DECL|function|ether1_open
 id|ether1_open
 (paren
 r_struct
@@ -3561,9 +3572,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|ether1_sendpacket
 r_static
 r_int
+DECL|function|ether1_sendpacket
 id|ether1_sendpacket
 (paren
 r_struct
@@ -3917,17 +3928,15 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|ether1_xmit_done
 r_static
 r_void
+DECL|function|ether1_xmit_done
 id|ether1_xmit_done
 (paren
 r_struct
@@ -4010,6 +4019,7 @@ id|I82586_NULL
 )paren
 (brace
 id|ether1_outw
+c_func
 (paren
 id|dev
 comma
@@ -4381,9 +4391,9 @@ id|NET_BH
 )paren
 suffix:semicolon
 )brace
-DECL|function|ether1_recv_done
 r_static
 r_void
+DECL|function|ether1_recv_done
 id|ether1_recv_done
 (paren
 r_struct
@@ -4583,6 +4593,7 @@ suffix:semicolon
 r_else
 (brace
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;%s: %s&bslash;n&quot;
@@ -4629,6 +4640,7 @@ op_ne
 id|priv-&gt;rx_head
 )paren
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;%s: receiver buffer chaining error (%04X != %04X)&bslash;n&quot;
@@ -4729,9 +4741,9 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-DECL|function|ether1_interrupt
 r_static
 r_void
+DECL|function|ether1_interrupt
 id|ether1_interrupt
 (paren
 r_int
@@ -4800,6 +4812,7 @@ id|status
 )paren
 (brace
 id|ether1_outw
+c_func
 (paren
 id|dev
 comma
@@ -4840,11 +4853,13 @@ id|status
 op_amp
 id|SCB_STCX
 )paren
+(brace
 id|ether1_xmit_done
 (paren
 id|dev
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4938,11 +4953,13 @@ id|status
 op_amp
 id|SCB_STFR
 )paren
+(brace
 id|ether1_recv_done
 (paren
 id|dev
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5007,6 +5024,7 @@ multiline_comment|/* we suspended due to lack of buffer space */
 )brace
 r_else
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;%s: RU went not ready: %04X&bslash;n&quot;
@@ -5061,9 +5079,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|ether1_close
 r_static
 r_int
+DECL|function|ether1_close
 id|ether1_close
 (paren
 r_struct
@@ -5100,11 +5118,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|ether1_getstats
 r_static
 r_struct
 id|enet_statistics
 op_star
+DECL|function|ether1_getstats
 id|ether1_getstats
 (paren
 r_struct
@@ -5131,9 +5149,9 @@ id|priv-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set or clear the multicast filter for this adaptor.&n; * num_addrs == -1&t;Promiscuous mode, receive all packets.&n; * num_addrs == 0&t;Normal mode, clear multicast list.&n; * num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n; *&t;&t;&t;best-effort filtering.&n; */
-DECL|function|ether1_setmulticastlist
 r_static
 r_void
+DECL|function|ether1_setmulticastlist
 id|ether1_setmulticastlist
 (paren
 r_struct
@@ -5176,8 +5194,8 @@ id|ec
 id|MAX_ECARDS
 )braket
 suffix:semicolon
-DECL|function|init_module
 r_int
+DECL|function|init_module
 id|init_module
 (paren
 r_void
@@ -5231,7 +5249,6 @@ op_assign
 l_int|0
 suffix:semicolon
 id|ecard_startfind
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -5467,8 +5484,8 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
 r_void
+DECL|function|cleanup_module
 id|cleanup_module
 (paren
 r_void

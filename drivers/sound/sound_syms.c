@@ -1,9 +1,12 @@
-multiline_comment|/*&n; *    The sound core exports the following symbols to the rest of&n; *      modulespace.&n; *&n; *      (C) Copyright 1997      Alan Cox, Licensed under the GNU GPL&n; */
+multiline_comment|/*&n; *&t;The sound core exports the following symbols to the rest of&n; *&t;modulespace.&n; *&n; *      (C) Copyright 1997      Alan Cox, Licensed under the GNU GPL&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 DECL|macro|_MIDI_SYNTH_C_
 mdefine_line|#define _MIDI_SYNTH_C_
 macro_line|#include &quot;midi_synth.h&quot;
+DECL|macro|_SEQUENCER_C_
+mdefine_line|#define _SEQUENCER_C_
+macro_line|#include &quot;tuning.h&quot;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &quot;sound_firmware.h&quot;
 r_extern
@@ -113,18 +116,18 @@ c_func
 id|sound_free_dma
 )paren
 suffix:semicolon
-DECL|variable|snd_set_irq_handler
+DECL|variable|sound_open_dma
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|snd_set_irq_handler
+id|sound_open_dma
 )paren
 suffix:semicolon
-DECL|variable|snd_release_irq
+DECL|variable|sound_close_dma
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|snd_release_irq
+id|sound_close_dma
 )paren
 suffix:semicolon
 DECL|variable|sound_alloc_audiodev
@@ -160,27 +163,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sound_alloc_synthdev
-)paren
-suffix:semicolon
-DECL|variable|sound_mem_blocks
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sound_mem_blocks
-)paren
-suffix:semicolon
-DECL|variable|sound_mem_sizes
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sound_mem_sizes
-)paren
-suffix:semicolon
-DECL|variable|sound_nblocks
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sound_nblocks
 )paren
 suffix:semicolon
 DECL|variable|sound_unload_audiodev
@@ -456,6 +438,41 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|midi_synth_load_patch
+)paren
+suffix:semicolon
+multiline_comment|/* Firmware */
+DECL|variable|mod_firmware_load
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mod_firmware_load
+)paren
+suffix:semicolon
+multiline_comment|/* Tuning */
+DECL|variable|cent_tuning
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cent_tuning
+)paren
+suffix:semicolon
+DECL|variable|semitone_tuning
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|semitone_tuning
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Sound subsystem&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Hannu Savolainen, et al.&quot;
 )paren
 suffix:semicolon
 eof

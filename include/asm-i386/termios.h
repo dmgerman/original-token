@@ -119,6 +119,8 @@ DECL|macro|N_AX25
 mdefine_line|#define N_AX25&t;&t;5
 DECL|macro|N_X25
 mdefine_line|#define N_X25&t;&t;6&t;/* X.25 async */
+DECL|macro|N_6PACK
+mdefine_line|#define N_6PACK&t;&t;7
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&t;intr=^C&t;&t;quit=^&bslash;&t;&t;erase=del&t;kill=^U&n;&t;eof=^D&t;&t;vtime=&bslash;0&t;vmin=&bslash;1&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Z&t;&t;eol=&bslash;0&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;&t;eol2=&bslash;0&n;*/
 DECL|macro|INIT_C_CC

@@ -201,7 +201,7 @@ c_cond
 (paren
 id|inb
 (paren
-id|REG0_STATUS
+id|REG_STAT
 c_func
 (paren
 op_amp
@@ -209,7 +209,7 @@ id|info-&gt;info
 )paren
 )paren
 op_amp
-id|STATUS_INT
+id|STAT_INT
 )paren
 r_goto
 id|end
@@ -291,7 +291,7 @@ c_cond
 (paren
 id|inb
 (paren
-id|REG0_STATUS
+id|REG_STAT
 c_func
 (paren
 op_amp
@@ -299,7 +299,7 @@ id|info-&gt;info
 )paren
 )paren
 op_amp
-id|STATUS_INT
+id|STAT_INT
 )paren
 r_goto
 id|end
@@ -357,7 +357,7 @@ c_cond
 (paren
 id|inb
 (paren
-id|REG0_STATUS
+id|REG_STAT
 c_func
 (paren
 op_amp
@@ -365,7 +365,7 @@ id|info-&gt;info
 )paren
 )paren
 op_amp
-id|STATUS_INT
+id|STAT_INT
 )paren
 r_goto
 id|end

@@ -3620,6 +3620,8 @@ c_func
 (paren
 op_amp
 id|qcam-&gt;vdev
+comma
+id|VFL_TYPE_GRABBER
 )paren
 op_eq
 op_minus

@@ -597,8 +597,6 @@ id|kmsg_redirect
 op_assign
 l_int|0
 suffix:semicolon
-DECL|macro|CONFIG_SERIAL_ECHO
-mdefine_line|#define CONFIG_SERIAL_ECHO
 macro_line|#ifdef CONFIG_SERIAL_ECHO
 macro_line|#include &lt;linux/serial_reg.h&gt;
 r_extern

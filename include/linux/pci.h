@@ -1554,6 +1554,9 @@ mdefine_line|#define PCI_SLOT(devfn)&t;&t;(((devfn) &gt;&gt; 3) &amp; 0x1f)
 DECL|macro|PCI_FUNC
 mdefine_line|#define PCI_FUNC(devfn)&t;&t;((devfn) &amp; 0x07)
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* Create an index into the pci_dev base_address[] array from an offset.  */
+DECL|macro|PCI_BASE_INDEX
+mdefine_line|#define PCI_BASE_INDEX(o) (((o)-PCI_BASE_ADDRESS_0)&gt;&gt;2)
 multiline_comment|/*&n; * Error values that may be returned by the PCI bios.  Use&n; * pcibios_strerror() to convert to a printable string.&n; */
 DECL|macro|PCIBIOS_SUCCESSFUL
 mdefine_line|#define PCIBIOS_SUCCESSFUL&t;&t;0x00

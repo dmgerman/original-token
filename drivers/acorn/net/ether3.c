@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/net/ether3.c&n; *&n; * SEEQ nq8005 ethernet driver for Acorn/ANT Ether3 card&n; *  for Acorn machines&n; *&n; * By Russell King, with some suggestions from borris@ant.co.uk&n; *&n; * Changelog:&n; * 1.04 RMK     29/02/1996      Won&squot;t pass packets that are from our ethernet&n; *                              address up to the higher levels - they&squot;re&n; *                              silently ignored.  I/F can now be put into&n; *                              multicast mode.  Receiver routine optimised.&n; * 1.05 RMK     30/02/1996      Now claims interrupt at open when part of&n; *                              the kernel rather than when a module.&n; * 1.06 RMK     02/03/1996      Various code cleanups&n; * 1.07 RMK     13/10/1996      Optimised interrupt routine and transmit&n; *                              routines.&n; * 1.08 RMK     14/10/1996      Fixed problem with too many packets,&n; *                              prevented the kernel message about dropped&n; *                              packets appearing too many times a second.&n; *                              Now does not disable all IRQs, only the IRQ&n; *                              used by this card.&n; * 1.09 RMK     10/11/1996      Only enables TX irq when buffer space is low,&n; *                              but we still service the TX queue if we get a&n; *                              RX interrupt.&n; * 1.10 RMK     15/07/1997      Fixed autoprobing of NQ8004.&n; * 1.11 RMK     16/11/1997      Fixed autoprobing of NQ8005A.&n; * 1.12 RMK     31/12/1997      Removed reference to dev_tint for Linux 2.1.&n; *&n; * TODO:&n; *  When we detect a fatal error on the interface, we should restart it.&n; */
+multiline_comment|/*&n; * linux/drivers/net/ether3.c&n; *&n; * SEEQ nq8005 ethernet driver for Acorn/ANT Ether3 card&n; *  for Acorn machines&n; *&n; * By Russell King, with some suggestions from borris@ant.co.uk&n; *&n; * Changelog:&n; * 1.04&t;RMK&t;29/02/1996&t;Won&squot;t pass packets that are from our ethernet&n; *&t;&t;&t;&t;address up to the higher levels - they&squot;re&n; *&t;&t;&t;&t;silently ignored.  I/F can now be put into&n; *&t;&t;&t;&t;multicast mode.  Receiver routine optimised.&n; * 1.05&t;RMK&t;30/02/1996&t;Now claims interrupt at open when part of&n; *&t;&t;&t;&t;the kernel rather than when a module.&n; * 1.06&t;RMK&t;02/03/1996&t;Various code cleanups&n; * 1.07&t;RMK&t;13/10/1996&t;Optimised interrupt routine and transmit&n; *&t;&t;&t;&t;routines.&n; * 1.08&t;RMK&t;14/10/1996&t;Fixed problem with too many packets,&n; *&t;&t;&t;&t;prevented the kernel message about dropped&n; *&t;&t;&t;&t;packets appearing too many times a second.&n; *&t;&t;&t;&t;Now does not disable all IRQs, only the IRQ&n; *&t;&t;&t;&t;used by this card.&n; * 1.09&t;RMK&t;10/11/1996&t;Only enables TX irq when buffer space is low,&n; *&t;&t;&t;&t;but we still service the TX queue if we get a&n; *&t;&t;&t;&t;RX interrupt.&n; * 1.10&t;RMK&t;15/07/1997&t;Fixed autoprobing of NQ8004.&n; * 1.11&t;RMK&t;16/11/1997&t;Fixed autoprobing of NQ8005A.&n; * 1.12&t;RMK&t;31/12/1997&t;Removed reference to dev_tint for Linux 2.1.&n; *&n; * TODO:&n; *  When we detect a fatal error on the interface, we should restart it.&n; *  Reap transmit packets after some time even if the buffer never filled.&n; */
 DECL|variable|version
 r_static
 r_char
@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
@@ -155,8 +156,6 @@ r_int
 id|len
 )paren
 suffix:semicolon
-DECL|macro|struct
-mdefine_line|#define &t;struct dev_priv *priv = (struct dev_priv *)dev-&gt;priv &bslash;&n;&t;struct dev_priv *priv = (struct dev_priv *)dev-&gt;priv
 DECL|macro|BUS_16
 mdefine_line|#define BUS_16&t;&t;2
 DECL|macro|BUS_8
@@ -199,9 +198,9 @@ DECL|typedef|buffer_rw_t
 )brace
 id|buffer_rw_t
 suffix:semicolon
-DECL|function|ether3_setbuffer
 r_static
 r_int
+DECL|function|ether3_setbuffer
 id|ether3_setbuffer
 c_func
 (paren
@@ -281,7 +280,6 @@ op_decrement
 id|printk
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;%s: setbuffer broken&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -356,22 +354,22 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * write data to the buffer memory&n; */
 DECL|macro|ether3_writebuffer
-mdefine_line|#define ether3_writebuffer(dev,data,length)&t;&t;&t;&bslash;&n;&t;outswb (REG_BUFWIN, (data), (length))
+mdefine_line|#define ether3_writebuffer(dev,data,length)&t;&t;&t;&bslash;&n;&t;outswb(REG_BUFWIN, (data), (length))
 DECL|macro|ether3_writeword
-mdefine_line|#define ether3_writeword(dev,data)&t;&t;&t;&t;&bslash;&n;&t;outw ((data), REG_BUFWIN)
+mdefine_line|#define ether3_writeword(dev,data)&t;&t;&t;&t;&bslash;&n;&t;outw((data), REG_BUFWIN)
 DECL|macro|ether3_writelong
-mdefine_line|#define ether3_writelong(dev,data)&t;{&t;&t;&t;&bslash;&n;&t;unsigned long reg_bufwin = REG_BUFWIN;&t;&t;&t;&bslash;&n;&t;outw ((data), reg_bufwin);&t;&t;&t;&t;&bslash;&n;&t;outw ((data) &gt;&gt; 16, reg_bufwin);&t;&t;&t;&bslash;&n;}
+mdefine_line|#define ether3_writelong(dev,data)&t;{&t;&t;&t;&bslash;&n;&t;unsigned long reg_bufwin = REG_BUFWIN;&t;&t;&t;&bslash;&n;&t;outw((data), reg_bufwin);&t;&t;&t;&t;&bslash;&n;&t;outw((data) &gt;&gt; 16, reg_bufwin);&t;&t;&t;&bslash;&n;}
 multiline_comment|/*&n; * read data from the buffer memory&n; */
 DECL|macro|ether3_readbuffer
-mdefine_line|#define ether3_readbuffer(dev,data,length)&t;&t;&t;&bslash;&n;&t;inswb (REG_BUFWIN, (data), (length))
+mdefine_line|#define ether3_readbuffer(dev,data,length)&t;&t;&t;&bslash;&n;&t;inswb(REG_BUFWIN, (data), (length))
 DECL|macro|ether3_readword
-mdefine_line|#define ether3_readword(dev)&t;&t;&t;&t;&t;&bslash;&n;&t;inw (REG_BUFWIN)
+mdefine_line|#define ether3_readword(dev)&t;&t;&t;&t;&t;&bslash;&n;&t;inw(REG_BUFWIN)
 DECL|macro|ether3_readlong
-mdefine_line|#define ether3_readlong(dev)&t; &t;&t;&t;&t;&bslash;&n;&t;inw (REG_BUFWIN) | (inw (REG_BUFWIN) &lt;&lt; 16)
+mdefine_line|#define ether3_readlong(dev)&t; &t;&t;&t;&t;&bslash;&n;&t;inw(REG_BUFWIN) | (inw(REG_BUFWIN) &lt;&lt; 16)
 multiline_comment|/*&n; * Switch LED off...&n; */
-DECL|function|ether3_ledoff
 r_static
 r_void
+DECL|function|ether3_ledoff
 id|ether3_ledoff
 c_func
 (paren
@@ -416,10 +414,10 @@ id|REG_CONFIG2
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * switch LED on...&n; */
-DECL|function|ether3_ledon
 r_static
 r_inline
 r_void
+DECL|function|ether3_ledon
 id|ether3_ledon
 c_func
 (paren
@@ -489,7 +487,10 @@ id|REG_CONFIG2
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read the ethernet address string from the on board rom.&n; * This is an ascii string!!!&n; */
-DECL|function|ether3_addr
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ether3_addr
@@ -503,6 +504,7 @@ r_struct
 id|expansion_card
 op_star
 id|ec
+)paren
 )paren
 (brace
 r_struct
@@ -608,6 +610,14 @@ l_int|6
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* I wonder if we should even let the user continue in this case&n;&t; *   - no, it would be better to disable the device&n;&t; */
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ether3: Couldn&squot;t read a valid MAC address from card.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -620,7 +630,10 @@ l_int|6
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------------- */
-DECL|function|ether3_ramtest
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ether3_ramtest
@@ -634,6 +647,7 @@ comma
 r_int
 r_char
 id|byte
+)paren
 )paren
 (brace
 r_int
@@ -922,7 +936,10 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------------- */
-DECL|function|ether3_init_2
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ether3_init_2
@@ -932,6 +949,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_struct
@@ -1031,7 +1049,7 @@ id|priv-&gt;regs.config1
 op_or_assign
 id|CFG1_RECVSPECBROAD
 suffix:semicolon
-multiline_comment|/*&n;&t; * There is a problem with the NQ8005 in that it occasionally losses the&n;&t; * last two bytes.  To get round this problem, we receive the CRC as well.&n;&t; * That way, if we do loose the last two, then it doesn&squot;t matter&n;&t; */
+multiline_comment|/*&n;&t; * There is a problem with the NQ8005 in that it occasionally loses the&n;&t; * last two bytes.  To get round this problem, we receive the CRC as&n;&t; * well.  That way, if we do loose the last two, then it doesn&squot;t matter.&n;&t; */
 id|outw
 c_func
 (paren
@@ -1123,9 +1141,11 @@ c_cond
 (paren
 id|i
 )paren
+(brace
 r_return
 id|i
 suffix:semicolon
+)brace
 id|i
 op_assign
 id|ether3_ramtest
@@ -1141,9 +1161,11 @@ c_cond
 (paren
 id|i
 )paren
+(brace
 r_return
 id|i
 suffix:semicolon
+)brace
 id|ether3_setbuffer
 c_func
 (paren
@@ -1166,9 +1188,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|ether3_init_for_open
 r_static
 r_void
+DECL|function|ether3_init_for_open
 id|ether3_init_for_open
 c_func
 (paren
@@ -1395,7 +1417,10 @@ id|REG_COMMAND
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the real probe routine.&n; */
-DECL|function|ether3_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ether3_probe1
@@ -1405,6 +1430,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_static
@@ -1771,7 +1797,10 @@ id|error
 suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
-DECL|function|ether3_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ether3_probe
 c_func
@@ -1780,6 +1809,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_struct
@@ -1861,9 +1891,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * Open/initialize the board.  This is called (in the current kernel)&n; * sometime after booting when the &squot;ifconfig&squot; program is run.&n; *&n; * This routine should set everything up anew at each open, even&n; * registers that &quot;should&quot; only need to be set once at boot, so that&n; * there is non-reboot way to recover if something goes wrong.&n; */
-DECL|function|ether3_open
 r_static
 r_int
+DECL|function|ether3_open
 id|ether3_open
 c_func
 (paren
@@ -1925,9 +1955,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The inverse routine to ether3_open().&n; */
-DECL|function|ether3_close
 r_static
 r_int
+DECL|function|ether3_close
 id|ether3_close
 c_func
 (paren
@@ -2033,7 +2063,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Get the current statistics.        This may be called with the card open or&n; * closed.&n; */
+multiline_comment|/*&n; * Get the current statistics.&t;This may be called with the card open or&n; * closed.&n; */
 DECL|function|ether3_getstats
 r_static
 r_struct
@@ -2140,9 +2170,9 @@ id|REG_CONFIG1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Transmit a packet&n; */
-DECL|function|ether3_sendpacket
 r_static
 r_int
+DECL|function|ether3_sendpacket
 id|ether3_sendpacket
 c_func
 (paren
@@ -2241,8 +2271,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|priv-&gt;stats.tx_dropped
@@ -2467,8 +2495,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if
@@ -2584,9 +2610,9 @@ id|retry
 suffix:semicolon
 )brace
 )brace
-DECL|function|ether3_interrupt
 r_static
 r_void
+DECL|function|ether3_interrupt
 id|ether3_interrupt
 c_func
 (paren
@@ -2632,6 +2658,7 @@ id|net_debug
 op_amp
 id|DEBUG_INT
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -2640,6 +2667,7 @@ comma
 id|irq
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 id|priv
 op_assign
@@ -2753,18 +2781,20 @@ id|net_debug
 op_amp
 id|DEBUG_INT
 )paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot;done&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * If we have a good packet(s), get it/them out of the buffers.&n; */
-DECL|function|ether3_rx
 r_static
 r_int
+DECL|function|ether3_rx
 id|ether3_rx
 c_func
 (paren
@@ -2900,7 +2930,7 @@ comma
 l_int|12
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * ignore our own packets...&n;&t;&t; */
+multiline_comment|/*&n; &t;&t; * ignore our own packets...&n;&t; &t; */
 r_if
 c_cond
 (paren
@@ -3353,7 +3383,7 @@ comma
 id|REG_RECVEND
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Don&squot;t print this message too many times...&n;&t;&t; */
+multiline_comment|/*&n;&t; * Don&squot;t print this message too many times...&n;&t; */
 r_if
 c_cond
 (paren
@@ -3388,9 +3418,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Update stats for the transmitted packet(s)&n; */
-DECL|function|ether3_tx
 r_static
 r_void
+DECL|function|ether3_tx
 id|ether3_tx
 c_func
 (paren
@@ -3417,7 +3447,7 @@ r_int
 r_int
 id|status
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Read the packet header&n;&t;&t; */
+multiline_comment|/*&n;&t;    &t; * Read the packet header&n;    &t;&t; */
 id|ether3_setbuffer
 c_func
 (paren
@@ -3610,8 +3640,8 @@ id|ec
 id|MAX_ECARDS
 )braket
 suffix:semicolon
-DECL|function|init_module
 r_int
+DECL|function|init_module
 id|init_module
 c_func
 (paren
@@ -3913,7 +3943,9 @@ id|i
 OL
 id|MAX_ECARDS
 )paren
+(brace
 suffix:semicolon
+)brace
 r_return
 id|i
 op_ne
@@ -3926,28 +3958,13 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
 r_void
+DECL|function|cleanup_module
 id|cleanup_module
 c_func
 (paren
 r_void
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ether3: device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
 (brace
 r_int
 id|i
@@ -4034,6 +4051,5 @@ suffix:semicolon
 )brace
 )brace
 )brace
-)brace
-macro_line|#endif&t;&t;&t;&t;/* MODULE */
+macro_line|#endif /* MODULE */
 eof

@@ -14,8 +14,8 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
 DECL|macro|FAS216_C
 mdefine_line|#define FAS216_C
-macro_line|#include &quot;scsi.h&quot;
-macro_line|#include &quot;hosts.h&quot;
+macro_line|#include &quot;../../scsi/scsi.h&quot;
+macro_line|#include &quot;../../scsi/hosts.h&quot;
 macro_line|#include &quot;fas216.h&quot;
 DECL|macro|VER_MAJOR
 mdefine_line|#define VER_MAJOR&t;0
@@ -211,6 +211,7 @@ suffix:semicolon
 r_else
 r_if
 c_cond
+(paren
 id|value
 OG
 l_int|35
@@ -5054,6 +5055,66 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/* Function: int fas216_eh_abort(Scsi_Cmnd *SCpnt)&n; * Purpose : abort this command&n; * Params  : SCpnt - command to abort&n; * Returns : FAILED if unable to abort&n; */
+DECL|function|fas216_eh_abort
+r_int
+id|fas216_eh_abort
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+(brace
+r_return
+id|FAILED
+suffix:semicolon
+)brace
+multiline_comment|/* Function: int fas216_eh_device_reset(Scsi_Cmnd *SCpnt)&n; * Purpose : Reset the device associated with this command&n; * Params  : SCpnt - command specifing device to reset&n; * Returns : FAILED if unable to reset&n; */
+DECL|function|fas216_eh_device_reset
+r_int
+id|fas216_eh_device_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+(brace
+r_return
+id|FAILED
+suffix:semicolon
+)brace
+multiline_comment|/* Function: int fas216_eh_bus_reset(Scsi_Cmnd *SCpnt)&n; * Purpose : Reset the complete bus associated with this command&n; * Params  : SCpnt - command specifing bus to reset&n; * Returns : FAILED if unable to reset&n; */
+DECL|function|fas216_eh_bus_reset
+r_int
+id|fas216_eh_bus_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+(brace
+r_return
+id|FAILED
+suffix:semicolon
+)brace
+multiline_comment|/* Function: int fas216_eh_host_reset(Scsi_Cmnd *SCpnt)&n; * Purpose : Reset the host associated with this command&n; * Params  : SCpnt - command specifing host to reset&n; * Returns : FAILED if unable to reset&n; */
+DECL|function|fas216_eh_host_reset
+r_int
+id|fas216_eh_host_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+(brace
+r_return
+id|FAILED
+suffix:semicolon
+)brace
 multiline_comment|/* Function: int fas216_abort (Scsi_Cmnd *SCpnt)&n; * Purpose : abort a command if something horrible happens.&n; * Params  : SCpnt - Command that is believed to be causing a problem.&n; * Returns : one of SCSI_ABORT_ macros.&n; */
 DECL|function|fas216_abort
 r_int
@@ -5321,6 +5382,8 @@ op_assign
 id|fas216_syncperiod
 c_func
 (paren
+id|info
+comma
 id|info-&gt;ifcfg.asyncperiod
 )paren
 suffix:semicolon
@@ -5459,6 +5522,8 @@ c_func
 id|fas216_syncperiod
 c_func
 (paren
+id|info
+comma
 id|info-&gt;ifcfg.asyncperiod
 )paren
 comma
@@ -5848,7 +5913,7 @@ id|info-&gt;scsi.cfg
 l_int|2
 )braket
 op_assign
-id|CNTL3_ADDIDCHK
+id|CNTL3_ADIDCHK
 op_or
 id|CNTL3_G2CB
 op_or
@@ -6057,7 +6122,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|CNTL3_IDENABLE
+id|CNTL3_ADIDCHK
 comma
 id|REG_CNTL3
 c_func
@@ -6360,6 +6425,34 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|fas216_release
+)paren
+suffix:semicolon
+DECL|variable|fas216_eh_abort
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fas216_eh_abort
+)paren
+suffix:semicolon
+DECL|variable|fas216_eh_device_reset
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fas216_eh_device_reset
+)paren
+suffix:semicolon
+DECL|variable|fas216_eh_bus_reset
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fas216_eh_bus_reset
+)paren
+suffix:semicolon
+DECL|variable|fas216_eh_host_reset
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fas216_eh_host_reset
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE

@@ -518,11 +518,7 @@ op_assign
 op_minus
 id|ENOENT
 suffix:semicolon
-id|iput
-(paren
-id|pseudo_root
-)paren
-suffix:semicolon
+multiline_comment|/* iput (pseudo_root); FIXME */
 )brace
 r_else
 r_if
@@ -555,11 +551,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|iput
-(paren
-id|dir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (dir); FIXME */
 id|PRINTK
 (paren
 (paren
@@ -797,8 +789,11 @@ comma
 id|UMSDOS_EMD_NAMELEN
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: prolly should fill inode part ? */
 id|ret
 op_assign
 id|msdos_unlink
@@ -844,11 +839,7 @@ op_minus
 id|ENOTEMPTY
 suffix:semicolon
 )brace
-id|iput
-(paren
-id|sdir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (sdir); FIXME */
 )brace
 )brace
 id|umsdos_unlockcreate
@@ -857,11 +848,7 @@ id|dir
 )paren
 suffix:semicolon
 )brace
-id|iput
-(paren
-id|dir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (dir); FIXME */
 r_return
 id|ret
 suffix:semicolon

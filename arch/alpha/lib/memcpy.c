@@ -315,10 +315,10 @@ id|n
 )paren
 suffix:semicolon
 )brace
-DECL|function|__memcpy
+DECL|function|memcpy
 r_void
 op_star
-id|__memcpy
+id|memcpy
 c_func
 (paren
 r_void
@@ -401,52 +401,11 @@ r_return
 id|dest
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Broken compiler uses &quot;bcopy&quot; to do internal&n; * assignments. Silly OSF/1 BSDism.&n; */
-DECL|function|bcopy
-r_char
-op_star
-id|bcopy
+multiline_comment|/* For backward modules compatibility, define __memcpy.  */
+id|asm
 c_func
 (paren
-r_const
-r_char
-op_star
-id|src
-comma
-r_char
-op_star
-id|dest
-comma
-r_int
-id|n
-)paren
-(brace
-id|__memcpy
-c_func
-(paren
-id|dest
-comma
-id|src
-comma
-id|n
+l_string|&quot;__memcpy = memcpy; .globl __memcpy&quot;
 )paren
 suffix:semicolon
-r_return
-id|dest
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * gcc-2.7.1 and newer generate calls to memset and memcpy.  So we&n; * need to define that here:&n; */
-macro_line|#ifdef __ELF__
-id|asm
-(paren
-l_string|&quot;.weak memcpy; memcpy = __memcpy&quot;
-)paren
-suffix:semicolon
-macro_line|#else
-id|asm
-(paren
-l_string|&quot;.weakext memcpy, __memcpy&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 eof

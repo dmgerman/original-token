@@ -378,7 +378,7 @@ multiline_comment|/* Note: the constraints in the asm statement didn&squot;t alw
 DECL|function|add_two_Xsig
 r_extern
 r_inline
-r_int
+r_void
 id|add_two_Xsig
 c_func
 (paren

@@ -1,6 +1,4 @@
-multiline_comment|/* &n; * sound/softoss.c&n; *&n; * Software based MIDI synthsesizer driver.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/* &n; * sound/softoss.c&n; *&n; * Software based MIDI synthsesizer driver.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n; * When POLLED_MODE is defined, the resampling loop is run using a timer&n; * callback routine. Normally the resampling loop is executed inside&n; * audio buffer interrupt handler which doesn&squot;t work with single mode DMA.&n; */
@@ -783,9 +781,9 @@ id|voice_limit
 op_assign
 l_int|24
 suffix:semicolon
+DECL|function|set_max_voices
 r_static
 r_void
-DECL|function|set_max_voices
 id|set_max_voices
 c_func
 (paren
@@ -864,9 +862,9 @@ r_return
 suffix:semicolon
 )brace
 )brace
+DECL|function|update_vibrato
 r_static
 r_void
-DECL|function|update_vibrato
 id|update_vibrato
 c_func
 (paren
@@ -941,9 +939,9 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#ifdef HANDLE_LFO
+DECL|function|update_tremolo
 r_static
 r_void
-DECL|function|update_tremolo
 id|update_tremolo
 c_func
 (paren
@@ -995,9 +993,9 @@ l_int|20
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|function|start_vibrato
 r_static
 r_void
-DECL|function|start_vibrato
 id|start_vibrato
 c_func
 (paren
@@ -1054,9 +1052,9 @@ id|voice
 suffix:semicolon
 multiline_comment|/* Enable vibrato */
 )brace
+DECL|function|start_tremolo
 r_static
 r_void
-DECL|function|start_tremolo
 id|start_tremolo
 c_func
 (paren
@@ -1113,9 +1111,9 @@ id|voice
 suffix:semicolon
 multiline_comment|/* Enable tremolo */
 )brace
+DECL|function|update_volume
 r_static
 r_void
-DECL|function|update_volume
 id|update_volume
 c_func
 (paren
@@ -1137,7 +1135,7 @@ r_int
 r_int
 id|vol
 suffix:semicolon
-multiline_comment|/*&n; * Compute plain volume&n; */
+multiline_comment|/*&n;&t; *&t;Compute plain volume&n;&t; */
 id|vol
 op_assign
 (paren
@@ -1151,7 +1149,7 @@ op_rshift
 l_int|12
 suffix:semicolon
 macro_line|#ifdef HANDLE_LFO
-multiline_comment|/*&n; * Handle LFO&n; */
+multiline_comment|/*&n;&t; *&t;Handle LFO&n;&t; */
 r_if
 c_cond
 (paren
@@ -1191,7 +1189,7 @@ id|voice
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Envelope&n; */
+multiline_comment|/*&n;&t; *&t;Envelope&n;&t; */
 r_if
 c_cond
 (paren
@@ -1221,7 +1219,7 @@ id|vol
 op_rshift_assign
 l_int|4
 suffix:semicolon
-multiline_comment|/*&n; * Handle panning&n; */
+multiline_comment|/*&n;&t; * Handle panning&n;&t; */
 r_if
 c_cond
 (paren
@@ -1277,9 +1275,9 @@ op_assign
 id|vol
 suffix:semicolon
 )brace
+DECL|function|step_envelope
 r_static
 r_void
-DECL|function|step_envelope
 id|step_envelope
 c_func
 (paren
@@ -1360,6 +1358,7 @@ c_cond
 op_logical_neg
 id|do_release
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1415,6 +1414,7 @@ id|flags
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -1656,9 +1656,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|step_envelope_lfo
 r_static
 r_void
-DECL|function|step_envelope_lfo
 id|step_envelope_lfo
 c_func
 (paren
@@ -1676,7 +1676,7 @@ id|softoss_voices
 id|voice
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * Update pitch (vibrato) LFO &n; */
+multiline_comment|/*&n;&t; * Update pitch (vibrato) LFO &n;&t; */
 r_if
 c_cond
 (paren
@@ -1694,7 +1694,7 @@ c_func
 id|voice
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * Update envelope&n; */
+multiline_comment|/* &n;&t; * Update envelope&n;&t; */
 r_if
 c_cond
 (paren
@@ -1751,9 +1751,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|function|compute_step
 r_static
 r_void
-DECL|function|compute_step
 id|compute_step
 c_func
 (paren
@@ -1771,7 +1771,7 @@ id|softoss_voices
 id|voice
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t; * Since the pitch bender may have been set before playing the note, we&n;&t; * have to calculate the bending now.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Since the pitch bender may have been set before playing the note, we&n;&t; *&t;have to calculate the bending now.&n;&t; */
 id|v-&gt;current_freq
 op_assign
 id|compute_finetune
@@ -1820,9 +1820,9 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Reversed playback */
 )brace
+DECL|function|init_voice
 r_static
 r_void
-DECL|function|init_voice
 id|init_voice
 c_func
 (paren
@@ -2031,9 +2031,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|reset_samples
 r_static
 r_void
-DECL|function|reset_samples
 id|reset_samples
 c_func
 (paren
@@ -2177,9 +2177,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|init_engine
 r_static
 r_void
-DECL|function|init_engine
 id|init_engine
 c_func
 (paren
@@ -2282,7 +2282,7 @@ id|devc-&gt;engine_state
 op_assign
 id|ES_STOPPED
 suffix:semicolon
-multiline_comment|/*&n; *    Initialize delay&n; */
+multiline_comment|/*&n;&t; *    Initialize delay&n;&t; */
 r_for
 c_loop
 (paren
@@ -2359,8 +2359,8 @@ op_assign
 id|DELAY_SIZE
 suffix:semicolon
 )brace
-r_void
 DECL|function|softsyn_control_loop
+r_void
 id|softsyn_control_loop
 c_func
 (paren
@@ -2370,7 +2370,7 @@ r_void
 r_int
 id|voice
 suffix:semicolon
-multiline_comment|/*&n; *    Recompute envlope, LFO, etc.&n; */
+multiline_comment|/*&n;&t; *    Recompute envlope, LFO, etc.&n;&t; */
 r_for
 c_loop
 (paren
@@ -2385,6 +2385,7 @@ suffix:semicolon
 id|voice
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2416,6 +2417,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
 r_static
 r_void
 id|start_engine
@@ -2426,9 +2428,9 @@ op_star
 id|devc
 )paren
 suffix:semicolon
+DECL|function|do_resample
 r_static
 r_void
-DECL|function|do_resample
 id|do_resample
 c_func
 (paren
@@ -2495,6 +2497,7 @@ id|is_running
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;SoftOSS: Playback overrun&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2560,6 +2563,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;SoftOSS: CPU overload. Limiting # of voices to %d&bslash;n&quot;
 comma
 id|voice_limit
@@ -2590,6 +2594,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;SoftOSS: Dropping sampling rate and stopping the device.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2623,6 +2628,7 @@ id|devc-&gt;max_playahead
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;SoftOSS: audio buffers full&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2639,7 +2645,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * First verify that all active voices are valid (do this just once per block).&n; */
+multiline_comment|/*&n;&t; * First verify that all active voices are valid (do this just once per block).&n;&t; */
 r_for
 c_loop
 (paren
@@ -2654,6 +2660,7 @@ suffix:semicolon
 id|voice
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2726,7 +2733,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Start the resampling process&n; */
+)brace
+multiline_comment|/*&n;&t; *    Start the resampling process&n;&t; */
 id|loops
 op_assign
 id|devc-&gt;samples_per_fragment
@@ -2782,20 +2790,19 @@ c_cond
 (paren
 id|tmr_running
 )paren
-(brace
 id|sound_timer_interrupt
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n; *    Execute timer&n; */
+multiline_comment|/*&n;&t; *    Execute timer&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|tmr_running
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2816,6 +2823,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+)brace
 id|is_running
 op_assign
 l_int|0
@@ -2827,9 +2835,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|delayed_resample
 r_static
 r_void
-DECL|function|delayed_resample
 id|delayed_resample
 c_func
 (paren
@@ -2889,9 +2897,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef POLLED_MODE
+DECL|function|softsyn_poll
 r_static
 r_void
-DECL|function|softsyn_poll
 id|softsyn_poll
 c_func
 (paren
@@ -2916,11 +2924,9 @@ id|ES_STOPPED
 (brace
 id|poll_timer.expires
 op_assign
-(paren
-l_int|1
-)paren
-op_plus
 id|jiffies
+op_plus
+l_int|1
 suffix:semicolon
 id|add_timer
 c_func
@@ -2930,12 +2936,11 @@ id|poll_timer
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 macro_line|#else
+DECL|function|softsyn_callback
 r_static
 r_void
-DECL|function|softsyn_callback
 id|softsyn_callback
 c_func
 (paren
@@ -3081,11 +3086,9 @@ suffix:semicolon
 macro_line|#ifdef POLLED_MODE
 id|poll_timer.expires
 op_assign
-(paren
-l_int|1
-)paren
-op_plus
 id|jiffies
+op_plus
+l_int|1
 suffix:semicolon
 id|add_timer
 c_func
@@ -3177,9 +3180,9 @@ id|fs
 suffix:semicolon
 )brace
 )brace
+DECL|function|stop_engine
 r_static
 r_void
-DECL|function|stop_engine
 id|stop_engine
 c_func
 (paren
@@ -3189,9 +3192,9 @@ id|devc
 )paren
 (brace
 )brace
+DECL|function|request_engine
 r_static
 r_void
-DECL|function|request_engine
 id|request_engine
 c_func
 (paren
@@ -3236,9 +3239,9 @@ id|HZ
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Softsync hook serves mode1 (timing) calls made by sequencer.c&n; */
+DECL|function|softsynth_hook
 r_static
 r_int
-DECL|function|softsynth_hook
 id|softsynth_hook
 c_func
 (paren
@@ -3316,6 +3319,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;SoftOSS: Unknown request %d&bslash;n&quot;
 comma
 id|cmd
@@ -3359,7 +3363,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_to_user
+id|copy_to_user
 c_func
 (paren
 id|arg
@@ -3414,9 +3418,9 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+DECL|function|softsyn_kill_note
 r_static
 r_int
-DECL|function|softsyn_kill_note
 id|softsyn_kill_note
 c_func
 (paren
@@ -3546,9 +3550,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|softsyn_set_instr
 r_static
 r_int
-DECL|function|softsyn_set_instr
 id|softsyn_set_instr
 c_func
 (paren
@@ -3583,6 +3587,7 @@ id|MAX_PATCH
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;SoftOSS: Invalid instrument number %d&bslash;n&quot;
 comma
 id|instr
@@ -3605,9 +3610,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|softsyn_start_note
 r_static
 r_int
-DECL|function|softsyn_start_note
 id|softsyn_start_note
 c_func
 (paren
@@ -3789,6 +3794,7 @@ id|NO_SAMPLE
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;SoftOSS: Undefined MIDI instrument %d&bslash;n&quot;
 comma
 id|instr
@@ -3826,6 +3832,7 @@ id|devc-&gt;nrsamples
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;SoftOSS: Corrupted MIDI instrument %d (%d)&bslash;n&quot;
 comma
 id|v-&gt;instr
@@ -3942,10 +3949,12 @@ id|instr
 op_member_access_from_pointer
 id|high_note
 )paren
+(brace
 id|selected
 op_assign
 id|instr
 suffix:semicolon
+)brace
 r_else
 id|instr
 op_assign
@@ -4001,6 +4010,7 @@ id|devc-&gt;nrsamples
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;SoftOSS: Unresolved MIDI instrument %d&bslash;n&quot;
 comma
 id|v-&gt;instr
@@ -4033,13 +4043,11 @@ c_cond
 id|v-&gt;percussive_voice
 )paren
 multiline_comment|/* No key tracking */
-(brace
 id|v-&gt;orig_freq
 op_assign
 id|sample-&gt;base_freq
 suffix:semicolon
 multiline_comment|/* Fixed pitch */
-)brace
 r_else
 (brace
 id|base_note
@@ -4075,12 +4083,10 @@ op_amp
 id|WAVE_LOOPING
 )paren
 )paren
-(brace
 id|sample-&gt;loop_end
 op_assign
 id|sample-&gt;len
 suffix:semicolon
-)brace
 id|v-&gt;wave
 op_assign
 id|devc-&gt;wave
@@ -4435,12 +4441,7 @@ id|AFMT_S16_LE
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: The audio device doesn&squot;t support 16 bits&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;SoftOSS: The audio device doesn&squot;t support 16 bits&bslash;n&quot;); */
 r_return
 op_minus
 id|ENXIO
@@ -4619,14 +4620,10 @@ op_amp
 id|devc-&gt;finfo
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: A 16 bit stereo soundcard is required&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;SoftOSS: A 16 bit stereo soundcard is required&bslash;n&quot;);*/
 r_return
-l_int|0
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 r_if
@@ -4765,9 +4762,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|softsyn_hw_control
 r_static
 r_void
-DECL|function|softsyn_hw_control
 id|softsyn_hw_control
 c_func
 (paren
@@ -4873,9 +4870,9 @@ suffix:colon
 suffix:semicolon
 )brace
 )brace
+DECL|function|softsyn_load_patch
 r_static
 r_int
-DECL|function|softsyn_load_patch
 id|softsyn_load_patch
 c_func
 (paren
@@ -4957,14 +4954,7 @@ op_ne
 id|GUS_PATCH
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: Invalid patch format (key) 0x%x&bslash;n&quot;
-comma
-id|format
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;SoftOSS: Invalid patch format (key) 0x%x&bslash;n&quot;, format);*/
 r_return
 op_minus
 id|EINVAL
@@ -4978,12 +4968,7 @@ OL
 id|sizeof_patch
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: Patch header too short&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;SoftOSS: Patch header too short&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -5001,15 +4986,10 @@ op_ge
 id|MAX_SAMPLE
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: Sample table full&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  printk(KERN_ERR &quot;SoftOSS: Sample table full&bslash;n&quot;);*/
 r_return
 op_minus
-id|ENOSPC
+id|ENOBUFS
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Copy the header from user space but ignore the first bytes which have&n;&t; * been transferred already.&n;&t; */
@@ -5033,17 +5013,15 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: Out of memory&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;SoftOSS: Out of memory&bslash;n&quot;);*/
 r_return
 op_minus
-id|ENOSPC
+id|ENOMEM
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -5071,7 +5049,13 @@ id|sizeof_patch
 op_minus
 id|offs
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5103,14 +5087,7 @@ template_param
 id|MAX_PATCH
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: Invalid patch number %d&bslash;n&quot;
-comma
-id|instr
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;SoftOSS: Invalid patch number %d&bslash;n&quot;, instr);*/
 id|vfree
 c_func
 (paren
@@ -5130,19 +5107,7 @@ OL
 id|patch-&gt;len
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: Patch record too short (%d&lt;%d)&bslash;n&quot;
-comma
-id|count
-comma
-(paren
-r_int
-)paren
-id|patch-&gt;len
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;SoftOSS: Patch record too short (%d&lt;%d)&bslash;n&quot;, count, (int) patch-&gt;len);*/
 id|patch-&gt;len
 op_assign
 id|count
@@ -5164,17 +5129,7 @@ id|devc-&gt;ram_used
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: Invalid sample length %d&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|patch-&gt;len
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;SoftOSS: Invalid sample length %d&bslash;n&quot;, (int) patch-&gt;len); */
 id|vfree
 c_func
 (paren
@@ -5206,14 +5161,7 @@ op_ge
 id|patch-&gt;len
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: Invalid loop start %d&bslash;n&quot;
-comma
-id|patch-&gt;loop_start
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;&t;printk(KERN_ERR &quot;SoftOSS: Invalid loop start %d&bslash;n&quot;, patch-&gt;loop_start);*/
 id|vfree
 c_func
 (paren
@@ -5233,16 +5181,7 @@ template_param
 id|patch-&gt;len
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: Invalid loop start or end point (%d, %d)&bslash;n&quot;
-comma
-id|patch-&gt;loop_start
-comma
-id|patch-&gt;loop_end
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;&t;printk(KERN_ERR &quot;SoftOSS: Invalid loop start or end point (%d, %d)&bslash;n&quot;, patch-&gt;loop_start, patch-&gt;loop_end);*/
 id|vfree
 c_func
 (paren
@@ -5255,7 +5194,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n; * Next load the wave data to memory&n; */
+multiline_comment|/* &n;&t; *&t;Next load the wave data to memory&n;&t; */
 id|memlen
 op_assign
 id|patch-&gt;len
@@ -5299,14 +5238,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SoftOSS: Can&squot;t allocate %d bytes of mem for a sample&bslash;n&quot;
-comma
-id|memlen
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_ERR &quot;SoftOSS: Can&squot;t allocate %d bytes of mem for a sample&bslash;n&quot;, memlen);*/
 id|vfree
 c_func
 (paren
@@ -5315,7 +5247,7 @@ id|patch
 suffix:semicolon
 r_return
 op_minus
-id|ENOSPC
+id|ENOMEM
 suffix:semicolon
 )brace
 id|p
@@ -5515,7 +5447,7 @@ id|devc-&gt;ram_used
 op_add_assign
 id|patch-&gt;len
 suffix:semicolon
-multiline_comment|/*&n; * Convert pointers to 16 bit indexes&n; */
+multiline_comment|/*&n;&t; * Convert pointers to 16 bit indexes&n;&t; */
 id|patch-&gt;len
 op_div_assign
 id|adj
@@ -5528,7 +5460,7 @@ id|patch-&gt;loop_end
 op_div_assign
 id|adj
 suffix:semicolon
-multiline_comment|/*&n; * Finally link the loaded patch to the chain&n; */
+multiline_comment|/*&n;&t; * Finally link the loaded patch to the chain&n;&t; */
 id|patch-&gt;key
 op_assign
 id|devc-&gt;programs
@@ -5566,9 +5498,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|softsyn_panning
 r_static
 r_void
-DECL|function|softsyn_panning
 id|softsyn_panning
 c_func
 (paren
@@ -5639,9 +5571,9 @@ id|voice
 )paren
 suffix:semicolon
 )brace
+DECL|function|softsyn_volume_method
 r_static
 r_void
-DECL|function|softsyn_volume_method
 id|softsyn_volume_method
 c_func
 (paren
@@ -5653,9 +5585,9 @@ id|mode
 )paren
 (brace
 )brace
+DECL|function|softsyn_aftertouch
 r_static
 r_void
-DECL|function|softsyn_aftertouch
 id|softsyn_aftertouch
 c_func
 (paren
@@ -5693,9 +5625,9 @@ id|voice
 )paren
 suffix:semicolon
 )brace
+DECL|function|softsyn_controller
 r_static
 r_void
-DECL|function|softsyn_controller
 id|softsyn_controller
 c_func
 (paren
@@ -5894,9 +5826,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|softsyn_bender
 r_static
 r_void
-DECL|function|softsyn_bender
 id|softsyn_bender
 c_func
 (paren
@@ -5946,9 +5878,9 @@ id|voice
 suffix:semicolon
 multiline_comment|/* Update pitch */
 )brace
+DECL|function|softsyn_alloc_voice
 r_static
 r_int
-DECL|function|softsyn_alloc_voice
 id|softsyn_alloc_voice
 c_func
 (paren
@@ -5985,7 +5917,7 @@ id|p
 op_assign
 id|alloc-&gt;ptr
 suffix:semicolon
-multiline_comment|/*&n;&t;   * First look for a completely stopped voice&n;&t; */
+multiline_comment|/*&n;&t; * First look for a completely stopped voice&n;&t; */
 r_for
 c_loop
 (paren
@@ -6061,7 +5993,7 @@ op_mod
 id|alloc-&gt;max_voice
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;   * Then look for a releasing voice&n;&t; */
+multiline_comment|/*&n;&t; * Then look for a releasing voice&n;&t; */
 r_for
 c_loop
 (paren
@@ -6140,9 +6072,9 @@ r_return
 id|p
 suffix:semicolon
 )brace
+DECL|function|softsyn_setup_voice
 r_static
 r_void
-DECL|function|softsyn_setup_voice
 id|softsyn_setup_voice
 c_func
 (paren
@@ -6293,9 +6225,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|softsyn_reset
 r_static
 r_void
-DECL|function|softsyn_reset
 id|softsyn_reset
 c_func
 (paren
@@ -6402,10 +6334,10 @@ id|softsyn_setup_voice
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Timer stuff (for /dev/music).&n; */
+DECL|function|soft_tmr_start
 r_static
 r_int
 r_int
-DECL|function|soft_tmr_start
 id|soft_tmr_start
 c_func
 (paren
@@ -6431,9 +6363,9 @@ r_return
 id|devc-&gt;usecs_per_frag
 suffix:semicolon
 )brace
+DECL|function|soft_tmr_disable
 r_static
 r_void
-DECL|function|soft_tmr_disable
 id|soft_tmr_disable
 c_func
 (paren
@@ -6452,9 +6384,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|soft_tmr_restart
 r_static
 r_void
-DECL|function|soft_tmr_restart
 id|soft_tmr_restart
 c_func
 (paren
@@ -6485,8 +6417,8 @@ comma
 id|soft_tmr_restart
 )brace
 suffix:semicolon
-r_int
 DECL|function|probe_softsyn
+r_int
 id|probe_softsyn
 c_func
 (paren
@@ -6607,8 +6539,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_softsyn_card
+r_void
 id|attach_softsyn_card
 c_func
 (paren
@@ -6659,8 +6591,8 @@ suffix:semicolon
 macro_line|#ifndef POLLED_MODE
 macro_line|#endif
 )brace
-r_void
 DECL|function|unload_softsyn
+r_void
 id|unload_softsyn
 c_func
 (paren
@@ -6678,8 +6610,6 @@ id|softsynth_loaded
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifndef POLLED_MODE
-macro_line|#endif
 id|softsynthp
 op_assign
 l_int|NULL
@@ -6702,8 +6632,8 @@ r_struct
 id|address_info
 id|config
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -6713,6 +6643,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SoftOSS driver Copyright (C) by Hannu Savolainen 1993-1997&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6744,8 +6675,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

@@ -120,6 +120,8 @@ DECL|macro|N_AX25
 mdefine_line|#define N_AX25&t;&t;5
 DECL|macro|N_X25
 mdefine_line|#define N_X25&t;&t;6&t;/* X.25 async */
+DECL|macro|N_6PACK
+mdefine_line|#define N_6PACK&t;&t;7
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Translate a &quot;termio&quot; structure into a &quot;termios&quot;. Ugh.&n; */
 DECL|macro|user_termio_to_kernel_termios

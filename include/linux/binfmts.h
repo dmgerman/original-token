@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/capability.h&gt;
 multiline_comment|/*&n; * MAX_ARG_PAGES defines the number of pages allocated for arguments&n; * and envelope for the new program. 32 should suffice, this gives&n; * a maximum env+arg of 128kB w/4KB pages!&n; */
 DECL|macro|MAX_ARG_PAGES
 mdefine_line|#define MAX_ARG_PAGES 32
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This structure is used to hold the arguments that are used when loading binaries.&n; */
 DECL|struct|linux_binprm
 r_struct
@@ -373,5 +374,6 @@ suffix:semicolon
 multiline_comment|/* this eventually goes away */
 DECL|macro|change_ldt
 mdefine_line|#define change_ldt(a,b) setup_arg_pages(a,b)
-macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* _LINUX_BINFMTS_H */
 eof

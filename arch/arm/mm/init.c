@@ -28,15 +28,6 @@ id|swapper_pg_dir
 id|PTRS_PER_PGD
 )braket
 suffix:semicolon
-DECL|variable|bad_pmd_string
-r_const
-r_char
-id|bad_pmd_string
-(braket
-)braket
-op_assign
-l_string|&quot;Bad pmd in pte_alloc: %08lx&bslash;n&quot;
-suffix:semicolon
 r_extern
 r_char
 id|_etext

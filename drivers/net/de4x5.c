@@ -8,6 +8,7 @@ id|version
 op_assign
 l_string|&quot;de4x5.c:V0.536 1998/3/5 davies@maniac.ultranet.com&bslash;n&quot;
 suffix:semicolon
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -68,20 +68,36 @@ op_star
 id|hw_config
 )paren
 (brace
-id|snd_set_irq_handler
+r_if
+c_cond
+(paren
+id|request_irq
 c_func
 (paren
 id|hw_config-&gt;irq
 comma
 id|gusintr
 comma
-l_string|&quot;Gravis Ultrasound&quot;
+l_int|0
 comma
-id|hw_config-&gt;osp
+l_string|&quot;Gravis Ultrasound&quot;
 comma
 id|hw_config
 )paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;gus_card.c: Unable to allocate IRQ %d&bslash;n&quot;
+comma
+id|hw_config-&gt;irq
+)paren
 suffix:semicolon
+)brace
 id|gus_wave_init
 c_func
 (paren
@@ -125,7 +141,10 @@ l_string|&quot;GUS&quot;
 id|printk
 c_func
 (paren
-l_string|&quot;gus_card.c: Can&squot;t allocate DMA channel&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;gus_card.c: Can&squot;t allocate DMA channel %d&bslash;n&quot;
+comma
+id|hw_config-&gt;dma
 )paren
 suffix:semicolon
 r_if
@@ -154,7 +173,10 @@ l_string|&quot;GUS(2)&quot;
 id|printk
 c_func
 (paren
-l_string|&quot;gus_card.c: Can&squot;t allocate DMA channel 2&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;gus_card.c: Can&squot;t allocate DMA channel %d&bslash;n&quot;
+comma
+id|hw_config-&gt;dma2
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_MIDI)
@@ -425,7 +447,7 @@ l_int|12
 )paren
 suffix:semicolon
 multiline_comment|/* 0x10c-&gt; is MAX */
-id|snd_release_irq
+id|free_irq
 c_func
 (paren
 id|hw_config-&gt;irq

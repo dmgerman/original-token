@@ -321,11 +321,7 @@ id|inode-&gt;u.umsdos_i.i_emd_owner
 op_assign
 id|emd_owner-&gt;i_ino
 suffix:semicolon
-id|iput
-(paren
-id|emd_owner
-)paren
-suffix:semicolon
+multiline_comment|/* iput (emd_owner); FIXME */
 id|inode-&gt;u.umsdos_i.pos
 op_assign
 id|f_pos
@@ -426,6 +422,65 @@ id|inode-&gt;i_mode
 r_if
 c_cond
 (paren
+id|MSDOS_SB
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|cvf_format
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MSDOS_SB
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|cvf_format-&gt;flags
+op_amp
+id|CVF_USE_READPAGE
+)paren
+(brace
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;umsdos_patch_inode /mn/: seting i_op = umsdos_file_inode_operations_readpage&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|umsdos_file_inode_operations_readpage
+suffix:semicolon
+)brace
+r_else
+(brace
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;umsdos_patch_inode /mn/: seting i_op = umsdos_file_inode_operations_no_bmap&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|umsdos_file_inode_operations_no_bmap
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
 id|inode-&gt;i_op-&gt;bmap
 op_ne
 l_int|NULL
@@ -460,6 +515,7 @@ op_assign
 op_amp
 id|umsdos_file_inode_operations_no_bmap
 suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -659,11 +715,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|iput
-(paren
-id|emd_owner
-)paren
-suffix:semicolon
+multiline_comment|/* iput (emd_owner); FIXME */
 r_if
 c_cond
 (paren
@@ -950,11 +1002,11 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
-id|KERN_ERR
-l_string|&quot;UMSDOS_notify_change: /mn/ completly untested&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;UMSDOS_notify_change: entering&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -1090,6 +1142,8 @@ comma
 l_int|10
 comma
 id|emd_owner
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|fill_new_filp
@@ -1270,11 +1324,7 @@ id|entry.nlink
 suffix:semicolon
 multiline_comment|/* #Specification: notify_change / msdos fs&n;&t;     notify_change operation are done only on the&n;&t;     EMD file. The msdos fs is not even called.&n;&t;  */
 )brace
-id|iput
-(paren
-id|emd_owner
-)paren
-suffix:semicolon
+multiline_comment|/* iput (emd_owner); FIXME */
 )brace
 id|Printk
 (paren
@@ -1444,7 +1494,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;UMSDOS dentry-WIP-Beta 0.82-2 (compatibility level %d.%d, fast msdos)&bslash;n&quot;
+l_string|&quot;UMSDOS dentry-WIP-Beta 0.82-3 (compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION
 comma
@@ -1553,6 +1603,8 @@ id|UMSDOS_PSDROOT_NAME
 )paren
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|sbin
@@ -1562,6 +1614,8 @@ id|creat_dentry
 l_string|&quot;sbin&quot;
 comma
 l_int|4
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren
@@ -1623,6 +1677,8 @@ comma
 l_int|3
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* if (umsdos_real_lookup (pseudo,&quot;etc&quot;,3,etc)==0 */
@@ -1665,6 +1721,8 @@ comma
 l_int|4
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|etc_rc
@@ -1674,6 +1732,8 @@ id|creat_dentry
 l_string|&quot;rc&quot;
 comma
 l_int|2
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren
@@ -1834,12 +1894,7 @@ l_string|&quot;umsdos_read_super /mn/: Pseudo should be iput-ed here...&bslash;n
 )paren
 )paren
 suffix:semicolon
-id|iput
-(paren
-id|pseudo
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME */
+multiline_comment|/* iput (pseudo); / * FIXME */
 )brace
 macro_line|#endif /* disabled */
 id|PRINTK

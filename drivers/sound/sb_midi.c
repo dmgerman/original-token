@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the Sound Blaster DS chips.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the Sound Blaster DS chips.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIG_SBDSP
@@ -8,9 +7,9 @@ macro_line|#include &quot;sb.h&quot;
 DECL|macro|SB_TEST_IRQ
 macro_line|#undef SB_TEST_IRQ
 multiline_comment|/*&n; * The DSP channel can be used either for input or output. Variable&n; * &squot;sb_irq_mode&squot; will be set when the program calls read or write first time&n; * after open. Current version doesn&squot;t support mode changes without closing&n; * and reopening the device. Support for this feature may be implemented in a&n; * future version of this driver.&n; */
+DECL|function|sb_midi_open
 r_static
 r_int
-DECL|function|sb_midi_open
 id|sb_midi_open
 c_func
 (paren
@@ -171,9 +170,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sb_midi_close
 r_static
 r_void
-DECL|function|sb_midi_close
 id|sb_midi_close
 c_func
 (paren
@@ -241,9 +240,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|sb_midi_out
 r_static
 r_int
-DECL|function|sb_midi_out
 id|sb_midi_out
 c_func
 (paren
@@ -309,9 +308,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|sb_midi_start_read
 r_static
 r_int
-DECL|function|sb_midi_start_read
 id|sb_midi_start_read
 c_func
 (paren
@@ -323,9 +322,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sb_midi_end_read
 r_static
 r_int
-DECL|function|sb_midi_end_read
 id|sb_midi_end_read
 c_func
 (paren
@@ -369,7 +368,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* why -EPERM and not -EINVAL?? */
 DECL|function|sb_midi_ioctl
 r_static
 r_int
@@ -388,11 +386,11 @@ id|arg
 (brace
 r_return
 op_minus
-id|EPERM
+id|EINVAL
 suffix:semicolon
 )brace
-r_void
 DECL|function|sb_midi_interrupt
+r_void
 id|sb_midi_interrupt
 c_func
 (paren
@@ -509,8 +507,8 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-r_void
 DECL|function|sb_dsp_midi_init
+r_void
 id|sb_dsp_midi_init
 c_func
 (paren
@@ -581,13 +579,7 @@ r_struct
 id|midi_operations
 op_star
 )paren
-(paren
-id|sound_mem_blocks
-(braket
-id|sound_nblocks
-)braket
-op_assign
-id|vmalloc
+id|kmalloc
 c_func
 (paren
 r_sizeof
@@ -595,30 +587,9 @@ r_sizeof
 r_struct
 id|midi_operations
 )paren
+comma
+id|GFP_KERNEL
 )paren
-)paren
-suffix:semicolon
-id|sound_mem_sizes
-(braket
-id|sound_nblocks
-)braket
-op_assign
-r_sizeof
-(paren
-r_struct
-id|midi_operations
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sound_nblocks
-OL
-l_int|1024
-)paren
-id|sound_nblocks
-op_increment
-suffix:semicolon
 suffix:semicolon
 r_if
 c_cond
@@ -635,7 +606,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;sb MIDI: Failed to allocate memory&bslash;n&quot;
+l_string|&quot;soundblaster: Failed to allocate MIDI memory.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sound_unload_mididev
@@ -694,13 +665,7 @@ r_struct
 id|synth_operations
 op_star
 )paren
-(paren
-id|sound_mem_blocks
-(braket
-id|sound_nblocks
-)braket
-op_assign
-id|vmalloc
+id|kmalloc
 c_func
 (paren
 r_sizeof
@@ -708,30 +673,9 @@ r_sizeof
 r_struct
 id|synth_operations
 )paren
+comma
+id|GFP_KERNEL
 )paren
-)paren
-suffix:semicolon
-id|sound_mem_sizes
-(braket
-id|sound_nblocks
-)braket
-op_assign
-r_sizeof
-(paren
-r_struct
-id|synth_operations
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sound_nblocks
-OL
-l_int|1024
-)paren
-id|sound_nblocks
-op_increment
-suffix:semicolon
 suffix:semicolon
 r_if
 c_cond
@@ -750,7 +694,16 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;sb MIDI: Failed to allocate memory&bslash;n&quot;
+l_string|&quot;soundblaster: Failed to allocate MIDI memory.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|midi_devs
+(braket
+id|dev
+)braket
 )paren
 suffix:semicolon
 id|sound_unload_mididev

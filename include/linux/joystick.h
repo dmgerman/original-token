@@ -1,12 +1,11 @@
 macro_line|#ifndef _LINUX_JOYSTICK_H
 DECL|macro|_LINUX_JOYSTICK_H
 mdefine_line|#define _LINUX_JOYSTICK_H
-multiline_comment|/*&n; *  $Id: joystick.h,v 1.2 1997/10/31 19:11:57 mj Exp $&n; *&n; *  Copyright (C) 1997 Vojtech Pavlik&n; */
-macro_line|#include &lt;linux/ioctl.h&gt;
+multiline_comment|/*&n; *  $Id: joystick.h,v 1.3 1998/03/30 11:10:40 mj Exp $&n; *&n; *  Copyright (C) 1997, 1998 Vojtech Pavlik&n; */
 macro_line|#include &lt;asm/types.h&gt;
 multiline_comment|/*&n; * Version&n; */
 DECL|macro|JS_VERSION
-mdefine_line|#define JS_VERSION&t;&t;0x00010006L&t;&t;/* 1.0.6 BCD */
+mdefine_line|#define JS_VERSION&t;&t;0x00010007L&t;&t;/* 1.0.7 BCD */
 multiline_comment|/*&n; * IOCTL commands for joystick driver&n; */
 DECL|macro|JSIOCGVERSION
 mdefine_line|#define JSIOCGVERSION&t;&t;_IOR(&squot;j&squot;, 0x01, __u32)&t;&t;&t;&t;/* get driver version */

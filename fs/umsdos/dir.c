@@ -63,6 +63,8 @@ comma
 id|len
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|rv
@@ -137,6 +139,8 @@ id|creat_dentry
 id|name
 comma
 id|len
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren
@@ -819,19 +823,11 @@ id|u_entry
 op_assign
 id|entry
 suffix:semicolon
-id|iput
-(paren
-id|inode
-)paren
-suffix:semicolon
+multiline_comment|/* iput (inode); FIXME */
 r_break
 suffix:semicolon
 )brace
-id|iput
-(paren
-id|inode
-)paren
-suffix:semicolon
+multiline_comment|/* iput (inode); FIXME */
 )brace
 r_else
 (brace
@@ -883,12 +879,7 @@ id|filp-&gt;f_pos
 op_assign
 id|start_fpos
 suffix:semicolon
-id|iput
-c_func
-(paren
-id|emd_dir
-)paren
-suffix:semicolon
+multiline_comment|/* iput(emd_dir); FIXME */
 )brace
 )brace
 id|umsdos_endlookup
@@ -1519,11 +1510,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|iput
-(paren
-id|emddir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (emddir); FIXME */
 r_if
 c_cond
 (paren
@@ -2048,11 +2035,7 @@ op_amp
 id|entry
 )paren
 suffix:semicolon
-id|iput
-(paren
-id|dir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (dir); FIXME */
 id|dir
 op_assign
 l_int|NULL
@@ -2136,11 +2119,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|iput
-(paren
-id|dir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (dir); FIXME */
 r_return
 id|ret
 suffix:semicolon
@@ -2245,6 +2224,47 @@ id|name
 op_assign
 id|dentry-&gt;d_name.name
 suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;umsdos_lookup_x: /mn/ name=%.*s, dir=%lu, d_parent=%p&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_name.len
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dir-&gt;i_ino
+comma
+id|dentry-&gt;d_parent
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME /mn/ debug only */
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_parent
+)paren
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;   d_parent is %.*s&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_parent-&gt;d_name.len
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME : delme /mn/ */
 id|root_inode
 op_assign
 id|iget
@@ -2281,9 +2301,12 @@ op_eq
 l_char|&squot;.&squot;
 )paren
 (brace
-id|dentry-&gt;d_inode
-op_assign
+id|d_add
+(paren
+id|dentry
+comma
 id|dir
+)paren
 suffix:semicolon
 id|dir-&gt;i_count
 op_increment
@@ -2331,9 +2354,12 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|dentry-&gt;d_inode
-op_assign
+id|d_add
+(paren
+id|dentry
+comma
 id|pseudo_root
+)paren
 suffix:semicolon
 id|pseudo_root-&gt;i_count
 op_increment
@@ -2407,11 +2433,7 @@ op_amp
 id|entry
 )paren
 suffix:semicolon
-id|iput
-(paren
-id|aadir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (aadir); FIXME */
 )brace
 )brace
 )brace
@@ -2429,9 +2451,12 @@ id|dentry
 )paren
 (brace
 multiline_comment|/* #Specification: pseudo root / lookup(DOS)&n;       A lookup of DOS in the pseudo root will always succeed&n;       and return the inode of the real root.&n;    */
-id|dentry-&gt;d_inode
-op_assign
+id|d_add
+(paren
+id|dentry
+comma
 id|root_inode
+)paren
 suffix:semicolon
 (paren
 id|dentry-&gt;d_inode
@@ -2589,14 +2614,17 @@ id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 multiline_comment|/* we&squot;ve found it. now get inode and put it in dentry. Is this ok /mn/ ? */
-id|dentry-&gt;d_inode
-op_assign
+id|d_add
+(paren
+id|dentry
+comma
 id|iget
 c_func
 (paren
 id|dir-&gt;i_sb
 comma
 id|inode-&gt;i_ino
+)paren
 )paren
 suffix:semicolon
 id|umsdos_lookup_patch
@@ -2672,11 +2700,7 @@ l_string|&quot;umsdos_lookup_x: warning: untested /mn/ Pseudo_root thingy&bslash
 )paren
 )paren
 suffix:semicolon
-id|iput
-(paren
-id|pseudo_root
-)paren
-suffix:semicolon
+multiline_comment|/* iput (pseudo_root); FIXME */
 id|dentry-&gt;d_inode
 op_assign
 l_int|NULL
@@ -2696,11 +2720,7 @@ c_func
 id|dir
 )paren
 suffix:semicolon
-id|iput
-(paren
-id|dir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (dir); FIXME */
 id|Printk
 (paren
 (paren
@@ -2878,11 +2898,7 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|iput
-(paren
-id|hlink
-)paren
-suffix:semicolon
+multiline_comment|/* iput (hlink); FIXME */
 )brace
 r_else
 (brace
@@ -2912,6 +2928,8 @@ comma
 l_int|8
 comma
 id|hlink
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|memset
@@ -3069,6 +3087,8 @@ comma
 id|len
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -3197,12 +3217,7 @@ l_string|&quot;umsdos_hlink2inode: all those iput&squot;s() frighten me /mn/. Wh
 )paren
 )paren
 suffix:semicolon
-id|iput
-(paren
-id|hlink
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME */
+multiline_comment|/* iput (hlink); / * FIXME */
 )brace
 id|Printk
 (paren

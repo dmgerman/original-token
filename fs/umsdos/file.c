@@ -362,4 +362,105 @@ comma
 multiline_comment|/* smap */
 )brace
 suffix:semicolon
+multiline_comment|/* For other with larger and unaligned file system with readpage */
+DECL|variable|umsdos_file_operations_readpage
+r_struct
+id|file_operations
+id|umsdos_file_operations_readpage
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek - default */
+id|UMSDOS_file_read
+comma
+multiline_comment|/* read */
+id|UMSDOS_file_write
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir - bad */
+l_int|NULL
+comma
+multiline_comment|/* poll - default */
+l_int|NULL
+comma
+multiline_comment|/* ioctl - default */
+id|generic_file_mmap
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open is needed */
+l_int|NULL
+comma
+multiline_comment|/* release */
+id|file_fsync
+multiline_comment|/* fsync */
+)brace
+suffix:semicolon
+DECL|variable|umsdos_file_inode_operations_readpage
+r_struct
+id|inode_operations
+id|umsdos_file_inode_operations_readpage
+op_assign
+(brace
+op_amp
+id|umsdos_file_operations_readpage
+comma
+multiline_comment|/* default file operations */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow link */
+id|fat_readpage
+comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+id|UMSDOS_truncate
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+comma
+multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+)brace
+suffix:semicolon
 eof

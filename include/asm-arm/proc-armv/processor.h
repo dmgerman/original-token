@@ -178,7 +178,7 @@ mdefine_line|#define start_thread(regs,pc,sp)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&
 multiline_comment|/* Allocation and freeing of basic task resources. */
 multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
 DECL|macro|alloc_task_struct
-mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1,0))
+mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1))
 DECL|macro|free_task_struct
 mdefine_line|#define free_task_struct(p)&t;free_pages((unsigned long)(p),1)
 macro_line|#endif

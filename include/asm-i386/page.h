@@ -1,7 +1,6 @@
 macro_line|#ifndef _I386_PAGE_H
 DECL|macro|_I386_PAGE_H
 mdefine_line|#define _I386_PAGE_H
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* PAGE_SHIFT determines the page size */
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT&t;12
@@ -130,9 +129,9 @@ macro_line|#endif /* !__ASSEMBLY__ */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
-multiline_comment|/* This handles the memory map.. */
+multiline_comment|/*&n; * This handles the memory map.. We could make this a config&n; * option, but too many people screw it up, and too few need&n; * it.&n; *&n; * A __PAGE_OFFSET of 0xC0000000 means that the kernel has&n; * a virtual address space of one gigabyte, which limits the&n; * amount of physical memory you can use to about 950MB. If&n; * you want to use more physical memory, change this define.&n; *&n; * For example, if you have 2GB worth of physical memory, you&n; * could change this define to 0x70000000, which gives the&n; * kernel slightly more than 2GB of virtual memory (enough to&n; * map all your physical memory + a bit extra for various&n; * io-memory mappings)&n; *&n; * IF YOU CHANGE THIS, PLEASE ALSO CHANGE&n; *&n; *&t;arch/i386/vmlinux.lds&n; *&n; * which has the same constant encoded..&n; */
 DECL|macro|__PAGE_OFFSET
-mdefine_line|#define __PAGE_OFFSET&t;&t;((0x1000-CONFIG_MAX_MEMSIZE)&lt;&lt;20)
+mdefine_line|#define __PAGE_OFFSET&t;&t;(0xC0000000)
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;((unsigned long)__PAGE_OFFSET)
 DECL|macro|__pa

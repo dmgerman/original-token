@@ -1,13 +1,12 @@
-multiline_comment|/*&n; * sound/sb_audio.c&n; *&n; * Audio routines for Sound Blaster compatible cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * sound/sb_audio.c&n; *&n; * Audio routines for Sound Blaster compatible cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes&n; *&t;Alan Cox&t;:&t;Formatting and clean ups&n; *&n; * Status&n; *&t;Mostly working. mmap bug still present (swaps channels)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SBDSP) || defined(MODULE)
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
+DECL|function|sb_audio_open
 r_static
 r_int
-DECL|function|sb_audio_open
 id|sb_audio_open
 c_func
 (paren
@@ -44,6 +43,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;SB: Incomplete initialization&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -64,14 +64,6 @@ op_amp
 id|OPEN_READ
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Notice: Recording is not possible with /dev/dsp%d&bslash;n&quot;
-comma
-id|dev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -169,13 +161,72 @@ c_func
 id|devc
 )paren
 suffix:semicolon
+multiline_comment|/* The ALS007 seems to require that the DSP be removed from the output */
+multiline_comment|/* in order for recording to be activated properly.  This is done by   */
+multiline_comment|/* setting the appropriate bits of the output control register 4ch to  */
+multiline_comment|/* zero.  This code assumes that the output control registers are not  */
+multiline_comment|/* used anywhere else and therefore the DSP bits are *always* ON for   */
+multiline_comment|/* output and OFF for sampling.                                        */
+r_if
+c_cond
+(paren
+id|devc-&gt;submodel
+op_eq
+id|SUBMDL_ALS007
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mode
+op_amp
+id|OPEN_READ
+)paren
+id|sb_setmixer
+c_func
+(paren
+id|devc
+comma
+id|ALS007_OUTPUT_CTRL2
+comma
+id|sb_getmixer
+c_func
+(paren
+id|devc
+comma
+id|ALS007_OUTPUT_CTRL2
+)paren
+op_amp
+l_int|0xf9
+)paren
+suffix:semicolon
+r_else
+id|sb_setmixer
+c_func
+(paren
+id|devc
+comma
+id|ALS007_OUTPUT_CTRL2
+comma
+id|sb_getmixer
+c_func
+(paren
+id|devc
+comma
+id|ALS007_OUTPUT_CTRL2
+)paren
+op_or
+l_int|0x06
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sb_audio_close
 r_static
 r_void
-DECL|function|sb_audio_close
 id|sb_audio_close
 c_func
 (paren
@@ -228,14 +279,50 @@ c_func
 id|devc-&gt;dma16
 )paren
 suffix:semicolon
+multiline_comment|/* For ALS007, turn DSP output back on if closing the device for read */
+r_if
+c_cond
+(paren
+(paren
+id|devc-&gt;submodel
+op_eq
+id|SUBMDL_ALS007
+)paren
+op_logical_and
+(paren
+id|devc-&gt;opened
+op_amp
+id|OPEN_READ
+)paren
+)paren
+(brace
+id|sb_setmixer
+c_func
+(paren
+id|devc
+comma
+id|ALS007_OUTPUT_CTRL2
+comma
+id|sb_getmixer
+c_func
+(paren
+id|devc
+comma
+id|ALS007_OUTPUT_CTRL2
+)paren
+op_or
+l_int|0x06
+)paren
+suffix:semicolon
+)brace
 id|devc-&gt;opened
 op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sb_set_output_parms
 r_static
 r_void
-DECL|function|sb_set_output_parms
 id|sb_set_output_parms
 c_func
 (paren
@@ -281,9 +368,9 @@ op_assign
 id|IMODE_OUTPUT
 suffix:semicolon
 )brace
+DECL|function|sb_set_input_parms
 r_static
 r_void
-DECL|function|sb_set_input_parms
 id|sb_set_input_parms
 c_func
 (paren
@@ -330,9 +417,9 @@ id|IMODE_INPUT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * SB1.x compatible routines &n; */
+DECL|function|sb1_audio_output_block
 r_static
 r_void
-DECL|function|sb1_audio_output_block
 id|sb1_audio_output_block
 c_func
 (paren
@@ -459,7 +546,8 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;SB: Unable to start DAC&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;soundblaster: Unable to start DAC&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -473,9 +561,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|sb1_audio_start_input
 r_static
 r_void
-DECL|function|sb1_audio_start_input
 id|sb1_audio_start_input
 c_func
 (paren
@@ -603,7 +691,8 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;SB Error: Unable to start ADC&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundblaster: Unable to start ADC&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -617,9 +706,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|sb1_audio_trigger
 r_static
 r_void
-DECL|function|sb1_audio_trigger
 id|sb1_audio_trigger
 c_func
 (paren
@@ -709,9 +798,9 @@ op_assign
 id|bits
 suffix:semicolon
 )brace
+DECL|function|sb1_audio_prepare_for_input
 r_static
 r_int
-DECL|function|sb1_audio_prepare_for_input
 id|sb1_audio_prepare_for_input
 c_func
 (paren
@@ -792,9 +881,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sb1_audio_prepare_for_output
 r_static
 r_int
-DECL|function|sb1_audio_prepare_for_output
 id|sb1_audio_prepare_for_output
 c_func
 (paren
@@ -875,9 +964,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sb1_audio_set_speed
 r_static
 r_int
-DECL|function|sb1_audio_set_speed
 id|sb1_audio_set_speed
 c_func
 (paren
@@ -995,9 +1084,9 @@ r_return
 id|devc-&gt;speed
 suffix:semicolon
 )brace
+DECL|function|sb1_audio_set_channels
 r_static
 r_int
-DECL|function|sb1_audio_set_channels
 id|sb1_audio_set_channels
 c_func
 (paren
@@ -1025,10 +1114,10 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|sb1_audio_set_bits
 r_static
 r_int
 r_int
-DECL|function|sb1_audio_set_bits
 id|sb1_audio_set_bits
 c_func
 (paren
@@ -1057,9 +1146,9 @@ op_assign
 l_int|8
 suffix:semicolon
 )brace
+DECL|function|sb1_audio_halt_xfer
 r_static
 r_void
-DECL|function|sb1_audio_halt_xfer
 id|sb1_audio_halt_xfer
 c_func
 (paren
@@ -1107,9 +1196,9 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * SB 2.0 and SB 2.01 compatible routines&n; */
+DECL|function|sb20_audio_output_block
 r_static
 r_void
-DECL|function|sb20_audio_output_block
 id|sb20_audio_output_block
 c_func
 (paren
@@ -1270,7 +1359,8 @@ id|cmd
 id|printk
 c_func
 (paren
-l_string|&quot;SB: Unable to start DAC&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundblaster: Unable to start DAC&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1278,7 +1368,8 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;SB: Unable to start DAC&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundblaster: Unable to start DAC&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1292,9 +1383,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|sb20_audio_start_input
 r_static
 r_void
-DECL|function|sb20_audio_start_input
 id|sb20_audio_start_input
 c_func
 (paren
@@ -1465,7 +1556,8 @@ id|cmd
 id|printk
 c_func
 (paren
-l_string|&quot;SB: Unable to start ADC&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundblaster: Unable to start ADC&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1473,7 +1565,8 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;SB Error: Unable to start ADC&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundblaster: Unable to start ADC&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1487,9 +1580,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|sb20_audio_trigger
 r_static
 r_void
-DECL|function|sb20_audio_trigger
 id|sb20_audio_trigger
 c_func
 (paren
@@ -1580,9 +1673,9 @@ id|bits
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * SB2.01 specific speed setup&n; */
+DECL|function|sb201_audio_set_speed
 r_static
 r_int
-DECL|function|sb201_audio_set_speed
 id|sb201_audio_set_speed
 c_func
 (paren
@@ -1715,9 +1808,9 @@ id|devc-&gt;speed
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * SB Pro specific routines&n; */
+DECL|function|sbpro_audio_prepare_for_input
 r_static
 r_int
-DECL|function|sbpro_audio_prepare_for_input
 id|sbpro_audio_prepare_for_input
 c_func
 (paren
@@ -1892,9 +1985,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sbpro_audio_prepare_for_output
 r_static
 r_int
-DECL|function|sbpro_audio_prepare_for_output
 id|sbpro_audio_prepare_for_output
 c_func
 (paren
@@ -2132,9 +2225,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sbpro_audio_set_speed
 r_static
 r_int
-DECL|function|sbpro_audio_set_speed
 id|sbpro_audio_set_speed
 c_func
 (paren
@@ -2214,9 +2307,9 @@ r_return
 id|devc-&gt;speed
 suffix:semicolon
 )brace
+DECL|function|sbpro_audio_set_channels
 r_static
 r_int
-DECL|function|sbpro_audio_set_channels
 id|sbpro_audio_set_channels
 c_func
 (paren
@@ -2249,6 +2342,7 @@ id|channels
 op_eq
 l_int|2
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2272,20 +2366,6 @@ id|devc-&gt;channels
 op_eq
 l_int|2
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|devc-&gt;speed
-OG
-l_int|22050
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;OSS: Application error. Wrong ioctl call order.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|sbpro_audio_set_speed
 c_func
 (paren
@@ -2300,9 +2380,9 @@ r_return
 id|devc-&gt;channels
 suffix:semicolon
 )brace
+DECL|function|jazz16_audio_set_speed
 r_static
 r_int
-DECL|function|jazz16_audio_set_speed
 id|jazz16_audio_set_speed
 c_func
 (paren
@@ -2351,7 +2431,7 @@ l_int|5000
 )paren
 id|speed
 op_assign
-l_int|4000
+l_int|5000
 suffix:semicolon
 r_if
 c_cond
@@ -2420,9 +2500,9 @@ id|devc-&gt;speed
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * ESS specific routines&n; */
+DECL|function|ess_audio_set_speed
 r_static
 r_int
-DECL|function|ess_audio_set_speed
 id|ess_audio_set_speed
 c_func
 (paren
@@ -2464,7 +2544,7 @@ l_int|5000
 )paren
 id|speed
 op_assign
-l_int|4000
+l_int|5000
 suffix:semicolon
 r_if
 c_cond
@@ -2546,9 +2626,9 @@ r_return
 id|devc-&gt;speed
 suffix:semicolon
 )brace
+DECL|function|ess_speed
 r_static
 r_void
-DECL|function|ess_speed
 id|ess_speed
 c_func
 (paren
@@ -2656,7 +2736,7 @@ comma
 id|bits
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Set filter divider register&n; */
+multiline_comment|/*&n;&t; * Set filter divider register&n;&t; */
 id|speed
 op_assign
 (paren
@@ -2693,9 +2773,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ess_audio_prepare_for_input
 r_static
 r_int
-DECL|function|ess_audio_prepare_for_input
 id|ess_audio_prepare_for_input
 c_func
 (paren

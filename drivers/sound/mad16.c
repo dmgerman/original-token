@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *      OPTi 82C930&n; *      OPTi 82C924     (in non PnP mode)&n; *&n; * These audio interface chips don&squot;t produce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;Sound Blaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0c=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; */
+multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *      OPTi 82C930&n; *      OPTi 82C924     (in non PnP mode)&n; *&n; * These audio interface chips don&squot;t produce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;Sound Blaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0c=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; *&n; *&t;Changes&n; *&t;&n; *&t;Alan Cox&t;&t;Clean up, added module selections.&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#ifdef MODULE
@@ -91,10 +91,10 @@ macro_line|#ifndef DDB
 DECL|macro|DDB
 mdefine_line|#define DDB(x)
 macro_line|#endif
+DECL|function|mad_read
 r_static
 r_int
 r_char
-DECL|function|mad_read
 id|mad_read
 c_func
 (paren
@@ -233,9 +233,9 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+DECL|function|mad_write
 r_static
 r_void
-DECL|function|mad_write
 id|mad_write
 c_func
 (paren
@@ -389,9 +389,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|detect_c930
 r_static
 r_int
-DECL|function|detect_c930
 id|detect_c930
 c_func
 (paren
@@ -689,7 +689,7 @@ l_int|0
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* Force off PnP mode, This is not recommended because&n;&t; * the PnP bios will not recognize the chip on the next&n;&t; * warm boot and may assignd different resources to other&n;&t; * PnP/PCI cards.&n;&t;*/
+multiline_comment|/* Force off PnP mode, This is not recommended because&n;&t; * the PnP bios will not recognize the chip on the next&n;&t; * warm boot and may assignd different resources to other&n;&t; * PnP/PCI cards.&n;&t; */
 id|mad_write
 c_func
 (paren
@@ -704,9 +704,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|detect_mad16
 r_static
 r_int
-DECL|function|detect_mad16
 id|detect_mad16
 c_func
 (paren
@@ -722,7 +722,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n; * Check that reading a register doesn&squot;t return bus float (0xff)&n; * when the card is accessed using password. This may fail in case&n; * the card is in low power mode. Normally at least the power saving mode&n; * bit should be 0.&n; */
+multiline_comment|/*&n;&t; * Check that reading a register doesn&squot;t return bus float (0xff)&n;&t; * when the card is accessed using password. This may fail in case&n;&t; * the card is in low power mode. Normally at least the power saving mode&n;&t; * bit should be 0.&n;&t; */
 r_if
 c_cond
 (paren
@@ -798,7 +798,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Now check that the gate is closed on first I/O after writing&n; * the password. (This is how a MAD16 compatible card works).&n; */
+multiline_comment|/*&n;&t; * Now check that the gate is closed on first I/O after writing&n;&t; * the password. (This is how a MAD16 compatible card works).&n;&t; */
 r_if
 c_cond
 (paren
@@ -905,9 +905,9 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Bingo */
 )brace
+DECL|function|wss_init
 r_static
 r_int
-DECL|function|wss_init
 id|wss_init
 c_func
 (paren
@@ -922,7 +922,7 @@ id|ad_flags
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; *    Verify the WSS parameters&n; */
+multiline_comment|/*&n;&t; *    Verify the WSS parameters&n;&t; */
 r_if
 c_cond
 (paren
@@ -938,6 +938,7 @@ l_int|8
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;MSS: I/O port conflict&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -965,7 +966,7 @@ id|mad16_osp
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Check if the IO port returns valid signature. The original MS Sound&n;&t;   * system returns 0x04 while some cards (AudioTrix Pro for example)&n;&t;   * return 0x00.&n;&t; */
+multiline_comment|/*&n;&t; * Check if the IO port returns valid signature. The original MS Sound&n;&t; * system returns 0x04 while some cards (AudioTrix Pro for example)&n;&t; * return 0x00.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1033,6 +1034,7 @@ l_int|11
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;MSS: Bad IRQ %d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
@@ -1061,6 +1063,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;MSS: Bad DMA %d&bslash;n&quot;
 comma
 id|hw_config-&gt;dma
@@ -1070,7 +1073,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;   * Check that DMA0 is not in use with a 8 bit board.&n;&t; */
+multiline_comment|/*&n;&t; * Check that DMA0 is not in use with a 8 bit board.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1120,23 +1123,22 @@ l_int|3
 op_amp
 l_int|0x80
 )paren
-(brace
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;MSS: Can&squot;t use IRQ%d with a 8 bit card/slot&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|init_c930
 r_static
 r_int
-DECL|function|init_c930
 id|init_c930
 c_func
 (paren
@@ -1227,6 +1229,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;MAD16: Invalid codec port %x&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
@@ -1335,9 +1338,9 @@ id|hw_config
 )paren
 suffix:semicolon
 )brace
+DECL|function|chip_detect
 r_static
 r_int
-DECL|function|chip_detect
 id|chip_detect
 c_func
 (paren
@@ -1347,7 +1350,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n; *    Then try to detect with the old password&n; */
+multiline_comment|/*&n;&t; *    Then try to detect with the old password&n;&t; */
 id|board_type
 op_assign
 id|C924
@@ -1435,7 +1438,7 @@ l_int|0xff
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * First relocate MC# registers to 0xe0e/0xe0f, disable password &n; */
+multiline_comment|/*&n;&t;&t;&t;&t; * First relocate MC# registers to 0xe0e/0xe0f, disable password &n;&t;&t;&t;&t; */
 id|outb
 c_func
 (paren
@@ -1603,8 +1606,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_int
 DECL|function|probe_mad16
+r_int
 id|probe_mad16
 c_func
 (paren
@@ -1660,7 +1663,7 @@ id|mad16_osp
 op_assign
 id|hw_config-&gt;osp
 suffix:semicolon
-multiline_comment|/*&n; *    Check that all ports return 0xff (bus float) when no password&n; *      is written to the password register.&n; */
+multiline_comment|/*&n;&t; *    Check that all ports return 0xff (bus float) when no password&n;&t; *      is written to the password register.&n;&t; */
 id|DDB
 c_func
 (paren
@@ -1772,6 +1775,7 @@ multiline_comment|/* Not a valid port */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;MAD16/Mozart: Bad WSS base address 0x%x&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
@@ -1803,13 +1807,13 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Set optional CD-ROM and joystick settings.&n; */
-macro_line|#ifdef MAD16_CONF
+multiline_comment|/*&n;&t; * Set optional CD-ROM and joystick settings.&n;&t; */
 id|tmp
 op_and_assign
 op_complement
 l_int|0x0f
 suffix:semicolon
+macro_line|#if defined(MAD16_CONF)
 id|tmp
 op_or_assign
 (paren
@@ -2038,8 +2042,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_mad16
+r_void
 id|attach_mad16
 c_func
 (paren
@@ -2165,7 +2169,7 @@ id|mad16_osp
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Set the IRQ and DMA addresses.&n;&t; */
+multiline_comment|/*&n;&t; * Set the IRQ and DMA addresses.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2228,10 +2232,11 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;[IRQ Conflict?]&quot;
+id|KERN_ERR
+l_string|&quot;[IRQ Conflict?]&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Handle the capture DMA channel&n; */
+multiline_comment|/*&n;&t; * Handle the capture DMA channel&n;&t; */
 r_if
 c_cond
 (paren
@@ -2414,8 +2419,8 @@ l_string|&quot;MAD16 WSS config&quot;
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_mad16_mpu
+r_void
 id|attach_mad16_mpu
 c_func
 (paren
@@ -2434,7 +2439,7 @@ id|C929
 )paren
 multiline_comment|/* Early chip. No MPU support. Just SB MIDI */
 (brace
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MAD16_OLDCARD)
 r_if
 c_cond
 (paren
@@ -2494,8 +2499,8 @@ id|hw_config
 suffix:semicolon
 macro_line|#endif
 )brace
-r_int
 DECL|function|probe_mad16_mpu
+r_int
 id|probe_mad16_mpu
 c_func
 (paren
@@ -2584,7 +2589,7 @@ id|C929
 )paren
 multiline_comment|/* Early chip. No MPU support. Just SB MIDI */
 (brace
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MAD16_OLDCARD)
 r_int
 r_char
 id|tmp
@@ -2597,7 +2602,7 @@ c_func
 id|MC3_PORT
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;&t;   * MAD16 SB base is defined by the WSS base. It cannot be changed &n;&t;&t;   * alone.&n;&t;&t;   * Ignore configured I/O base. Use the active setting. &n;&t;&t;   */
+multiline_comment|/* &n;&t;&t; * MAD16 SB base is defined by the WSS base. It cannot be changed &n;&t;&t; * alone.&n;&t;&t; * Ignore configured I/O base. Use the active setting. &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2672,6 +2677,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;mad16/Mozart: Invalid MIDI IRQ&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2749,6 +2755,7 @@ multiline_comment|/* Out of array bounds */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;MAD16 / Mozart: Invalid MIDI port 0x%x&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
@@ -2807,6 +2814,7 @@ multiline_comment|/* Out of array bounds */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;MAD16 / Mozart: Invalid MIDI IRQ %d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
@@ -2859,8 +2867,8 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-r_void
 DECL|function|unload_mad16
+r_void
 id|unload_mad16
 c_func
 (paren
@@ -2915,7 +2923,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MAD16_OLDCARD)
 r_if
 c_cond
 (paren
@@ -2945,6 +2953,18 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
+DECL|variable|mpu_io
+r_int
+id|mpu_io
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|mpu_irq
+r_int
+id|mpu_irq
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|io
 r_int
 id|io
@@ -3013,6 +3033,22 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
+id|mpu_io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mpu_irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
 id|io
 comma
 l_string|&quot;i&quot;
@@ -3089,6 +3125,8 @@ id|joystick
 comma
 l_string|&quot;i&quot;
 )paren
+suffix:semicolon
+id|EXPORT_NO_SYMBOLS
 suffix:semicolon
 DECL|variable|found_mpu
 r_static
@@ -3209,8 +3247,13 @@ r_struct
 id|address_info
 id|config
 suffix:semicolon
-r_int
+DECL|variable|config_mpu
+r_struct
+id|address_info
+id|config_mpu
+suffix:semicolon
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -3225,6 +3268,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;MAD16 audio driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3250,6 +3294,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;I/O, DMA and irq are mandatory&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3261,6 +3306,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;CDROM &quot;
 )paren
 suffix:semicolon
@@ -3365,7 +3411,14 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nInvalid CDROM type&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Invalid CDROM type&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3405,7 +3458,14 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nInvalid CDROM DMA&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Invalid CDROM DMA&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3488,7 +3548,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;.&bslash;nJoystick port &quot;
+l_string|&quot;.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Joystick port &quot;
 )paren
 suffix:semicolon
 r_if
@@ -3606,6 +3673,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unknown CDROM I/O base %d&bslash;n&quot;
 comma
 id|cdport
@@ -3655,13 +3723,21 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|config_mpu.io_base
+op_assign
+id|mpu_io
+suffix:semicolon
+id|config_mpu.irq
+op_assign
+id|mpu_irq
+suffix:semicolon
 id|found_mpu
 op_assign
 id|probe_mad16_mpu
 c_func
 (paren
 op_amp
-id|config
+id|config_mpu
 )paren
 suffix:semicolon
 id|attach_mad16
@@ -3680,7 +3756,7 @@ id|attach_mad16_mpu
 c_func
 (paren
 op_amp
-id|config
+id|config_mpu
 )paren
 suffix:semicolon
 id|SOUND_LOCK
@@ -3689,8 +3765,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

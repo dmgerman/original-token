@@ -194,6 +194,10 @@ DECL|macro|N_PPP
 mdefine_line|#define N_PPP&t;&t;3
 DECL|macro|N_AX25
 mdefine_line|#define N_AX25&t;&t;5
+DECL|macro|N_X25
+mdefine_line|#define N_X25&t;&t;6
+DECL|macro|N_6PACK
+mdefine_line|#define N_6PACK&t;&t;7
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&t;eof=^D&t;&t;eol=&bslash;0&t;&t;eol2=&bslash;0&t;&t;erase=del&n;&t;werase=^W&t;kill=^U&t;&t;reprint=^R&t;sxtc=&bslash;0&n;&t;intr=^C&t;&t;quit=^&bslash;&t;&t;susp=^Z&t;&t;&lt;OSF/1 VDSUSP&gt;&n;&t;start=^Q&t;stop=^S&t;&t;lnext=^V&t;discard=^U&n;&t;vmin=&bslash;1&t;&t;vtime=&bslash;0&n;*/
 DECL|macro|INIT_C_CC

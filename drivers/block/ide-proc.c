@@ -1055,6 +1055,16 @@ op_star
 id|data
 )paren
 (brace
+r_char
+op_star
+id|out
+op_assign
+id|page
+suffix:semicolon
+r_int
+id|len
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
 id|ide_hwif_t
 op_star
 id|hwif
@@ -1065,20 +1075,11 @@ op_star
 )paren
 id|data
 suffix:semicolon
-r_char
-op_star
-id|out
-op_assign
-id|page
-suffix:semicolon
 r_int
-id|len
-comma
 id|reg
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
 r_struct
 id|pci_dev
 op_star

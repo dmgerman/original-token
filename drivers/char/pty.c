@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/drivers/char/pty.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Added support for a Unix98-style ptmx device.&n; *    -- C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, 14-Jan-1998&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;&t;/* For EXPORT_SYMBOL */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

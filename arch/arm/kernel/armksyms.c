@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 r_extern
 r_void
 id|dump_thread
@@ -363,6 +364,21 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|processor
+)paren
+suffix:semicolon
+multiline_comment|/* irq */
+DECL|variable|enable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|enable_irq
+)paren
+suffix:semicolon
+DECL|variable|disable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|disable_irq
 )paren
 suffix:semicolon
 multiline_comment|/* io */

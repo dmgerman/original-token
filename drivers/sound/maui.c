@@ -2,6 +2,7 @@ multiline_comment|/*&n; * sound/maui.c&n; *&n; * The low level driver for Turtle
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;&t;General clean up, use kernel IRQ &n; *&t;&t;&t;&t;&t;system&n; *&n; *&t;Status:&n; *&t;&t;Untested&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS
@@ -1898,6 +1899,24 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 DECL|variable|io
 r_int
 id|io
@@ -2047,7 +2066,7 @@ id|fw_load
 op_logical_and
 id|maui_os
 )paren
-id|kfree
+id|vfree
 c_func
 (paren
 id|maui_os

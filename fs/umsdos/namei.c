@@ -501,6 +501,11 @@ multiline_comment|/* file */
 r_int
 id|ret
 suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|fake
+suffix:semicolon
 id|Printk
 (paren
 (paren
@@ -640,15 +645,27 @@ l_int|0
 id|dir-&gt;i_count
 op_increment
 suffix:semicolon
-multiline_comment|/* FIXME&n;&t; ret = msdos_create (dir,info.fake.fname,info.fake.len&n;&t; ,S_IFREG|0777,result);&n;      */
+id|fake
+op_assign
+id|creat_dentry
+(paren
+id|info.fake.fname
+comma
+id|info.fake.len
+comma
+l_int|NULL
+comma
+id|dentry-&gt;d_parent
+)paren
+suffix:semicolon
+multiline_comment|/* create short name dentry */
 id|ret
 op_assign
 id|msdos_create
-c_func
 (paren
 id|dir
 comma
-id|dentry
+id|fake
 comma
 id|S_IFREG
 op_or
@@ -668,7 +685,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|fake-&gt;d_inode
 suffix:semicolon
 id|umsdos_lookup_patch
 (paren
@@ -712,6 +729,15 @@ id|info.f_pos
 )paren
 )paren
 suffix:semicolon
+id|d_instantiate
+c_func
+(paren
+id|dentry
+comma
+id|inode
+)paren
+suffix:semicolon
+multiline_comment|/* long name also gets inode info */
 )brace
 r_else
 (brace
@@ -1158,6 +1184,8 @@ comma
 id|old_info.fake.len
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_new
@@ -1167,6 +1195,8 @@ id|creat_dentry
 id|new_info.fake.fname
 comma
 id|new_info.fake.len
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren
@@ -1522,8 +1552,8 @@ multiline_comment|/* Make the inode acceptable to MSDOS FIXME */
 id|Printk
 (paren
 (paren
-id|KERN_ERR
-l_string|&quot;umsdos_symlink_x: FIXME /mn/ Here goes the crash.. known wrong code...&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;umsdos_symlink_x: /mn/ Is this ok?&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -1619,14 +1649,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-id|d_instantiate
-c_func
-(paren
-id|dentry
-comma
-id|dir
-)paren
-suffix:semicolon
+multiline_comment|/* d_instantiate(dentry,dir);   //already done in umsdos_create_any */
 id|Printk
 (paren
 (paren
@@ -1949,6 +1972,8 @@ comma
 id|entry.name_len
 comma
 l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|Printk
@@ -2138,11 +2163,7 @@ id|dir
 )paren
 suffix:semicolon
 )brace
-id|iput
-(paren
-id|olddir
-)paren
-suffix:semicolon
+multiline_comment|/* iput (olddir); FIXME */
 )brace
 r_if
 c_cond
@@ -2175,16 +2196,7 @@ id|newattrs
 )paren
 suffix:semicolon
 )brace
-id|dput
-(paren
-id|olddentry
-)paren
-suffix:semicolon
-id|dput
-(paren
-id|dentry
-)paren
-suffix:semicolon
+multiline_comment|/*  dput (olddentry);&n;  dput (dentry); FIXME.... */
 id|Printk
 (paren
 (paren
@@ -2390,6 +2402,22 @@ r_struct
 id|dentry
 op_star
 id|temp
+comma
+op_star
+id|tdir
+suffix:semicolon
+id|tdir
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;mkd-dir&quot;
+comma
+l_int|7
+comma
+id|dir
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 id|temp
 op_assign
@@ -2400,6 +2428,8 @@ comma
 id|info.fake.len
 comma
 l_int|NULL
+comma
+id|tdir
 )paren
 suffix:semicolon
 id|dir-&gt;i_count
@@ -2466,11 +2496,26 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&t;    struct inode *result;&t;FIXME /mn/ hmmm what is this supposed to be ? */
 r_struct
 id|dentry
 op_star
 id|tdentry
+comma
+op_star
+id|tdsub
+suffix:semicolon
+id|tdsub
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;mkd-emd&quot;
+comma
+l_int|7
+comma
+id|subdir
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 id|tdentry
 op_assign
@@ -2481,6 +2526,8 @@ comma
 id|UMSDOS_EMD_NAMELEN
 comma
 l_int|NULL
+comma
+id|tdsub
 )paren
 suffix:semicolon
 id|ret
@@ -2496,9 +2543,34 @@ op_or
 l_int|0777
 )paren
 suffix:semicolon
+id|kill_dentry
+(paren
+id|tdentry
+)paren
+suffix:semicolon
+multiline_comment|/* we don&squot;t want empty EMD file to be visible ! too bad kill_dentry does nothing at the moment :-)  FIXME */
+id|kill_dentry
+(paren
+id|tdsub
+)paren
+suffix:semicolon
+id|umsdos_setup_dir_inode
+(paren
+id|subdir
+)paren
+suffix:semicolon
+multiline_comment|/* this should setup dir so it is promoted to EMD, and EMD file is not visible inside it */
 id|subdir
 op_assign
 l_int|NULL
+suffix:semicolon
+id|d_instantiate
+c_func
+(paren
+id|dentry
+comma
+id|temp-&gt;d_inode
+)paren
 suffix:semicolon
 multiline_comment|/* iput (result); FIXME */
 )brace
@@ -2536,7 +2608,7 @@ id|ret
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*  dput (dentry); FIXME /mn/ */
+multiline_comment|/* dput (dentry); / * FIXME /mn/ */
 r_return
 id|ret
 suffix:semicolon
@@ -2581,7 +2653,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*  dput(dentry); /mn/ FIXME! */
+multiline_comment|/* dput(dentry); / * /mn/ FIXME! */
 r_return
 id|ret
 suffix:semicolon
@@ -2605,6 +2677,8 @@ id|dentry
 (brace
 multiline_comment|/* #Specification: style / iput strategy&n;     In the UMSDOS project, I am trying to apply a single&n;     programming style regarding inode management. Many&n;     entry point are receiving an inode to act on, and must&n;     do an iput() as soon as they are finished with&n;     the inode.&n;     &n;     For simple case, there is no problem. When you introduce&n;     error checking, you end up with many iput placed around the&n;     code.&n;     &n;     The coding style I use all around is one where I am trying&n;     to provide independent flow logic (I don&squot;t know how to&n;     name this). With this style, code is easier to understand&n;     but you rapidly get iput() all around. Here is an exemple&n;     of what I am trying to avoid.&n;     &n;     #&n;     if (a){&n;     ...&n;     if(b){&n;     ...&n;     }&n;     ...&n;     if (c){&n;     // Complex state. Was b true ? &n;     ...&n;     }&n;     ...&n;     }&n;     // Weird state&n;     if (d){&n;     // ...&n;     }&n;     // Was iput finally done ?&n;     return status;&n;     #&n;     &n;     Here is the style I am using. Still sometime I do the&n;     first when things are very simple (or very complicated :-( )&n;     &n;     #&n;     if (a){&n;     if (b){&n;     ...&n;     }else if (c){&n;     // A single state gets here&n;     }&n;     }else if (d){&n;     ...&n;     }&n;     return status;&n;     #&n;     &n;     Again, while this help clarifying the code, I often get a lot&n;     of iput(), unlike the first style, where I can place few &n;     &quot;strategic&quot; iput(). &quot;strategic&quot; also mean, more difficult&n;     to place.&n;     &n;     So here is the style I will be using from now on in this project.&n;     There is always an iput() at the end of a function (which has&n;     to do an iput()). One iput by inode. There is also one iput()&n;     at the places where a successful operation is achieved. This&n;     iput() is often done by a sub-function (often from the msdos&n;     file system). So I get one too many iput() ? At the place&n;     where an iput() is done, the inode is simply nulled, disabling&n;     the last one.&n;     &n;     #&n;     if (a){&n;     if (b){&n;     ...&n;     }else if (c){&n;     msdos_rmdir(dir,...);&n;     dir = NULL;&n;     }&n;     }else if (d){&n;     ...&n;     }&n;     iput (dir);&n;     return status;&n;     #&n;     &n;     Note that the umsdos_lockcreate() and umsdos_unlockcreate() function&n;     pair goes against this practice of &quot;forgetting&quot; the inode as soon&n;     as possible.&n;  */
 r_int
+id|ret
+suffix:semicolon
 id|ret
 op_assign
 id|umsdos_nevercreat
@@ -2684,6 +2758,15 @@ OG
 l_int|1
 )paren
 (brace
+id|Printk
+(paren
+(paren
+l_string|&quot; /mn/ rmdir: FIXME EBUSY: hmmm, i_count is %d &gt; 1&bslash;n&quot;
+comma
+id|sdir-&gt;i_count
+)paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_minus
@@ -2710,6 +2793,22 @@ r_struct
 id|dentry
 op_star
 id|tdentry
+comma
+op_star
+id|tedir
+suffix:semicolon
+id|tedir
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;emd-rmd&quot;
+comma
+l_int|7
+comma
+id|dir
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 id|tdentry
 op_assign
@@ -2720,8 +2819,18 @@ comma
 id|UMSDOS_EMD_NAMELEN
 comma
 l_int|NULL
+comma
+id|tedir
 )paren
 suffix:semicolon
+id|umsdos_real_lookup
+(paren
+id|dir
+comma
+id|tdentry
+)paren
+suffix:semicolon
+multiline_comment|/* fill inode part */
 id|Printk
 (paren
 (paren
@@ -2766,7 +2875,7 @@ op_eq
 l_int|1
 )paren
 (brace
-multiline_comment|/* We have to removed the EMD file */
+multiline_comment|/* We have to remove the EMD file */
 id|ret
 op_assign
 id|msdos_unlink
@@ -2774,6 +2883,15 @@ id|msdos_unlink
 id|sdir
 comma
 id|tdentry
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;UMSDOS_rmdir: unlinking empty EMD ret=%d&quot;
+comma
+id|ret
+)paren
 )paren
 suffix:semicolon
 id|sdir
@@ -2814,6 +2932,9 @@ r_struct
 id|dentry
 op_star
 id|temp
+comma
+op_star
+id|tdir
 suffix:semicolon
 id|dir-&gt;i_count
 op_increment
@@ -2840,6 +2961,19 @@ comma
 l_int|2
 )paren
 suffix:semicolon
+id|tdir
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;dir-rmd&quot;
+comma
+l_int|7
+comma
+id|dir
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|temp
 op_assign
 id|creat_dentry
@@ -2849,6 +2983,67 @@ comma
 id|info.fake.len
 comma
 l_int|NULL
+comma
+id|tdir
+)paren
+suffix:semicolon
+id|umsdos_real_lookup
+(paren
+id|dir
+comma
+id|temp
+)paren
+suffix:semicolon
+multiline_comment|/* fill inode part */
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;  rmdir start dir=%lu, dir-&gt;sb=%p&bslash;n&quot;
+comma
+id|dir-&gt;i_ino
+comma
+id|dir-&gt;i_sb
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: /mn/ debug only */
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;    dentry=%.*s d_count=%d ino=%lu&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|temp-&gt;d_name.len
+comma
+id|temp-&gt;d_name.name
+comma
+id|temp-&gt;d_count
+comma
+id|temp-&gt;d_inode-&gt;i_ino
+)paren
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;    d_parent=%.*s d_count=%d ino=%lu&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|temp-&gt;d_parent-&gt;d_name.len
+comma
+id|temp-&gt;d_parent-&gt;d_name.name
+comma
+id|temp-&gt;d_parent-&gt;d_count
+comma
+id|temp-&gt;d_parent-&gt;d_inode-&gt;i_ino
+)paren
 )paren
 suffix:semicolon
 id|ret
@@ -2857,6 +3052,77 @@ id|msdos_rmdir
 (paren
 id|dir
 comma
+id|temp
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;  rmdir passed %d&bslash;n&quot;
+comma
+id|ret
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: /mn/ debug only */
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;  rmdir end dir=%lu, dir-&gt;sb=%p&bslash;n&quot;
+comma
+id|dir-&gt;i_ino
+comma
+id|dir-&gt;i_sb
+)paren
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;    dentry=%.*s d_count=%d ino=%p&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|temp-&gt;d_name.len
+comma
+id|temp-&gt;d_name.name
+comma
+id|temp-&gt;d_count
+comma
+id|temp-&gt;d_inode
+)paren
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;    d_parent=%.*s d_count=%d ino=%lu&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|temp-&gt;d_parent-&gt;d_name.len
+comma
+id|temp-&gt;d_parent-&gt;d_name.name
+comma
+id|temp-&gt;d_parent-&gt;d_count
+comma
+id|temp-&gt;d_parent-&gt;d_inode-&gt;i_ino
+)paren
+)paren
+suffix:semicolon
+id|kill_dentry
+(paren
+id|tdir
+)paren
+suffix:semicolon
+id|kill_dentry
+(paren
 id|temp
 )paren
 suffix:semicolon
@@ -2878,6 +3144,11 @@ op_amp
 id|info
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|d_delete
+(paren
+id|dentry
 )paren
 suffix:semicolon
 )brace
@@ -2919,12 +3190,7 @@ id|dir
 suffix:semicolon
 )brace
 )brace
-id|dput
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
+multiline_comment|/*  dput(dentry); FIXME /mn/ */
 id|Printk
 (paren
 (paren
@@ -3259,6 +3525,9 @@ r_struct
 id|dentry
 op_star
 id|temp
+comma
+op_star
+id|tdir
 suffix:semicolon
 id|Printk
 (paren
@@ -3274,6 +3543,21 @@ suffix:semicolon
 id|dir-&gt;i_count
 op_increment
 suffix:semicolon
+multiline_comment|/* FIXME /mn/ is this needed anymore now that msdos_unlink locks dir using d_parent ? */
+id|tdir
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;dir-del&quot;
+comma
+l_int|7
+comma
+id|dir
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME /mn/: do we need iget(dir-&gt;i_ino) or would dir itself suffice ? */
 id|temp
 op_assign
 id|creat_dentry
@@ -3283,8 +3567,18 @@ comma
 id|info.fake.len
 comma
 l_int|NULL
+comma
+id|tdir
 )paren
 suffix:semicolon
+id|umsdos_real_lookup
+(paren
+id|dir
+comma
+id|temp
+)paren
+suffix:semicolon
+multiline_comment|/* fill inode part */
 id|ret
 op_assign
 id|msdos_unlink_umsdos
@@ -3307,6 +3601,21 @@ id|info.entry.mode
 comma
 id|ret
 )paren
+)paren
+suffix:semicolon
+id|d_delete
+(paren
+id|dentry
+)paren
+suffix:semicolon
+id|kill_dentry
+(paren
+id|tdir
+)paren
+suffix:semicolon
+id|kill_dentry
+(paren
+id|temp
 )paren
 suffix:semicolon
 )brace
@@ -3338,12 +3647,7 @@ id|dir
 suffix:semicolon
 )brace
 )brace
-id|dput
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
+multiline_comment|/* dput(dentry); FIXME: shouldn&squot;t this be done in msdos_unlink ? */
 id|Printk
 (paren
 (paren
@@ -3536,16 +3840,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|dput
-(paren
-id|new_dentry
-)paren
-suffix:semicolon
-id|dput
-(paren
-id|old_dentry
-)paren
-suffix:semicolon
+multiline_comment|/*&n;  dput (new_dentry);&n;  dput (old_dentry); FIXME /mn/ */
 r_return
 id|ret
 suffix:semicolon

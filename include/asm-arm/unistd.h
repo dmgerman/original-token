@@ -368,6 +368,10 @@ DECL|macro|__NR_pread
 mdefine_line|#define __NR_pread&t;&t;&t;(__NR_SYSCALL_BASE+180)
 DECL|macro|__NR_pwrite
 mdefine_line|#define __NR_pwrite&t;&t;&t;(__NR_SYSCALL_BASE+181)
+DECL|macro|__NR_xstat
+mdefine_line|#define __NR_xstat&t;&t;&t;(__NR_SYSCALL_BASE+182)
+DECL|macro|__NR_xmknod
+mdefine_line|#define __NR_xmknod&t;&t;&t;(__NR_SYSCALL_BASE+183)
 DECL|macro|__sys2
 mdefine_line|#define __sys2(x) #x
 DECL|macro|__sys1
@@ -402,36 +406,6 @@ c_func
 r_int
 comma
 id|idle
-)paren
-suffix:semicolon
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
-r_int
-comma
-id|fork
-)paren
-suffix:semicolon
-r_static
-r_inline
-id|_syscall2
-c_func
-(paren
-r_int
-comma
-id|clone
-comma
-r_int
-r_int
-comma
-id|flags
-comma
-r_char
-op_star
-comma
-id|esp
 )paren
 suffix:semicolon
 r_static

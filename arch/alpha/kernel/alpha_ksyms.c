@@ -20,23 +20,6 @@ DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
 r_extern
-r_void
-id|bcopy
-(paren
-r_const
-r_char
-op_star
-id|src
-comma
-r_char
-op_star
-id|dst
-comma
-r_int
-id|len
-)paren
-suffix:semicolon
-r_extern
 r_struct
 id|hwrpb_struct
 op_star
@@ -631,8 +614,6 @@ id|__strlen_user
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * The following are special because they&squot;re not called&n; * explicitly (the C compiler or assembler generates them in&n; * response to division operations).  Fortunately, their&n; * interface isn&squot;t gonna change any time soon now, so it&squot;s OK&n; * to leave it out of version control.&n; */
-DECL|macro|bcopy
-macro_line|# undef bcopy
 DECL|macro|memcpy
 macro_line|# undef memcpy
 DECL|macro|memset
@@ -707,13 +688,4 @@ c_func
 id|memset
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_PCI
-DECL|variable|pci_devices
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_devices
-)paren
-suffix:semicolon
-macro_line|#endif
 eof

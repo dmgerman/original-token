@@ -437,7 +437,8 @@ DECL|macro|PG_free_after
 mdefine_line|#define PG_free_after&t;&t; 4
 DECL|macro|PG_decr_after
 mdefine_line|#define PG_decr_after&t;&t; 5
-multiline_comment|/* Unused&t;&t;&t; 6 */
+DECL|macro|PG_swap_unlock_after
+mdefine_line|#define PG_swap_unlock_after&t; 6
 DECL|macro|PG_DMA
 mdefine_line|#define PG_DMA&t;&t;&t; 7
 DECL|macro|PG_Slab
@@ -459,6 +460,8 @@ DECL|macro|PageFreeAfter
 mdefine_line|#define PageFreeAfter(page)&t;(test_bit(PG_free_after, &amp;(page)-&gt;flags))
 DECL|macro|PageDecrAfter
 mdefine_line|#define PageDecrAfter(page)&t;(test_bit(PG_decr_after, &amp;(page)-&gt;flags))
+DECL|macro|PageSwapUnlockAfter
+mdefine_line|#define PageSwapUnlockAfter(page) (test_bit(PG_swap_unlock_after, &amp;(page)-&gt;flags))
 DECL|macro|PageDMA
 mdefine_line|#define PageDMA(page)&t;&t;(test_bit(PG_DMA, &amp;(page)-&gt;flags))
 DECL|macro|PageSlab

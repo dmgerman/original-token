@@ -1,11 +1,10 @@
-multiline_comment|/*&n; * sound/softoss_rs.c&n; *&n; * Software based MIDI synthsesizer driver, the actual mixing loop.&n; * Keep the loop as simple as possible to make it easier to rewrite this &n; * routine in assembly.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * sound/softoss_rs.c&n; *&n; * Software based MIDI synthsesizer driver, the actual mixing loop.&n; * Keep the loop as simple as possible to make it easier to rewrite this &n; * routine in assembly.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SOFTOSS) || defined(MODULE)
 macro_line|#include &quot;softoss.h&quot;
-r_void
 DECL|function|softsynth_resample_loop
+r_void
 id|softsynth_resample_loop
 c_func
 (paren
@@ -87,6 +86,7 @@ suffix:semicolon
 id|voice
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -294,6 +294,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Compute voice */
+)brace
 macro_line|#if 1&t;&t;&t;&t;/* Delay */
 id|left
 op_add_assign
