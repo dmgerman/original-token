@@ -99,92 +99,6 @@ comma
 id|no_387
 )paren
 suffix:semicolon
-DECL|variable|fpu_error
-r_static
-r_char
-id|__initdata
-id|fpu_error
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|__initdata
-r_static
-r_struct
-id|timer_list
-id|copro_timer
-id|__initdata
-op_assign
-(brace
-(brace
-l_int|0
-comma
-l_int|0
-)brace
-comma
-l_int|0
-)brace
-suffix:semicolon
-DECL|function|copro_timeout
-r_static
-r_void
-id|__init
-id|copro_timeout
-c_func
-(paren
-r_int
-r_int
-id|dummy
-)paren
-(brace
-id|fpu_error
-op_assign
-l_int|1
-suffix:semicolon
-id|mod_timer
-c_func
-(paren
-op_amp
-id|copro_timer
-comma
-id|jiffies
-op_plus
-id|HZ
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;387 failed: trying to reset&bslash;n&quot;
-)paren
-suffix:semicolon
-id|send_sig
-c_func
-(paren
-id|SIGFPE
-comma
-id|current
-comma
-l_int|1
-)paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-l_int|0
-comma
-l_int|0xf1
-)paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-l_int|0
-comma
-l_int|0xf0
-)paren
-suffix:semicolon
-)brace
 DECL|variable|x
 r_static
 r_float
@@ -201,46 +115,7 @@ id|y
 op_assign
 l_float|3145727.0
 suffix:semicolon
-macro_line|#ifdef CONFIG_X86_XMM
-DECL|variable|zero
-r_static
-r_float
-id|__initdata
-id|zero
-(braket
-l_int|4
-)braket
-op_assign
-(brace
-l_float|0.0
-comma
-l_float|0.0
-comma
-l_float|0.0
-comma
-l_float|0.0
-)brace
-suffix:semicolon
-DECL|variable|one
-r_static
-r_float
-id|__initdata
-id|one
-(braket
-l_int|4
-)braket
-op_assign
-(brace
-l_float|1.0
-comma
-l_float|1.0
-comma
-l_float|1.0
-comma
-l_float|1.0
-)brace
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/*&n; * This used to check for exceptions.. &n; * However, it turns out that to support that,&n; * the XMM trap handlers basically had to&n; * be buggy. So let&squot;s have a correct XMM trap&n; * handler, and forget about printing out&n; * some status at boot.&n; *&n; * We should really only care about bugs here&n; * anyway. Not features.&n; */
 DECL|function|check_fpu
 r_static
 r_void
@@ -251,10 +126,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|control_word
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -288,247 +159,7 @@ macro_line|#endif
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|mca_pentium_flag
-)paren
-(brace
-multiline_comment|/* The IBM Model 95 machines with pentiums lock up on&n;&t;&t; * fpu test, so we avoid it. All pentiums have inbuilt&n;&t;&t; * FPU and thus should use exception 16. We still do&n;&t;&t; * the FDIV test, although I doubt there where ever any&n;&t;&t; * MCA boxes built with non-FDIV-bug cpus.&n;&t;&t; */
-id|__asm__
-c_func
-(paren
-l_string|&quot;fninit&bslash;n&bslash;t&quot;
-l_string|&quot;fldl %1&bslash;n&bslash;t&quot;
-l_string|&quot;fdivl %2&bslash;n&bslash;t&quot;
-l_string|&quot;fmull %2&bslash;n&bslash;t&quot;
-l_string|&quot;fldl %1&bslash;n&bslash;t&quot;
-l_string|&quot;fsubp %%st,%%st(1)&bslash;n&bslash;t&quot;
-l_string|&quot;fistpl %0&bslash;n&bslash;t&quot;
-l_string|&quot;fwait&bslash;n&bslash;t&quot;
-l_string|&quot;fninit&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-op_star
-op_amp
-id|boot_cpu_data.fdiv_bug
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-op_star
-op_amp
-id|x
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-op_amp
-id|y
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;mca-pentium specified, avoiding FPU coupling test... &quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|boot_cpu_data.fdiv_bug
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;??? No FDIV bug? Lucky you...&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;detected FDIV bug though.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * check if exception 16 works correctly.. This is truly evil&n;&t; * code: it disables the high 8 interrupts to make sure that&n;&t; * the irq13 doesn&squot;t happen. But as this will lead to a lockup&n;&t; * if no exception16 arrives, it depends on the fact that the&n;&t; * high 8 interrupts will be re-enabled by the next timer tick.&n;&t; * So the irq13 will happen eventually, but the exception 16&n;&t; * should get there first..&n;&t; */
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Checking 386/387 coupling... &quot;
-)paren
-suffix:semicolon
-id|init_timer
-c_func
-(paren
-op_amp
-id|copro_timer
-)paren
-suffix:semicolon
-id|copro_timer.function
-op_assign
-id|copro_timeout
-suffix:semicolon
-id|mod_timer
-c_func
-(paren
-op_amp
-id|copro_timer
-comma
-id|jiffies
-op_plus
-id|HZ
-op_div
-l_int|2
-)paren
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;clts ; fninit ; fnstcw %0 ; fwait&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-op_star
-op_amp
-id|control_word
-)paren
-)paren
-suffix:semicolon
-id|control_word
-op_and_assign
-l_int|0xffc0
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;fldcw %0 ; fwait&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-op_star
-op_amp
-id|control_word
-)paren
-)paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-id|inb_p
-c_func
-(paren
-l_int|0x21
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-l_int|2
-)paren
-comma
-l_int|0x21
-)paren
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;fldz ; fld1 ; fdiv %st,%st(1) ; fwait&quot;
-)paren
-suffix:semicolon
-id|del_timer
-c_func
-(paren
-op_amp
-id|copro_timer
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|fpu_error
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ignore_irq13
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;OK, FPU using old IRQ 13 error reporting&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|__asm__
-c_func
-(paren
-l_string|&quot;fninit&bslash;n&bslash;t&quot;
-l_string|&quot;fldl %1&bslash;n&bslash;t&quot;
-l_string|&quot;fdivl %2&bslash;n&bslash;t&quot;
-l_string|&quot;fmull %2&bslash;n&bslash;t&quot;
-l_string|&quot;fldl %1&bslash;n&bslash;t&quot;
-l_string|&quot;fsubp %%st,%%st(1)&bslash;n&bslash;t&quot;
-l_string|&quot;fistpl %0&bslash;n&bslash;t&quot;
-l_string|&quot;fwait&bslash;n&bslash;t&quot;
-l_string|&quot;fninit&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-op_star
-op_amp
-id|boot_cpu_data.fdiv_bug
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-op_star
-op_amp
-id|x
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-op_amp
-id|y
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|boot_cpu_data.fdiv_bug
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;OK, FPU using exception 16 error reporting.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;Hmm, FPU using exception 16 error reporting with FDIV bug.&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* Enable FXSR and company _before_ testing for FP problems. */
 macro_line|#if defined(CONFIG_X86_FXSR) || defined(CONFIG_X86_RUNTIME_FXSR)
 multiline_comment|/*&n;&t; * Verify that the FXSAVE/FXRSTOR data will be 16-byte aligned.&n;&t; */
 r_if
@@ -603,49 +234,6 @@ c_func
 l_string|&quot;done.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Check if exception 19 works okay. */
-id|load_mxcsr
-c_func
-(paren
-l_int|0x0000
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Checking SIMD FPU exceptions... &quot;
-)paren
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movups %0,%%xmm0&bslash;n&bslash;t&quot;
-l_string|&quot;movups %1,%%xmm1&bslash;n&bslash;t&quot;
-l_string|&quot;divps %%xmm0,%%xmm1&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-op_star
-op_amp
-id|zero
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-op_amp
-id|one
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;OK, SIMD FPU using exception 19 error reporting.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|load_mxcsr
 c_func
 (paren
@@ -654,6 +242,53 @@ l_int|0x1f80
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/* Test for the divl bug.. */
+id|__asm__
+c_func
+(paren
+l_string|&quot;fninit&bslash;n&bslash;t&quot;
+l_string|&quot;fldl %1&bslash;n&bslash;t&quot;
+l_string|&quot;fdivl %2&bslash;n&bslash;t&quot;
+l_string|&quot;fmull %2&bslash;n&bslash;t&quot;
+l_string|&quot;fldl %1&bslash;n&bslash;t&quot;
+l_string|&quot;fsubp %%st,%%st(1)&bslash;n&bslash;t&quot;
+l_string|&quot;fistpl %0&bslash;n&bslash;t&quot;
+l_string|&quot;fwait&bslash;n&bslash;t&quot;
+l_string|&quot;fninit&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+op_amp
+id|boot_cpu_data.fdiv_bug
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+op_star
+op_amp
+id|x
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+op_amp
+id|y
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|boot_cpu_data.fdiv_bug
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Hmm, FPU with FDIV bug.&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 DECL|function|check_hlt
 r_static

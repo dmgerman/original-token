@@ -6997,6 +6997,9 @@ id|c
 op_increment
 )paren
 (brace
+r_int
+id|fpu_exception
+suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
@@ -7317,6 +7320,21 @@ id|c-&gt;x86_mask
 OL
 l_int|3
 suffix:semicolon
+multiline_comment|/* We use exception 16 if we have hardware math and we&squot;ve either seen it or the CPU claims it is internal */
+id|fpu_exception
+op_assign
+id|c-&gt;hard_math
+op_logical_and
+(paren
+id|ignore_irq13
+op_or
+(paren
+id|c-&gt;x86_capability
+op_amp
+id|X86_FEATURE_FPU
+)paren
+)paren
+suffix:semicolon
 id|p
 op_add_assign
 id|sprintf
@@ -7377,11 +7395,7 @@ l_string|&quot;yes&quot;
 suffix:colon
 l_string|&quot;no&quot;
 comma
-(paren
-id|c-&gt;hard_math
-op_logical_and
-id|ignore_irq13
-)paren
+id|fpu_exception
 ques
 c_cond
 l_string|&quot;yes&quot;

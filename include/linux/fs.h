@@ -5213,7 +5213,7 @@ r_int
 )paren
 suffix:semicolon
 r_int
-id|block_zero_page
+id|block_truncate_page
 c_func
 (paren
 r_struct
@@ -5222,7 +5222,8 @@ op_star
 comma
 id|loff_t
 comma
-r_int
+id|get_block_t
+op_star
 )paren
 suffix:semicolon
 r_extern

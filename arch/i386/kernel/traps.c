@@ -2437,12 +2437,6 @@ c_func
 id|task
 )paren
 suffix:semicolon
-id|load_mxcsr
-c_func
-(paren
-l_int|0x1f80
-)paren
-suffix:semicolon
 id|task-&gt;thread.trap_no
 op_assign
 l_int|19

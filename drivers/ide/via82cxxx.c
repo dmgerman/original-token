@@ -1788,7 +1788,7 @@ multiline_comment|/* hoping it is less than 4K... */
 )brace
 macro_line|#endif
 DECL|macro|FIT
-mdefine_line|#define FIT(v,min,max) (((v)&gt;(max)?(max):(v))&lt;(min)?(min):(v))
+mdefine_line|#define FIT(v,min,max) ((v)&gt;(max)?(max):((v)&lt;(min)?(min):(v)))
 DECL|macro|ENOUGH
 mdefine_line|#define ENOUGH(v,un) (((v)-1)/(un)+1)
 macro_line|#ifdef DEBUG
