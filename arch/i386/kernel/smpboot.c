@@ -1478,6 +1478,12 @@ id|i
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Wait for idle.&n;&t;&t; */
+id|apic_wait_icr_idle
+c_func
+(paren
+)paren
+suffix:semicolon
 id|apic_write_around
 c_func
 (paren

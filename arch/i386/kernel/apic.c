@@ -429,6 +429,12 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/*&n;&t; * Wait for idle.&n;&t; */
+id|apic_wait_icr_idle
+c_func
+(paren
+)paren
+suffix:semicolon
 id|Dprintk
 c_func
 (paren

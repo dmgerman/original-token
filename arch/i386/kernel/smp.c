@@ -108,6 +108,12 @@ r_int
 r_int
 id|cfg
 suffix:semicolon
+multiline_comment|/*&n;&t; * Wait for idle.&n;&t; */
+id|apic_wait_icr_idle
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * No need to touch the target chip field&n;&t; */
 id|cfg
 op_assign
@@ -224,6 +230,12 @@ id|flags
 )paren
 suffix:semicolon
 id|__cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Wait for idle.&n;&t; */
+id|apic_wait_icr_idle
 c_func
 (paren
 )paren
