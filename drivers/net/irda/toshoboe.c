@@ -10,7 +10,6 @@ id|rcsid
 op_assign
 l_string|&quot;$Id: toshoboe.c,v 1.91 1999/06/29 14:21:06 root Exp $&quot;
 suffix:semicolon
-multiline_comment|/* &n; * $Log: toshoboe.c,v $&n; * Revision 1.9  1999/06/29 14:21:06  root&n; * *** empty log message ***&n; *&n; * Revision 1.8  1999/06/29 14:15:08  root&n; * *** empty log message ***&n; *&n; * Revision 1.7  1999/06/29 13:46:42  root&n; * *** empty log message ***&n; *&n; * Revision 1.6  1999/06/29 12:31:03  root&n; * *** empty log message ***&n; *&n; * Revision 1.5  1999/05/12 12:24:39  root&n; * *** empty log message ***&n; *&n; * Revision 1.4  1999/05/12 11:55:08  root&n; * *** empty log message ***&n; *&n; * Revision 1.3  1999/05/09 01:33:12  root&n; * *** empty log message ***&n; *&n; * Revision 1.2  1999/05/09 01:30:38  root&n; * *** empty log message ***&n; *&n; * Revision 1.1  1999/05/09 01:25:04  root&n; * Initial revision&n; * &n; */
 multiline_comment|/* Define this to have only one frame in the XMIT or RECV queue */
 multiline_comment|/* Toshiba&squot;s drivers do this, but it disables back to back tansfers */
 multiline_comment|/* I think that the chip may have some problems certainly, I have */
@@ -2093,9 +2092,9 @@ suffix:semicolon
 )brace
 id|release_region
 (paren
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 comma
-id|self-&gt;io.io_ext
+id|self-&gt;io.sir_ext
 )paren
 suffix:semicolon
 r_for
@@ -2351,7 +2350,7 @@ l_int|0
 dot
 id|start
 suffix:semicolon
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 op_assign
 id|self-&gt;base
 suffix:semicolon
@@ -2359,7 +2358,7 @@ id|self-&gt;io.irq
 op_assign
 id|pci_dev-&gt;irq
 suffix:semicolon
-id|self-&gt;io.io_ext
+id|self-&gt;io.sir_ext
 op_assign
 id|CHIP_IO_EXTENT
 suffix:semicolon
@@ -2372,9 +2371,9 @@ id|i
 op_assign
 id|check_region
 (paren
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 comma
-id|self-&gt;io.io_ext
+id|self-&gt;io.sir_ext
 )paren
 suffix:semicolon
 r_if
@@ -2392,7 +2391,7 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), can&squot;t get iobase of 0x%03x&bslash;n&quot;
 comma
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 )paren
 suffix:semicolon
 id|dev_self
@@ -2801,9 +2800,9 @@ suffix:semicolon
 )brace
 id|request_region
 (paren
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 comma
-id|self-&gt;io.io_ext
+id|self-&gt;io.sir_ext
 comma
 id|driver_name
 )paren

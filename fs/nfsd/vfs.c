@@ -29,17 +29,9 @@ DECL|macro|NFSDDBG_FACILITY
 mdefine_line|#define NFSDDBG_FACILITY&t;&t;NFSDDBG_FILEOP
 DECL|macro|NFSD_PARANOIA
 mdefine_line|#define NFSD_PARANOIA
-multiline_comment|/* Open mode for nfsd_open */
-DECL|macro|OPEN_READ
-mdefine_line|#define OPEN_READ&t;0
-DECL|macro|OPEN_WRITE
-mdefine_line|#define OPEN_WRITE&t;1
-multiline_comment|/* Hack until we have a macro check for mandatory locks. */
-macro_line|#ifndef IS_ISMNDLK
-multiline_comment|/* We must ignore files (but only file) which might have mandatory&n; * locks on them because there is no way to know if the accesser has&n; * the lock.&n; */
+multiline_comment|/* We must ignore files (but only files) which might have mandatory&n; * locks on them because there is no way to know if the accesser has&n; * the lock.&n; */
 DECL|macro|IS_ISMNDLK
-mdefine_line|#define IS_ISMNDLK(i)&t;(((i)-&gt;i_mode &amp; (S_ISGID|S_IXGRP|S_IFMT)) &bslash;&n;&t;&t;&t; == (S_ISGID|S_IFREG))
-macro_line|#endif
+mdefine_line|#define IS_ISMNDLK(i)&t;(S_ISREG((i)-&gt;i_mode) &amp;&amp; MANDATORY_LOCK(i))
 multiline_comment|/* Check for dir entries &squot;.&squot; and &squot;..&squot; */
 DECL|macro|isdotent
 mdefine_line|#define isdotent(n, l)&t;(l &lt; 3 &amp;&amp; n[0] == &squot;.&squot; &amp;&amp; (l == 1 || n[1] == &squot;.&squot;))
@@ -1356,7 +1348,7 @@ id|error
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Open an existing file or directory.&n; * The wflag argument indicates write access.&n; * N.B. After this call fhp needs an fh_put&n; */
+multiline_comment|/*&n; * Open an existing file or directory.&n; * The access argument indicates the type of open (read/write/lock)&n; * N.B. After this call fhp needs an fh_put&n; */
 r_int
 DECL|function|nfsd_open
 id|nfsd_open
@@ -1376,7 +1368,7 @@ r_int
 id|type
 comma
 r_int
-id|wflag
+id|access
 comma
 r_struct
 id|file
@@ -1395,18 +1387,7 @@ op_star
 id|inode
 suffix:semicolon
 r_int
-id|access
-comma
 id|err
-suffix:semicolon
-id|access
-op_assign
-id|wflag
-ques
-c_cond
-id|MAY_WRITE
-suffix:colon
-id|MAY_READ
 suffix:semicolon
 id|err
 op_assign
@@ -1476,7 +1457,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|wflag
+(paren
+id|access
+op_amp
+id|MAY_WRITE
+)paren
 op_logical_and
 (paren
 id|err
@@ -1520,24 +1505,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|filp-&gt;f_flags
-op_assign
-id|wflag
-ques
-c_cond
-id|O_WRONLY
-suffix:colon
-id|O_RDONLY
-suffix:semicolon
-id|filp-&gt;f_mode
-op_assign
-id|wflag
-ques
-c_cond
-id|FMODE_WRITE
-suffix:colon
-id|FMODE_READ
-suffix:semicolon
 id|filp-&gt;f_dentry
 op_assign
 id|dentry
@@ -1545,14 +1512,37 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|wflag
+id|access
+op_amp
+id|MAY_WRITE
 )paren
+(brace
+id|filp-&gt;f_flags
+op_assign
+id|O_WRONLY
+suffix:semicolon
+id|filp-&gt;f_mode
+op_assign
+id|FMODE_WRITE
+suffix:semicolon
 id|DQUOT_INIT
 c_func
 (paren
 id|inode
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|filp-&gt;f_flags
+op_assign
+id|O_RDONLY
+suffix:semicolon
+id|filp-&gt;f_mode
+op_assign
+id|FMODE_READ
+suffix:semicolon
+)brace
 id|err
 op_assign
 l_int|0
@@ -1586,7 +1576,9 @@ id|err
 r_if
 c_cond
 (paren
-id|wflag
+id|access
+op_amp
+id|MAY_WRITE
 )paren
 id|put_write_access
 c_func
@@ -2021,7 +2013,7 @@ id|fhp
 comma
 id|S_IFREG
 comma
-id|OPEN_READ
+id|MAY_READ
 comma
 op_amp
 id|file
@@ -2304,7 +2296,7 @@ id|fhp
 comma
 id|S_IFREG
 comma
-id|OPEN_WRITE
+id|MAY_WRITE
 comma
 op_amp
 id|file
@@ -2810,7 +2802,7 @@ id|fhp
 comma
 id|S_IFREG
 comma
-id|OPEN_WRITE
+id|MAY_WRITE
 comma
 op_amp
 id|file
@@ -4506,6 +4498,16 @@ id|iap-&gt;ia_valid
 op_or_assign
 id|ATTR_CTIME
 suffix:semicolon
+id|iap-&gt;ia_mode
+op_assign
+(paren
+id|iap-&gt;ia_mode
+op_amp
+id|S_IALLUGO
+)paren
+op_or
+id|S_IFLNK
+suffix:semicolon
 id|err
 op_assign
 id|notify_change
@@ -5952,7 +5954,7 @@ id|fhp
 comma
 id|S_IFDIR
 comma
-id|OPEN_READ
+id|MAY_READ
 comma
 op_amp
 id|file
@@ -6412,7 +6414,7 @@ macro_line|#if 0
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: permission 0x%x%s%s%s%s%s mode 0%o%s%s%s&bslash;n&quot;
+l_string|&quot;nfsd: permission 0x%x%s%s%s%s%s%s mode 0%o%s%s%s&bslash;n&quot;
 comma
 id|acc
 comma
@@ -6468,6 +6470,17 @@ id|MAY_TRUNC
 ques
 c_cond
 l_string|&quot; trunc&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+(paren
+id|acc
+op_amp
+id|MAY_LOCK
+)paren
+ques
+c_cond
+l_string|&quot; lock&quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
@@ -6586,6 +6599,31 @@ id|inode
 r_return
 id|nfserr_perm
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|acc
+op_amp
+id|MAY_LOCK
+)paren
+(brace
+multiline_comment|/* If we cannot rely on authentication in NLM requests,&n;&t;&t; * just allow locks, others require read permission&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|exp-&gt;ex_flags
+op_amp
+id|NFSEXP_NONLMAUTH
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_else
+id|acc
+op_assign
+id|MAY_READ
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * The file owner always gets access permission. This is to make&n;&t; * file access work even when the client has done a fchmod(fd, 0).&n;&t; *&n;&t; * However, `cp foo bar&squot; should fail nevertheless when bar is&n;&t; * readonly. A sensible way to do this might be to reject all&n;&t; * attempts to truncate a read-only file, because a creat() call&n;&t; * always implies file truncation.&n;&t; */
 r_if
 c_cond

@@ -3760,6 +3760,19 @@ id|idx
 op_add_assign
 id|shmd-&gt;vm_pgoff
 suffix:semicolon
+multiline_comment|/*&n;&t; * A shared mapping past the last page of the file is an error&n;&t; * and results in a SIGBUS, so logically a shared mapping past &n;&t; * the end of a shared memory segment should result in SIGBUS&n;&t; * as well.&n;&t; */
+r_if
+c_cond
+(paren
+id|idx
+op_ge
+id|shp-&gt;shm_npages
+)paren
+(brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|down
 c_func
 (paren

@@ -4839,8 +4839,6 @@ op_complement
 (paren
 id|MSG_DONTWAIT
 op_or
-id|MSG_OOB
-op_or
 id|MSG_EOR
 )paren
 )paren

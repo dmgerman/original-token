@@ -1932,6 +1932,14 @@ op_assign
 id|wait_table
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|nfds
+op_ne
+l_int|0
+)paren
+(brace
 id|fds
 op_assign
 (paren
@@ -1975,6 +1983,7 @@ l_int|NULL
 r_goto
 id|out
 suffix:semicolon
+)brace
 id|nchunks
 op_assign
 l_int|0
@@ -2336,6 +2345,13 @@ id|i
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|nfds
+op_ne
+l_int|0
+)paren
 id|kfree
 c_func
 (paren

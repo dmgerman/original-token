@@ -3549,7 +3549,7 @@ id|transfer_buffer
 id|err
 c_func
 (paren
-l_string|&quot;whiteheat_writememory: kmalloc(%d) failed.&bslash;n&quot;
+l_string|&quot;whiteheat_writememory: kmalloc(%d) failed.&quot;
 comma
 id|length
 )paren
@@ -3917,7 +3917,7 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;whiteheat_writememory failed for second firmware step (%d %04X %p %d)&bslash;n&quot;
+l_string|&quot;whiteheat_writememory failed for second firmware step (%d %04X %p %d)&quot;
 comma
 id|response
 comma
@@ -4123,7 +4123,7 @@ id|transfer_buffer
 id|err
 c_func
 (paren
-l_string|&quot;visor_serial_close: kmalloc(%d) failed.&bslash;n&quot;
+l_string|&quot;visor_serial_close: kmalloc(%d) failed.&quot;
 comma
 l_int|0x12
 )paren
@@ -4343,7 +4343,7 @@ id|transfer_buffer
 id|err
 c_func
 (paren
-l_string|&quot;visor_startup: kmalloc(%d) failed.&bslash;n&quot;
+l_string|&quot;visor_startup: kmalloc(%d) failed.&quot;
 comma
 l_int|256
 )paren

@@ -853,10 +853,6 @@ r_int
 id|ep_cnt
 suffix:semicolon
 r_char
-op_star
-id|ident
-suffix:semicolon
-r_char
 id|valid_device
 op_assign
 l_int|0

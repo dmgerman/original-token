@@ -515,7 +515,7 @@ op_assign
 op_star
 id|maxproto
 op_assign
-id|AUTOFS_PROTO_VERSION
+id|AUTOFS_MAX_PROTO_VERSION
 suffix:semicolon
 op_star
 id|pipefd
@@ -1236,7 +1236,7 @@ c_cond
 (paren
 id|maxproto
 template_param
-id|AUTOFS_PROTO_VERSION
+id|AUTOFS_MAX_PROTO_VERSION
 )paren
 (brace
 id|printk
@@ -1251,7 +1251,7 @@ id|maxproto
 comma
 id|AUTOFS_MIN_PROTO_VERSION
 comma
-id|AUTOFS_PROTO_VERSION
+id|AUTOFS_MAX_PROTO_VERSION
 )paren
 suffix:semicolon
 r_goto
@@ -1262,10 +1262,10 @@ id|sbi-&gt;version
 op_assign
 id|maxproto
 OG
-id|AUTOFS_PROTO_VERSION
+id|AUTOFS_MAX_PROTO_VERSION
 ques
 c_cond
-id|AUTOFS_PROTO_VERSION
+id|AUTOFS_MAX_PROTO_VERSION
 suffix:colon
 id|maxproto
 suffix:semicolon

@@ -2,6 +2,7 @@ macro_line|#ifndef __TRID4DWAVE_H
 DECL|macro|__TRID4DWAVE_H
 mdefine_line|#define __TRID4DWAVE_H
 multiline_comment|/*&n; *  audio@tridentmicro.com&n; *  Fri Feb 19 15:55:28 MST 1999&n; *  Definitions for Trident 4DWave DX/NX chips&n; *&n; *&n; *   This program is free software; you can redistribute it and/or modify&n; *   it under the terms of the GNU General Public License as published by&n; *   the Free Software Foundation; either version 2 of the License, or&n; *   (at your option) any later version.&n; *&n; *   This program is distributed in the hope that it will be useful,&n; *   but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *   GNU General Public License for more details.&n; *&n; *   You should have received a copy of the GNU General Public License&n; *   along with this program; if not, write to the Free Software&n; *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/* PCI vendor and device ID */
 macro_line|#ifndef PCI_VENDOR_ID_TRIDENT
 DECL|macro|PCI_VENDOR_ID_TRIDENT
 mdefine_line|#define PCI_VENDOR_ID_TRIDENT&t;&t;0x1023
@@ -22,177 +23,413 @@ macro_line|#ifndef PCI_DEVICE_ID_SI_7018
 DECL|macro|PCI_DEVICE_ID_SI_7018
 mdefine_line|#define PCI_DEVICE_ID_SI_7018&t;&t;0x7018
 macro_line|#endif
-multiline_comment|/*&n; * Direct registers&n; */
 macro_line|#ifndef FALSE
 DECL|macro|FALSE
-mdefine_line|#define FALSE 0
+mdefine_line|#define FALSE &t;&t;0
 DECL|macro|TRUE
-mdefine_line|#define TRUE  1
+mdefine_line|#define TRUE  &t;&t;1
 macro_line|#endif
-DECL|macro|TRID_REG
-mdefine_line|#define TRID_REG( trident, x ) ( (trident) -&gt; iobase + (x) )
 DECL|macro|CHANNEL_REGS
 mdefine_line|#define CHANNEL_REGS&t;5
 DECL|macro|CHANNEL_START
 mdefine_line|#define CHANNEL_START&t;0xe0   
 singleline_comment|// The first bytes of the contiguous register space.
 DECL|macro|BANK_A
-mdefine_line|#define BANK_A 0
+mdefine_line|#define BANK_A &t;&t;0
 DECL|macro|BANK_B
-mdefine_line|#define BANK_B 1
-DECL|macro|NUM_BANKS
-mdefine_line|#define NUM_BANKS 2
-DECL|macro|ID_4DWAVE_DX
-mdefine_line|#define ID_4DWAVE_DX&t;0x2000
-DECL|macro|ID_4DWAVE_NX
-mdefine_line|#define ID_4DWAVE_NX&t;0x2001
-DECL|macro|ID_SI_7018
-mdefine_line|#define ID_SI_7018&t;0x7018
-singleline_comment|// Register definitions
-singleline_comment|// Global registers
-singleline_comment|// T2 legacy dma control registers.
-DECL|macro|LEGACY_DMAR0
-mdefine_line|#define LEGACY_DMAR0&t;&t;0x00  
-singleline_comment|// ADR0
-DECL|macro|LEGACY_DMAR4
-mdefine_line|#define LEGACY_DMAR4&t;&t;0x04  
-singleline_comment|// CNT0
-DECL|macro|LEGACY_DMAR11
-mdefine_line|#define LEGACY_DMAR11&t;&t;0x0b  
-singleline_comment|// MOD 
-DECL|macro|LEGACY_DMAR15
-mdefine_line|#define LEGACY_DMAR15&t;&t;0x0f  
-singleline_comment|// MMR 
-DECL|macro|T4D_START_A
-mdefine_line|#define T4D_START_A&t;&t;0x80
-DECL|macro|T4D_STOP_A
-mdefine_line|#define T4D_STOP_A&t;&t;0x84
-DECL|macro|T4D_DLY_A
-mdefine_line|#define T4D_DLY_A&t;&t;&t;0x88
-DECL|macro|T4D_SIGN_CSO_A
-mdefine_line|#define T4D_SIGN_CSO_A&t;&t;0x8c
-DECL|macro|T4D_CSPF_A
-mdefine_line|#define T4D_CSPF_A&t;&t;0x90
-DECL|macro|T4D_CEBC_A
-mdefine_line|#define T4D_CEBC_A&t;&t;0x94
-DECL|macro|T4D_AINT_A
-mdefine_line|#define T4D_AINT_A&t;&t;0x98
-DECL|macro|T4D_EINT_A
-mdefine_line|#define T4D_EINT_A&t;&t;0x9c
-DECL|macro|T4D_LFO_GC_CIR
-mdefine_line|#define T4D_LFO_GC_CIR&t;&t;0xa0
-DECL|macro|T4D_AINTEN_A
-mdefine_line|#define T4D_AINTEN_A&t;&t;0xa4
-DECL|macro|T4D_MUSICVOL_WAVEVOL
-mdefine_line|#define T4D_MUSICVOL_WAVEVOL&t;0xa8
-DECL|macro|T4D_SBDELTA_DELTA_R
-mdefine_line|#define T4D_SBDELTA_DELTA_R&t;0xac
-DECL|macro|T4D_MISCINT
-mdefine_line|#define T4D_MISCINT&t;&t;0xb0
-DECL|macro|T4D_START_B
-mdefine_line|#define T4D_START_B&t;&t;0xb4
-DECL|macro|T4D_STOP_B
-mdefine_line|#define T4D_STOP_B&t;&t;0xb8
-DECL|macro|T4D_CSPF_B
-mdefine_line|#define T4D_CSPF_B&t;&t;0xbc
-DECL|macro|T4D_SBBL_SBCL
-mdefine_line|#define T4D_SBBL_SBCL&t;&t;0xc0
-DECL|macro|T4D_SBCTRL_SBE2R_SBDD
-mdefine_line|#define T4D_SBCTRL_SBE2R_SBDD&t;0xc4
-DECL|macro|T4D_STIMER
-mdefine_line|#define T4D_STIMER&t;&t;0xc8
-DECL|macro|T4D_LFO_B_I2S_DELTA
-mdefine_line|#define T4D_LFO_B_I2S_DELTA&t;0xcc
-DECL|macro|T4D_AINT_B
-mdefine_line|#define T4D_AINT_B&t;&t;0xd8
-DECL|macro|T4D_AINTEN_B
-mdefine_line|#define T4D_AINTEN_B&t;&t;0xdc
-singleline_comment|// MPU-401 UART
-DECL|macro|T4D_MPU401_BASE
-mdefine_line|#define T4D_MPU401_BASE&t;&t;0x20
-DECL|macro|T4D_MPUR0
-mdefine_line|#define T4D_MPUR0&t;&t;&t;0x20
-DECL|macro|T4D_MPUR1
-mdefine_line|#define T4D_MPUR1&t;&t;&t;0x21
-DECL|macro|T4D_MPUR2
-mdefine_line|#define T4D_MPUR2&t;&t;&t;0x22
-DECL|macro|T4D_MPUR3
-mdefine_line|#define T4D_MPUR3&t;&t;&t;0x23
-singleline_comment|// S/PDIF Registers
-DECL|macro|NX_SPCTRL_SPCSO
-mdefine_line|#define NX_SPCTRL_SPCSO&t;&t;0x24
-DECL|macro|NX_SPLBA
-mdefine_line|#define NX_SPLBA&t;&t;&t;0x28
-DECL|macro|NX_SPESO
-mdefine_line|#define NX_SPESO&t;&t;&t;0x2c
-DECL|macro|NX_SPCSTATUS
-mdefine_line|#define NX_SPCSTATUS&t;&t;0x64
-singleline_comment|// Channel Registers
-DECL|macro|CH_DX_CSO_ALPHA_FMS
-mdefine_line|#define CH_DX_CSO_ALPHA_FMS&t;0xe0
-DECL|macro|CH_DX_ESO_DELTA
-mdefine_line|#define CH_DX_ESO_DELTA&t;&t;0xe8
-DECL|macro|CH_DX_FMC_RVOL_CVOL
-mdefine_line|#define CH_DX_FMC_RVOL_CVOL&t;0xec
-DECL|macro|CH_NX_DELTA_CSO
-mdefine_line|#define CH_NX_DELTA_CSO&t;&t;0xe0
-DECL|macro|CH_NX_DELTA_ESO
-mdefine_line|#define CH_NX_DELTA_ESO&t;&t;0xe8
-DECL|macro|CH_NX_ALPHA_FMS_FMC_RVOL_CVOL
-mdefine_line|#define CH_NX_ALPHA_FMS_FMC_RVOL_CVOL 0xec
-DECL|macro|CH_LBA
-mdefine_line|#define CH_LBA&t;&t;&t;0xe4
-DECL|macro|CH_GVSEL_PAN_VOL_CTRL_EC
-mdefine_line|#define CH_GVSEL_PAN_VOL_CTRL_EC&t;0xf0
-singleline_comment|// AC-97 Registers
-DECL|macro|DX_ACR0_AC97_W
-mdefine_line|#define DX_ACR0_AC97_W&t;&t;0x40
-DECL|macro|DX_ACR1_AC97_R
-mdefine_line|#define DX_ACR1_AC97_R&t;&t;0x44
-DECL|macro|DX_ACR2_AC97_COM_STAT
-mdefine_line|#define DX_ACR2_AC97_COM_STAT&t;0x48
-DECL|macro|NX_ACR0_AC97_COM_STAT
-mdefine_line|#define NX_ACR0_AC97_COM_STAT&t;0x40
-DECL|macro|NX_ACR1_AC97_W
-mdefine_line|#define NX_ACR1_AC97_W&t;&t;0x44
-DECL|macro|NX_ACR2_AC97_R_PRIMARY
-mdefine_line|#define NX_ACR2_AC97_R_PRIMARY&t;0x48
-DECL|macro|NX_ACR3_AC97_R_SECONDARY
-mdefine_line|#define NX_ACR3_AC97_R_SECONDARY&t;0x4c
-DECL|macro|SI_AC97_WRITE
-mdefine_line|#define SI_AC97_WRITE&t;&t;0x40
-DECL|macro|SI_AC97_READ
-mdefine_line|#define SI_AC97_READ&t;&t;0x44
-DECL|macro|SI_SERIAL_INTF_CTRL
-mdefine_line|#define SI_SERIAL_INTF_CTRL&t;0x48
-DECL|macro|SI_AC97_GPIO
-mdefine_line|#define SI_AC97_GPIO&t;&t;0x4c
-DECL|macro|AC97_SIGMATEL_DAC2INVERT
-mdefine_line|#define AC97_SIGMATEL_DAC2INVERT&t;0x6E
-DECL|macro|AC97_SIGMATEL_BIAS1
-mdefine_line|#define AC97_SIGMATEL_BIAS1&t;0x70
-DECL|macro|AC97_SIGMATEL_BIAS2
-mdefine_line|#define AC97_SIGMATEL_BIAS2&t;0x72
-DECL|macro|AC97_SIGMATEL_CIC1
-mdefine_line|#define AC97_SIGMATEL_CIC1&t;0x76
-DECL|macro|AC97_SIGMATEL_CIC2
-mdefine_line|#define AC97_SIGMATEL_CIC2&t;0x78
-DECL|macro|SI_AC97_BUSY_WRITE
-mdefine_line|#define SI_AC97_BUSY_WRITE 0x8000
-DECL|macro|SI_AC97_AUDIO_BUSY
-mdefine_line|#define SI_AC97_AUDIO_BUSY 0x4000
-DECL|macro|DX_AC97_BUSY_WRITE
-mdefine_line|#define DX_AC97_BUSY_WRITE 0x8000
-DECL|macro|NX_AC97_BUSY_WRITE
-mdefine_line|#define NX_AC97_BUSY_WRITE 0x0800
-DECL|macro|SI_AC97_BUSY_READ
-mdefine_line|#define SI_AC97_BUSY_READ  0x8000
-DECL|macro|DX_AC97_BUSY_READ
-mdefine_line|#define DX_AC97_BUSY_READ  0x8000
-DECL|macro|NX_AC97_BUSY_READ
-mdefine_line|#define NX_AC97_BUSY_READ  0x0800
+mdefine_line|#define BANK_B &t;&t;1
+DECL|macro|NR_BANKS
+mdefine_line|#define NR_BANKS&t;&t;2
+DECL|macro|TRIDENT_FMT_STEREO
+mdefine_line|#define TRIDENT_FMT_STEREO     0x01
+DECL|macro|TRIDENT_FMT_16BIT
+mdefine_line|#define TRIDENT_FMT_16BIT      0x02
+DECL|macro|TRIDENT_FMT_MASK
+mdefine_line|#define TRIDENT_FMT_MASK       0x03
+DECL|macro|DMA_ENABLE
+mdefine_line|#define DMA_ENABLE&t;0x01
+DECL|macro|DMA_RUNNING
+mdefine_line|#define DMA_RUNNING&t;0x02
+multiline_comment|/* Register Addresses */
+multiline_comment|/* operational registers common to DX, NX, 7018 */
+DECL|enum|trident_op_registers
+r_enum
+id|trident_op_registers
+(brace
+DECL|enumerator|T4D_START_A
+DECL|enumerator|T4D_STOP_A
+id|T4D_START_A
+op_assign
+l_int|0x80
+comma
+id|T4D_STOP_A
+op_assign
+l_int|0x84
+comma
+DECL|enumerator|T4D_DLY_A
+DECL|enumerator|T4D_SIGN_CSO_A
+id|T4D_DLY_A
+op_assign
+l_int|0x88
+comma
+id|T4D_SIGN_CSO_A
+op_assign
+l_int|0x8c
+comma
+DECL|enumerator|T4D_CSPF_A
+DECL|enumerator|T4D_CEBC_A
+id|T4D_CSPF_A
+op_assign
+l_int|0x90
+comma
+id|T4D_CEBC_A
+op_assign
+l_int|0x94
+comma
+DECL|enumerator|T4D_AINT_A
+DECL|enumerator|T4D_EINT_A
+id|T4D_AINT_A
+op_assign
+l_int|0x98
+comma
+id|T4D_EINT_A
+op_assign
+l_int|0x9c
+comma
+DECL|enumerator|T4D_LFO_GC_CIR
+DECL|enumerator|T4D_AINTEN_A
+id|T4D_LFO_GC_CIR
+op_assign
+l_int|0xa0
+comma
+id|T4D_AINTEN_A
+op_assign
+l_int|0xa4
+comma
+DECL|enumerator|T4D_MUSICVOL_WAVEVOL
+DECL|enumerator|T4D_SBDELTA_DELTA_R
+id|T4D_MUSICVOL_WAVEVOL
+op_assign
+l_int|0xa8
+comma
+id|T4D_SBDELTA_DELTA_R
+op_assign
+l_int|0xac
+comma
+DECL|enumerator|T4D_MISCINT
+DECL|enumerator|T4D_START_B
+id|T4D_MISCINT
+op_assign
+l_int|0xb0
+comma
+id|T4D_START_B
+op_assign
+l_int|0xb4
+comma
+DECL|enumerator|T4D_STOP_B
+DECL|enumerator|T4D_CSPF_B
+id|T4D_STOP_B
+op_assign
+l_int|0xb8
+comma
+id|T4D_CSPF_B
+op_assign
+l_int|0xbc
+comma
+DECL|enumerator|T4D_SBBL_SBCL
+DECL|enumerator|T4D_SBCTRL_SBE2R_SBDD
+id|T4D_SBBL_SBCL
+op_assign
+l_int|0xc0
+comma
+id|T4D_SBCTRL_SBE2R_SBDD
+op_assign
+l_int|0xc4
+comma
+DECL|enumerator|T4D_STIMER
+DECL|enumerator|T4D_LFO_B_I2S_DELTA
+id|T4D_STIMER
+op_assign
+l_int|0xc8
+comma
+id|T4D_LFO_B_I2S_DELTA
+op_assign
+l_int|0xcc
+comma
+DECL|enumerator|T4D_AINT_B
+DECL|enumerator|T4D_AINTEN_B
+id|T4D_AINT_B
+op_assign
+l_int|0xd8
+comma
+id|T4D_AINTEN_B
+op_assign
+l_int|0xdc
+)brace
+suffix:semicolon
+multiline_comment|/* S/PDIF Operational Registers for 4D-NX */
+DECL|enum|nx_spdif_registers
+r_enum
+id|nx_spdif_registers
+(brace
+DECL|enumerator|NX_SPCTRL_SPCSO
+DECL|enumerator|NX_SPLBA
+id|NX_SPCTRL_SPCSO
+op_assign
+l_int|0x24
+comma
+id|NX_SPLBA
+op_assign
+l_int|0x28
+comma
+DECL|enumerator|NX_SPESO
+DECL|enumerator|NX_SPCSTATUS
+id|NX_SPESO
+op_assign
+l_int|0x2c
+comma
+id|NX_SPCSTATUS
+op_assign
+l_int|0x64
+)brace
+suffix:semicolon
+multiline_comment|/* OP registers to access each hardware channel */
+DECL|enum|channel_registers
+r_enum
+id|channel_registers
+(brace
+DECL|enumerator|CH_DX_CSO_ALPHA_FMS
+DECL|enumerator|CH_DX_ESO_DELTA
+id|CH_DX_CSO_ALPHA_FMS
+op_assign
+l_int|0xe0
+comma
+id|CH_DX_ESO_DELTA
+op_assign
+l_int|0xe8
+comma
+DECL|enumerator|CH_DX_FMC_RVOL_CVOL
+id|CH_DX_FMC_RVOL_CVOL
+op_assign
+l_int|0xec
+comma
+DECL|enumerator|CH_NX_DELTA_CSO
+DECL|enumerator|CH_NX_DELTA_ESO
+id|CH_NX_DELTA_CSO
+op_assign
+l_int|0xe0
+comma
+id|CH_NX_DELTA_ESO
+op_assign
+l_int|0xe8
+comma
+DECL|enumerator|CH_NX_ALPHA_FMS_FMC_RVOL_CVOL
+id|CH_NX_ALPHA_FMS_FMC_RVOL_CVOL
+op_assign
+l_int|0xec
+comma
+DECL|enumerator|CH_LBA
+id|CH_LBA
+op_assign
+l_int|0xe4
+comma
+DECL|enumerator|CH_GVSEL_PAN_VOL_CTRL_EC
+id|CH_GVSEL_PAN_VOL_CTRL_EC
+op_assign
+l_int|0xf0
+)brace
+suffix:semicolon
+multiline_comment|/* registers to read/write/control AC97 codec */
+DECL|enum|dx_ac97_registers
+r_enum
+id|dx_ac97_registers
+(brace
+DECL|enumerator|DX_ACR0_AC97_W
+DECL|enumerator|DX_ACR1_AC97_R
+id|DX_ACR0_AC97_W
+op_assign
+l_int|0x40
+comma
+id|DX_ACR1_AC97_R
+op_assign
+l_int|0x44
+comma
+DECL|enumerator|DX_ACR2_AC97_COM_STAT
+id|DX_ACR2_AC97_COM_STAT
+op_assign
+l_int|0x48
+)brace
+suffix:semicolon
+DECL|enum|nx_ac97_registers
+r_enum
+id|nx_ac97_registers
+(brace
+DECL|enumerator|NX_ACR0_AC97_COM_STAT
+DECL|enumerator|NX_ACR1_AC97_W
+id|NX_ACR0_AC97_COM_STAT
+op_assign
+l_int|0x40
+comma
+id|NX_ACR1_AC97_W
+op_assign
+l_int|0x44
+comma
+DECL|enumerator|NX_ACR2_AC97_R_PRIMARY
+DECL|enumerator|NX_ACR3_AC97_R_SECONDARY
+id|NX_ACR2_AC97_R_PRIMARY
+op_assign
+l_int|0x48
+comma
+id|NX_ACR3_AC97_R_SECONDARY
+op_assign
+l_int|0x4c
+)brace
+suffix:semicolon
+DECL|enum|si_ac97_registers
+r_enum
+id|si_ac97_registers
+(brace
+DECL|enumerator|SI_AC97_WRITE
+DECL|enumerator|SI_AC97_READ
+id|SI_AC97_WRITE
+op_assign
+l_int|0x40
+comma
+id|SI_AC97_READ
+op_assign
+l_int|0x44
+comma
+DECL|enumerator|SI_SERIAL_INTF_CTRL
+DECL|enumerator|SI_AC97_GPIO
+id|SI_SERIAL_INTF_CTRL
+op_assign
+l_int|0x48
+comma
+id|SI_AC97_GPIO
+op_assign
+l_int|0x4c
+)brace
+suffix:semicolon
+multiline_comment|/* Bit mask for operational registers */
 DECL|macro|AC97_REG_ADDR
 mdefine_line|#define AC97_REG_ADDR      0x000000ff
+DECL|enum|sis7018_ac97_bits
+r_enum
+id|sis7018_ac97_bits
+(brace
+DECL|enumerator|SI_AC97_BUSY_WRITE
+DECL|enumerator|SI_AC97_BUSY_READ
+id|SI_AC97_BUSY_WRITE
+op_assign
+l_int|0x8000
+comma
+id|SI_AC97_BUSY_READ
+op_assign
+l_int|0x8000
+comma
+DECL|enumerator|SI_AC97_AUDIO_BUSY
+DECL|enumerator|SI_AC97_MODEM_BUSY
+id|SI_AC97_AUDIO_BUSY
+op_assign
+l_int|0x4000
+comma
+id|SI_AC97_MODEM_BUSY
+op_assign
+l_int|0x2000
+comma
+DECL|enumerator|SI_AC97_SECONDARY
+id|SI_AC97_SECONDARY
+op_assign
+l_int|0x0080
+)brace
+suffix:semicolon
+DECL|enum|trident_dx_ac97_bits
+r_enum
+id|trident_dx_ac97_bits
+(brace
+DECL|enumerator|DX_AC97_BUSY_WRITE
+DECL|enumerator|DX_AC97_BUSY_READ
+id|DX_AC97_BUSY_WRITE
+op_assign
+l_int|0x8000
+comma
+id|DX_AC97_BUSY_READ
+op_assign
+l_int|0x8000
+comma
+DECL|enumerator|DX_AC97_READY
+DECL|enumerator|DX_AC97_RECORD
+id|DX_AC97_READY
+op_assign
+l_int|0x0010
+comma
+id|DX_AC97_RECORD
+op_assign
+l_int|0x0008
+comma
+DECL|enumerator|DX_AC97_PLAYBACK
+id|DX_AC97_PLAYBACK
+op_assign
+l_int|0x0002
+)brace
+suffix:semicolon
+DECL|enum|trident_nx_ac97_bits
+r_enum
+id|trident_nx_ac97_bits
+(brace
+multiline_comment|/* ACR1-3 */
+DECL|enumerator|NX_AC97_BUSY_WRITE
+DECL|enumerator|NX_AC97_BUSY_READ
+id|NX_AC97_BUSY_WRITE
+op_assign
+l_int|0x0800
+comma
+id|NX_AC97_BUSY_READ
+op_assign
+l_int|0x0800
+comma
+DECL|enumerator|NX_AC97_WRITE_SECONDARY
+id|NX_AC97_WRITE_SECONDARY
+op_assign
+l_int|0x0100
+comma
+multiline_comment|/* ACR0 */
+DECL|enumerator|NX_AC97_SECONDARY_READY
+DECL|enumerator|NX_AC97_SECONDARY_RECORD
+id|NX_AC97_SECONDARY_READY
+op_assign
+l_int|0x0040
+comma
+id|NX_AC97_SECONDARY_RECORD
+op_assign
+l_int|0x0020
+comma
+DECL|enumerator|NX_AC97_SURROUND_OUTPUT
+id|NX_AC97_SURROUND_OUTPUT
+op_assign
+l_int|0x0010
+comma
+DECL|enumerator|NX_AC97_PRIMARY_READY
+DECL|enumerator|NX_AC97_PRIMARY_RECORD
+id|NX_AC97_PRIMARY_READY
+op_assign
+l_int|0x0008
+comma
+id|NX_AC97_PRIMARY_RECORD
+op_assign
+l_int|0x0004
+comma
+DECL|enumerator|NX_AC97_PCM_OUTPUT
+id|NX_AC97_PCM_OUTPUT
+op_assign
+l_int|0x0002
+comma
+DECL|enumerator|NX_AC97_WARM_RESET
+id|NX_AC97_WARM_RESET
+op_assign
+l_int|0x0001
+)brace
+suffix:semicolon
 DECL|enum|serial_intf_ctrl_bits
 r_enum
 id|serial_intf_ctrl_bits
@@ -257,6 +494,67 @@ id|LINE2IN
 op_assign
 l_int|0x00000800
 comma
+DECL|enumerator|HEAD_SET_IN
+DECL|enumerator|GPIOIN
+id|HEAD_SET_IN
+op_assign
+l_int|0x00001000
+comma
+id|GPIOIN
+op_assign
+l_int|0x00002000
+comma
+multiline_comment|/* 7018 spec says id = 01 but the demo board routed to 10 &n;&t;   SECONDARY_ID= 0x00008000, */
+DECL|enumerator|SECONDARY_ID
+id|SECONDARY_ID
+op_assign
+l_int|0x00004000
+comma
+DECL|enumerator|PCMOUT
+DECL|enumerator|SURROUT
+id|PCMOUT
+op_assign
+l_int|0x00010000
+comma
+id|SURROUT
+op_assign
+l_int|0x00020000
+comma
+DECL|enumerator|CENTEROUT
+DECL|enumerator|LFEOUT
+id|CENTEROUT
+op_assign
+l_int|0x00040000
+comma
+id|LFEOUT
+op_assign
+l_int|0x00080000
+comma
+DECL|enumerator|LINE1OUT
+DECL|enumerator|LINE2OUT
+id|LINE1OUT
+op_assign
+l_int|0x00100000
+comma
+id|LINE2OUT
+op_assign
+l_int|0x00200000
+comma
+DECL|enumerator|GPIOOUT
+id|GPIOOUT
+op_assign
+l_int|0x00400000
+comma
+DECL|enumerator|SI_AC97_PRIMARY_READY
+id|SI_AC97_PRIMARY_READY
+op_assign
+l_int|0x01000000
+comma
+DECL|enumerator|SI_AC97_SECONDARY_READY
+id|SI_AC97_SECONDARY_READY
+op_assign
+l_int|0x02000000
+comma
 )brace
 suffix:semicolon
 DECL|enum|global_control_bits
@@ -312,6 +610,81 @@ comma
 id|BANK_B_EN
 op_assign
 l_int|0x00010000
+)brace
+suffix:semicolon
+DECL|enum|channel_control_bits
+r_enum
+id|channel_control_bits
+(brace
+DECL|enumerator|CHANNEL_LOOP
+DECL|enumerator|CHANNEL_SIGNED
+id|CHANNEL_LOOP
+op_assign
+l_int|0x00001000
+comma
+id|CHANNEL_SIGNED
+op_assign
+l_int|0x00002000
+comma
+DECL|enumerator|CHANNEL_STEREO
+DECL|enumerator|CHANNEL_16BITS
+id|CHANNEL_STEREO
+op_assign
+l_int|0x00004000
+comma
+id|CHANNEL_16BITS
+op_assign
+l_int|0x00008000
+comma
+)brace
+suffix:semicolon
+DECL|enum|channel_attribute
+r_enum
+id|channel_attribute
+(brace
+DECL|enumerator|MODEM_LINE1
+DECL|enumerator|MODEM_LINE2
+DECL|enumerator|PCM_LR
+DECL|enumerator|HSET
+id|MODEM_LINE1
+comma
+id|MODEM_LINE2
+comma
+id|PCM_LR
+comma
+id|HSET
+comma
+DECL|enumerator|I2SLR
+DECL|enumerator|CENTER_LFE
+DECL|enumerator|SURR_LR
+DECL|enumerator|SPDIF_LR
+id|I2SLR
+comma
+id|CENTER_LFE
+comma
+id|SURR_LR
+comma
+id|SPDIF_LR
+comma
+DECL|enumerator|CHANNEL_PB
+DECL|enumerator|CHANNEL_SPC_PB
+id|CHANNEL_PB
+op_assign
+l_int|0x00000000
+comma
+id|CHANNEL_SPC_PB
+op_assign
+l_int|0x40000000
+comma
+DECL|enumerator|CHANNEL_REC
+DECL|enumerator|CHANNEL_REC_PB
+id|CHANNEL_REC
+op_assign
+l_int|0x80000000
+comma
+id|CHANNEL_REC_PB
+op_assign
+l_int|0xc0000000
 )brace
 suffix:semicolon
 DECL|enum|miscint_bits
@@ -399,23 +772,122 @@ op_assign
 l_int|0x01000000
 )brace
 suffix:semicolon
-DECL|macro|IWriteAinten
-mdefine_line|#define IWriteAinten( x ) &bslash;&n;&t;{int i; &bslash;&n;&t; for( i= 0; i &lt; ChanDwordCount; i++) &bslash;&n;&t;&t;outl((x)-&gt;lpChAinten[i], TRID_REG(trident, (x)-&gt;lpAChAinten[i]));}
-DECL|macro|IReadAinten
-mdefine_line|#define IReadAinten( x ) &bslash;&n;&t;{int i; &bslash;&n;&t; for( i= 0; i &lt; ChanDwordCount; i++) &bslash;&n;&t; (x)-&gt;lpChAinten[i] = inl(TRID_REG(trident, (x)-&gt;lpAChAinten[i]));}
-DECL|macro|ReadAint
-mdefine_line|#define ReadAint( x ) &bslash;&n;&t;IReadAint( x ) 
-DECL|macro|WriteAint
-mdefine_line|#define WriteAint( x ) &bslash;&n;&t;IWriteAint( x ) 
-DECL|macro|IWriteAint
-mdefine_line|#define IWriteAint( x ) &bslash;&n;&t;{int i; &bslash;&n;&t; for( i= 0; i &lt; ChanDwordCount; i++) &bslash;&n;&t; outl((x)-&gt;lpChAint[i], TRID_REG(trident, (x)-&gt;lpAChAint[i]));}
-DECL|macro|IReadAint
-mdefine_line|#define IReadAint( x ) &bslash;&n;&t;{int i; &bslash;&n;&t; for( i= 0; i &lt; ChanDwordCount; i++) &bslash;&n;&t; (x)-&gt;lpChAint[i] = inl(TRID_REG(trident, (x)-&gt;lpAChAint[i]));}
+DECL|macro|AC97_SIGMATEL_DAC2INVERT
+mdefine_line|#define AC97_SIGMATEL_DAC2INVERT&t;0x6E
+DECL|macro|AC97_SIGMATEL_BIAS1
+mdefine_line|#define AC97_SIGMATEL_BIAS1&t;0x70
+DECL|macro|AC97_SIGMATEL_BIAS2
+mdefine_line|#define AC97_SIGMATEL_BIAS2&t;0x72
+DECL|macro|AC97_SIGMATEL_CIC1
+mdefine_line|#define AC97_SIGMATEL_CIC1&t;0x76
+DECL|macro|AC97_SIGMATEL_CIC2
+mdefine_line|#define AC97_SIGMATEL_CIC2&t;0x78
+DECL|macro|TRID_REG
+mdefine_line|#define TRID_REG( trident, x ) ( (trident) -&gt; iobase + (x) )
 DECL|macro|VALIDATE_MAGIC
 mdefine_line|#define VALIDATE_MAGIC(FOO,MAG)&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;if (!(FOO) || (FOO)-&gt;magic != MAG) { &bslash;&n;&t;&t;printk(invalid_magic,__FUNCTION__);&t;       &bslash;&n;&t;&t;return -ENXIO;&t;&t;&t;  &bslash;&n;&t;}&t;&t;&t;&t;&t;  &bslash;&n;})
 DECL|macro|VALIDATE_STATE
 mdefine_line|#define VALIDATE_STATE(a) VALIDATE_MAGIC(a,TRIDENT_STATE_MAGIC)
 DECL|macro|VALIDATE_CARD
 mdefine_line|#define VALIDATE_CARD(a) VALIDATE_MAGIC(a,TRIDENT_CARD_MAGIC)
+DECL|function|ld2
+r_extern
+id|__inline__
+r_int
+id|ld2
+c_func
+(paren
+r_int
+r_int
+id|x
+)paren
+(brace
+r_int
+id|r
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|x
+op_ge
+l_int|0x10000
+)paren
+(brace
+id|x
+op_rshift_assign
+l_int|16
+suffix:semicolon
+id|r
+op_add_assign
+l_int|16
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|x
+op_ge
+l_int|0x100
+)paren
+(brace
+id|x
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|r
+op_add_assign
+l_int|8
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|x
+op_ge
+l_int|0x10
+)paren
+(brace
+id|x
+op_rshift_assign
+l_int|4
+suffix:semicolon
+id|r
+op_add_assign
+l_int|4
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|x
+op_ge
+l_int|4
+)paren
+(brace
+id|x
+op_rshift_assign
+l_int|2
+suffix:semicolon
+id|r
+op_add_assign
+l_int|2
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|x
+op_ge
+l_int|2
+)paren
+id|r
+op_increment
+suffix:semicolon
+r_return
+id|r
+suffix:semicolon
+)brace
 macro_line|#endif /* __TRID4DWAVE_H */
 eof

@@ -7,10 +7,14 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/limits.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
+multiline_comment|/* This header file describes a range of autofs interface versions;&n;   the new implementation (&quot;autofs4&quot;) supports them all, but the old&n;   implementation only supports v3.  */
 DECL|macro|AUTOFS_MIN_PROTO_VERSION
 mdefine_line|#define AUTOFS_MIN_PROTO_VERSION 3&t;/* Min version we support */
+DECL|macro|AUTOFS_MAX_PROTO_VERSION
+mdefine_line|#define AUTOFS_MAX_PROTO_VERSION 4&t;/* Max (current) version */
+multiline_comment|/* Backwards compat for autofs v3; it just implements a version */
 DECL|macro|AUTOFS_PROTO_VERSION
-mdefine_line|#define AUTOFS_PROTO_VERSION 4&t;&t;/* Current version */
+mdefine_line|#define AUTOFS_PROTO_VERSION 3&t;&t;/* v3 version */
 multiline_comment|/*&n; * Architectures where both 32- and 64-bit binaries can be executed&n; * on 64-bit kernels need this.  This keeps the structure format&n; * uniform, and makes sure the wait_queue_token isn&squot;t too big to be&n; * passed back down to the kernel.&n; *&n; * This assumes that on these architectures:&n; * mode     32 bit    64 bit&n; * -------------------------&n; * int      32 bit    32 bit&n; * long     32 bit    64 bit&n; *&n; * If so, 32-bit user-space code should be backwards compatible.&n; */
 macro_line|#if defined(__sparc__) || defined(__mips__)
 DECL|typedef|autofs_wqt_t

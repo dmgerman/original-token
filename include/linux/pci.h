@@ -1936,6 +1936,7 @@ r_int
 r_int
 id|device
 comma
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -1959,6 +1960,7 @@ r_int
 r_int
 r_class
 comma
+r_const
 r_struct
 id|pci_dev
 op_star
@@ -2016,6 +2018,7 @@ r_int
 r_int
 id|ss_device
 comma
+r_const
 r_struct
 id|pci_dev
 op_star

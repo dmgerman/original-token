@@ -227,6 +227,41 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined(CONFIG_MVME162_SCC) || defined(CONFIG_BVME6000_SCC) || defined(CONFIG_MVME147_SCC)
+r_extern
+r_int
+id|vme_scc_init
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|vme_scc_console_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SERIAL167
+r_extern
+r_int
+id|serial167_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|serial167_console_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_8xx
 r_extern
 id|console_8xx_init
@@ -8738,13 +8773,27 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#else &t;
+macro_line|#elif defined(CONFIG_SERIAL) &t;
 id|serial_console_init
 c_func
 (paren
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
+macro_line|#if defined(CONFIG_MVME162_SCC) || defined(CONFIG_BVME6000_SCC) || defined(CONFIG_MVME147_SCC)
+id|vme_scc_console_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_SERIAL167)
+id|serial167_console_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 )brace
 DECL|variable|dev_tty_driver
@@ -9034,6 +9083,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined(CONFIG_MVME162_SCC) || defined(CONFIG_BVME6000_SCC) || defined(CONFIG_MVME147_SCC)
+id|vme_scc_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_COMPUTONE
 id|ip2_init
 c_func
@@ -9055,7 +9111,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_MVME16x
+macro_line|#ifdef CONFIG_SERIAL167
 id|serial167_init
 c_func
 (paren

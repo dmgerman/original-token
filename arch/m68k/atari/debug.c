@@ -1411,11 +1411,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_KGDB
-multiline_comment|/* the m68k_debug_device is used by the GDB stub, do nothing here */
-r_return
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

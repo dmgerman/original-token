@@ -19,9 +19,6 @@ macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/siginfo.h&gt;
-macro_line|#ifdef CONFIG_KGDB
-macro_line|#include &lt;asm/kgdb.h&gt;
-macro_line|#endif
 multiline_comment|/* assembler routines */
 id|asmlinkage
 r_void
@@ -3375,16 +3372,6 @@ op_star
 id|fp
 )paren
 (brace
-macro_line|#ifdef CONFIG_KGDB
-multiline_comment|/* This will never return to here, if kgdb has been initialized. And if&n;&t; * it returns from there, then to where the error happened... */
-id|enter_kgdb
-c_func
-(paren
-op_amp
-id|fp-&gt;ptregs
-)paren
-suffix:semicolon
-macro_line|#else
 r_int
 r_int
 op_star
@@ -3916,7 +3903,6 @@ id|printk
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|bad_super_trap
 r_void
@@ -3928,16 +3914,6 @@ op_star
 id|fp
 )paren
 (brace
-macro_line|#ifdef CONFIG_KGDB
-multiline_comment|/* Save the register dump if we&squot;ll enter kgdb anyways */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|kgdb_initialized
-)paren
-(brace
-macro_line|#endif
 id|console_verbose
 c_func
 (paren
@@ -4110,9 +4086,6 @@ comma
 id|current-&gt;pid
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KGDB
-)brace
-macro_line|#endif
 id|die_if_kernel
 c_func
 (paren
@@ -4573,16 +4546,6 @@ id|PS_S
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef CONFIG_KGDB
-multiline_comment|/* Save the register dump if we&squot;ll enter kgdb anyways */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|kgdb_initialized
-)paren
-(brace
-macro_line|#endif
 id|console_verbose
 c_func
 (paren
@@ -4658,9 +4621,6 @@ r_int
 id|current
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KGDB
-)brace
-macro_line|#endif
 id|dump_stack
 c_func
 (paren

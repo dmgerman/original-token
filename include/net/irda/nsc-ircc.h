@@ -1,19 +1,35 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      nsc_fir.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Nov 13 14:37:40 1998&n; * Modified at:   Wed Jan  5 12:00:16 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
-macro_line|#ifndef NSC_FIR_H
-DECL|macro|NSC_FIR_H
-mdefine_line|#define NSC_FIR_H
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      nsc-ircc.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Nov 13 14:37:40 1998&n; * Modified at:   Sun Jan 23 17:47:00 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+macro_line|#ifndef NSC_IRCC_H
+DECL|macro|NSC_IRCC_H
+mdefine_line|#define NSC_IRCC_H
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-DECL|macro|PC87108
-mdefine_line|#define PC87108         0x10
-DECL|macro|PC97338
-mdefine_line|#define PC97338         0xb0
 multiline_comment|/* DMA modes needed */
 DECL|macro|DMA_TX_MODE
 mdefine_line|#define DMA_TX_MODE     0x08    /* Mem to I/O, ++, demand. */
 DECL|macro|DMA_RX_MODE
 mdefine_line|#define DMA_RX_MODE     0x04    /* I/O to mem, ++, demand. */
+multiline_comment|/* Config registers for the &squot;108 */
+DECL|macro|CFG_BAIC
+mdefine_line|#define CFG_BAIC 0x00
+DECL|macro|CFG_CSRT
+mdefine_line|#define CFG_CSRT 0x01
+DECL|macro|CFG_MCTL
+mdefine_line|#define CFG_MCTL 0x02
+multiline_comment|/* Config registers for the &squot;338 */
+DECL|macro|CFG_FER
+mdefine_line|#define CFG_FER  0x00
+DECL|macro|CFG_FAR
+mdefine_line|#define CFG_FAR  0x01
+DECL|macro|CFG_PTR
+mdefine_line|#define CFG_PTR  0x02
+DECL|macro|CFG_PNP0
+mdefine_line|#define CFG_PNP0 0x1b
+DECL|macro|CFG_PNP1
+mdefine_line|#define CFG_PNP1 0x1c
+DECL|macro|CFG_PNP3
+mdefine_line|#define CFG_PNP3 0x4f
 multiline_comment|/* Flags for configuration register CRF0 */
 DECL|macro|APEDCRC
 mdefine_line|#define APEDCRC&t;&t;0x02
@@ -230,6 +246,83 @@ DECL|macro|IRM_CR_IRX_MSL
 mdefine_line|#define IRM_CR_IRX_MSL&t;0x40
 DECL|macro|IRM_CR_AF_MNT
 mdefine_line|#define IRM_CR_AF_MNT   0x80 /* Automatic format */
+multiline_comment|/* NSC chip information */
+DECL|struct|nsc_chip
+r_struct
+id|nsc_chip
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+multiline_comment|/* Name of chipset */
+DECL|member|cfg
+r_int
+id|cfg
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* Config registers */
+DECL|member|cid_index
+id|u_int8_t
+id|cid_index
+suffix:semicolon
+multiline_comment|/* Chip identification index reg */
+DECL|member|cid_value
+id|u_int8_t
+id|cid_value
+suffix:semicolon
+multiline_comment|/* Chip identification expected value */
+DECL|member|cid_mask
+id|u_int8_t
+id|cid_mask
+suffix:semicolon
+multiline_comment|/* Chip identification revision mask */
+multiline_comment|/* Functions for probing and initializing the specific chip */
+DECL|member|probe
+r_int
+(paren
+op_star
+id|probe
+)paren
+(paren
+r_struct
+id|nsc_chip
+op_star
+id|chip
+comma
+id|chipio_t
+op_star
+id|info
+)paren
+suffix:semicolon
+DECL|member|init
+r_int
+(paren
+op_star
+id|init
+)paren
+(paren
+r_struct
+id|nsc_chip
+op_star
+id|chip
+comma
+id|chipio_t
+op_star
+id|info
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|typedef|nsc_chip_t
+r_typedef
+r_struct
+id|nsc_chip
+id|nsc_chip_t
+suffix:semicolon
 multiline_comment|/* For storing entries in the status FIFO */
 DECL|struct|st_fifo_entry
 r_struct
@@ -245,6 +338,10 @@ id|len
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|MAX_TX_WINDOW
+mdefine_line|#define MAX_TX_WINDOW 7
+DECL|macro|MAX_RX_WINDOW
+mdefine_line|#define MAX_RX_WINDOW 7
 DECL|struct|st_fifo
 r_struct
 id|st_fifo
@@ -254,8 +351,12 @@ r_struct
 id|st_fifo_entry
 id|entries
 (braket
-l_int|10
+id|MAX_RX_WINDOW
 )braket
+suffix:semicolon
+DECL|member|pending_bytes
+r_int
+id|pending_bytes
 suffix:semicolon
 DECL|member|head
 r_int
@@ -288,8 +389,6 @@ suffix:semicolon
 multiline_comment|/* Lenght of frame in DMA mem */
 )brace
 suffix:semicolon
-DECL|macro|MAX_WINDOW
-mdefine_line|#define MAX_WINDOW 7
 DECL|struct|tx_fifo
 r_struct
 id|tx_fifo
@@ -299,7 +398,7 @@ r_struct
 id|frame_cb
 id|queue
 (braket
-id|MAX_WINDOW
+id|MAX_TX_WINDOW
 )braket
 suffix:semicolon
 multiline_comment|/* Info about frames in queue */
@@ -327,9 +426,9 @@ multiline_comment|/* Next free start in DMA mem */
 )brace
 suffix:semicolon
 multiline_comment|/* Private data for each instance */
-DECL|struct|nsc_fir_cb
+DECL|struct|nsc_ircc_cb
 r_struct
-id|nsc_fir_cb
+id|nsc_ircc_cb
 (brace
 DECL|member|st_fifo
 r_struct
@@ -343,19 +442,6 @@ id|tx_fifo
 id|tx_fifo
 suffix:semicolon
 multiline_comment|/* Info about frames to be transmitted */
-DECL|member|tx_buff_offsets
-r_int
-id|tx_buff_offsets
-(braket
-l_int|10
-)braket
-suffix:semicolon
-multiline_comment|/* Offsets between frames in tx_buff */
-DECL|member|tx_len
-r_int
-id|tx_len
-suffix:semicolon
-multiline_comment|/* Number of frames in tx_buff */
 DECL|member|netdev
 r_struct
 id|net_device
@@ -375,30 +461,32 @@ op_star
 id|irlap
 suffix:semicolon
 multiline_comment|/* The link layer we are binded to */
-DECL|member|io
-r_struct
-id|chipio_t
-id|io
-suffix:semicolon
-multiline_comment|/* IrDA controller information */
-DECL|member|tx_buff
-r_struct
-id|iobuff_t
-id|tx_buff
-suffix:semicolon
-multiline_comment|/* Transmit buffer */
-DECL|member|rx_buff
-r_struct
-id|iobuff_t
-id|rx_buff
-suffix:semicolon
-multiline_comment|/* Receive buffer */
 DECL|member|qos
 r_struct
 id|qos_info
 id|qos
 suffix:semicolon
 multiline_comment|/* QoS capabilities for this device */
+DECL|member|io
+id|chipio_t
+id|io
+suffix:semicolon
+multiline_comment|/* IrDA controller information */
+DECL|member|tx_buff
+id|iobuff_t
+id|tx_buff
+suffix:semicolon
+multiline_comment|/* Transmit buffer */
+DECL|member|rx_buff
+id|iobuff_t
+id|rx_buff
+suffix:semicolon
+multiline_comment|/* Receive buffer */
+DECL|member|ier
+id|__u8
+id|ier
+suffix:semicolon
+multiline_comment|/* Interrupt enable register */
 DECL|member|stamp
 r_struct
 id|timeval
@@ -423,10 +511,11 @@ DECL|member|new_speed
 id|__u32
 id|new_speed
 suffix:semicolon
-DECL|member|suspend
+DECL|member|index
 r_int
-id|suspend
+id|index
 suffix:semicolon
+multiline_comment|/* Instance index */
 )brace
 suffix:semicolon
 DECL|function|switch_bank
@@ -454,5 +543,5 @@ id|BSR
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* NSC_FIR_H */
+macro_line|#endif /* NSC_IRCC_H */
 eof

@@ -107,21 +107,6 @@ DECL|macro|DECLARE_WAITQUEUE
 mdefine_line|#define DECLARE_WAITQUEUE(wait, current) struct wait_queue wait = { current, NULL }
 macro_line|#endif
 macro_line|#include &quot;generic_serial.h&quot;
-macro_line|#ifndef MODULE
-r_extern
-r_void
-id|my_hd
-(paren
-r_int
-r_char
-op_star
-id|ptr
-comma
-r_int
-id|n
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|variable|tmp_buf
 r_static
 r_char
@@ -149,9 +134,9 @@ DECL|macro|gs_dprintk
 mdefine_line|#define gs_dprintk(f, str...) /* nothing */
 macro_line|#endif
 DECL|macro|func_enter
-mdefine_line|#define func_enter() gs_dprintk (SX_DEBUG_FLOW, &quot;gs: enter &quot; __FUNCTION__ &quot;&bslash;n&quot;)
+mdefine_line|#define func_enter() gs_dprintk (GS_DEBUG_FLOW, &quot;gs: enter &quot; __FUNCTION__ &quot;&bslash;n&quot;)
 DECL|macro|func_exit
-mdefine_line|#define func_exit()  gs_dprintk (SX_DEBUG_FLOW, &quot;gs: exit  &quot; __FUNCTION__ &quot;&bslash;n&quot;)
+mdefine_line|#define func_exit()  gs_dprintk (GS_DEBUG_FLOW, &quot;gs: exit  &quot; __FUNCTION__ &quot;&bslash;n&quot;)
 macro_line|#if NEW_WRITE_LOCKING
 DECL|macro|DECL
 mdefine_line|#define DECL      /* Nothing */
@@ -2864,22 +2849,6 @@ comma
 l_string|&quot;termios structure (%p):&bslash;n&quot;
 comma
 id|tiosp
-)paren
-suffix:semicolon
-id|my_hd
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|tiosp
-comma
-r_sizeof
-(paren
-r_struct
-id|termios
-)paren
 )paren
 suffix:semicolon
 )brace

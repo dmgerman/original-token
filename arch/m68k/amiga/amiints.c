@@ -1531,7 +1531,7 @@ id|custom.intreq
 op_assign
 id|intena
 suffix:semicolon
-multiline_comment|/* serve first fast handlers - there can only be one of these */
+multiline_comment|/* serve fast handler if present - there can only be one of these */
 id|node
 op_assign
 id|ami_irq_list
@@ -1611,11 +1611,31 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#if 0 /* def CPU_M68060_ONLY */
 id|sti
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|restore_flags
+c_func
+(paren
+(paren
+id|flags
+op_amp
+op_complement
+l_int|0x0700
+)paren
+op_or
+(paren
+id|fp-&gt;sr
+op_amp
+l_int|0x0700
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|slow_nodes
 op_assign
 id|node

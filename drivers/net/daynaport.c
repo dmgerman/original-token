@@ -1,5 +1,6 @@
-multiline_comment|/* mac_ns8390.c: A Macintosh 8390 based ethernet driver for linux. */
-multiline_comment|/*&n;&t;Derived from code:&n;&t;&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;    TODO:&n;&n;&t;    The block output routines may be wrong for non Dayna&n;&t;    cards&n;&n;&t;    Reading MAC addresses&n;*/
+multiline_comment|/* daynaport.c: A Macintosh 8390 based ethernet driver for linux. */
+multiline_comment|/*&n;&t;Derived from code:&n;&t;&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;    TODO:&n;&n;&t;    The block output routines may be wrong for non Dayna&n;&t;    cards&n;&n;&t;&t;Fix this driver so that it will attempt to use the info&n;&t;&t;(i.e. iobase, iosize) given to it by the new and improved&n;&t;&t;NuBus code.&n;&n;&t;&t;Despite its misleading filename, this driver is not Dayna-specific&n;&t;&t;anymore. */
+multiline_comment|/* Cabletron E6100 card support added by Tony Mantler (eek@escape.ca) April 1999 */
 DECL|variable|version
 r_static
 r_const
@@ -7,9 +8,17 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;mac_ns8390.c:v0.01 7/5/97 Alan Cox (Alan.Cox@linux.org)&bslash;n&quot;
+l_string|&quot;daynaport.c: v0.02 1999-05-17 Alan Cox (Alan.Cox@linux.org) and others&bslash;n&quot;
+suffix:semicolon
+DECL|variable|version_printed
+r_static
+r_int
+id|version_printed
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -18,10 +27,15 @@ macro_line|#include &lt;linux/nubus.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/hwtest.h&gt;
+macro_line|#include &lt;asm/macints.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
+r_extern
+r_int
+id|console_loglevel
+suffix:semicolon
 r_int
 id|ns8390_probe1
 c_func
@@ -43,6 +57,11 @@ id|id
 comma
 r_int
 id|prom
+comma
+r_struct
+id|nubus_dev
+op_star
+id|ndev
 )paren
 suffix:semicolon
 r_static
@@ -78,6 +97,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* Interlan */
 r_static
 r_void
 id|interlan_reset
@@ -89,6 +109,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* Dayna */
 r_static
 r_void
 id|dayna_get_8390_hdr
@@ -154,6 +175,7 @@ r_int
 id|start_page
 )paren
 suffix:semicolon
+multiline_comment|/* Sane (32-bit chunk memory read/write) */
 r_static
 r_void
 id|sane_get_8390_hdr
@@ -219,6 +241,7 @@ r_int
 id|start_page
 )paren
 suffix:semicolon
+multiline_comment|/* Slow Sane (16-bit chunk memory read/write) */
 r_static
 r_void
 id|slow_sane_get_8390_hdr
@@ -291,6 +314,12 @@ DECL|macro|WD03_STOP_PG
 mdefine_line|#define WD03_STOP_PG&t;0x20&t;/* Last page +1 of RX ring */
 DECL|macro|WD13_STOP_PG
 mdefine_line|#define WD13_STOP_PG&t;0x40&t;/* Last page +1 of RX ring */
+DECL|macro|CABLETRON_RX_START_PG
+mdefine_line|#define CABLETRON_RX_START_PG          0x00    /* First page of RX buffer */
+DECL|macro|CABLETRON_RX_STOP_PG
+mdefine_line|#define CABLETRON_RX_STOP_PG           0x30    /* Last page +1 of RX ring */
+DECL|macro|CABLETRON_TX_START_PG
+mdefine_line|#define CABLETRON_TX_START_PG          CABLETRON_RX_STOP_PG  /* First page of TX buffer */
 DECL|macro|DAYNA_MAC_BASE
 mdefine_line|#define DAYNA_MAC_BASE&t;&t;0xf0007
 DECL|macro|DAYNA_8390_BASE
@@ -305,12 +334,19 @@ DECL|macro|APPLE_8390_MEM
 mdefine_line|#define APPLE_8390_MEM&t;&t;0xD0000
 DECL|macro|APPLE_MEMSIZE
 mdefine_line|#define APPLE_MEMSIZE&t;&t;8192    /* FIXME: need to dynamically check */
+DECL|macro|KINETICS_MAC_BASE
+mdefine_line|#define KINETICS_MAC_BASE&t;0xf0004 /* first byte of each long */
 DECL|macro|KINETICS_8390_BASE
-mdefine_line|#define KINETICS_8390_BASE&t;0x80003
+mdefine_line|#define KINETICS_8390_BASE&t;0x80000
 DECL|macro|KINETICS_8390_MEM
-mdefine_line|#define KINETICS_8390_MEM&t;0x00000
+mdefine_line|#define KINETICS_8390_MEM&t;0x00000 /* first word of each long */
 DECL|macro|KINETICS_MEMSIZE
 mdefine_line|#define KINETICS_MEMSIZE&t;8192    /* FIXME: need to dynamically check */
+multiline_comment|/*#define KINETICS_MEMSIZE&t;(0x10000/2) * CSA: on the board I have, at least */
+DECL|macro|CABLETRON_8390_BASE
+mdefine_line|#define CABLETRON_8390_BASE&t;&t;0x90000&t;
+DECL|macro|CABLETRON_8390_MEM
+mdefine_line|#define CABLETRON_8390_MEM&t;&t;0x00000
 DECL|function|test_8390
 r_static
 r_int
@@ -479,74 +515,65 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Identify the species of NS8390 card/driver we need&n; */
-DECL|macro|NS8390_DAYNA
-mdefine_line|#define NS8390_DAYNA&t;&t;1
-DECL|macro|NS8390_INTERLAN
-mdefine_line|#define NS8390_INTERLAN&t;&t;2
-DECL|macro|NS8390_KINETICS
-mdefine_line|#define NS8390_KINETICS&t;&t;3
-DECL|macro|NS8390_APPLE
-mdefine_line|#define NS8390_APPLE&t;&t;4
-DECL|macro|NS8390_FARALLON
-mdefine_line|#define NS8390_FARALLON&t;&t;5
-DECL|macro|NS8390_ASANTE
-mdefine_line|#define NS8390_ASANTE&t;&t;6
+DECL|enum|mac8390_type
+r_enum
+id|mac8390_type
+(brace
+DECL|enumerator|NS8390_DAYNA
+id|NS8390_DAYNA
+comma
+DECL|enumerator|NS8390_INTERLAN
+id|NS8390_INTERLAN
+comma
+DECL|enumerator|NS8390_KINETICS
+id|NS8390_KINETICS
+comma
+DECL|enumerator|NS8390_APPLE
+id|NS8390_APPLE
+comma
+DECL|enumerator|NS8390_FARALLON
+id|NS8390_FARALLON
+comma
+DECL|enumerator|NS8390_ASANTE
+id|NS8390_ASANTE
+comma
+DECL|enumerator|NS8390_CABLETRON
+id|NS8390_CABLETRON
+)brace
+suffix:semicolon
 DECL|function|ns8390_ident
 r_int
+id|__init
 id|ns8390_ident
 c_func
 (paren
 r_struct
-id|nubus_type
+id|nubus_dev
 op_star
-id|nb
+id|ndev
 )paren
 (brace
-multiline_comment|/* It appears anything with a software type of 0 is an apple&n;&t;   compatible - even if the hardware matches others */
-r_if
-c_cond
-(paren
-id|nb-&gt;DrSW
-op_eq
-l_int|0x0001
-op_logical_or
-id|nb-&gt;DrSW
-op_eq
-l_int|0x0109
-op_logical_or
-id|nb-&gt;DrSW
-op_eq
-l_int|0x0000
-op_logical_or
-id|nb-&gt;DrSW
-op_eq
-l_int|0x0100
-)paren
-(brace
-r_return
-id|NS8390_APPLE
-suffix:semicolon
-)brace
+multiline_comment|/* This really needs to be tested and tested hard.  */
+multiline_comment|/* Summary of what we know so far --&n;&t; * SW: 0x0104 -- asante,    16 bit, back4_offsets&n;&t; * SW: 0x010b -- daynaport, 16 bit, fwrd4_offsets&n;&t; * SW: 0x010c -- farallon,  16 bit, back4_offsets, no long word access&n;&t; * SW: 0x011a -- focus,     [no details yet]&n;&t; * SW: ?????? -- interlan,  16 bit, back4_offsets, funny reset&n;&t; * SW: ?????? -- kinetics,   8 bit, back4_offsets&n;&t; * -- so i&squot;ve this hypothesis going that says DrSW&amp;1 says whether the&n;&t; *    map is forward or backwards -- and maybe DrSW&amp;256 says what the&n;&t; *    register spacing is -- for all cards that report a DrSW in some&n;&t; *    range.&n;&t; *    This would allow the &quot;apple compatible&quot; driver to drive many&n;&t; *    seemingly different types of cards.  More DrSW info is needed&n;&t; *    to investigate this properly. [CSA, 21-May-1999]&n;&t; */
 multiline_comment|/* Dayna ex Kinetics board */
 r_if
 c_cond
 (paren
-id|nb-&gt;DrHW
+id|ndev-&gt;dr_sw
 op_eq
-l_int|0x0103
+id|NUBUS_DRSW_DAYNA
 )paren
 (brace
 r_return
 id|NS8390_DAYNA
 suffix:semicolon
 )brace
-multiline_comment|/* Asante board */
 r_if
 c_cond
 (paren
-id|nb-&gt;DrHW
+id|ndev-&gt;dr_sw
 op_eq
-l_int|0x0104
+id|NUBUS_DRSW_ASANTE
 )paren
 (brace
 r_return
@@ -556,39 +583,71 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|nb-&gt;DrHW
+id|ndev-&gt;dr_sw
 op_eq
-l_int|0x0100
+id|NUBUS_DRSW_FARALLON
 )paren
 (brace
+multiline_comment|/* farallon or sonic systems */
 r_return
-id|NS8390_INTERLAN
+id|NS8390_FARALLON
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
-id|nb-&gt;DrHW
+id|ndev-&gt;dr_sw
 op_eq
-l_int|0x0106
+id|NUBUS_DRSW_KINETICS
 )paren
 (brace
 r_return
 id|NS8390_KINETICS
 suffix:semicolon
 )brace
+multiline_comment|/* My ATI Engineering card with this combination crashes the */
+multiline_comment|/* driver trying to xmit packets. Best not touch it for now. */
+multiline_comment|/*     - 1999-05-20 (funaho@jurai.org)                       */
 r_if
 c_cond
 (paren
-id|nb-&gt;DrSW
+id|ndev-&gt;dr_sw
 op_eq
-l_int|0x010C
+id|NUBUS_DRSW_FOCUS
 )paren
 (brace
 r_return
-id|NS8390_FARALLON
+op_minus
+l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* Check the HW on this one, because it shares the same DrSW as&n;&t;   the on-board SONIC chips */
+r_if
+c_cond
+(paren
+id|ndev-&gt;dr_hw
+op_eq
+id|NUBUS_DRHW_CABLETRON
+)paren
+(brace
+r_return
+id|NS8390_CABLETRON
+suffix:semicolon
+)brace
+multiline_comment|/* does anyone have one of these? */
+r_if
+c_cond
+(paren
+id|ndev-&gt;dr_hw
+op_eq
+id|NUBUS_DRHW_INTERLAN
+)paren
+(brace
+r_return
+id|NS8390_INTERLAN
+suffix:semicolon
+)brace
+multiline_comment|/* FIXME: what do genuine Apple boards look like? */
 r_return
 op_minus
 l_int|1
@@ -597,6 +656,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Memory probe for 8390 cards&n; */
 DECL|function|apple_8390_mem_probe
 r_int
+id|__init
 id|apple_8390_mem_probe
 c_func
 (paren
@@ -717,30 +777,24 @@ r_return
 l_int|16384
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Probe for 8390 cards.  &n; *    The ns8390_probe1() routine initializes the card and fills the&n; *    station address field. On entry base_addr is set, irq is set&n; *    (These come from the nubus probe code). dev-&gt;mem_start points&n; *    at the memory ring, dev-&gt;mem_end gives the end of it.&n; */
-DECL|function|ns8390_probe
+multiline_comment|/*&n; *    Probe for 8390 cards.  &n; *    The ns8390_probe1() routine initializes the card and fills the&n; *    station address field.&n; *&n; *    The NuBus interface has changed!  We now scan for these somewhat&n; *    like how the PCI and Zorro drivers do.  It&squot;s not clear whether&n; *    this is actually better, but it makes things more consistent.&n; *&n; *    dev-&gt;mem_start points&n; *    at the memory ring, dev-&gt;mem_end gives the end of it.&n; */
+DECL|function|mac8390_probe
 r_int
-id|ns8390_probe
+id|__init
+id|mac8390_probe
 c_func
 (paren
-r_struct
-id|nubus_device_specifier
-op_star
-id|d
-comma
-r_int
-id|slot
-comma
-r_struct
-id|nubus_type
-op_star
-id|match
-)paren
-(brace
 r_struct
 id|net_device
 op_star
 id|dev
+)paren
+(brace
+r_static
+r_int
+id|slots
+op_assign
+l_int|0
 suffix:semicolon
 r_volatile
 r_int
@@ -760,24 +814,56 @@ suffix:semicolon
 r_int
 id|id
 suffix:semicolon
+r_static
+r_struct
+id|nubus_dev
+op_star
+id|ndev
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Find the first card that hasn&squot;t already been seen */
+r_while
+c_loop
+(paren
+(paren
+id|ndev
+op_assign
+id|nubus_find_type
+c_func
+(paren
+id|NUBUS_CAT_NETWORK
+comma
+id|NUBUS_TYPE_ETHERNET
+comma
+id|ndev
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* Have we seen it already? */
 r_if
 c_cond
 (paren
-id|match-&gt;category
-op_ne
-id|NUBUS_CAT_NETWORK
-op_logical_or
-id|match-&gt;type
-op_ne
+id|slots
+op_amp
+(paren
 l_int|1
+op_lshift
+id|ndev-&gt;board-&gt;slot
 )paren
-(brace
-r_return
-op_minus
-id|ENODEV
+)paren
+r_continue
 suffix:semicolon
-)brace
-multiline_comment|/* Ok so it is an ethernet network device */
+id|slots
+op_or_assign
+l_int|1
+op_lshift
+id|ndev-&gt;board-&gt;slot
+suffix:semicolon
+multiline_comment|/* Is it one of ours? */
 r_if
 c_cond
 (paren
@@ -787,33 +873,34 @@ op_assign
 id|ns8390_ident
 c_func
 (paren
-id|match
+id|ndev
 )paren
 )paren
-op_eq
+op_ne
 op_minus
 l_int|1
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Ethernet but type unknown %d&bslash;n&quot;
-comma
-id|match-&gt;DrHW
-)paren
+r_break
 suffix:semicolon
+)brace
+multiline_comment|/* Hm.  No more cards, then */
+r_if
+c_cond
+(paren
+id|ndev
+op_eq
+l_int|NULL
+)paren
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 id|dev
 op_assign
 id|init_etherdev
 c_func
 (paren
-l_int|0
+id|dev
 comma
 l_int|0
 )paren
@@ -821,14 +908,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev
-op_eq
-l_int|NULL
+op_logical_neg
+id|version_printed
 )paren
 (brace
-r_return
-op_minus
-id|ENOMEM
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s&quot;
+comma
+id|version
+)paren
+suffix:semicolon
+id|version_printed
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Dayna specific init&n;&t; */
@@ -846,11 +941,7 @@ op_assign
 r_int
 )paren
 (paren
-id|nubus_slot_addr
-c_func
-(paren
-id|slot
-)paren
+id|ndev-&gt;board-&gt;slot_addr
 op_plus
 id|DAYNA_8390_BASE
 )paren
@@ -861,11 +952,7 @@ op_assign
 r_int
 )paren
 (paren
-id|nubus_slot_addr
-c_func
-(paren
-id|slot
-)paren
+id|ndev-&gt;board-&gt;slot_addr
 op_plus
 id|DAYNA_8390_MEM
 )paren
@@ -880,7 +967,10 @@ multiline_comment|/* 8K it seems */
 id|printk
 c_func
 (paren
-l_string|&quot;daynaport: testing board: &quot;
+id|KERN_INFO
+l_string|&quot;%s: daynaport. testing board: &quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|printk
@@ -941,15 +1031,16 @@ suffix:semicolon
 op_star
 id|i
 op_assign
-l_int|0x5555
+l_int|0x5678
 suffix:semicolon
+multiline_comment|/* make sure we catch byte smearing */
 r_if
 c_cond
 (paren
 op_star
 id|i
 op_ne
-l_int|0x5555
+l_int|0x5678
 )paren
 (brace
 r_goto
@@ -1083,7 +1174,11 @@ l_string|&quot;OK&bslash;n&quot;
 suffix:semicolon
 id|dev-&gt;irq
 op_assign
-id|slot
+id|SLOT2IRQ
+c_func
+(paren
+id|ndev-&gt;board-&gt;slot
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1101,6 +1196,197 @@ id|id
 comma
 op_minus
 l_int|1
+comma
+id|ndev
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Cabletron */
+r_if
+c_cond
+(paren
+id|id
+op_eq
+id|NS8390_CABLETRON
+)paren
+(brace
+r_int
+id|memsize
+op_assign
+l_int|16
+op_lshift
+l_int|10
+suffix:semicolon
+multiline_comment|/* fix this */
+id|dev-&gt;base_addr
+op_assign
+(paren
+r_int
+)paren
+(paren
+id|ndev-&gt;board-&gt;slot_addr
+op_plus
+id|CABLETRON_8390_BASE
+)paren
+suffix:semicolon
+id|dev-&gt;mem_start
+op_assign
+(paren
+r_int
+)paren
+(paren
+id|ndev-&gt;board-&gt;slot_addr
+op_plus
+id|CABLETRON_8390_MEM
+)paren
+suffix:semicolon
+id|dev-&gt;mem_end
+op_assign
+id|dev-&gt;mem_start
+op_plus
+id|memsize
+suffix:semicolon
+id|dev-&gt;irq
+op_assign
+id|SLOT2IRQ
+c_func
+(paren
+id|ndev-&gt;board-&gt;slot
+)paren
+suffix:semicolon
+multiline_comment|/* The base address is unreadable if 0x00 has been written to the command register */
+multiline_comment|/* Reset the chip by writing E8390_NODMA+E8390_PAGE0+E8390_STOP just to be sure */
+id|i
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|dev-&gt;base_addr
+suffix:semicolon
+op_star
+id|i
+op_assign
+l_int|0x21
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: cabletron: testing board: &quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%dK memory - &quot;
+comma
+id|memsize
+op_rshift
+l_int|10
+)paren
+suffix:semicolon
+id|i
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|dev-&gt;mem_start
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|i
+OL
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+(paren
+id|dev-&gt;mem_start
+op_plus
+id|memsize
+)paren
+)paren
+(brace
+op_star
+id|i
+op_assign
+l_int|0xAAAA
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|i
+op_ne
+l_int|0xAAAA
+)paren
+(brace
+r_goto
+id|membad
+suffix:semicolon
+)brace
+op_star
+id|i
+op_assign
+l_int|0x5555
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|i
+op_ne
+l_int|0x5555
+)paren
+(brace
+r_goto
+id|membad
+suffix:semicolon
+)brace
+id|i
+op_add_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* Skip a word */
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;OK&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ns8390_probe1
+c_func
+(paren
+id|dev
+comma
+l_int|1
+comma
+l_string|&quot;cabletron&quot;
+comma
+id|id
+comma
+op_minus
+l_int|1
+comma
+id|ndev
 )paren
 op_eq
 l_int|0
@@ -1137,11 +1423,7 @@ op_assign
 r_int
 )paren
 (paren
-id|nubus_slot_addr
-c_func
-(paren
-id|slot
-)paren
+id|ndev-&gt;board-&gt;slot_addr
 op_plus
 id|APPLE_8390_BASE
 )paren
@@ -1152,11 +1434,7 @@ op_assign
 r_int
 )paren
 (paren
-id|nubus_slot_addr
-c_func
-(paren
-id|slot
-)paren
+id|ndev-&gt;board-&gt;slot_addr
 op_plus
 id|APPLE_8390_MEM
 )paren
@@ -1181,14 +1459,63 @@ id|memsize
 suffix:semicolon
 id|dev-&gt;irq
 op_assign
-id|slot
+id|SLOT2IRQ
+c_func
+(paren
+id|ndev-&gt;board-&gt;slot
+)paren
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|id
+)paren
+(brace
+r_case
+id|NS8390_FARALLON
+suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;apple/clone: testing board: &quot;
+id|KERN_INFO
+l_string|&quot;%s: farallon: testing board: &quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|NS8390_ASANTE
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: asante: testing board: &quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|NS8390_APPLE
+suffix:colon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: apple/clone: testing board: &quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -1278,14 +1605,15 @@ c_func
 l_string|&quot;OK&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|id
-op_eq
-id|NS8390_FARALLON
 )paren
 (brace
+r_case
+id|NS8390_FARALLON
+suffix:colon
 r_if
 c_cond
 (paren
@@ -1302,6 +1630,8 @@ id|id
 comma
 op_minus
 l_int|1
+comma
+id|ndev
 )paren
 op_eq
 l_int|0
@@ -1311,9 +1641,47 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-)brace
-r_else
+r_break
+suffix:semicolon
+r_case
+id|NS8390_ASANTE
+suffix:colon
+r_if
+c_cond
+(paren
+id|ns8390_probe1
+c_func
+(paren
+id|dev
+comma
+l_int|1
+comma
+l_string|&quot;asante&quot;
+comma
+id|id
+comma
+op_minus
+l_int|1
+comma
+id|ndev
+)paren
+op_eq
+l_int|0
+)paren
 (brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|NS8390_APPLE
+suffix:colon
+r_default
+suffix:colon
+(brace
+)brace
 r_if
 c_cond
 (paren
@@ -1330,6 +1698,8 @@ id|id
 comma
 op_minus
 l_int|1
+comma
+id|ndev
 )paren
 op_eq
 l_int|0
@@ -1339,6 +1709,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Interlan */
@@ -1357,11 +1729,7 @@ op_assign
 r_int
 )paren
 (paren
-id|nubus_slot_addr
-c_func
-(paren
-id|slot
-)paren
+id|ndev-&gt;board-&gt;slot_addr
 op_plus
 id|APPLE_8390_BASE
 )paren
@@ -1372,11 +1740,7 @@ op_assign
 r_int
 )paren
 (paren
-id|nubus_slot_addr
-c_func
-(paren
-id|slot
-)paren
+id|ndev-&gt;board-&gt;slot_addr
 op_plus
 id|APPLE_8390_MEM
 )paren
@@ -1390,7 +1754,11 @@ suffix:semicolon
 multiline_comment|/* 8K it seems */
 id|dev-&gt;irq
 op_assign
-id|slot
+id|SLOT2IRQ
+c_func
+(paren
+id|ndev-&gt;board-&gt;slot
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1408,6 +1776,8 @@ id|id
 comma
 op_minus
 l_int|1
+comma
+id|ndev
 )paren
 op_eq
 l_int|0
@@ -1418,7 +1788,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Kinetics */
+multiline_comment|/* Kinetics (Shiva Etherport) */
 r_if
 c_cond
 (paren
@@ -1433,11 +1803,7 @@ op_assign
 r_int
 )paren
 (paren
-id|nubus_slot_addr
-c_func
-(paren
-id|slot
-)paren
+id|ndev-&gt;board-&gt;slot_addr
 op_plus
 id|KINETICS_8390_BASE
 )paren
@@ -1448,11 +1814,7 @@ op_assign
 r_int
 )paren
 (paren
-id|nubus_slot_addr
-c_func
-(paren
-id|slot
-)paren
+id|ndev-&gt;board-&gt;slot_addr
 op_plus
 id|KINETICS_8390_MEM
 )paren
@@ -1466,7 +1828,11 @@ suffix:semicolon
 multiline_comment|/* 8K it seems */
 id|dev-&gt;irq
 op_assign
-id|slot
+id|SLOT2IRQ
+c_func
+(paren
+id|ndev-&gt;board-&gt;slot
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1484,6 +1850,8 @@ id|id
 comma
 op_minus
 l_int|1
+comma
+id|ndev
 )paren
 op_eq
 l_int|0
@@ -1494,10 +1862,12 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-id|kfree
+multiline_comment|/* We should hopefully not get here */
+id|printk
 c_func
 (paren
-id|dev
+id|KERN_ERR
+l_string|&quot;Probe unsucessful.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1509,13 +1879,22 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;failed.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|kfree
-c_func
+id|KERN_ERR
+l_string|&quot;failed at %p in %p - %p.&bslash;n&quot;
+comma
+id|i
+comma
 (paren
-id|dev
+r_void
+op_star
+)paren
+id|dev-&gt;mem_start
+comma
+(paren
+r_void
+op_star
+)paren
+id|dev-&gt;mem_end
 )paren
 suffix:semicolon
 r_return
@@ -1523,8 +1902,93 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+DECL|function|mac8390_ethernet_addr
+r_int
+id|__init
+id|mac8390_ethernet_addr
+c_func
+(paren
+r_struct
+id|nubus_dev
+op_star
+id|ndev
+comma
+r_int
+r_char
+id|addr
+(braket
+l_int|6
+)braket
+)paren
+(brace
+r_struct
+id|nubus_dir
+id|dir
+suffix:semicolon
+r_struct
+id|nubus_dirent
+id|ent
+suffix:semicolon
+multiline_comment|/* Get the functional resource for this device */
+r_if
+c_cond
+(paren
+id|nubus_get_func_dir
+c_func
+(paren
+id|ndev
+comma
+op_amp
+id|dir
+)paren
+op_eq
+op_minus
+l_int|1
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nubus_find_rsrc
+c_func
+(paren
+op_amp
+id|dir
+comma
+id|NUBUS_RESID_MAC_ADDRESS
+comma
+op_amp
+id|ent
+)paren
+op_eq
+op_minus
+l_int|1
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+id|nubus_get_rsrc_mem
+c_func
+(paren
+id|addr
+comma
+op_amp
+id|ent
+comma
+l_int|6
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|ns8390_probe1
 r_int
+id|__init
 id|ns8390_probe1
 c_func
 (paren
@@ -1545,14 +2009,13 @@ id|type
 comma
 r_int
 id|promoff
+comma
+r_struct
+id|nubus_dev
+op_star
+id|ndev
 )paren
 (brace
-r_static
-r_int
-id|version_printed
-op_assign
-l_int|0
-suffix:semicolon
 r_static
 id|u32
 id|fwrd4_offsets
@@ -1571,68 +2034,29 @@ l_int|16
 op_assign
 initialization_block
 suffix:semicolon
+r_static
+id|u32
+id|fwrd2_offsets
+(braket
+l_int|16
+)braket
+op_assign
+initialization_block
+suffix:semicolon
 r_int
 r_char
 op_star
 id|prom
 op_assign
 (paren
-(paren
 r_int
 r_char
 op_star
 )paren
-id|nubus_slot_addr
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-)paren
+id|ndev-&gt;board-&gt;slot_addr
 op_plus
 id|promoff
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ei_debug
-op_logical_and
-id|version_printed
-op_increment
-op_eq
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|version
-)paren
-suffix:semicolon
-multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;&t;   share a slot! and the board will usually be enabled. */
-r_if
-c_cond
-(paren
-id|nubus_request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|dev
-comma
-id|ei_interrupt
-)paren
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot; unable to get nubus IRQ %d.&bslash;n&quot;
-comma
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-r_return
-id|EAGAIN
-suffix:semicolon
-)brace
 multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
 r_if
 c_cond
@@ -1646,13 +2070,9 @@ id|dev
 (brace
 id|printk
 (paren
-l_string|&quot; unable to get memory for dev-&gt;priv.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|nubus_free_irq
-c_func
-(paren
-id|dev-&gt;irq
+l_string|&quot;%s: unable to get memory for dev-&gt;priv.&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -1669,6 +2089,42 @@ id|ei_status.word16
 op_assign
 id|word16
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|type
+op_eq
+id|NS8390_CABLETRON
+)paren
+(brace
+multiline_comment|/* Cabletron card puts the RX buffer before the TX buffer */
+id|ei_status.tx_start_page
+op_assign
+id|CABLETRON_TX_START_PG
+suffix:semicolon
+id|ei_status.rx_start_page
+op_assign
+id|CABLETRON_RX_START_PG
+suffix:semicolon
+id|ei_status.stop_page
+op_assign
+id|CABLETRON_RX_STOP_PG
+suffix:semicolon
+id|dev-&gt;rmem_start
+op_assign
+id|dev-&gt;mem_start
+suffix:semicolon
+id|dev-&gt;rmem_end
+op_assign
+id|dev-&gt;mem_start
+op_plus
+id|CABLETRON_RX_STOP_PG
+op_star
+l_int|256
+suffix:semicolon
+)brace
+r_else
+(brace
 id|ei_status.tx_start_page
 op_assign
 id|WD_START_PG
@@ -1678,14 +2134,6 @@ op_assign
 id|WD_START_PG
 op_plus
 id|TX_PAGES
-suffix:semicolon
-id|dev-&gt;rmem_start
-op_assign
-id|dev-&gt;mem_start
-op_plus
-id|TX_PAGES
-op_star
-l_int|256
 suffix:semicolon
 id|ei_status.stop_page
 op_assign
@@ -1697,10 +2145,19 @@ id|dev-&gt;mem_start
 op_div
 l_int|256
 suffix:semicolon
+id|dev-&gt;rmem_start
+op_assign
+id|dev-&gt;mem_start
+op_plus
+id|TX_PAGES
+op_star
+l_int|256
+suffix:semicolon
 id|dev-&gt;rmem_end
 op_assign
 id|dev-&gt;mem_end
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1714,11 +2171,10 @@ multiline_comment|/* Use nubus resources ? */
 r_if
 c_cond
 (paren
-id|nubus_ethernet_addr
+id|mac8390_ethernet_addr
 c_func
 (paren
-id|dev-&gt;irq
-multiline_comment|/* slot */
+id|ndev
 comma
 id|dev-&gt;dev_addr
 )paren
@@ -1769,6 +2225,10 @@ c_cond
 id|type
 op_eq
 id|NS8390_INTERLAN
+op_logical_or
+id|type
+op_eq
+id|NS8390_KINETICS
 )paren
 (brace
 id|x
@@ -1826,9 +2286,74 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; %s, IRQ %d, shared memory at %#lx-%#lx.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;%s: %s in slot %X (type %s)&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|ndev-&gt;board-&gt;name
+comma
+id|ndev-&gt;board-&gt;slot
 comma
 id|model_name
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;MAC &quot;
+)paren
+suffix:semicolon
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%2.2x&quot;
+comma
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|5
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;:&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot; IRQ %d, shared memory at %#lx-%#lx.&bslash;n&quot;
 comma
 id|dev-&gt;irq
 comma
@@ -1849,6 +2374,10 @@ r_case
 id|NS8390_DAYNA
 suffix:colon
 multiline_comment|/* Dayna card */
+r_case
+id|NS8390_KINETICS
+suffix:colon
+multiline_comment|/* Kinetics --  8 bit config, but 16 bit mem */
 multiline_comment|/* 16 bit, 4 word offsets */
 id|ei_status.reset_8390
 op_assign
@@ -1873,6 +2402,38 @@ suffix:semicolon
 id|ei_status.reg_offset
 op_assign
 id|fwrd4_offsets
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|NS8390_CABLETRON
+suffix:colon
+multiline_comment|/* Cabletron */
+multiline_comment|/*&t;&t;16 bit card, register map is short forward */
+id|ei_status.reset_8390
+op_assign
+op_amp
+id|ns8390_no_reset
+suffix:semicolon
+multiline_comment|/* Ctron card won&squot;t accept 32bit values read or written to it */
+id|ei_status.block_input
+op_assign
+op_amp
+id|slow_sane_block_input
+suffix:semicolon
+id|ei_status.block_output
+op_assign
+op_amp
+id|slow_sane_block_output
+suffix:semicolon
+id|ei_status.get_8390_hdr
+op_assign
+op_amp
+id|slow_sane_get_8390_hdr
+suffix:semicolon
+id|ei_status.reg_offset
+op_assign
+id|fwrd2_offsets
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1971,6 +2532,7 @@ id|back4_offsets
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#if 0 /* i think this suffered code rot.  my kinetics card has much&n;&t;   * different settings.  -- CSA [22-May-1999] */
 r_case
 id|NS8390_KINETICS
 suffix:colon
@@ -2002,6 +2564,7 @@ id|back4_offsets
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|panic
@@ -2051,6 +2614,42 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* At least on my card (a Focus Enhancements PDS card) I start */
+multiline_comment|/* getting interrupts right away, so the driver needs to be    */
+multiline_comment|/* completely initialized before enabling the interrupt.        */
+multiline_comment|/*                             - funaho@jurai.org (1999-05-17) */
+multiline_comment|/* Non-slow interrupt, works around issues with the SONIC driver */
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|ei_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;8390 Ethernet&quot;
+comma
+id|dev
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;%s: unable to get IRQ %d.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+r_return
+id|EAGAIN
+suffix:semicolon
+)brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
@@ -2131,6 +2730,14 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|dev
+)paren
+suffix:semicolon
 id|ei_close
 c_func
 (paren
@@ -2143,13 +2750,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|nubus_8390
-r_struct
-id|nubus_device_specifier
-id|nubus_8390
-op_assign
-initialization_block
-suffix:semicolon
 multiline_comment|/*&n; *    Interlan Specific Code Starts Here&n; */
 DECL|function|interlan_reset
 r_static
@@ -2171,7 +2771,11 @@ op_assign
 id|nubus_slot_addr
 c_func
 (paren
+id|IRQ2SLOT
+c_func
+(paren
 id|dev-&gt;irq
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2220,10 +2824,10 @@ suffix:semicolon
 multiline_comment|/*&n; *    Daynaport code (some is used by other drivers)&n; */
 multiline_comment|/* Grab the 8390 specific header. Similar to the block_input routine, but&n;   we don&squot;t need to be concerned with ring wrap as the header will be at&n;   the start of a page, so we optimize accordingly. */
 multiline_comment|/* Block input and output are easy on shared memory ethercards, and trivial&n;   on the Daynaport card where there is no choice of how to do it.&n;   The only complications are that the ring buffer wraps.&n;*/
-DECL|function|dayna_cpu_memcpy
+DECL|function|dayna_memcpy_fromcard
 r_static
 r_void
-id|dayna_cpu_memcpy
+id|dayna_memcpy_fromcard
 c_func
 (paren
 r_struct
@@ -2273,6 +2877,43 @@ op_plus
 id|from
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Leading byte?&n;&t; */
+r_if
+c_cond
+(paren
+id|from
+op_amp
+l_int|2
+)paren
+(brace
+op_star
+(paren
+(paren
+r_char
+op_star
+)paren
+id|target
+)paren
+op_increment
+op_assign
+op_star
+(paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|ptr
+op_increment
+)paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|count
+op_decrement
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -2293,7 +2934,7 @@ multiline_comment|/* Copy and */
 id|ptr
 op_increment
 suffix:semicolon
-multiline_comment|/* Cruft and */
+multiline_comment|/* skip cruft */
 id|count
 op_sub_assign
 l_int|2
@@ -2329,10 +2970,10 @@ l_int|8
 suffix:semicolon
 )brace
 )brace
-DECL|function|cpu_dayna_memcpy
+DECL|function|dayna_memcpy_tocard
 r_static
 r_void
-id|cpu_dayna_memcpy
+id|dayna_memcpy_tocard
 c_func
 (paren
 r_struct
@@ -2384,6 +3025,50 @@ op_plus
 id|to
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Leading byte?&n;&t; */
+r_if
+c_cond
+(paren
+id|to
+op_amp
+l_int|2
+)paren
+(brace
+multiline_comment|/* avoid a byte write (stomps on other data) */
+id|ptr
+(braket
+op_minus
+l_int|1
+)braket
+op_assign
+(paren
+id|ptr
+(braket
+op_minus
+l_int|1
+)braket
+op_amp
+l_int|0xFF00
+)paren
+op_or
+op_star
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|src
+)paren
+op_increment
+suffix:semicolon
+id|ptr
+op_increment
+suffix:semicolon
+id|count
+op_decrement
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -2404,7 +3089,7 @@ multiline_comment|/* Copy and */
 id|ptr
 op_increment
 suffix:semicolon
-multiline_comment|/* Cruft and */
+multiline_comment|/* skip cruft */
 id|count
 op_sub_assign
 l_int|2
@@ -2425,18 +3110,22 @@ op_assign
 op_star
 id|src
 suffix:semicolon
+multiline_comment|/* card doesn&squot;t like byte writes */
 op_star
-(paren
-(paren
-r_char
-op_star
-)paren
 id|ptr
-)paren
 op_assign
+(paren
+op_star
+id|ptr
+op_amp
+l_int|0x00FF
+)paren
+op_or
+(paren
 id|v
-op_rshift
-l_int|8
+op_amp
+l_int|0xFF00
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2472,7 +3161,7 @@ id|WD_START_PG
 op_lshift
 l_int|8
 suffix:semicolon
-id|dayna_cpu_memcpy
+id|dayna_memcpy_fromcard
 c_func
 (paren
 id|dev
@@ -2568,7 +3257,7 @@ id|dev-&gt;rmem_end
 op_minus
 id|xfer_start
 suffix:semicolon
-id|dayna_cpu_memcpy
+id|dayna_memcpy_fromcard
 c_func
 (paren
 id|dev
@@ -2584,7 +3273,7 @@ id|count
 op_sub_assign
 id|semi_count
 suffix:semicolon
-id|dayna_cpu_memcpy
+id|dayna_memcpy_fromcard
 c_func
 (paren
 id|dev
@@ -2603,7 +3292,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dayna_cpu_memcpy
+id|dayna_memcpy_fromcard
 c_func
 (paren
 id|dev
@@ -2652,7 +3341,7 @@ id|WD_START_PG
 op_lshift
 l_int|8
 suffix:semicolon
-id|cpu_dayna_memcpy
+id|dayna_memcpy_tocard
 c_func
 (paren
 id|dev
@@ -3355,5 +4044,5 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;
 )brace
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c daynaport.c&quot;&n; *  version-control: t&n; *  tab-width: 4&n; *  kept-new-versions: 5&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c daynaport.c&quot;&n; *  version-control: t&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; *  kept-new-versions: 5&n; * End:&n; */
 eof

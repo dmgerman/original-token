@@ -639,6 +639,10 @@ id|id
 l_int|40
 )braket
 suffix:semicolon
+id|mach_max_dma_address
+op_assign
+l_int|0xffffffff
+suffix:semicolon
 id|mach_sched_init
 op_assign
 id|mvme16x_sched_init

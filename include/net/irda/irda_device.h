@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       0.9&n; * Description:   Contains various declarations used by the drivers&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Mon Dec 13 12:05:31 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       0.9&n; * Description:   Contains various declarations used by the drivers&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Fri Jan 14 10:46:56 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999-2000 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_DEVICE_H
 DECL|macro|IRDA_DEVICE_H
 mdefine_line|#define IRDA_DEVICE_H
@@ -350,31 +350,39 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Chip specific info */
-DECL|struct|chipio_t
+r_typedef
 r_struct
-id|chipio_t
 (brace
-DECL|member|iobase
-DECL|member|iobase2
+DECL|member|cfg_base
 r_int
-id|iobase
-comma
-id|iobase2
+id|cfg_base
 suffix:semicolon
-multiline_comment|/* IO base */
-DECL|member|io_ext
-DECL|member|io_ext2
+multiline_comment|/* Config register IO base */
+DECL|member|sir_base
 r_int
-id|io_ext
-comma
-id|io_ext2
+id|sir_base
 suffix:semicolon
-multiline_comment|/* Length of iobase */
-DECL|member|membase
+multiline_comment|/* SIR IO base */
+DECL|member|fir_base
 r_int
-id|membase
+id|fir_base
+suffix:semicolon
+multiline_comment|/* FIR IO base */
+DECL|member|mem_base
+r_int
+id|mem_base
 suffix:semicolon
 multiline_comment|/* Shared memory base */
+DECL|member|sir_ext
+r_int
+id|sir_ext
+suffix:semicolon
+multiline_comment|/* Length of SIR iobase */
+DECL|member|fir_ext
+r_int
+id|fir_ext
+suffix:semicolon
+multiline_comment|/* Length of FIR iobase */
 DECL|member|irq
 DECL|member|irq2
 r_int
@@ -383,11 +391,6 @@ comma
 id|irq2
 suffix:semicolon
 multiline_comment|/* Interrupts used */
-DECL|member|fifo_size
-r_int
-id|fifo_size
-suffix:semicolon
-multiline_comment|/* FIFO size */
 DECL|member|dma
 DECL|member|dma2
 r_int
@@ -395,7 +398,12 @@ id|dma
 comma
 id|dma2
 suffix:semicolon
-multiline_comment|/* DMA channel used */
+multiline_comment|/* DMA channel(s) used */
+DECL|member|fifo_size
+r_int
+id|fifo_size
+suffix:semicolon
+multiline_comment|/* FIFO size */
 DECL|member|irqflags
 r_int
 id|irqflags
@@ -406,22 +414,38 @@ r_int
 id|direction
 suffix:semicolon
 multiline_comment|/* Link direction, used by some FIR drivers */
+DECL|member|enabled
+r_int
+id|enabled
+suffix:semicolon
+multiline_comment|/* Powered on? */
+DECL|member|suspended
+r_int
+id|suspended
+suffix:semicolon
+multiline_comment|/* Suspended by APM */
 DECL|member|speed
 id|__u32
 id|speed
 suffix:semicolon
 multiline_comment|/* Currently used speed */
+DECL|member|new_speed
+id|__u32
+id|new_speed
+suffix:semicolon
+multiline_comment|/* Speed we must change to when Tx is finished */
 DECL|member|dongle_id
 r_int
 id|dongle_id
 suffix:semicolon
 multiline_comment|/* Dongle or transceiver currently used */
+DECL|typedef|chipio_t
 )brace
+id|chipio_t
 suffix:semicolon
 multiline_comment|/* IO buffer specific info (inspired by struct sk_buff) */
-DECL|struct|iobuff_t
+r_typedef
 r_struct
-id|iobuff_t
 (brace
 DECL|member|state
 r_int
@@ -465,7 +489,9 @@ DECL|member|fcs
 id|__u16
 id|fcs
 suffix:semicolon
+DECL|typedef|iobuff_t
 )brace
+id|iobuff_t
 suffix:semicolon
 multiline_comment|/* Function prototypes */
 r_int

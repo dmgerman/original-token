@@ -104,6 +104,13 @@ DECL|macro|ADD_MASK
 mdefine_line|#define ADD_MASK 0x3000&t;&t;/*  Mask it use of the ADD_PORT register */
 DECL|macro|ADD_SIG
 mdefine_line|#define ADD_SIG 0x3000&t;&t;/*  Expected ID signature */
+multiline_comment|/* On Macs, we only need use the ISA I/O stuff until we do MEMORY_ON */
+macro_line|#ifdef CONFIG_MAC
+DECL|macro|LCSLOTBASE
+mdefine_line|#define LCSLOTBASE 0xfee00000
+DECL|macro|MMIOBASE
+mdefine_line|#define MMIOBASE 0x40000
+macro_line|#endif
 DECL|macro|CHIP_EISA_ID_SIG
 mdefine_line|#define CHIP_EISA_ID_SIG 0x630E   /*  Product ID Code for Crystal Chip (CS8900 spec 4.3) */
 macro_line|#ifdef IBMEIPKT

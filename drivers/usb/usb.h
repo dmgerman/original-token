@@ -1349,6 +1349,11 @@ op_star
 id|config
 suffix:semicolon
 multiline_comment|/* All of the configs */
+DECL|member|have_langid
+r_int
+id|have_langid
+suffix:semicolon
+multiline_comment|/* whether string_langid is valid yet */
 DECL|member|string_langid
 r_int
 id|string_langid

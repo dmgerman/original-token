@@ -4770,7 +4770,7 @@ id|err
 id|err
 c_func
 (paren
-l_string|&quot;ov511_init_isoc: usb_run_isoc(1) ret %d&bslash;n&quot;
+l_string|&quot;ov511_init_isoc: usb_run_isoc(1) ret %d&quot;
 comma
 id|err
 )paren

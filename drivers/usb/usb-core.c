@@ -338,6 +338,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_USB_UHCI_ALT
+id|uhci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_USB_OHCI
 id|ohci_hcd_init
 c_func

@@ -65,7 +65,7 @@ id|fh
 comma
 id|S_IFREG
 comma
-l_int|0
+id|MAY_LOCK
 comma
 id|filp
 )paren

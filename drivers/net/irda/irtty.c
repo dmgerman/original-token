@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Wed Jan  5 14:00:13 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Fri Jan 14 21:02:27 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -897,6 +897,39 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+multiline_comment|/* dev_alloc doesn&squot;t clear the struct */
+id|memset
+c_func
+(paren
+(paren
+(paren
+id|__u8
+op_star
+)paren
+id|dev
+)paren
+op_plus
+r_sizeof
+(paren
+r_char
+op_star
+)paren
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|net_device
+)paren
+op_minus
+r_sizeof
+(paren
+r_char
+op_star
+)paren
+)paren
+suffix:semicolon
 id|dev-&gt;priv
 op_assign
 (paren
@@ -2413,6 +2446,10 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
+id|self-&gt;stats.tx_bytes
+op_add_assign
+id|self-&gt;tx_buff.len
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2442,13 +2479,6 @@ suffix:semicolon
 id|self-&gt;tx_buff.len
 op_sub_assign
 id|actual
-suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
-suffix:semicolon
-id|self-&gt;stats.tx_bytes
-op_add_assign
-id|self-&gt;tx_buff.len
 suffix:semicolon
 id|dev_kfree_skb
 c_func
@@ -2573,6 +2603,9 @@ suffix:semicolon
 id|self-&gt;tx_buff.len
 op_sub_assign
 id|actual
+suffix:semicolon
+id|self-&gt;stats.tx_packets
+op_increment
 suffix:semicolon
 )brace
 r_else

@@ -2506,6 +2506,16 @@ l_string|&quot;&quot;
 )brace
 comma
 (brace
+id|NFSEXP_NOAUTHNLM
+comma
+(brace
+l_string|&quot;no_auth_nlm&quot;
+comma
+l_string|&quot;&quot;
+)brace
+)brace
+comma
+(brace
 l_int|0
 comma
 (brace

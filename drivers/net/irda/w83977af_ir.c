@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       1.0&n; * Description:   FIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Wed Jan  5 15:11:21 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998-1999 Rebel.com&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Rebel.com admit liability nor provide&n; *     warranty for any of this software. This material is provided &quot;AS-IS&quot;&n; *     and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations are quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       1.0&n; * Description:   FIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Fri Jan 28 12:10:59 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-2000 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998-1999 Rebel.com&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Rebel.com admit liability nor provide&n; *     warranty for any of this software. This material is provided &quot;AS-IS&quot;&n; *     and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations are quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt; 
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -684,7 +684,7 @@ op_assign
 id|self
 suffix:semicolon
 multiline_comment|/* Initialize IO */
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 op_assign
 id|iobase
 suffix:semicolon
@@ -692,7 +692,7 @@ id|self-&gt;io.irq
 op_assign
 id|irq
 suffix:semicolon
-id|self-&gt;io.io_ext
+id|self-&gt;io.fir_ext
 op_assign
 id|CHIP_IO_EXTENT
 suffix:semicolon
@@ -710,9 +710,9 @@ op_assign
 id|check_region
 c_func
 (paren
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 comma
-id|self-&gt;io.io_ext
+id|self-&gt;io.fir_ext
 )paren
 suffix:semicolon
 r_if
@@ -731,7 +731,7 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), can&squot;t get iobase of 0x%03x&bslash;n&quot;
 comma
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 )paren
 suffix:semicolon
 multiline_comment|/* w83977af_cleanup( self);  */
@@ -743,9 +743,9 @@ suffix:semicolon
 id|request_region
 c_func
 (paren
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 comma
-id|self-&gt;io.io_ext
+id|self-&gt;io.fir_ext
 comma
 id|driver_name
 )paren
@@ -944,39 +944,6 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-multiline_comment|/* dev_alloc doesn&squot;t clear the struct, so lets do a little hack */
-id|memset
-c_func
-(paren
-(paren
-(paren
-id|__u8
-op_star
-)paren
-id|dev
-)paren
-op_plus
-r_sizeof
-(paren
-r_char
-op_star
-)paren
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|net_device
-)paren
-op_minus
-r_sizeof
-(paren
-r_char
-op_star
-)paren
-)paren
-suffix:semicolon
 id|dev-&gt;priv
 op_assign
 (paren
@@ -1089,7 +1056,7 @@ l_string|&quot;()&bslash;n&quot;
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 macro_line|#ifdef CONFIG_USE_W977_PNP
 multiline_comment|/* enter PnP configuration mode */
@@ -1148,13 +1115,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Must free the old-style 2.2.x device */
-id|kfree
-c_func
-(paren
-id|self-&gt;netdev
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* Release the PORT that this driver is using */
 id|IRDA_DEBUG
@@ -1165,15 +1125,15 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), Releasing Region %03x&bslash;n&quot;
 comma
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 )paren
 suffix:semicolon
 id|release_region
 c_func
 (paren
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 comma
-id|self-&gt;io.io_ext
+id|self-&gt;io.fir_ext
 )paren
 suffix:semicolon
 r_if
@@ -1697,7 +1657,7 @@ id|set
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/* Update accounting for new speed */
 id|self-&gt;io.speed
@@ -2095,7 +2055,7 @@ id|dev-&gt;priv
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 id|IRDA_DEBUG
 c_func
@@ -2858,7 +2818,7 @@ suffix:semicolon
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/* Save current set */
 id|set
@@ -3040,7 +3000,7 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/* Save current set */
 id|set
@@ -3350,7 +3310,7 @@ id|self-&gt;st_fifo
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/* Save current set */
 id|set
@@ -3365,7 +3325,7 @@ id|SSR
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/* Read status FIFO */
 id|switch_bank
@@ -3832,7 +3792,7 @@ suffix:semicolon
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/*  Receive all characters in Rx FIFO */
 r_do
@@ -3921,7 +3881,7 @@ id|isr
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/* Transmit FIFO low on data */
 r_if
@@ -3938,7 +3898,7 @@ op_assign
 id|w83977af_pio_write
 c_func
 (paren
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 comma
 id|self-&gt;tx_buff.data
 comma
@@ -4136,7 +4096,7 @@ id|iobase
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 id|set
 op_assign
@@ -4423,7 +4383,7 @@ l_int|1
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/* Save current bank */
 id|set
@@ -4587,7 +4547,7 @@ l_int|115200
 (brace
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/* Check if rx FIFO is not empty */
 id|set
@@ -4759,7 +4719,7 @@ suffix:semicolon
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 r_if
 c_cond
@@ -4981,7 +4941,7 @@ suffix:semicolon
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/* Stop device */
 id|dev-&gt;tbusy

@@ -320,10 +320,9 @@ op_amp
 id|LP_POUTPA
 )paren
 (brace
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;usblp%d: out of paper&quot;
 comma
 id|usblp-&gt;minor
@@ -343,10 +342,9 @@ op_amp
 id|LP_PSELECD
 )paren
 (brace
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;usblp%d: off-line&quot;
 comma
 id|usblp-&gt;minor
@@ -366,10 +364,9 @@ op_amp
 id|LP_PERRORP
 )paren
 (brace
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;usblp%d: on fire&quot;
 comma
 id|usblp-&gt;minor
@@ -790,11 +787,10 @@ op_amp
 id|usblp-&gt;writeurb
 )paren
 suffix:semicolon
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usblp%d: timed out&bslash;n&quot;
+l_string|&quot;usblp%d: timed out&quot;
 comma
 id|usblp-&gt;minor
 )paren
@@ -820,10 +816,16 @@ c_cond
 op_logical_neg
 id|usblp-&gt;writeurb.status
 )paren
+(brace
 id|writecount
 op_add_assign
 id|usblp-&gt;writeurb.transfer_buffer_length
 suffix:semicolon
+id|usblp-&gt;writeurb.transfer_buffer_length
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_else
 (brace
 r_if
@@ -841,11 +843,10 @@ id|usblp
 )paren
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usblp%d: error %d writing to printer&bslash;n&quot;
+l_string|&quot;usblp%d: error %d writing to printer&quot;
 comma
 id|usblp-&gt;minor
 comma
@@ -1035,11 +1036,10 @@ c_cond
 id|usblp-&gt;readurb.status
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usblp%d: error %d reading from printer&bslash;n&quot;
+l_string|&quot;usblp%d: error %d reading from printer&quot;
 comma
 id|usblp-&gt;minor
 comma
@@ -1593,11 +1593,10 @@ id|usblp
 )paren
 suffix:semicolon
 )brace
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;usblp%d: USB %sdirectional printer dev %d if %d alt %d&bslash;n&quot;
+l_string|&quot;usblp%d: USB %sdirectional printer dev %d if %d alt %d&quot;
 comma
 id|minor
 comma

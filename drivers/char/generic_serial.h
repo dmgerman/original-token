@@ -2,6 +2,8 @@ multiline_comment|/*&n; *  generic_serial.h&n; *&n; *  Copyright (C) 1998 R.E.Wo
 macro_line|#ifndef GENERIC_SERIAL_H
 DECL|macro|GENERIC_SERIAL_H
 mdefine_line|#define GENERIC_SERIAL_H
+DECL|macro|RS_EVENT_WRITE_WAKEUP
+mdefine_line|#define RS_EVENT_WRITE_WAKEUP 0
 DECL|struct|real_driver
 r_struct
 id|real_driver
@@ -264,6 +266,8 @@ DECL|macro|GS_DEBUG_STUFF
 mdefine_line|#define GS_DEBUG_STUFF   0x00000008
 DECL|macro|GS_DEBUG_CLOSE
 mdefine_line|#define GS_DEBUG_CLOSE   0x00000010
+DECL|macro|GS_DEBUG_FLOW
+mdefine_line|#define GS_DEBUG_FLOW    0x00000020
 r_void
 id|gs_put_char
 c_func

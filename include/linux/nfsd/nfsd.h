@@ -23,8 +23,10 @@ DECL|macro|MAY_SATTR
 mdefine_line|#define MAY_SATTR&t;&t;8
 DECL|macro|MAY_TRUNC
 mdefine_line|#define MAY_TRUNC&t;&t;16
-macro_line|#if (MAY_SATTR | MAY_TRUNC) &amp; (MAY_READ | MAY_WRITE | MAY_EXEC)
-macro_line|# error &quot;please use a different value for MAY_SATTR or MAY_TRUNC.&quot;
+DECL|macro|MAY_LOCK
+mdefine_line|#define MAY_LOCK&t;&t;32
+macro_line|#if (MAY_SATTR | MAY_TRUNC | MAY_LOCK) &amp; (MAY_READ | MAY_WRITE | MAY_EXEC)
+macro_line|# error &quot;please use a different value for MAY_SATTR or MAY_TRUNC or MAY_LOCK.&quot;
 macro_line|#endif
 DECL|macro|MAY_CREATE
 mdefine_line|#define MAY_CREATE&t;&t;(MAY_EXEC|MAY_WRITE)

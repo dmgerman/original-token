@@ -1,5 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      toshoboe.h&n; * Version:       0.1&n; * Description:   Driver for the Toshiba OBOE (or type-O)&n; *                FIR Chipset. &n; * Status:        Experimental.&n; * Author:        James McKenzie &lt;james@fishsoup.dhs.org&gt;&n; * Created at:    Sat May 8  12:35:27 1999&n; * &n; *     Copyright (c) 1999 James McKenzie, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither James McKenzie nor Cambridge University admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Libretto 100CT. and many more&n; *&n; ********************************************************************/
-multiline_comment|/*&n; * $Log: toshoboe.h,v $&n; * Revision 1.4  1999/06/29 13:46:42  root&n; * ls&n; *&n; * Revision 1.3  1999/06/29 12:31:03  root&n; * *** empty log message ***&n; *&n; * Revision 1.2  1999/05/09 01:43:08  root&n; * *** empty log message ***&n; *&n; * Revision 1.1  1999/05/09 01:25:58  root&n; * Initial revision&n; *&n; */
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      toshoboe.h&n; * Version:       0.1&n; * Description:   Driver for the Toshiba OBOE (or type-O)&n; *                FIR Chipset. &n; * Status:        Experimental.&n; * Author:        James McKenzie &lt;james@fishsoup.dhs.org&gt;&n; * Created at:    Sat May 8  12:35:27 1999&n; * &n; *     Copyright (c) 1999-2000 James McKenzie, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither James McKenzie nor Cambridge University admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Libretto 100CT. and many more&n; *&n; ********************************************************************/
 macro_line|#ifndef TOSHOBOE_H
 DECL|macro|TOSHOBOE_H
 mdefine_line|#define TOSHOBOE_H
@@ -214,18 +213,17 @@ op_star
 id|irlap
 suffix:semicolon
 multiline_comment|/* The link layer we are binded to */
-DECL|member|io
-r_struct
-id|chipio_t
-id|io
-suffix:semicolon
-multiline_comment|/* IrDA controller information */
 DECL|member|qos
 r_struct
 id|qos_info
 id|qos
 suffix:semicolon
 multiline_comment|/* QoS capabilities for this device */
+DECL|member|io
+id|chipio_t
+id|io
+suffix:semicolon
+multiline_comment|/* IrDA controller information */
 DECL|member|flags
 id|__u32
 id|flags

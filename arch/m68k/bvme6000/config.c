@@ -508,6 +508,10 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|mach_max_dma_address
+op_assign
+l_int|0xffffffff
+suffix:semicolon
 id|mach_sched_init
 op_assign
 id|bvme6000_sched_init

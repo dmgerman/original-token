@@ -18,12 +18,22 @@ mdefine_line|#define PCI_DEVICE_ID_VIA_OHCI1394 0x3044
 macro_line|#endif
 DECL|macro|MAX_OHCI1394_CARDS
 mdefine_line|#define MAX_OHCI1394_CARDS        4
+DECL|macro|OHCI1394_MAX_AT_REQ_RETRIES
+mdefine_line|#define OHCI1394_MAX_AT_REQ_RETRIES       1
+DECL|macro|OHCI1394_MAX_AT_RESP_RETRIES
+mdefine_line|#define OHCI1394_MAX_AT_RESP_RETRIES      1
+DECL|macro|OHCI1394_MAX_PHYS_RESP_RETRIES
+mdefine_line|#define OHCI1394_MAX_PHYS_RESP_RETRIES    4
+DECL|macro|AR_RESP_NUM_DESC
+mdefine_line|#define AR_RESP_NUM_DESC                  4 /* number of AR resp descriptors */
 DECL|macro|AR_RESP_BUF_SIZE
-mdefine_line|#define AR_RESP_BUF_SIZE          4096
-DECL|macro|AR_RESP_PRG_SIZE
-mdefine_line|#define AR_RESP_PRG_SIZE          256
+mdefine_line|#define AR_RESP_BUF_SIZE               4096 /* size of AR resp buffers */
+DECL|macro|AR_RESP_SPLIT_PACKET_BUF_SIZE
+mdefine_line|#define AR_RESP_SPLIT_PACKET_BUF_SIZE   256 /* split packet buffer */
+DECL|macro|AR_RESP_TOTAL_BUF_SIZE
+mdefine_line|#define AR_RESP_TOTAL_BUF_SIZE         (AR_RESP_BUF_SIZE * AR_RESP_NUM_DESC)
 DECL|macro|AT_REQ_PRG_SIZE
-mdefine_line|#define AT_REQ_PRG_SIZE           256
+mdefine_line|#define AT_REQ_PRG_SIZE                256
 DECL|macro|IR_RECV_BUF_SIZE
 mdefine_line|#define IR_RECV_BUF_SIZE          4096 /* 4096 bytes/buffer */
 DECL|macro|IR_SPLIT_PACKET_BUF_SIZE
@@ -94,12 +104,53 @@ DECL|member|AR_resp_prg
 r_struct
 id|dma_cmd
 op_star
+op_star
 id|AR_resp_prg
 suffix:semicolon
 DECL|member|AR_resp_buf
 id|quadlet_t
 op_star
+op_star
 id|AR_resp_buf
+suffix:semicolon
+DECL|member|AR_resp_buf_bh_ind
+r_int
+r_int
+id|AR_resp_buf_bh_ind
+suffix:semicolon
+DECL|member|AR_resp_buf_bh_offset
+r_int
+r_int
+id|AR_resp_buf_bh_offset
+suffix:semicolon
+DECL|member|AR_resp_buf_th_ind
+r_int
+r_int
+id|AR_resp_buf_th_ind
+suffix:semicolon
+DECL|member|AR_resp_buf_th_offset
+r_int
+r_int
+id|AR_resp_buf_th_offset
+suffix:semicolon
+DECL|member|AR_resp_bytes_left
+r_int
+id|AR_resp_bytes_left
+suffix:semicolon
+DECL|member|AR_resp_spb
+id|quadlet_t
+op_star
+id|AR_resp_spb
+suffix:semicolon
+DECL|member|AR_resp_lock
+id|spinlock_t
+id|AR_resp_lock
+suffix:semicolon
+multiline_comment|/* async receive task */
+DECL|member|AR_resp_pdl_task
+r_struct
+id|tq_struct
+id|AR_resp_pdl_task
 suffix:semicolon
 multiline_comment|/* asynchronous transmit */
 DECL|member|AT_req_prg

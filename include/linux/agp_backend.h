@@ -171,6 +171,10 @@ DECL|member|type
 id|u32
 id|type
 suffix:semicolon
+DECL|member|physical
+id|u32
+id|physical
+suffix:semicolon
 DECL|member|is_bound
 id|u8
 id|is_bound

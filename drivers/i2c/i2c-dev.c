@@ -1,6 +1,6 @@
 multiline_comment|/*&n;    i2c-dev.c - i2c-bus driver, char device interface  &n;&n;    Copyright (C) 1995-97 Simon G. Vogl&n;    Copyright (C) 1998-99 Frodo Looijaard &lt;frodol@dds.nl&gt;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
 multiline_comment|/* Note that this is a complete rewrite of Simon Vogl&squot;s i2c-dev module.&n;   But I have used so much of his original code and ideas that it seems&n;   only fair to recognize him as co-author -- Frodo */
-multiline_comment|/* $Id: i2c-dev.c,v 1.18 1999/12/21 23:45:58 frodo Exp $ */
+multiline_comment|/* $Id: i2c-dev.c,v 1.25 2000/01/26 14:14:20 frodo Exp $ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -8,43 +8,8 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/* If you want debugging uncomment: */
 multiline_comment|/* #define DEBUG */
-macro_line|#ifndef KERNEL_VERSION
-DECL|macro|KERNEL_VERSION
-mdefine_line|#define KERNEL_VERSION(a,b,c) (((a) &lt;&lt; 16) | ((b) &lt;&lt; 8) | (c))
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,51)
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__init
-mdefine_line|#define __init
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,4))
-DECL|macro|copy_from_user
-mdefine_line|#define copy_from_user memcpy_fromfs
-DECL|macro|copy_to_user
-mdefine_line|#define copy_to_user memcpy_tofs
-DECL|macro|get_user_data
-mdefine_line|#define get_user_data(to,from) ((to) = get_user(from),0)
-macro_line|#else
 macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|macro|get_user_data
-mdefine_line|#define get_user_data(to,from) get_user(to,from)
-macro_line|#endif
-multiline_comment|/* 2.0.0 kernel compatibility */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020100
-DECL|macro|MODULE_AUTHOR
-mdefine_line|#define MODULE_AUTHOR(noone)
-DECL|macro|MODULE_DESCRIPTION
-mdefine_line|#define MODULE_DESCRIPTION(none)
-DECL|macro|MODULE_PARM
-mdefine_line|#define MODULE_PARM(no,param)
-DECL|macro|MODULE_PARM_DESC
-mdefine_line|#define MODULE_PARM_DESC(no,description)
-DECL|macro|EXPORT_SYMBOL
-mdefine_line|#define EXPORT_SYMBOL(noexport)
-DECL|macro|EXPORT_NO_SYMBOLS
-mdefine_line|#define EXPORT_NO_SYMBOLS
-macro_line|#endif
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/i2c-dev.h&gt;
 macro_line|#ifdef MODULE
@@ -66,7 +31,6 @@ r_void
 suffix:semicolon
 macro_line|#endif /* def MODULE */
 multiline_comment|/* struct file_operations changed too often in the 2.1 series for nice code */
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,70))
 r_static
 id|loff_t
 id|i2cdev_lseek
@@ -83,73 +47,6 @@ r_int
 id|origin
 )paren
 suffix:semicolon
-macro_line|#elif (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,56))
-r_static
-r_int
-r_int
-id|i2cdev_lseek
-(paren
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-id|origin
-)paren
-suffix:semicolon
-macro_line|#elif (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0))
-r_static
-r_int
-r_int
-id|i2cdev_llseek
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-id|origin
-)paren
-suffix:semicolon
-macro_line|#else
-r_static
-r_int
-id|i2cdev_lseek
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|origin
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,70))
 r_static
 id|ssize_t
 id|i2cdev_read
@@ -193,103 +90,6 @@ op_star
 id|offset
 )paren
 suffix:semicolon
-macro_line|#elif (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0))
-r_static
-r_int
-id|i2cdev_read
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-r_int
-id|count
-)paren
-suffix:semicolon
-r_static
-r_int
-id|i2cdev_write
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_const
-r_char
-op_star
-id|buf
-comma
-r_int
-r_int
-id|offset
-)paren
-suffix:semicolon
-macro_line|#else
-r_static
-r_int
-id|i2cdev_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-suffix:semicolon
-r_static
-r_int
-id|i2cdev_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_const
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|i2cdev_ioctl
@@ -328,7 +128,6 @@ op_star
 id|file
 )paren
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,31))
 r_static
 r_int
 id|i2cdev_release
@@ -344,23 +143,6 @@ op_star
 id|file
 )paren
 suffix:semicolon
-macro_line|#else
-r_static
-r_void
-id|i2cdev_release
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|i2cdev_attach_adapter
@@ -438,22 +220,20 @@ id|i2cdev_write
 comma
 l_int|NULL
 comma
-multiline_comment|/* i2cdev_readdir  */
+multiline_comment|/* i2cdev_readdir&t;*/
 l_int|NULL
 comma
-multiline_comment|/* i2cdev_select   */
+multiline_comment|/* i2cdev_select&t;*/
 id|i2cdev_ioctl
 comma
 l_int|NULL
 comma
-multiline_comment|/* i2cdev_mmap     */
+multiline_comment|/* i2cdev_mmap&t;&t;*/
 id|i2cdev_open
 comma
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,118)
 l_int|NULL
 comma
-multiline_comment|/* i2cdev_flush    */
-macro_line|#endif
+multiline_comment|/* i2cdev_flush&t;&t;*/
 id|i2cdev_release
 comma
 )brace
@@ -540,7 +320,6 @@ r_int
 id|i2cdev_initialized
 suffix:semicolon
 multiline_comment|/* Note that the lseek function is called llseek in 2.1 kernels. But things&n;   are complicated enough as is. */
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,70))
 DECL|function|i2cdev_lseek
 id|loff_t
 id|i2cdev_lseek
@@ -556,69 +335,8 @@ comma
 r_int
 id|origin
 )paren
-macro_line|#elif (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,56))
-r_int
-r_int
-id|i2cdev_lseek
-(paren
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-id|origin
-)paren
-macro_line|#elif (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0))
-r_int
-r_int
-id|i2cdev_llseek
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-id|origin
-)paren
-macro_line|#else
-r_int
-id|i2cdev_lseek
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|origin
-)paren
-macro_line|#endif
 (brace
 macro_line|#ifdef DEBUG
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,56))
 r_struct
 id|inode
 op_star
@@ -626,7 +344,6 @@ id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,70)) */
 id|printk
 c_func
 (paren
@@ -652,7 +369,6 @@ op_minus
 id|ESPIPE
 suffix:semicolon
 )brace
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,70))
 DECL|function|i2cdev_read
 r_static
 id|ssize_t
@@ -674,53 +390,6 @@ id|loff_t
 op_star
 id|offset
 )paren
-macro_line|#elif (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0))
-r_static
-r_int
-id|i2cdev_read
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-r_int
-id|count
-)paren
-macro_line|#else
-r_static
-r_int
-id|i2cdev_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-macro_line|#endif
 (brace
 r_char
 op_star
@@ -730,7 +399,6 @@ r_int
 id|ret
 suffix:semicolon
 macro_line|#ifdef DEBUG
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,70))
 r_struct
 id|inode
 op_star
@@ -738,7 +406,6 @@ id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,70)) */
 macro_line|#endif /* DEBUG */
 r_struct
 id|i2c_client
@@ -802,6 +469,14 @@ comma
 id|count
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ret
+)paren
+id|ret
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -811,6 +486,11 @@ id|tmp
 comma
 id|count
 )paren
+ques
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 id|kfree
 c_func
@@ -822,7 +502,6 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,70))
 DECL|function|i2cdev_write
 r_static
 id|ssize_t
@@ -845,55 +524,6 @@ id|loff_t
 op_star
 id|offset
 )paren
-macro_line|#elif (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0))
-r_static
-r_int
-id|i2cdev_write
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_const
-r_char
-op_star
-id|buf
-comma
-r_int
-r_int
-id|offset
-)paren
-macro_line|#else
-r_static
-r_int
-id|i2cdev_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_const
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-macro_line|#endif
 (brace
 r_int
 id|ret
@@ -915,7 +545,6 @@ op_star
 id|file-&gt;private_data
 suffix:semicolon
 macro_line|#ifdef DEBUG
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,70))
 r_struct
 id|inode
 op_star
@@ -923,7 +552,6 @@ id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,70)) */
 macro_line|#endif /* DEBUG */
 multiline_comment|/* copy user space data to kernel space. */
 id|tmp
@@ -947,6 +575,9 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -956,7 +587,19 @@ id|buf
 comma
 id|count
 )paren
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|tmp
+)paren
 suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -1039,8 +682,6 @@ id|i2c_smbus_data
 id|temp
 suffix:semicolon
 r_int
-id|ver
-comma
 id|datasize
 comma
 id|res
@@ -1160,65 +801,6 @@ suffix:semicolon
 r_case
 id|I2C_FUNCS
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|arg
-)paren
-(brace
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-dev.o: NULL argument pointer in ioctl I2C_SMBUS.&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
-)paren
-(brace
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-dev.o: invalid argument pointer (%ld) &quot;
-l_string|&quot;in IOCTL I2C_SMBUS.&bslash;n&quot;
-comma
-id|arg
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 id|funcs
 op_assign
 id|i2c_get_functionality
@@ -1227,6 +809,8 @@ c_func
 id|client-&gt;adapter
 )paren
 suffix:semicolon
+r_return
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -1246,73 +830,17 @@ r_int
 r_int
 )paren
 )paren
-suffix:semicolon
-r_return
+)paren
+ques
+op_minus
+id|EFAULT
+suffix:colon
 l_int|0
 suffix:semicolon
 r_case
 id|I2C_SMBUS
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|arg
-)paren
-(brace
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-dev.o: NULL argument pointer in ioctl I2C_SMBUS.&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_struct
-id|i2c_smbus_ioctl_data
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|i2c_smbus_ioctl_data
-)paren
-)paren
-)paren
-(brace
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-dev.o: invalid argument pointer (%ld) &quot;
-l_string|&quot;in IOCTL I2C_SMBUS.&bslash;n&quot;
-comma
-id|arg
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-id|copy_from_user
+id|copy_from_user_ret
 c_func
 (paren
 op_amp
@@ -1330,6 +858,9 @@ r_sizeof
 r_struct
 id|i2c_smbus_ioctl_data
 )paren
+comma
+op_minus
+id|EFAULT
 )paren
 suffix:semicolon
 r_if
@@ -1387,7 +918,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* Note that I2C_SMBUS_READ and I2C_SMBUS_WRITE are 0 and 1, &n;         so the check is valid if size==I2C_SMBUS_QUICK too. */
+multiline_comment|/* Note that I2C_SMBUS_READ and I2C_SMBUS_WRITE are 0 and 1, &n;&t;&t;   so the check is valid if size==I2C_SMBUS_QUICK too. */
 r_if
 c_cond
 (paren
@@ -1484,28 +1015,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* This seems unlogical but it is not: if the user wants to read a&n;         value, we must write that value to user memory! */
-id|ver
-op_assign
-(paren
-(paren
-id|data_arg.read_write
-op_eq
-id|I2C_SMBUS_WRITE
-)paren
-op_logical_and
-(paren
-id|data_arg.size
-op_ne
-id|I2C_SMBUS_PROC_CALL
-)paren
-)paren
-ques
-c_cond
-id|VERIFY_READ
-suffix:colon
-id|VERIFY_WRITE
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1563,35 +1072,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|verify_area
-c_func
-(paren
-id|ver
-comma
-id|data_arg.data
-comma
-id|datasize
-)paren
-)paren
-(brace
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-dev.o: invalid pointer data (%p) in ioctl I2C_SMBUS.&bslash;n&quot;
-comma
-id|data_arg.data
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 (paren
 id|data_arg.size
 op_eq
@@ -1604,7 +1084,7 @@ op_eq
 id|I2C_SMBUS_WRITE
 )paren
 )paren
-id|copy_from_user
+id|copy_from_user_ret
 c_func
 (paren
 op_amp
@@ -1613,6 +1093,9 @@ comma
 id|data_arg.data
 comma
 id|datasize
+comma
+op_minus
+id|EFAULT
 )paren
 suffix:semicolon
 id|res
@@ -1656,7 +1139,7 @@ id|I2C_SMBUS_READ
 )paren
 )paren
 )paren
-id|copy_to_user
+id|copy_to_user_ret
 c_func
 (paren
 id|data_arg.data
@@ -1665,6 +1148,9 @@ op_amp
 id|temp
 comma
 id|datasize
+comma
+op_minus
+id|EFAULT
 )paren
 suffix:semicolon
 r_return
@@ -1751,7 +1237,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* Note that we here allocate a client for later use, but we will *not*&n;     register this client! Yes, this is safe. No, it is not very clean. */
+multiline_comment|/* Note that we here allocate a client for later use, but we will *not*&n;&t;   register this client! Yes, this is safe. No, it is not very clean. */
 r_if
 c_cond
 (paren
@@ -1804,6 +1290,16 @@ id|file-&gt;private_data
 op_assign
 id|client
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|i2cdev_adaps
+(braket
+id|minor
+)braket
+op_member_access_from_pointer
+id|inc_use
+)paren
 id|i2cdev_adaps
 (braket
 id|minor
@@ -1834,7 +1330,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,31))
 DECL|function|i2cdev_release
 r_static
 r_int
@@ -1850,22 +1345,6 @@ id|file
 op_star
 id|file
 )paren
-macro_line|#else
-r_static
-r_void
-id|i2cdev_release
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-macro_line|#endif
 (brace
 r_int
 r_int
@@ -1899,6 +1378,16 @@ suffix:semicolon
 macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|i2cdev_adaps
+(braket
+id|minor
+)braket
+op_member_access_from_pointer
+id|dec_use
+)paren
 id|i2cdev_adaps
 (braket
 id|minor
@@ -1913,11 +1402,9 @@ id|minor
 )braket
 )paren
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,31))
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|i2cdev_attach_adapter
 r_int

@@ -992,6 +992,14 @@ comma
 id|type
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;memory : %p&bslash;n&quot;
+comma
+id|memory
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3486,6 +3494,10 @@ suffix:semicolon
 id|alloc.key
 op_assign
 id|memory-&gt;key
+suffix:semicolon
+id|alloc.physical
+op_assign
+id|memory-&gt;physical
 suffix:semicolon
 r_if
 c_cond

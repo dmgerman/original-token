@@ -154,6 +154,13 @@ c_func
 id|hpsb_make_writebpacket
 )paren
 suffix:semicolon
+DECL|variable|hpsb_make_lockpacket
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|hpsb_make_lockpacket
+)paren
+suffix:semicolon
 DECL|variable|hpsb_read
 id|EXPORT_SYMBOL
 c_func

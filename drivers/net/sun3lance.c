@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;sun3lance.c: v1.0 12/12/96  Sam Creasey (sammy@users.qual.net)&bslash;n&quot;
+l_string|&quot;sun3lance.c: v1.1 11/17/1999  Sam Creasey (sammy@oh.verio.com)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
@@ -637,6 +637,18 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+r_volatile
+r_int
+r_int
+op_star
+id|ioaddr_probe
+suffix:semicolon
+r_int
+r_int
+id|tmp1
+comma
+id|tmp2
+suffix:semicolon
 multiline_comment|/* LANCE_OBIO can be found within the IO pmeg with some effort */
 r_for
 c_loop
@@ -712,6 +724,77 @@ op_logical_neg
 id|found
 )paren
 (brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* test to see if there&squot;s really a lance here */
+multiline_comment|/* (CSRO_INIT shouldn&squot;t be readable) */
+id|ioaddr_probe
+op_assign
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+id|ioaddr
+suffix:semicolon
+id|tmp1
+op_assign
+id|ioaddr_probe
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|tmp2
+op_assign
+id|ioaddr_probe
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|ioaddr_probe
+(braket
+l_int|1
+)braket
+op_assign
+id|CSR0
+suffix:semicolon
+id|ioaddr_probe
+(braket
+l_int|0
+)braket
+op_assign
+id|CSR0_INIT
+op_or
+id|CSR0_STOP
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ioaddr_probe
+(braket
+l_int|0
+)braket
+op_ne
+id|CSR0_STOP
+)paren
+(brace
+id|ioaddr_probe
+(braket
+l_int|0
+)braket
+op_assign
+id|tmp1
+suffix:semicolon
+id|ioaddr_probe
+(braket
+l_int|1
+)braket
+op_assign
+id|tmp2
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

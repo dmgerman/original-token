@@ -283,6 +283,27 @@ r_int
 id|length
 )paren
 suffix:semicolon
+r_struct
+id|hpsb_packet
+op_star
+id|hpsb_make_lockpacket
+c_func
+(paren
+r_struct
+id|hpsb_host
+op_star
+id|host
+comma
+id|nodeid_t
+id|node
+comma
+id|u64
+id|addr
+comma
+r_int
+id|extcode
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * hpsb_packet_success - Make sense of the ack and reply codes and&n; * return more convenient error codes:&n; * 0           success&n; * -EBUSY      node is busy, try again&n; * -EAGAIN     error which can probably resolved by retry&n; * -EREMOTEIO  node suffers from an internal error&n; * -EACCES     this transaction is not allowed on requested address&n; * -EINVAL     invalid address at node&n; */
 r_int
 id|hpsb_packet_success

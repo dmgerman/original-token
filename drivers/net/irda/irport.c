@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; * &n; * Filename:&t;  irport.c&n; * Version:&t;  1.0&n; * Description:   Half duplex serial port SIR driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Wed Jan  5 13:59:38 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; * &n; *     Copyright (c) 1997, 1998, 1999-2000 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     This driver is ment to be a small half duplex serial driver to be&n; *     used for IR-chipsets that has a UART (16550) compatibility mode. &n; *     Eventually it will replace irtty, because of irtty has some &n; *     problems that is hard to get around when we don&squot;t have control&n; *     over the serial driver. This driver may also be used by FIR &n; *     drivers to handle SIR mode for them.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; * &n; * Filename:&t;  irport.c&n; * Version:&t;  1.0&n; * Description:   Half duplex serial port SIR driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Fri Jan 28 20:22:38 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; * &n; *     Copyright (c) 1997, 1998, 1999-2000 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     This driver is ment to be a small half duplex serial driver to be&n; *     used for IR-chipsets that has a UART (16550) compatibility mode. &n; *     Eventually it will replace irtty, because of irtty has some &n; *     problems that is hard to get around when we don&squot;t have control&n; *     over the serial driver. This driver may also be used by FIR &n; *     drivers to handle SIR mode for them.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -563,17 +563,17 @@ op_assign
 id|i
 suffix:semicolon
 multiline_comment|/* Initialize IO */
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 op_assign
 id|iobase
+suffix:semicolon
+id|self-&gt;io.sir_ext
+op_assign
+id|IO_EXTENT
 suffix:semicolon
 id|self-&gt;io.irq
 op_assign
 id|irq
-suffix:semicolon
-id|self-&gt;io.io_ext
-op_assign
-id|IO_EXTENT
 suffix:semicolon
 id|self-&gt;io.fifo_size
 op_assign
@@ -585,9 +585,9 @@ op_assign
 id|check_region
 c_func
 (paren
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 comma
-id|self-&gt;io.io_ext
+id|self-&gt;io.sir_ext
 )paren
 suffix:semicolon
 r_if
@@ -606,10 +606,9 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), can&squot;t get iobase of 0x%03x&bslash;n&quot;
 comma
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 )paren
 suffix:semicolon
-multiline_comment|/* irport_cleanup(self-&gt;self);  */
 r_return
 l_int|NULL
 suffix:semicolon
@@ -617,9 +616,9 @@ suffix:semicolon
 id|request_region
 c_func
 (paren
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 comma
-id|self-&gt;io.io_ext
+id|self-&gt;io.sir_ext
 comma
 id|driver_name
 )paren
@@ -989,15 +988,15 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), Releasing Region %03x&bslash;n&quot;
 comma
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 )paren
 suffix:semicolon
 id|release_region
 c_func
 (paren
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 comma
-id|self-&gt;io.io_ext
+id|self-&gt;io.sir_ext
 )paren
 suffix:semicolon
 r_if
@@ -1060,7 +1059,7 @@ id|iobase
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -1150,7 +1149,7 @@ id|iobase
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -1286,7 +1285,7 @@ suffix:semicolon
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 multiline_comment|/* Update accounting for new speed */
 id|self-&gt;io.speed
@@ -1556,10 +1555,12 @@ r_case
 id|IRDA_TASK_CHILD_INIT
 suffix:colon
 multiline_comment|/* Go to default speed */
-id|irport_change_speed
+id|self
+op_member_access_from_pointer
+id|change_speed
 c_func
 (paren
-id|self
+id|self-&gt;priv
 comma
 l_int|9600
 )paren
@@ -1639,10 +1640,12 @@ r_case
 id|IRDA_TASK_CHILD_DONE
 suffix:colon
 multiline_comment|/* Finally we are ready to change the speed */
-id|irport_change_speed
+id|self
+op_member_access_from_pointer
+id|change_speed
 c_func
 (paren
-id|self
+id|self-&gt;priv
 comma
 id|speed
 )paren
@@ -1734,7 +1737,7 @@ l_string|&quot;()&bslash;n&quot;
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 multiline_comment|/* Finished with frame?  */
 r_if
@@ -2083,11 +2086,6 @@ r_int
 id|flags
 suffix:semicolon
 r_int
-id|actual
-op_assign
-l_int|0
-suffix:semicolon
-r_int
 id|iobase
 suffix:semicolon
 id|__u32
@@ -2128,7 +2126,7 @@ suffix:semicolon
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 multiline_comment|/* Lock transmit buffer */
 r_if
@@ -2185,10 +2183,12 @@ c_func
 id|self
 )paren
 suffix:semicolon
-id|irport_change_speed
+id|self
+op_member_access_from_pointer
+id|change_speed
 c_func
 (paren
-id|self
+id|self-&gt;priv
 comma
 id|self-&gt;io.speed
 )paren
@@ -2245,13 +2245,9 @@ comma
 id|self-&gt;tx_buff.truesize
 )paren
 suffix:semicolon
-id|self-&gt;tx_buff.data
+id|self-&gt;stats.tx_bytes
 op_add_assign
-id|actual
-suffix:semicolon
 id|self-&gt;tx_buff.len
-op_sub_assign
-id|actual
 suffix:semicolon
 multiline_comment|/* Turn on transmit finished interrupt. Will fire immediately!  */
 id|outb
@@ -2317,7 +2313,7 @@ suffix:semicolon
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 multiline_comment|/*  &n;&t; * Receive all characters in Rx FIFO, unwrap and unstuff them. &n;         * async_unwrap_char will deliver all found frames  &n;&t; */
 r_do
@@ -2470,7 +2466,7 @@ l_int|1
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 id|iir
 op_assign
@@ -2687,7 +2683,7 @@ id|dev-&gt;priv
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 r_if
 c_cond
@@ -2818,7 +2814,7 @@ suffix:semicolon
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 multiline_comment|/* Stop device */
 id|dev-&gt;tbusy
@@ -2882,7 +2878,7 @@ id|iobase
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 multiline_comment|/* Wait until Tx FIFO is empty */
 r_while
@@ -2993,7 +2989,7 @@ suffix:semicolon
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 r_if
 c_cond
@@ -3085,7 +3081,7 @@ suffix:semicolon
 suffix:semicolon
 id|iobase
 op_assign
-id|self-&gt;io.iobase
+id|self-&gt;io.sir_base
 suffix:semicolon
 multiline_comment|/* Tx FIFO should be empty! */
 r_if

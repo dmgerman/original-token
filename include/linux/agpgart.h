@@ -187,6 +187,11 @@ id|__u32
 id|type
 suffix:semicolon
 multiline_comment|/* 0 == normal, other devspec   */
+DECL|member|physical
+id|__u32
+id|physical
+suffix:semicolon
+multiline_comment|/* device specific (some devices  &n;&t;&t;&t;&t; * need a phys address of the     &n;&t;&t;&t;&t; * actual page behind the gatt    &n;&t;&t;&t;&t; * table)                        */
 DECL|typedef|agp_allocate
 )brace
 id|agp_allocate
@@ -411,6 +416,11 @@ id|u32
 id|type
 suffix:semicolon
 multiline_comment|/* 0 == normal, other devspec   */
+DECL|member|physical
+id|u32
+id|physical
+suffix:semicolon
+multiline_comment|/* device specific (some devices  &n;&t;&t;&t;&t; * need a phys address of the     &n;&t;&t;&t;&t; * actual page behind the gatt    &n;&t;&t;&t;&t; * table)                        */
 DECL|typedef|agp_allocate
 )brace
 id|agp_allocate

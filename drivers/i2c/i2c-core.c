@@ -3,7 +3,7 @@ multiline_comment|/* -----------------------------------------------------------
 multiline_comment|/*   Copyright (C) 1995-99 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt;.&n;   All SMBus-related things are written by Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c-core.c,v 1.44 1999/12/21 23:45:58 frodo Exp $ */
+multiline_comment|/* $Id: i2c-core.c,v 1.48 2000/01/24 21:41:19 frodo Exp $ */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -12,44 +12,13 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 multiline_comment|/* ----- compatibility stuff ----------------------------------------------- */
-multiline_comment|/* 2.0.0 kernel compatibility */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020100
-DECL|macro|MODULE_AUTHOR
-mdefine_line|#define MODULE_AUTHOR(noone)
-DECL|macro|MODULE_DESCRIPTION
-mdefine_line|#define MODULE_DESCRIPTION(none)
-DECL|macro|MODULE_PARM
-mdefine_line|#define MODULE_PARM(no,param)
-DECL|macro|MODULE_PARM_DESC
-mdefine_line|#define MODULE_PARM_DESC(no,description)
-DECL|macro|EXPORT_SYMBOL
-mdefine_line|#define EXPORT_SYMBOL(noexport)
-DECL|macro|EXPORT_NO_SYMBOLS
-mdefine_line|#define EXPORT_NO_SYMBOLS
-macro_line|#endif
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#ifndef KERNEL_VERSION
-DECL|macro|KERNEL_VERSION
-mdefine_line|#define KERNEL_VERSION(a,b,c) (((a) &lt;&lt; 16) | ((b) &lt;&lt; 8) | (c))
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,53)
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__init
-mdefine_line|#define __init 
-macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,1)
 DECL|macro|init_MUTEX
 mdefine_line|#define init_MUTEX(s) do { *(s) = MUTEX; } while(0)
 macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,4))
-DECL|macro|copy_from_user
-mdefine_line|#define copy_from_user memcpy_fromfs
-DECL|macro|copy_to_user
-mdefine_line|#define copy_to_user memcpy_tofs
-macro_line|#else
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#endif
 multiline_comment|/* ----- global defines ---------------------------------------------------- */
 multiline_comment|/* exclusive access to the bus */
 DECL|macro|I2C_LOCK
@@ -143,7 +112,6 @@ id|client
 )paren
 suffix:semicolon
 multiline_comment|/* ---------------------------------------------------&n; * /proc entry declarations&n; *----------------------------------------------------&n; */
-multiline_comment|/* Note that quite some things changed within the 2.1 kernel series.&n;   Some things below are somewhat difficult to read because of this. */
 macro_line|#ifdef CONFIG_PROC_FS
 r_static
 r_int
@@ -161,7 +129,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,58)) &amp;&amp; &bslash;&n;    (LINUX_VERSION_CODE &lt;= KERNEL_VERSION(2,3,27))
+macro_line|#if (LINUX_VERSION_CODE &lt;= KERNEL_VERSION(2,3,27))
 r_static
 r_void
 id|monitor_bus_i2c
@@ -177,7 +145,6 @@ id|fill
 )paren
 suffix:semicolon
 macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,58)) */
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29))
 r_static
 id|ssize_t
 id|i2cproc_bus_read
@@ -229,142 +196,6 @@ op_star
 r_private
 )paren
 suffix:semicolon
-macro_line|#else /* (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,29)) */
-r_static
-r_int
-id|i2cproc_bus_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-suffix:semicolon
-r_static
-r_int
-id|read_bus_i2c
-c_func
-(paren
-r_char
-op_star
-id|buf
-comma
-r_char
-op_star
-op_star
-id|start
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|len
-comma
-r_int
-id|unused
-)paren
-suffix:semicolon
-DECL|variable|proc_bus_dir
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_bus_dir
-op_assign
-(brace
-multiline_comment|/* low_ino */
-l_int|0
-comma
-multiline_comment|/* Set by proc_register_dynamic */
-multiline_comment|/* namelen */
-l_int|3
-comma
-multiline_comment|/* name */
-l_string|&quot;bus&quot;
-comma
-multiline_comment|/* mode */
-id|S_IRUGO
-op_or
-id|S_IXUGO
-op_or
-id|S_IFDIR
-comma
-multiline_comment|/* nlink */
-l_int|2
-comma
-multiline_comment|/* Corrected by proc_register[_dynamic] */
-multiline_comment|/* uid */
-l_int|0
-comma
-multiline_comment|/* gid */
-l_int|0
-comma
-multiline_comment|/* size */
-l_int|0
-comma
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,0,36))
-multiline_comment|/* ops */
-op_amp
-id|proc_dir_inode_operations
-comma
-macro_line|#endif
-)brace
-suffix:semicolon
-DECL|variable|proc_bus_i2c_dir
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_bus_i2c_dir
-op_assign
-(brace
-multiline_comment|/* low_ino */
-l_int|0
-comma
-multiline_comment|/* Set by proc_register_dynamic */
-multiline_comment|/* namelen */
-l_int|3
-comma
-multiline_comment|/* name */
-l_string|&quot;i2c&quot;
-comma
-multiline_comment|/* mode */
-id|S_IRUGO
-op_or
-id|S_IFREG
-comma
-multiline_comment|/* nlink */
-l_int|1
-comma
-multiline_comment|/* uid */
-l_int|0
-comma
-multiline_comment|/* gid */
-l_int|0
-comma
-multiline_comment|/* size */
-l_int|0
-comma
-multiline_comment|/* ops */
-l_int|NULL
-comma
-multiline_comment|/* get_info */
-op_amp
-id|read_bus_i2c
-)brace
-suffix:semicolon
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29)) */
 multiline_comment|/* To implement the dynamic /proc/bus/i2c-? files, we need our own &n;   implementation of the read hook */
 DECL|variable|i2cproc_operations
 r_static
@@ -403,7 +234,7 @@ mdefine_line|#define i2cproc_init()
 DECL|macro|i2cproc_cleanup
 mdefine_line|#define i2cproc_cleanup()
 macro_line|#endif /* CONFIG_PROC_FS */
-multiline_comment|/* ---------------------------------------------------    &n; * registering functions &n; * --------------------------------------------------- &n; */
+multiline_comment|/* ---------------------------------------------------&n; * registering functions &n; * --------------------------------------------------- &n; */
 multiline_comment|/* -----&n; * i2c_add_adapter is called from within the algorithm layer,&n; * when a new hw adapter registers. A new device is register to be&n; * available for clients.&n; */
 DECL|function|i2c_add_adapter
 r_int
@@ -527,11 +358,6 @@ id|proc_dir_entry
 op_star
 id|proc_entry
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,29))
-r_int
-id|res
-suffix:semicolon
-macro_line|#endif
 id|sprintf
 c_func
 (paren
@@ -542,7 +368,6 @@ comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29))
 id|proc_entry
 op_assign
 id|create_proc_entry
@@ -585,170 +410,13 @@ id|proc_entry-&gt;owner
 op_assign
 id|THIS_MODULE
 suffix:semicolon
-macro_line|#elif (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,58))
+macro_line|#else
 id|proc_entry-&gt;fill_inode
 op_assign
 op_amp
 id|monitor_bus_i2c
 suffix:semicolon
 macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,58)) */
-macro_line|#else /* (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,29)) */
-id|adap-&gt;proc_entry
-op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|proc_entry
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|proc_dir_entry
-)paren
-op_plus
-id|strlen
-c_func
-(paren
-id|name
-)paren
-op_plus
-l_int|1
-comma
-id|GFP_KERNEL
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-core.o: Out of memory!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-id|memset
-c_func
-(paren
-id|proc_entry
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|proc_dir_entry
-)paren
-)paren
-suffix:semicolon
-id|proc_entry-&gt;namelen
-op_assign
-id|strlen
-c_func
-(paren
-id|name
-)paren
-suffix:semicolon
-id|proc_entry-&gt;name
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-id|proc_entry
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-id|proc_entry-&gt;mode
-op_assign
-id|S_IRUGO
-op_or
-id|S_IFREG
-suffix:semicolon
-id|proc_entry-&gt;nlink
-op_assign
-l_int|1
-suffix:semicolon
-id|proc_entry-&gt;ops
-op_assign
-op_amp
-id|i2cproc_inode_operations
-suffix:semicolon
-multiline_comment|/* Nasty stuff to keep GCC satisfied */
-(brace
-r_char
-op_star
-id|procname
-suffix:semicolon
-(paren
-r_const
-r_char
-op_star
-)paren
-id|procname
-op_assign
-id|proc_entry-&gt;name
-suffix:semicolon
-id|strcpy
-(paren
-id|procname
-comma
-id|name
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|res
-op_assign
-id|proc_register_dynamic
-c_func
-(paren
-op_amp
-id|proc_bus_dir
-comma
-id|proc_entry
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-core.o: Could not create %s.&bslash;n&quot;
-comma
-id|name
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|proc_entry
-)paren
-suffix:semicolon
-r_return
-id|res
-suffix:semicolon
-)brace
-id|adap-&gt;proc_entry
-op_assign
-id|proc_entry
-suffix:semicolon
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29)) */
 id|adap-&gt;inode
 op_assign
 id|proc_entry-&gt;low_ino
@@ -915,7 +583,6 @@ c_cond
 id|i2cproc_initialized
 )paren
 (brace
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29))
 r_char
 id|name
 (braket
@@ -940,72 +607,6 @@ comma
 id|proc_bus
 )paren
 suffix:semicolon
-macro_line|#else /* (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,29)) */
-r_int
-id|res
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|adapters
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|proc_entry
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|res
-op_assign
-id|proc_unregister
-c_func
-(paren
-op_amp
-id|proc_bus_dir
-comma
-id|adapters
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|proc_entry-&gt;low_ino
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-core.o: Deregistration of /proc &quot;
-l_string|&quot;entry failed&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ADAP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|res
-suffix:semicolon
-)brace
-id|kfree
-c_func
-(paren
-id|adapters
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|proc_entry
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29)) */
 )brace
 macro_line|#endif /* def CONFIG_PROC_FS */
 multiline_comment|/* detach any active clients */
@@ -1423,7 +1024,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* Have a look at each adapter, if clients of this driver are still&n;&t; * attached. If so, detach them to be able to kill the driver &n;         * afterwards.&n;&t; */
+multiline_comment|/* Have a look at each adapter, if clients of this driver are still&n;&t; * attached. If so, detach them to be able to kill the driver &n;&t; * afterwards.&n;&t; */
 id|DEB2
 c_func
 (paren
@@ -1991,7 +1592,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* ----------------------------------------------------&n; * The /proc functions&n; * ----------------------------------------------------&n; */
 macro_line|#ifdef CONFIG_PROC_FS
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,58)) &amp;&amp; &bslash;&n;    (LINUX_VERSION_CODE &lt;= KERNEL_VERSION(2,3,27))
+macro_line|#if (LINUX_VERSION_CODE &lt;= KERNEL_VERSION(2,3,27))
 multiline_comment|/* Monitor access to /proc/bus/i2c*; make unloading i2c-proc impossible&n;   if some process still uses it or some file in it */
 DECL|function|monitor_bus_i2c
 r_void
@@ -2018,9 +1619,8 @@ r_else
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,58)) */
+macro_line|#endif /* (LINUX_VERSION_CODE &lt;= KERNEL_VERSION(2,3,37)) */
 multiline_comment|/* This function generates the output for /proc/bus/i2c */
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29))
 DECL|function|read_bus_i2c
 r_int
 id|read_bus_i2c
@@ -2049,30 +1649,6 @@ r_void
 op_star
 r_private
 )paren
-macro_line|#else /* (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,29)) */
-r_int
-id|read_bus_i2c
-c_func
-(paren
-r_char
-op_star
-id|buf
-comma
-r_char
-op_star
-op_star
-id|start
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|len
-comma
-r_int
-id|unused
-)paren
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29)) */
 (brace
 r_int
 id|i
@@ -2243,7 +1819,6 @@ id|nr
 suffix:semicolon
 )brace
 multiline_comment|/* This function generates the output for /proc/bus/i2c-? */
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29))
 DECL|function|i2cproc_bus_read
 id|ssize_t
 id|i2cproc_bus_read
@@ -2273,30 +1848,6 @@ id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-macro_line|#else (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,29))
-r_int
-id|i2cproc_bus_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-(brace
-macro_line|#endif (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29))
 r_char
 op_star
 id|kbuf
@@ -2364,7 +1915,7 @@ op_eq
 id|inode-&gt;i_ino
 )paren
 (brace
-multiline_comment|/* We need a bit of slack in the kernel buffer; this makes the&n;         sprintf safe. */
+multiline_comment|/* We need a bit of slack in the kernel buffer; this makes the&n;&t;&t;   sprintf safe. */
 r_if
 c_cond
 (paren
@@ -2476,6 +2027,9 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 (paren
 id|buf
@@ -2486,7 +2040,19 @@ id|file-&gt;f_pos
 comma
 id|len
 )paren
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|kbuf
+)paren
 suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 id|file-&gt;f_pos
 op_add_assign
 id|len
@@ -2514,22 +2080,15 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29))
 r_struct
 id|proc_dir_entry
 op_star
 id|proc_bus_i2c
 suffix:semicolon
-macro_line|#else
-r_int
-id|res
-suffix:semicolon
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29)) */
 id|i2cproc_initialized
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29))
 r_if
 c_cond
 (paren
@@ -2598,96 +2157,17 @@ id|proc_bus_i2c-&gt;owner
 op_assign
 id|THIS_MODULE
 suffix:semicolon
-macro_line|#elif (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,58))
+macro_line|#else
 id|proc_bus_i2c-&gt;fill_inode
 op_assign
 op_amp
 id|monitor_bus_i2c
 suffix:semicolon
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29)) */
+macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,27)) */
 id|i2cproc_initialized
 op_add_assign
 l_int|2
 suffix:semicolon
-macro_line|#else /* (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,29)) */
-multiline_comment|/* In Linux 2.0.x, there is no /proc/bus! But I hope no other module&n;&t;   introduced it, or we are fucked. And 2.0.35 and earlier does not&n;&t;   export proc_dir_inode_operations, so we grab it from proc_net,&n;&t;   which also uses it. Not nice. */
-id|proc_bus_dir.ops
-op_assign
-id|proc_net.ops
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|res
-op_assign
-id|proc_register_dynamic
-c_func
-(paren
-op_amp
-id|proc_root
-comma
-op_amp
-id|proc_bus_dir
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-core.o: Could not create /proc/bus/&quot;
-)paren
-suffix:semicolon
-id|i2cproc_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|res
-suffix:semicolon
-)brace
-id|i2cproc_initialized
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|res
-op_assign
-id|proc_register_dynamic
-c_func
-(paren
-op_amp
-id|proc_bus_dir
-comma
-op_amp
-id|proc_bus_i2c_dir
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-core.o: Could not create /proc/bus/i2c&bslash;n&quot;
-)paren
-suffix:semicolon
-id|i2cproc_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|res
-suffix:semicolon
-)brace
-id|i2cproc_initialized
-op_increment
-suffix:semicolon
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29)) */
 r_return
 l_int|0
 suffix:semicolon
@@ -2708,7 +2188,6 @@ op_ge
 l_int|1
 )paren
 (brace
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29))
 id|remove_proc_entry
 c_func
 (paren
@@ -2721,89 +2200,13 @@ id|i2cproc_initialized
 op_sub_assign
 l_int|2
 suffix:semicolon
-macro_line|#else /* (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,29)) */
-r_int
-id|res
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i2cproc_initialized
-op_ge
-l_int|2
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|res
-op_assign
-id|proc_unregister
-c_func
-(paren
-op_amp
-id|proc_bus_dir
-comma
-id|proc_bus_i2c_dir.low_ino
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-core.o: could not delete &quot;
-l_string|&quot;/proc/bus/i2c, module not removed.&quot;
-)paren
-suffix:semicolon
-r_return
-id|res
-suffix:semicolon
-)brace
-id|i2cproc_initialized
-op_decrement
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|res
-op_assign
-id|proc_unregister
-c_func
-(paren
-op_amp
-id|proc_root
-comma
-id|proc_bus_dir.low_ino
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-core.o: could not delete /proc/bus/, &quot;
-l_string|&quot;module not removed.&quot;
-)paren
-suffix:semicolon
-r_return
-id|res
-suffix:semicolon
-)brace
-id|i2cproc_initialized
-op_decrement
-suffix:semicolon
-macro_line|#endif /* (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,29)) */
 )brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* def CONFIG_PROC_FS */
-multiline_comment|/* ---------------------------------------------------    &n; * dummy driver notification&n; * --------------------------------------------------- &n; */
+multiline_comment|/* ---------------------------------------------------&n; * dummy driver notification&n; * --------------------------------------------------- &n; */
 DECL|function|i2c_dummy_adapter
 r_static
 r_void
@@ -3478,7 +2881,7 @@ id|addr
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* If it is in one of the force entries, we don&squot;t do any detection&n;       at all */
+multiline_comment|/* If it is in one of the force entries, we don&squot;t do any detection&n;&t;&t;   at all */
 id|found
 op_assign
 l_int|0
@@ -3591,7 +2994,7 @@ id|found
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* If this address is in one of the ignores, we can forget about it&n;       right now */
+multiline_comment|/* If this address is in one of the ignores, we can forget about&n;&t;&t;   it right now */
 r_for
 c_loop
 (paren
@@ -3774,7 +3177,7 @@ id|found
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* Now, we will do a detection, but only if it is in the normal or &n;       probe entries */
+multiline_comment|/* Now, we will do a detection, but only if it is in the normal or &n;&t;&t;   probe entries */
 r_for
 c_loop
 (paren
@@ -4081,7 +3484,7 @@ id|found
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* OK, so we really should examine this address. First check&n;       whether there is some client here at all! */
+multiline_comment|/* OK, so we really should examine this address. First check&n;&t;&t;   whether there is some client here at all! */
 r_if
 c_cond
 (paren
@@ -4133,7 +3536,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* +++ frodo&n; * return id number for a specific adapter&n; */
+multiline_comment|/*&n; * return id number for a specific adapter&n; */
 DECL|function|i2c_adapter_id
 r_int
 id|i2c_adapter_id

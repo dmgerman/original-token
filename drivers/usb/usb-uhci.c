@@ -25,7 +25,7 @@ multiline_comment|/* This enables an extra UHCI slab for memory debugging */
 singleline_comment|//#define DEBUG_SLAB
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;usb-uhci.h&quot;
-macro_line|#include &quot;uhci-debug.h&quot;
+macro_line|#include &quot;usb-uhci-debug.h&quot;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 r_static

@@ -1,6 +1,8 @@
 macro_line|#ifndef _M68K_SEMAPHORE_H
 DECL|macro|_M68K_SEMAPHORE_H
 mdefine_line|#define _M68K_SEMAPHORE_H
+DECL|macro|RW_LOCK_BIAS
+mdefine_line|#define RW_LOCK_BIAS&t;&t; 0x01000000
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
@@ -529,10 +531,96 @@ suffix:semicolon
 macro_line|#endif
 )brace
 suffix:semicolon
-macro_line|#endif /* __ASSEMBLY__ */
-DECL|macro|RW_LOCK_BIAS
-mdefine_line|#define RW_LOCK_BIAS&t;&t; 0x01000000
-macro_line|#ifndef __ASSEMBLY__
+macro_line|#if WAITQUEUE_DEBUG
+DECL|macro|__RWSEM_DEBUG_INIT
+mdefine_line|#define __RWSEM_DEBUG_INIT&t;, ATOMIC_INIT(0), ATOMIC_INIT(0)
+macro_line|#else
+DECL|macro|__RWSEM_DEBUG_INIT
+mdefine_line|#define __RWSEM_DEBUG_INIT&t;/* */
+macro_line|#endif
+DECL|macro|__RWSEM_INITIALIZER
+mdefine_line|#define __RWSEM_INITIALIZER(name,count) &bslash;&n;{ ATOMIC_INIT(count), 0, 0, 0, 0, __WAIT_QUEUE_HEAD_INITIALIZER((name).wait), &bslash;&n;&t;__WAIT_QUEUE_HEAD_INITIALIZER((name).write_bias_wait) &bslash;&n;&t;__SEM_DEBUG_INIT(name) __RWSEM_DEBUG_INIT }
+DECL|macro|__DECLARE_RWSEM_GENERIC
+mdefine_line|#define __DECLARE_RWSEM_GENERIC(name,count) &bslash;&n;&t;struct rw_semaphore name = __RWSEM_INITIALIZER(name,count)
+DECL|macro|DECLARE_RWSEM
+mdefine_line|#define DECLARE_RWSEM(name) __DECLARE_RWSEM_GENERIC(name,RW_LOCK_BIAS)
+DECL|macro|DECLARE_RWSEM_READ_LOCKED
+mdefine_line|#define DECLARE_RWSEM_READ_LOCKED(name) __DECLARE_RWSEM_GENERIC(name,RW_LOCK_BIAS-1)
+DECL|macro|DECLARE_RWSEM_WRITE_LOCKED
+mdefine_line|#define DECLARE_RWSEM_WRITE_LOCKED(name) __DECLARE_RWSEM_GENERIC(name,0)
+DECL|function|init_rwsem
+r_extern
+r_inline
+r_void
+id|init_rwsem
+c_func
+(paren
+r_struct
+id|rw_semaphore
+op_star
+id|sem
+)paren
+(brace
+id|atomic_set
+c_func
+(paren
+op_amp
+id|sem-&gt;count
+comma
+id|RW_LOCK_BIAS
+)paren
+suffix:semicolon
+id|sem-&gt;read_bias_granted
+op_assign
+l_int|0
+suffix:semicolon
+id|sem-&gt;write_bias_granted
+op_assign
+l_int|0
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|sem-&gt;wait
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|sem-&gt;write_bias_wait
+)paren
+suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+id|sem-&gt;__magic
+op_assign
+(paren
+r_int
+)paren
+op_amp
+id|sem-&gt;__magic
+suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
+id|sem-&gt;readers
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
+id|sem-&gt;writers
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 DECL|function|down_read
 r_extern
 r_inline

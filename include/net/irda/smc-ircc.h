@@ -6,221 +6,245 @@ macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;net/irda/irport.h&gt;
 multiline_comment|/* DMA modes needed */
 DECL|macro|DMA_TX_MODE
-mdefine_line|#define DMA_TX_MODE              0x08    /* Mem to I/O, ++, demand. */
+mdefine_line|#define DMA_TX_MODE                0x08    /* Mem to I/O, ++, demand. */
 DECL|macro|DMA_RX_MODE
-mdefine_line|#define DMA_RX_MODE              0x04    /* I/O to mem, ++, demand. */
+mdefine_line|#define DMA_RX_MODE                0x04    /* I/O to mem, ++, demand. */
+multiline_comment|/* Master Control Register */
 DECL|macro|IRCC_MASTER
-mdefine_line|#define IRCC_MASTER              0x07
+mdefine_line|#define IRCC_MASTER                0x07
 DECL|macro|IRCC_MASTER_POWERDOWN
-mdefine_line|#define IRCC_MASTER_POWERDOWN&t; 1&lt;&lt;7
+mdefine_line|#define   IRCC_MASTER_POWERDOWN&t;   0x80
 DECL|macro|IRCC_MASTER_RESET
-mdefine_line|#define IRCC_MASTER_RESET        1&lt;&lt;6
+mdefine_line|#define   IRCC_MASTER_RESET        0x40
 DECL|macro|IRCC_MASTER_INT_EN
-mdefine_line|#define IRCC_MASTER_INT_EN       1&lt;&lt;5
+mdefine_line|#define   IRCC_MASTER_INT_EN       0x20
 DECL|macro|IRCC_MASTER_ERROR_RESET
-mdefine_line|#define IRCC_MASTER_ERROR_RESET&t; 1&lt;&lt;4
+mdefine_line|#define   IRCC_MASTER_ERROR_RESET  0x10
 multiline_comment|/* Register block 0 */
+multiline_comment|/* Interrupt Identification */
 DECL|macro|IRCC_IIR
-mdefine_line|#define IRCC_IIR                 0x01
-DECL|macro|IRCC_IER
-mdefine_line|#define IRCC_IER                 0x02
-DECL|macro|IRCC_LSR
-mdefine_line|#define IRCC_LSR                 0x03
-DECL|macro|IRCC_LCR_A
-mdefine_line|#define IRCC_LCR_A               0x04
-DECL|macro|IRCC_LCR_B
-mdefine_line|#define IRCC_LCR_B               0x05
-DECL|macro|IRCC_BSR
-mdefine_line|#define IRCC_BSR                 0x06
+mdefine_line|#define IRCC_IIR                   0x01
 DECL|macro|IRCC_IIR_ACTIVE_FRAME
-mdefine_line|#define IRCC_IIR_ACTIVE_FRAME    1&lt;&lt;7
+mdefine_line|#define   IRCC_IIR_ACTIVE_FRAME    0x80
 DECL|macro|IRCC_IIR_EOM
-mdefine_line|#define IRCC_IIR_EOM             1&lt;&lt;6
+mdefine_line|#define   IRCC_IIR_EOM             0x40
 DECL|macro|IRCC_IIR_RAW_MODE
-mdefine_line|#define IRCC_IIR_RAW_MODE        1&lt;&lt;5
+mdefine_line|#define   IRCC_IIR_RAW_MODE        0x20
 DECL|macro|IRCC_IIR_FIFO
-mdefine_line|#define IRCC_IIR_FIFO&t;&t; 1&lt;&lt;4
+mdefine_line|#define   IRCC_IIR_FIFO&t;&t;   0x10
+multiline_comment|/* Interrupt Enable */
+DECL|macro|IRCC_IER
+mdefine_line|#define IRCC_IER                   0x02
 DECL|macro|IRCC_IER_ACTIVE_FRAME
-mdefine_line|#define IRCC_IER_ACTIVE_FRAME&t; 1&lt;&lt;7
+mdefine_line|#define   IRCC_IER_ACTIVE_FRAME&t;   0x80
 DECL|macro|IRCC_IER_EOM
-mdefine_line|#define IRCC_IER_EOM &t;&t; 1&lt;&lt;6
+mdefine_line|#define   IRCC_IER_EOM &t;&t;   0x40
 DECL|macro|IRCC_IER_RAW_MODE
-mdefine_line|#define IRCC_IER_RAW_MODE        1&lt;&lt;5
+mdefine_line|#define   IRCC_IER_RAW_MODE        0x20
 DECL|macro|IRCC_IER_FIFO
-mdefine_line|#define IRCC_IER_FIFO&t;&t; 1&lt;&lt;4
+mdefine_line|#define   IRCC_IER_FIFO&t;&t;   0x10
+multiline_comment|/* Line Status Register */
+DECL|macro|IRCC_LSR
+mdefine_line|#define IRCC_LSR                   0x03
 DECL|macro|IRCC_LSR_UNDERRUN
-mdefine_line|#define IRCC_LSR_UNDERRUN        1&lt;&lt;7
+mdefine_line|#define   IRCC_LSR_UNDERRUN        0x80
 DECL|macro|IRCC_LSR_OVERRUN
-mdefine_line|#define IRCC_LSR_OVERRUN         1&lt;&lt;6
+mdefine_line|#define   IRCC_LSR_OVERRUN         0x40
 DECL|macro|IRCC_LSR_FRAME_ERROR
-mdefine_line|#define IRCC_LSR_FRAME_ERROR     1&lt;&lt;5
+mdefine_line|#define   IRCC_LSR_FRAME_ERROR     0x20
 DECL|macro|IRCC_LSR_SIZE_ERROR
-mdefine_line|#define IRCC_LSR_SIZE_ERROR      1&lt;&lt;4
+mdefine_line|#define   IRCC_LSR_SIZE_ERROR      0x10
 DECL|macro|IRCC_LSR_CRC_ERROR
-mdefine_line|#define IRCC_LSR_CRC_ERROR       1&lt;&lt;3
+mdefine_line|#define   IRCC_LSR_CRC_ERROR       0x80
 DECL|macro|IRCC_LSR_FRAME_ABORT
-mdefine_line|#define IRCC_LSR_FRAME_ABORT &t; 1&lt;&lt;2
+mdefine_line|#define   IRCC_LSR_FRAME_ABORT &t;   0x40
+multiline_comment|/* Line Control Register A */
+DECL|macro|IRCC_LCR_A
+mdefine_line|#define IRCC_LCR_A                 0x04
 DECL|macro|IRCC_LCR_A_FIFO_RESET
-mdefine_line|#define IRCC_LCR_A_FIFO_RESET    1&lt;&lt;7
+mdefine_line|#define   IRCC_LCR_A_FIFO_RESET    0x80
 DECL|macro|IRCC_LCR_A_FAST
-mdefine_line|#define IRCC_LCR_A_FAST          1&lt;&lt;6
+mdefine_line|#define   IRCC_LCR_A_FAST          0x40
 DECL|macro|IRCC_LCR_A_GP_DATA
-mdefine_line|#define IRCC_LCR_A_GP_DATA       1&lt;&lt;5
+mdefine_line|#define   IRCC_LCR_A_GP_DATA       0x20
 DECL|macro|IRCC_LCR_A_RAW_TX
-mdefine_line|#define IRCC_LCR_A_RAW_TX        1&lt;&lt;4
+mdefine_line|#define   IRCC_LCR_A_RAW_TX        0x10
 DECL|macro|IRCC_LCR_A_RAW_RX
-mdefine_line|#define IRCC_LCR_A_RAW_RX        1&lt;&lt;3
+mdefine_line|#define   IRCC_LCR_A_RAW_RX        0x08
 DECL|macro|IRCC_LCR_A_ABORT
-mdefine_line|#define IRCC_LCR_A_ABORT         1&lt;&lt;2
+mdefine_line|#define   IRCC_LCR_A_ABORT         0x04
 DECL|macro|IRCC_LCR_A_DATA_DONE
-mdefine_line|#define IRCC_LCR_A_DATA_DONE     1&lt;&lt;1
+mdefine_line|#define   IRCC_LCR_A_DATA_DONE     0x02
+multiline_comment|/* Line Control Register B */
+DECL|macro|IRCC_LCR_B
+mdefine_line|#define IRCC_LCR_B                 0x05
 DECL|macro|IRCC_LCR_B_SCE_DISABLED
-mdefine_line|#define IRCC_LCR_B_SCE_DISABLED  0x00&lt;&lt;6
+mdefine_line|#define   IRCC_LCR_B_SCE_DISABLED  0x00
 DECL|macro|IRCC_LCR_B_SCE_TRANSMIT
-mdefine_line|#define IRCC_LCR_B_SCE_TRANSMIT  0x01&lt;&lt;6
+mdefine_line|#define   IRCC_LCR_B_SCE_TRANSMIT  0x40
 DECL|macro|IRCC_LCR_B_SCE_RECEIVE
-mdefine_line|#define IRCC_LCR_B_SCE_RECEIVE&t; 0x02&lt;&lt;6
+mdefine_line|#define   IRCC_LCR_B_SCE_RECEIVE   0x80
 DECL|macro|IRCC_LCR_B_SCE_UNDEFINED
-mdefine_line|#define IRCC_LCR_B_SCE_UNDEFINED 0x03&lt;&lt;6
+mdefine_line|#define   IRCC_LCR_B_SCE_UNDEFINED 0xc0
 DECL|macro|IRCC_LCR_B_SIP_ENABLE
-mdefine_line|#define IRCC_LCR_B_SIP_ENABLE&t; 1&lt;&lt;5
+mdefine_line|#define   IRCC_LCR_B_SIP_ENABLE&t;   0x20
 DECL|macro|IRCC_LCR_B_BRICK_WALL
-mdefine_line|#define IRCC_LCR_B_BRICK_WALL    1&lt;&lt;4
+mdefine_line|#define   IRCC_LCR_B_BRICK_WALL    0x10
+multiline_comment|/* Bus Status Register */
+DECL|macro|IRCC_BSR
+mdefine_line|#define IRCC_BSR                   0x06
 DECL|macro|IRCC_BSR_NOT_EMPTY
-mdefine_line|#define IRCC_BSR_NOT_EMPTY&t; 1&lt;&lt;7
+mdefine_line|#define   IRCC_BSR_NOT_EMPTY&t;   0x80
 DECL|macro|IRCC_BSR_FIFO_FULL
-mdefine_line|#define IRCC_BSR_FIFO_FULL&t; 1&lt;&lt;6
+mdefine_line|#define   IRCC_BSR_FIFO_FULL&t;   0x40
 DECL|macro|IRCC_BSR_TIMEOUT
-mdefine_line|#define IRCC_BSR_TIMEOUT&t; 1&lt;&lt;5
+mdefine_line|#define   IRCC_BSR_TIMEOUT&t;   0x20
 multiline_comment|/* Register block 1 */
-DECL|macro|IRCC_SCE_CFGA
-mdefine_line|#define IRCC_SCE_CFGA&t;         0x00
-DECL|macro|IRCC_SCE_CFGB
-mdefine_line|#define IRCC_SCE_CFGB&t;         0x01
 DECL|macro|IRCC_FIFO_THRESHOLD
-mdefine_line|#define IRCC_FIFO_THRESHOLD&t; 0x02
+mdefine_line|#define IRCC_FIFO_THRESHOLD&t;   0x02
+DECL|macro|IRCC_SCE_CFGA
+mdefine_line|#define IRCC_SCE_CFGA&t;           0x00
 DECL|macro|IRCC_CFGA_AUX_IR
-mdefine_line|#define IRCC_CFGA_AUX_IR&t; 0x01&lt;&lt;7
+mdefine_line|#define   IRCC_CFGA_AUX_IR&t;   0x80
 DECL|macro|IRCC_CFGA_HALF_DUPLEX
-mdefine_line|#define IRCC_CFGA_HALF_DUPLEX&t; 0x01&lt;&lt;2
+mdefine_line|#define   IRCC_CFGA_HALF_DUPLEX&t;   0x04
 DECL|macro|IRCC_CFGA_TX_POLARITY
-mdefine_line|#define IRCC_CFGA_TX_POLARITY&t; 0x01&lt;&lt;1
+mdefine_line|#define   IRCC_CFGA_TX_POLARITY&t;   0x02
 DECL|macro|IRCC_CFGA_RX_POLARITY
-mdefine_line|#define IRCC_CFGA_RX_POLARITY&t; 0x01
+mdefine_line|#define   IRCC_CFGA_RX_POLARITY&t;   0x01
 DECL|macro|IRCC_CFGA_COM
-mdefine_line|#define IRCC_CFGA_COM&t;&t; 0x00&lt;&lt;3
+mdefine_line|#define   IRCC_CFGA_COM&t;&t;   0x00
 DECL|macro|IRCC_CFGA_IRDA_SIR_A
-mdefine_line|#define IRCC_CFGA_IRDA_SIR_A&t; 0x01&lt;&lt;3
+mdefine_line|#define   IRCC_CFGA_IRDA_SIR_A&t;   0x08
 DECL|macro|IRCC_CFGA_ASK_SIR
-mdefine_line|#define IRCC_CFGA_ASK_SIR&t; 0x02&lt;&lt;3
+mdefine_line|#define   IRCC_CFGA_ASK_SIR&t;   0x10
 DECL|macro|IRCC_CFGA_IRDA_SIR_B
-mdefine_line|#define IRCC_CFGA_IRDA_SIR_B&t; 0x03&lt;&lt;3
+mdefine_line|#define   IRCC_CFGA_IRDA_SIR_B&t;   0x18
 DECL|macro|IRCC_CFGA_IRDA_HDLC
-mdefine_line|#define IRCC_CFGA_IRDA_HDLC &t; 0x04&lt;&lt;3
+mdefine_line|#define   IRCC_CFGA_IRDA_HDLC &t;   0x20
 DECL|macro|IRCC_CFGA_IRDA_4PPM
-mdefine_line|#define IRCC_CFGA_IRDA_4PPM &t; 0x05&lt;&lt;3
+mdefine_line|#define   IRCC_CFGA_IRDA_4PPM &t;   0x28
 DECL|macro|IRCC_CFGA_CONSUMER
-mdefine_line|#define IRCC_CFGA_CONSUMER&t; 0x06&lt;&lt;3
+mdefine_line|#define   IRCC_CFGA_CONSUMER&t;   0x30
 DECL|macro|IRCC_CFGA_RAW_IR
-mdefine_line|#define IRCC_CFGA_RAW_IR&t; 0x07&lt;&lt;3
+mdefine_line|#define   IRCC_CFGA_RAW_IR&t;   0x38
 DECL|macro|IRCC_CFGA_OTHER
-mdefine_line|#define IRCC_CFGA_OTHER&t;&t; 0x08&lt;&lt;3
+mdefine_line|#define   IRCC_CFGA_OTHER          0x40
 DECL|macro|IRCC_IR_HDLC
-mdefine_line|#define IRCC_IR_HDLC             0x04
+mdefine_line|#define IRCC_IR_HDLC               0x04
 DECL|macro|IRCC_IR_4PPM
-mdefine_line|#define IRCC_IR_4PPM             0x01
+mdefine_line|#define IRCC_IR_4PPM               0x01
 DECL|macro|IRCC_IR_CONSUMER
-mdefine_line|#define IRCC_IR_CONSUMER         0x02
+mdefine_line|#define IRCC_IR_CONSUMER           0x02
+DECL|macro|IRCC_SCE_CFGB
+mdefine_line|#define IRCC_SCE_CFGB&t;           0x01
 DECL|macro|IRCC_CFGB_LOOPBACK
-mdefine_line|#define IRCC_CFGB_LOOPBACK       0x01&lt;&lt;5
+mdefine_line|#define IRCC_CFGB_LOOPBACK         0x20
 DECL|macro|IRCC_CFGB_LPBCK_TX_CRC
-mdefine_line|#define IRCC_CFGB_LPBCK_TX_CRC&t; 0x01&lt;&lt;4
+mdefine_line|#define IRCC_CFGB_LPBCK_TX_CRC&t;   0x10
 DECL|macro|IRCC_CFGB_NOWAIT
-mdefine_line|#define IRCC_CFGB_NOWAIT&t; 0x01&lt;&lt;3
+mdefine_line|#define IRCC_CFGB_NOWAIT&t;   0x08
 DECL|macro|IRCC_CFGB_STRING_MOVE
-mdefine_line|#define IRCC_CFGB_STRING_MOVE&t; 0x01&lt;&lt;2
+mdefine_line|#define IRCC_CFGB_STRING_MOVE&t;   0x04
 DECL|macro|IRCC_CFGB_DMA_BURST
-mdefine_line|#define IRCC_CFGB_DMA_BURST &t; 0x01&lt;&lt;1
+mdefine_line|#define IRCC_CFGB_DMA_BURST &t;   0x02
 DECL|macro|IRCC_CFGB_DMA_ENABLE
-mdefine_line|#define IRCC_CFGB_DMA_ENABLE&t; 0x01
-DECL|macro|IRCC_CFGB_COM
-mdefine_line|#define IRCC_CFGB_COM&t;&t; 0x00&lt;&lt;6
-DECL|macro|IRCC_CFGB_IR
-mdefine_line|#define IRCC_CFGB_IR&t;&t; 0x01&lt;&lt;6
-DECL|macro|IRCC_CFGB_AUX
-mdefine_line|#define IRCC_CFGB_AUX&t;&t; 0x02&lt;&lt;6
-DECL|macro|IRCC_CFGB_INACTIVE
-mdefine_line|#define IRCC_CFGB_INACTIVE&t; 0x03&lt;&lt;6
+mdefine_line|#define IRCC_CFGB_DMA_ENABLE&t;   0x01
+DECL|macro|IRCC_CFGB_MUX_COM
+mdefine_line|#define IRCC_CFGB_MUX_COM          0x00
+DECL|macro|IRCC_CFGB_MUX_IR
+mdefine_line|#define IRCC_CFGB_MUX_IR           0x40
+DECL|macro|IRCC_CFGB_MUX_AUX
+mdefine_line|#define IRCC_CFGB_MUX_AUX          0x80
+DECL|macro|IRCC_CFGB_MUX_INACTIVE
+mdefine_line|#define IRCC_CFGB_MUX_INACTIVE&t;   0xc0
 multiline_comment|/* Register block 3 - Identification Registers! */
 DECL|macro|IRCC_ID_HIGH
-mdefine_line|#define IRCC_ID_HIGH&t;         0x00   /* 0x10 */
+mdefine_line|#define IRCC_ID_HIGH&t;           0x00   /* 0x10 */
 DECL|macro|IRCC_ID_LOW
-mdefine_line|#define IRCC_ID_LOW&t;         0x01   /* 0xB8 */
+mdefine_line|#define IRCC_ID_LOW&t;           0x01   /* 0xB8 */
 DECL|macro|IRCC_CHIP_ID
-mdefine_line|#define IRCC_CHIP_ID &t;         0x02   /* 0xF1 */
+mdefine_line|#define IRCC_CHIP_ID &t;           0x02   /* 0xF1 */
 DECL|macro|IRCC_VERSION
-mdefine_line|#define IRCC_VERSION&t;         0x03   /* 0x01 */
+mdefine_line|#define IRCC_VERSION&t;           0x03   /* 0x01 */
 DECL|macro|IRCC_INTERFACE
-mdefine_line|#define IRCC_INTERFACE&t;         0x04   /* low 4 = DMA, high 4 = IRQ */
+mdefine_line|#define IRCC_INTERFACE&t;           0x04   /* low 4 = DMA, high 4 = IRQ */
 multiline_comment|/* Register block 4 - IrDA */
 DECL|macro|IRCC_CONTROL
-mdefine_line|#define IRCC_CONTROL             0x00
+mdefine_line|#define IRCC_CONTROL               0x00
 DECL|macro|IRCC_BOF_COUNT_LO
-mdefine_line|#define IRCC_BOF_COUNT_LO        0x01
+mdefine_line|#define IRCC_BOF_COUNT_LO          0x01 /* Low byte */
+DECL|macro|IRCC_BOF_COUNT_HI
+mdefine_line|#define IRCC_BOF_COUNT_HI          0x00 /* High nibble (bit 0-3) */
 DECL|macro|IRCC_BRICKWALL_CNT_LO
-mdefine_line|#define IRCC_BRICKWALL_CNT_LO    0x02
-DECL|macro|IRCC_BRICKWALL_TX_CNT_HI
-mdefine_line|#define IRCC_BRICKWALL_TX_CNT_HI 0x03
+mdefine_line|#define IRCC_BRICKWALL_CNT_LO      0x02 /* Low byte */
+DECL|macro|IRCC_BRICKWALL_CNT_HI
+mdefine_line|#define IRCC_BRICKWALL_CNT_HI      0x03 /* High nibble (bit 4-7) */
 DECL|macro|IRCC_TX_SIZE_LO
-mdefine_line|#define IRCC_TX_SIZE_LO          0x04
+mdefine_line|#define IRCC_TX_SIZE_LO            0x04 /* Low byte */
+DECL|macro|IRCC_TX_SIZE_HI
+mdefine_line|#define IRCC_TX_SIZE_HI            0x03 /* High nibble (bit 0-3) */
 DECL|macro|IRCC_RX_SIZE_HI
-mdefine_line|#define IRCC_RX_SIZE_HI          0x05
+mdefine_line|#define IRCC_RX_SIZE_HI            0x05 /* High nibble (bit 0-3) */
 DECL|macro|IRCC_RX_SIZE_LO
-mdefine_line|#define IRCC_RX_SIZE_LO          0x06
+mdefine_line|#define IRCC_RX_SIZE_LO            0x06 /* Low byte */
 DECL|macro|IRCC_1152
-mdefine_line|#define IRCC_1152                0x01&lt;&lt;7
+mdefine_line|#define IRCC_1152                  0x80
 DECL|macro|IRCC_CRC
-mdefine_line|#define IRCC_CRC                 0x01&lt;&lt;6
-multiline_comment|/* For storing entries in the status FIFO */
-DECL|struct|st_fifo_entry
+mdefine_line|#define IRCC_CRC                   0x40
+DECL|struct|smc_chip
 r_struct
-id|st_fifo_entry
+id|smc_chip
 (brace
-DECL|member|status
-r_int
-id|status
+DECL|member|name
+r_char
+op_star
+id|name
 suffix:semicolon
-DECL|member|len
+DECL|member|entr1
 r_int
-id|len
+r_char
+id|entr1
+suffix:semicolon
+DECL|member|entr2
+r_int
+r_char
+id|entr2
+suffix:semicolon
+DECL|member|cid_index
+r_int
+r_char
+id|cid_index
+suffix:semicolon
+DECL|member|cid_value
+r_int
+r_char
+id|cid_value
+suffix:semicolon
+DECL|member|probe
+r_int
+(paren
+op_star
+id|probe
+)paren
+(paren
+r_struct
+id|smc_chip
+op_star
+id|chip
+comma
+id|chipio_t
+op_star
+id|info
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|st_fifo
+DECL|typedef|smc_chip_t
+r_typedef
 r_struct
-id|st_fifo
-(brace
-DECL|member|entries
-r_struct
-id|st_fifo_entry
-id|entries
-(braket
-l_int|10
-)braket
-suffix:semicolon
-DECL|member|head
-r_int
-id|head
-suffix:semicolon
-DECL|member|tail
-r_int
-id|tail
-suffix:semicolon
-DECL|member|len
-r_int
-id|len
-suffix:semicolon
-)brace
+id|smc_chip
+id|smc_chip_t
 suffix:semicolon
 multiline_comment|/* Private data for each instance */
 DECL|struct|ircc_cb
@@ -242,19 +266,16 @@ id|irlap
 suffix:semicolon
 multiline_comment|/* The link layer we are binded to */
 DECL|member|io
-r_struct
 id|chipio_t
 id|io
 suffix:semicolon
 multiline_comment|/* IrDA controller information */
 DECL|member|tx_buff
-r_struct
 id|iobuff_t
 id|tx_buff
 suffix:semicolon
 multiline_comment|/* Transmit buffer */
 DECL|member|rx_buff
-r_struct
 id|iobuff_t
 id|rx_buff
 suffix:semicolon
@@ -279,11 +300,6 @@ id|__u32
 id|flags
 suffix:semicolon
 multiline_comment|/* Interface flags */
-DECL|member|st_fifo
-r_struct
-id|st_fifo
-id|st_fifo
-suffix:semicolon
 DECL|member|tx_buff_offsets
 r_int
 id|tx_buff_offsets

@@ -37,8 +37,10 @@ DECL|macro|NFSEXP_CROSSMNT
 mdefine_line|#define NFSEXP_CROSSMNT&t;&t;0x0200
 DECL|macro|NFSEXP_NOSUBTREECHECK
 mdefine_line|#define NFSEXP_NOSUBTREECHECK&t;0x0400
+DECL|macro|NFSEXP_NOAUTHNLM
+mdefine_line|#define&t;NFSEXP_NOAUTHNLM&t;0x0800&t;&t;/* Don&squot;t authenticate NLM requests - just trust */
 DECL|macro|NFSEXP_ALLFLAGS
-mdefine_line|#define NFSEXP_ALLFLAGS&t;&t;0x07FF
+mdefine_line|#define NFSEXP_ALLFLAGS&t;&t;0x0FFF
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* The following are hashtable sizes and must be powers of 2 */
 DECL|macro|NFSCLNT_EXPMAX
