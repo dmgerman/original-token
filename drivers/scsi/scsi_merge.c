@@ -1692,6 +1692,7 @@ c_func
 l_string|&quot;Incorrect number of segments after building list&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI_DEBUG_QUEUES
 id|dump_stats
 c_func
 (paren
@@ -1704,6 +1705,7 @@ comma
 id|count
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond

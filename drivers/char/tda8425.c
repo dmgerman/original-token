@@ -390,10 +390,10 @@ l_int|0xF0
 )paren
 suffix:semicolon
 )brace
-DECL|function|tda8425_init
+DECL|function|do_tda8425_init
 r_static
 r_void
-id|tda8425_init
+id|do_tda8425_init
 c_func
 (paren
 r_struct
@@ -621,7 +621,7 @@ op_star
 id|tda
 )paren
 suffix:semicolon
-id|tda8425_init
+id|do_tda8425_init
 c_func
 (paren
 id|client
@@ -712,7 +712,7 @@ id|tda
 op_assign
 id|client-&gt;data
 suffix:semicolon
-id|tda8425_init
+id|do_tda8425_init
 c_func
 (paren
 id|client

@@ -505,6 +505,20 @@ r_int
 id|size
 )paren
 suffix:semicolon
+r_int
+id|isapnp_proc_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|isapnp_proc_done
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* manager */
 r_struct
 id|pci_bus
@@ -578,6 +592,20 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|list_head
+id|isapnp_cards
+suffix:semicolon
+r_extern
+r_struct
+id|list_head
+id|isapnp_devices
+suffix:semicolon
+DECL|macro|isapnp_for_each_card
+mdefine_line|#define isapnp_for_each_card(card) &bslash;&n;&t;for(card = pci_bus_b(isapnp_cards.next); card != pci_bus_b(&amp;isapnp_cards); card = pci_bus_b(card-&gt;node.next))
+DECL|macro|isapnp_for_each_dev
+mdefine_line|#define isapnp_for_each_dev(dev) &bslash;&n;&t;for(dev = pci_dev_g(isapnp_devices.next); dev != pci_dev_g(&amp;isapnp_devices); dev = pci_dev_g(dev-&gt;global_list.next))
 macro_line|#else /* !CONFIG_ISAPNP */
 multiline_comment|/* lowlevel configuration */
 DECL|function|isapnp_present
@@ -735,6 +763,7 @@ suffix:semicolon
 )brace
 DECL|function|isapnp_wake
 r_extern
+r_inline
 r_void
 id|isapnp_wake
 c_func
@@ -748,6 +777,7 @@ suffix:semicolon
 )brace
 DECL|function|isapnp_device
 r_extern
+r_inline
 r_void
 id|isapnp_device
 c_func
@@ -761,6 +791,7 @@ suffix:semicolon
 )brace
 DECL|function|isapnp_activate
 r_extern
+r_inline
 r_void
 id|isapnp_activate
 c_func
@@ -774,6 +805,7 @@ suffix:semicolon
 )brace
 DECL|function|isapnp_deactivate
 r_extern
+r_inline
 r_void
 id|isapnp_deactivate
 c_func
@@ -788,6 +820,7 @@ suffix:semicolon
 multiline_comment|/* manager */
 DECL|function|isapnp_find_card
 r_extern
+r_inline
 r_struct
 id|pci_bus
 op_star
@@ -814,6 +847,7 @@ suffix:semicolon
 )brace
 DECL|function|isapnp_find_dev
 r_extern
+r_inline
 r_struct
 id|pci_dev
 op_star
@@ -845,6 +879,7 @@ suffix:semicolon
 )brace
 DECL|function|isapnp_resource_change
 r_extern
+r_inline
 r_void
 id|isapnp_resource_change
 c_func

@@ -70,12 +70,6 @@ DECL|macro|PCDATA_CODE_TYPE
 mdefine_line|#define PCDATA_CODE_TYPE&t;0x0014
 DECL|macro|PCDATA_INDICATOR
 mdefine_line|#define PCDATA_INDICATOR&t;0x0015
-macro_line|#ifndef CONFIG_PROC_FS
-DECL|macro|pci_proc_attach_device
-mdefine_line|#define pci_proc_attach_device(dev)&t;do { } while (0)
-DECL|macro|pci_proc_detach_device
-mdefine_line|#define pci_proc_detach_device(dev)&t;do { } while (0)
-macro_line|#endif
 DECL|struct|cb_config_t
 r_typedef
 r_struct
@@ -1177,30 +1171,12 @@ id|r
 suffix:semicolon
 )brace
 )brace
-id|list_add_tail
-c_func
-(paren
-op_amp
-id|dev-&gt;bus_list
-comma
-op_amp
-id|bus-&gt;devices
-)paren
-suffix:semicolon
-id|list_add_tail
-c_func
-(paren
-op_amp
-id|dev-&gt;global_list
-comma
-op_amp
-id|pci_devices
-)paren
-suffix:semicolon
-id|pci_proc_attach_device
+id|pci_insert_device
 c_func
 (paren
 id|dev
+comma
+id|bus
 )paren
 suffix:semicolon
 id|pci_enable_device
@@ -1327,27 +1303,13 @@ id|i
 dot
 id|dev
 suffix:semicolon
-id|list_del
-c_func
-(paren
-op_amp
-id|dev-&gt;bus_list
-)paren
-suffix:semicolon
-id|list_del
-c_func
-(paren
-op_amp
-id|dev-&gt;global_list
-)paren
-suffix:semicolon
 id|free_resources
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|pci_proc_detach_device
+id|pci_remove_device
 c_func
 (paren
 id|dev

@@ -868,6 +868,7 @@ suffix:semicolon
 DECL|function|proc_symlink
 r_extern
 r_inline
+r_struct
 id|proc_dir_entry
 op_star
 id|proc_symlink
@@ -895,6 +896,7 @@ suffix:semicolon
 DECL|function|proc_mknod
 r_extern
 r_inline
+r_struct
 id|proc_dir_entry
 op_star
 id|proc_mknod
@@ -923,6 +925,7 @@ suffix:semicolon
 )brace
 DECL|function|proc_mkdir
 r_extern
+r_inline
 r_struct
 id|proc_dir_entry
 op_star

@@ -13530,7 +13530,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;subsystem_vendor_id
+id|dev-&gt;subsystem_vendor
 )paren
 id|printk
 c_func

@@ -345,7 +345,7 @@ id|maplist
 comma
 id|iobuf-&gt;maplist
 comma
-id|wanted
+id|iobuf-&gt;array_len
 op_star
 r_sizeof
 (paren

@@ -1,8 +1,8 @@
 multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**                     Brief history&n;**&n;**  December 10 1995 by Gerard Roudier:&n;**     Initial port to Linux.&n;**&n;**  June 23 1996 by Gerard Roudier:&n;**     Support for 64 bits architectures (Alpha).&n;**&n;**  November 30 1996 by Gerard Roudier:&n;**     Support for Fast-20 scsi.&n;**     Support for large DMA fifo and 128 dwords bursting.&n;**&n;**  February 27 1997 by Gerard Roudier:&n;**     Support for Fast-40 scsi.&n;**     Support for on-Board RAM.&n;**&n;**  May 3 1997 by Gerard Roudier:&n;**     Full support for scsi scripts instructions pre-fetching.&n;**&n;**  May 19 1997 by Richard Waltham &lt;dormouse@farsrobt.demon.co.uk&gt;:&n;**     Support for NvRAM detection and reading.&n;**&n;**  August 18 1997 by Cort &lt;cort@cs.nmt.edu&gt;:&n;**     Support for Power/PC (Big Endian).&n;**&n;**  June 20 1998 by Gerard Roudier &lt;groudier@club-internet.fr&gt;:&n;**     Support for up to 64 tags per lun.&n;**     O(1) everywhere (C and SCRIPTS) for normal cases.&n;**     Low PCI traffic for command handling when on-chip RAM is present.&n;**     Aggressive SCSI SCRIPTS optimizations.&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;December 6 1999, version 3.2d&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR/SYMBIOS chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&t;&t;53C895A&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&t;&t;53C896&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&t;&t;53C1510D&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
+multiline_comment|/*&n;**&t;January 8 2000, version 3.2e&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR/SYMBIOS chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&t;&t;53C895A&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&t;&t;53C896&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&t;&t;53C1510D&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 multiline_comment|/*&n;**&t;Name and version of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&quot;ncr53c8xx - version 3.2d&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&quot;ncr53c8xx - version 3.2e&quot;
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
 mdefine_line|#define SCSI_NCR_DEBUG_FLAGS&t;(0)
 multiline_comment|/*==========================================================&n;**&n;**      Include files&n;**&n;**==========================================================&n;*/
@@ -14289,7 +14289,6 @@ c_func
 id|nc_sstat0
 )paren
 suffix:semicolon
-multiline_comment|/* rst, sdp0 */
 id|term
 op_assign
 (paren
@@ -14309,9 +14308,10 @@ op_amp
 l_int|1
 )paren
 op_lshift
-l_int|16
+l_int|17
 )paren
 suffix:semicolon
+multiline_comment|/* rst sdp0 */
 id|term
 op_or_assign
 (paren
@@ -14325,28 +14325,47 @@ op_amp
 l_int|0x01
 )paren
 op_lshift
-l_int|25
+l_int|26
 )paren
 op_or
-multiline_comment|/* sdp1 */
+multiline_comment|/* sdp1     */
+(paren
 (paren
 id|INW
 c_func
 (paren
 id|nc_sbdl
 )paren
+op_amp
+l_int|0xff
+)paren
 op_lshift
 l_int|9
 )paren
 op_or
-multiline_comment|/* d15-0 */
+multiline_comment|/* d7-0     */
+(paren
+(paren
+id|INW
+c_func
+(paren
+id|nc_sbdl
+)paren
+op_amp
+l_int|0xff00
+)paren
+op_lshift
+l_int|10
+)paren
+op_or
+multiline_comment|/* d15-8    */
 id|INB
 c_func
 (paren
 id|nc_sbcl
 )paren
 suffix:semicolon
-multiline_comment|/* req, ack, bsy, sel, atn, msg, cd, io */
+multiline_comment|/* req ack bsy sel atn msg cd io    */
 r_if
 c_cond
 (paren
@@ -29120,14 +29139,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef SCSI_NCR_NVRAM_SUPPORT
-id|ncr_nvram
-op_star
-id|nvram
-op_assign
-id|device-&gt;nvram
-suffix:semicolon
-macro_line|#endif
 id|ncr_chip
 op_star
 id|chip
@@ -30682,133 +30693,6 @@ id|device-&gt;attach_done
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef SCSI_NCR_NVRAM_SUPPORT
-r_if
-c_cond
-(paren
-op_logical_neg
-id|nvram
-)paren
-r_goto
-id|out
-suffix:semicolon
-multiline_comment|/*&n;&t;** Get access to chip IO registers&n;&t;*/
-macro_line|#ifdef NCR_IOMAPPED
-id|request_region
-c_func
-(paren
-id|io_port
-comma
-l_int|128
-comma
-l_string|&quot;ncr53c8xx&quot;
-)paren
-suffix:semicolon
-id|device-&gt;slot.port
-op_assign
-id|io_port
-suffix:semicolon
-macro_line|#else
-id|device-&gt;slot.reg
-op_assign
-(paren
-r_struct
-id|ncr_reg
-op_star
-)paren
-id|remap_pci_mem
-c_func
-(paren
-(paren
-id|ulong
-)paren
-id|base
-comma
-l_int|128
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|device-&gt;slot.reg
-)paren
-r_goto
-id|out
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;&t;** Try to read SYMBIOS nvram.&n;&t;** Data can be used to order booting of boards.&n;&t;**&n;&t;** Data is saved in ncr_device structure if NVRAM found. This&n;&t;** is then used to find drive boot order for ncr_attach().&n;&t;**&n;&t;** NVRAM data is passed to Scsi_Host_Template later during ncr_attach()&n;&t;** for any device set up.&n;&t;**&n;&t;** Try to read TEKRAM nvram if Symbios nvram not found.&n;&t;*/
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ncr_get_Symbios_nvram
-c_func
-(paren
-op_amp
-id|device-&gt;slot
-comma
-op_amp
-id|nvram-&gt;data.Symbios
-)paren
-)paren
-id|nvram-&gt;type
-op_assign
-id|SCSI_NCR_SYMBIOS_NVRAM
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ncr_get_Tekram_nvram
-c_func
-(paren
-op_amp
-id|device-&gt;slot
-comma
-op_amp
-id|nvram-&gt;data.Tekram
-)paren
-)paren
-id|nvram-&gt;type
-op_assign
-id|SCSI_NCR_TEKRAM_NVRAM
-suffix:semicolon
-r_else
-id|nvram-&gt;type
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
-multiline_comment|/*&n;&t;** Release access to chip IO registers&n;&t;*/
-macro_line|#ifdef NCR_IOMAPPED
-id|release_region
-c_func
-(paren
-id|device-&gt;slot.port
-comma
-l_int|128
-)paren
-suffix:semicolon
-macro_line|#else
-id|unmap_pci_mem
-c_func
-(paren
-(paren
-id|vm_offset_t
-)paren
-id|device-&gt;slot.reg
-comma
-(paren
-id|u_long
-)paren
-l_int|128
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif&t;/* SCSI_NCR_NVRAM_SUPPORT */
 r_return
 l_int|0
 suffix:semicolon

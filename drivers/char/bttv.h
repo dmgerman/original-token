@@ -3,7 +3,7 @@ macro_line|#ifndef _BTTV_H_
 DECL|macro|_BTTV_H_
 mdefine_line|#define _BTTV_H_
 DECL|macro|BTTV_VERSION_CODE
-mdefine_line|#define BTTV_VERSION_CODE 0x00070b
+mdefine_line|#define BTTV_VERSION_CODE 0x00070d
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &quot;audiochip.h&quot;
@@ -695,30 +695,6 @@ DECL|macro|BTTV_TERRATV
 mdefine_line|#define BTTV_TERRATV       0x1c
 DECL|macro|BTTV_PXC200
 mdefine_line|#define BTTV_PXC200        0x1d
-macro_line|#if 0
-mdefine_line|#define BTTV_UNKNOWN       0x00
-mdefine_line|#define BTTV_MIRO          0x01
-mdefine_line|#define BTTV_HAUPPAUGE     0x02
-mdefine_line|#define BTTV_STB           0x03
-mdefine_line|#define BTTV_INTEL         0x04
-mdefine_line|#define BTTV_DIAMOND       0x05 
-mdefine_line|#define BTTV_AVERMEDIA     0x06 
-mdefine_line|#define BTTV_MATRIX_VISION 0x07 
-mdefine_line|#define BTTV_FLYVIDEO      0x08
-mdefine_line|#define BTTV_TURBOTV       0x09
-mdefine_line|#define BTTV_HAUPPAUGE878  0x0a
-mdefine_line|#define BTTV_MIROPRO       0x0b
-mdefine_line|#define BTTV_TVBOOSTAR     0x0c
-mdefine_line|#define BTTV_WINCAM        0x0d
-mdefine_line|#define BTTV_MAXI          0x0e
-mdefine_line|#define BTTV_VHX           0x10
-mdefine_line|#define BTTV_PXC200        0x11
-mdefine_line|#define BTTV_AVERMEDIA98   0x12
-mdefine_line|#define BTTV_FLYVIDEO98    0x13
-mdefine_line|#define BTTV_PIXVIEWPLAYTV 0x17
-mdefine_line|#define BTTV_WINVIEW_601   0x18
-mdefine_line|#define BTTV_CONFERENCETV  0x1c
-macro_line|#endif
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO

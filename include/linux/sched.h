@@ -1406,13 +1406,13 @@ suffix:semicolon
 DECL|macro|wake_up
 mdefine_line|#define wake_up(x)&t;&t;&t;__wake_up((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE | TASK_EXCLUSIVE)
 DECL|macro|wake_up_all
-mdefine_line|#define wake_up_all(x)&t;&t;&t;__wake_up_all((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE)
+mdefine_line|#define wake_up_all(x)&t;&t;&t;__wake_up((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE)
 DECL|macro|wake_up_sync
 mdefine_line|#define wake_up_sync(x)&t;&t;&t;__wake_up_sync((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE | TASK_EXCLUSIVE)
 DECL|macro|wake_up_interruptible
 mdefine_line|#define wake_up_interruptible(x)&t;__wake_up((x),TASK_INTERRUPTIBLE | TASK_EXCLUSIVE)
 DECL|macro|wake_up_interruptible_all
-mdefine_line|#define wake_up_interruptible_all(x)&t;__wake_up_all((x),TASK_INTERRUPTIBLE)
+mdefine_line|#define wake_up_interruptible_all(x)&t;__wake_up((x),TASK_INTERRUPTIBLE)
 DECL|macro|wake_up_interruptible_sync
 mdefine_line|#define wake_up_interruptible_sync(x)&t;__wake_up_sync((x),TASK_INTERRUPTIBLE | TASK_EXCLUSIVE)
 r_extern

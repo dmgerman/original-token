@@ -1624,9 +1624,11 @@ r_return
 r_void
 op_star
 )paren
+(paren
 id|p
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 )brace
 )brace

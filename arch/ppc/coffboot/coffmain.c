@@ -3,8 +3,6 @@ macro_line|#include &quot;nonstdio.h&quot;
 macro_line|#include &quot;zlib.h&quot;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
-DECL|macro|__KERNEL__
-mdefine_line|#define __KERNEL__
 macro_line|#include &lt;asm/page.h&gt;
 r_extern
 r_void

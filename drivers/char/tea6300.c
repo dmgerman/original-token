@@ -388,10 +388,10 @@ l_int|12
 )paren
 suffix:semicolon
 )brace
-DECL|function|tea6300_init
+DECL|function|do_tea6300_init
 r_static
 r_void
-id|tea6300_init
+id|do_tea6300_init
 c_func
 (paren
 r_struct
@@ -684,7 +684,7 @@ op_star
 id|tea
 )paren
 suffix:semicolon
-id|tea6300_init
+id|do_tea6300_init
 c_func
 (paren
 id|client
@@ -775,7 +775,7 @@ id|tea
 op_assign
 id|client-&gt;data
 suffix:semicolon
-id|tea6300_init
+id|do_tea6300_init
 c_func
 (paren
 id|client

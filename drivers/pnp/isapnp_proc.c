@@ -1,4 +1,14 @@
 multiline_comment|/*&n; *  ISA Plug &amp; Play support&n; *  Copyright (c) by Jaroslav Kysela &lt;perex@suse.cz&gt;&n; *&n; *&n; *   This program is free software; you can redistribute it and/or modify&n; *   it under the terms of the GNU General Public License as published by&n; *   the Free Software Foundation; either version 2 of the License, or&n; *   (at your option) any later version.&n; *&n; *   This program is distributed in the hope that it will be useful,&n; *   but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *   GNU General Public License for more details.&n; *&n; *   You should have received a copy of the GNU General Public License&n; *   along with this program; if not, write to the Free Software&n; *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+DECL|macro|__NO_VERSION__
+mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/isapnp.h&gt;
 DECL|struct|isapnp_info_buffer
 r_struct
 id|isapnp_info_buffer
@@ -897,7 +907,6 @@ multiline_comment|/* default sound info directory file-ops */
 )brace
 suffix:semicolon
 DECL|function|isapnp_proc_init
-r_static
 r_int
 id|__init
 id|isapnp_proc_init
@@ -957,7 +966,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|function|isapnp_proc_done
-r_static
 r_int
 id|isapnp_proc_done
 c_func
@@ -2933,43 +2941,16 @@ id|buffer
 )paren
 (brace
 r_struct
-id|list_head
-op_star
-id|card_list
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|card_list
-op_assign
-id|isapnp_cards.next
-suffix:semicolon
-id|card_list
-op_ne
-op_amp
-id|isapnp_cards
-suffix:semicolon
-id|card_list
-op_assign
-id|card_list-&gt;next
-)paren
-(brace
-r_struct
 id|pci_bus
 op_star
 id|card
-op_assign
-id|list_entry
+suffix:semicolon
+id|isapnp_for_each_card
 c_func
 (paren
-id|card_list
-comma
-r_struct
-id|pci_bus
-comma
-id|node
+id|card
 )paren
-suffix:semicolon
+(brace
 r_struct
 id|list_head
 op_star
@@ -3079,32 +3060,18 @@ id|dev_list
 op_assign
 id|dev_list-&gt;next
 )paren
-(brace
-r_struct
-id|pci_dev
-op_star
-id|dev
-op_assign
-id|list_entry
-c_func
-(paren
-id|dev_list
-comma
-r_struct
-id|pci_dev
-comma
-id|bus_list
-)paren
-suffix:semicolon
 id|isapnp_print_device
 c_func
 (paren
 id|buffer
 comma
-id|dev
+id|pci_dev_b
+c_func
+(paren
+id|dev_list
+)paren
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/*&n; *&n; */
@@ -3723,15 +3690,10 @@ id|list-&gt;next
 (brace
 id|isapnp_info_card
 op_assign
-id|list_entry
+id|pci_bus_b
 c_func
 (paren
 id|list
-comma
-r_struct
-id|pci_bus
-comma
-id|node
 )paren
 suffix:semicolon
 r_if
@@ -3747,9 +3709,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|isapnp_info_card
+id|list
 op_eq
-l_int|NULL
+op_amp
+id|isapnp_cards
 )paren
 (brace
 id|printk

@@ -604,10 +604,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|tda9855_init
+DECL|function|do_tda9855_init
 r_static
 r_void
-id|tda9855_init
+id|do_tda9855_init
 c_func
 (paren
 r_struct
@@ -824,7 +824,7 @@ op_star
 id|t
 )paren
 suffix:semicolon
-id|tda9855_init
+id|do_tda9855_init
 c_func
 (paren
 id|client
@@ -915,7 +915,7 @@ id|t
 op_assign
 id|client-&gt;data
 suffix:semicolon
-id|tda9855_init
+id|do_tda9855_init
 c_func
 (paren
 id|client
@@ -1126,15 +1126,8 @@ id|client
 op_rshift
 l_int|4
 suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|0
-op_eq
 id|va-&gt;mode
-)paren
-id|va-&gt;mode
-op_assign
+op_or_assign
 id|VIDEO_SOUND_MONO
 suffix:semicolon
 r_break
@@ -1303,7 +1296,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|VIDEO_SOUND_LANG2
+id|VIDEO_SOUND_LANG1
 suffix:colon
 id|t-&gt;c2
 op_assign
@@ -1842,7 +1835,7 @@ c_func
 r_void
 )paren
 (brace
-id|i2c_add_driver
+id|i2c_del_driver
 c_func
 (paren
 op_amp

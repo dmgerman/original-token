@@ -80,6 +80,13 @@ c_func
 id|proc_bus
 )paren
 suffix:semicolon
+DECL|variable|proc_root_driver
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|proc_root_driver
+)paren
+suffix:semicolon
 DECL|variable|proc_fs_type
 r_static
 r_struct

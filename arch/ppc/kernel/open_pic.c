@@ -80,6 +80,10 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+DECL|variable|open_pic_irq_offset
+r_int
+id|open_pic_irq_offset
+suffix:semicolon
 multiline_comment|/*&n; *  Accesses to the current processor&squot;s registers&n; */
 macro_line|#ifndef __powerpc__
 DECL|macro|THIS_CPU
@@ -103,7 +107,7 @@ DECL|macro|check_arg_pri
 mdefine_line|#define check_arg_pri(pri) &bslash;&n;    if (pri &lt; 0 || pri &gt;= OPENPIC_NUM_PRI) &bslash;&n;&t;printk(&quot;openpic.c:%d: illegal priority %d&bslash;n&quot;, __LINE__, pri);
 multiline_comment|/*&n; * I changed this to return to keep us from from trying to use irq #&squot;s&n; * that we&squot;re using for IPI&squot;s.&n; *   -- Cort&n; */
 DECL|macro|check_arg_irq
-mdefine_line|#define check_arg_irq(irq) &bslash;&n;    /*if (irq &lt; 0 || irq &gt;= (NumSources+open_pic.irq_offset)) &bslash;&n;      printk(&quot;openpic.c:%d: illegal irq %d&bslash;n&quot;, __LINE__, irq);*/
+mdefine_line|#define check_arg_irq(irq) &bslash;&n;    /*if (irq &lt; 0 || irq &gt;= (NumSources+open_pic_irq_offset)) &bslash;&n;      printk(&quot;openpic.c:%d: illegal irq %d&bslash;n&quot;, __LINE__, irq);*/
 DECL|macro|check_arg_cpu
 mdefine_line|#define check_arg_cpu(cpu) &bslash;&n;    if (cpu &lt; 0 || cpu &gt;= NumProcessors) &bslash;&n;&t;printk(&quot;openpic.c:%d: illegal cpu %d&bslash;n&quot;, __LINE__, cpu);
 macro_line|#else
@@ -757,7 +761,7 @@ l_int|0
 comma
 l_int|8
 comma
-id|open_pic.irq_offset
+id|open_pic_irq_offset
 comma
 l_int|1
 comma
@@ -797,7 +801,7 @@ id|i
 comma
 l_int|8
 comma
-id|open_pic.irq_offset
+id|open_pic_irq_offset
 op_plus
 id|i
 comma
@@ -1524,12 +1528,7 @@ id|OpenPIC-&gt;Source
 (braket
 id|irq
 op_minus
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
-id|handler-&gt;irq_offset
+id|open_pic_irq_offset
 )braket
 dot
 id|Vector_Priority
@@ -1561,12 +1560,7 @@ id|OpenPIC-&gt;Source
 (braket
 id|irq
 op_minus
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
-id|handler-&gt;irq_offset
+id|open_pic_irq_offset
 )braket
 dot
 id|Vector_Priority

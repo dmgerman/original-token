@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/ext2/fsync.c&n; *&n; *  Copyright (C) 1993  Stephen Tweedie (sct@dcs.ed.ac.uk)&n; *  from&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *                      Laboratoire MASI - Institut Blaise Pascal&n; *                      Universite Pierre et Marie Curie (Paris VI)&n; *  from&n; *  linux/fs/minix/truncate.c   Copyright (C) 1991, 1992  Linus Torvalds&n; * &n; *  ext2fs fsync primitive&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; * &n; *  Removed unnecessary code duplication for little endian machines&n; *  and excessive __inline__s. &n; *        Andi Kleen, 1997&n; *&n; * Major simplications and cleanup - we only need to do the metadata, because&n; * we can depend on generic_block_fdatasync() to sync the data blocks.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 DECL|macro|blocksize
 mdefine_line|#define blocksize&t;(EXT2_BLOCK_SIZE(inode-&gt;i_sb))
 DECL|macro|addr_per_block
@@ -83,8 +84,25 @@ id|bh
 )paren
 )paren
 (brace
-id|brelse
+multiline_comment|/* There can be a parallell read(2) that started read-I/O&n;&t;&t;   on the buffer so we can&squot;t assume that there&squot;s been&n;&t;&t;   an I/O error without first waiting I/O completation. */
+id|wait_on_buffer
 c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
+)paren
+(brace
+id|brelse
 (paren
 id|bh
 )paren
@@ -93,6 +111,7 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -114,6 +133,18 @@ id|bh
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|wait
+)paren
+multiline_comment|/* when we return from fsync all the blocks&n;&t;&t;&t;   must be _just_ stored on disk */
+id|wait_on_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
 id|brelse
 c_func
 (paren

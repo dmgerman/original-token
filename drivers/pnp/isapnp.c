@@ -7,16 +7,12 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/vmalloc.h&gt;
-macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/isapnp.h&gt;
 DECL|variable|isapnp_cards
 id|LIST_HEAD
@@ -32,13 +28,6 @@ c_func
 id|isapnp_devices
 )paren
 suffix:semicolon
-DECL|macro|isapnp_for_each_card
-mdefine_line|#define isapnp_for_each_card(card) &bslash;&n;&t;for(card = pci_bus_b(isapnp_cards.next); card != pci_bus_b(&amp;isapnp_cards); card = pci_bus_b(card-&gt;node.next))
-DECL|macro|isapnp_for_each_dev
-mdefine_line|#define isapnp_for_each_dev(dev) &bslash;&n;&t;for(dev = pci_dev_g(isapnp_devices.next); dev != pci_dev_g(&amp;isapnp_devices); dev = pci_dev_g(dev-&gt;global_list.next))
-macro_line|#ifdef CONFIG_PROC_FS
-macro_line|#include &quot;isapnp_proc.c&quot;
-macro_line|#endif
 macro_line|#if 0
 mdefine_line|#define ISAPNP_REGION_OK
 macro_line|#endif
@@ -4909,6 +4898,13 @@ suffix:semicolon
 id|card-&gt;checksum
 op_assign
 id|isapnp_checksum_value
+suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|card-&gt;devices
+)paren
 suffix:semicolon
 id|list_add_tail
 c_func

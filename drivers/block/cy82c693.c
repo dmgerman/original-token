@@ -693,7 +693,7 @@ op_assign
 id|pci_find_slot
 c_func
 (paren
-id|dev
+id|dev-&gt;bus-&gt;number
 comma
 id|dev-&gt;devfn
 op_plus
@@ -712,6 +712,8 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;%s: tune_drive: Cannot find secondary interface!&bslash;n&quot;
+comma
+id|drive-&gt;name
 )paren
 suffix:semicolon
 r_return

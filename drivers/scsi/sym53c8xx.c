@@ -1,8 +1,8 @@
-multiline_comment|/******************************************************************************&n;**  High Performance device driver for the Symbios 53C896 controller.&n;**&n;**  Copyright (C) 1998-1999  Gerard Roudier &lt;groudier@club-internet.fr&gt;&n;**&n;**  This driver also supports all the Symbios 53C8XX controller family, &n;**  except 53C810 revisions &lt; 16, 53C825 revisions &lt; 16 and all &n;**  revisions of 53C815 controllers.&n;**&n;**  This driver is based on the Linux port of the FreeBSD ncr driver.&n;** &n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**  &n;**-----------------------------------------------------------------------------&n;**  &n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  The Linux port of the FreeBSD ncr driver has been achieved in &n;**  november 1995 by:&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  Major contributions:&n;**  --------------------&n;**&n;**  NVRAM detection and reading.&n;**    Copyright (C) 1997 Richard Waltham &lt;dormouse@farsrobt.demon.co.uk&gt;&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;December 6 1999, sym53c8xx 1.5g&n;**&n;**&t;Supported SCSI features:&n;**&t;    Synchronous data transfers&n;**&t;    Wide16 SCSI BUS&n;**&t;    Disconnection/Reselection&n;**&t;    Tagged command queuing&n;**&t;    SCSI Parity checking&n;**&n;**&t;Supported NCR/SYMBIOS chips:&n;**&t;&t;53C810A&t;  (8 bits, Fast 10,&t; no rom BIOS) &n;**&t;&t;53C825A&t;  (Wide,   Fast 10,&t; on-board rom BIOS)&n;**&t;&t;53C860&t;  (8 bits, Fast 20,&t; no rom BIOS)&n;**&t;&t;53C875&t;  (Wide,   Fast 20,&t; on-board rom BIOS)&n;**&t;&t;53C876&t;  (Wide,   Fast 20 Dual, on-board rom BIOS)&n;**&t;&t;53C895&t;  (Wide,   Fast 40,&t; on-board rom BIOS)&n;**&t;&t;53C895A&t;  (Wide,   Fast 40,&t; on-board rom BIOS)&n;**&t;&t;53C896&t;  (Wide,   Fast 40 Dual, on-board rom BIOS)&n;**&t;&t;53C1510D  (Wide,   Fast 40 Dual, on-board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO&n;**&t;&t;Module&n;**&t;&t;Shared IRQ&n;*/
+multiline_comment|/******************************************************************************&n;**  High Performance device driver for the Symbios 53C896 controller.&n;**&n;**  Copyright (C) 1998-2000  Gerard Roudier &lt;groudier@club-internet.fr&gt;&n;**&n;**  This driver also supports all the Symbios 53C8XX controller family, &n;**  except 53C810 revisions &lt; 16, 53C825 revisions &lt; 16 and all &n;**  revisions of 53C815 controllers.&n;**&n;**  This driver is based on the Linux port of the FreeBSD ncr driver.&n;** &n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**  &n;**-----------------------------------------------------------------------------&n;**  &n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  The Linux port of the FreeBSD ncr driver has been achieved in &n;**  november 1995 by:&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  Major contributions:&n;**  --------------------&n;**&n;**  NVRAM detection and reading.&n;**    Copyright (C) 1997 Richard Waltham &lt;dormouse@farsrobt.demon.co.uk&gt;&n;**&n;*******************************************************************************&n;*/
+multiline_comment|/*&n;**&t;January 9 2000, sym53c8xx 1.5h&n;**&n;**&t;Supported SCSI features:&n;**&t;    Synchronous data transfers&n;**&t;    Wide16 SCSI BUS&n;**&t;    Disconnection/Reselection&n;**&t;    Tagged command queuing&n;**&t;    SCSI Parity checking&n;**&n;**&t;Supported NCR/SYMBIOS chips:&n;**&t;&t;53C810A&t;  (8 bits, Fast 10,&t; no rom BIOS) &n;**&t;&t;53C825A&t;  (Wide,   Fast 10,&t; on-board rom BIOS)&n;**&t;&t;53C860&t;  (8 bits, Fast 20,&t; no rom BIOS)&n;**&t;&t;53C875&t;  (Wide,   Fast 20,&t; on-board rom BIOS)&n;**&t;&t;53C876&t;  (Wide,   Fast 20 Dual, on-board rom BIOS)&n;**&t;&t;53C895&t;  (Wide,   Fast 40,&t; on-board rom BIOS)&n;**&t;&t;53C895A&t;  (Wide,   Fast 40,&t; on-board rom BIOS)&n;**&t;&t;53C896&t;  (Wide,   Fast 40 Dual, on-board rom BIOS)&n;**&t;&t;53C1510D  (Wide,   Fast 40 Dual, on-board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO&n;**&t;&t;Module&n;**&t;&t;Shared IRQ&n;*/
 multiline_comment|/*&n;**&t;Name and version of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&quot;sym53c8xx - version 1.5g&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&quot;sym53c8xx - version 1.5h&quot;
 multiline_comment|/* #define DEBUG_896R1 */
 DECL|macro|SCSI_NCR_OPTIMIZE_896
 mdefine_line|#define SCSI_NCR_OPTIMIZE_896
@@ -17511,7 +17511,6 @@ c_func
 id|nc_sstat0
 )paren
 suffix:semicolon
-multiline_comment|/* rst, sdp0 */
 id|term
 op_assign
 (paren
@@ -17531,9 +17530,10 @@ op_amp
 l_int|1
 )paren
 op_lshift
-l_int|16
+l_int|17
 )paren
 suffix:semicolon
+multiline_comment|/* rst sdp0 */
 id|term
 op_or_assign
 (paren
@@ -17547,28 +17547,47 @@ op_amp
 l_int|0x01
 )paren
 op_lshift
-l_int|25
+l_int|26
 )paren
 op_or
-multiline_comment|/* sdp1 */
+multiline_comment|/* sdp1     */
+(paren
 (paren
 id|INW
 c_func
 (paren
 id|nc_sbdl
 )paren
+op_amp
+l_int|0xff
+)paren
 op_lshift
 l_int|9
 )paren
 op_or
-multiline_comment|/* d15-0 */
+multiline_comment|/* d7-0     */
+(paren
+(paren
+id|INW
+c_func
+(paren
+id|nc_sbdl
+)paren
+op_amp
+l_int|0xff00
+)paren
+op_lshift
+l_int|10
+)paren
+op_or
+multiline_comment|/* d15-8    */
 id|INB
 c_func
 (paren
 id|nc_sbcl
 )paren
 suffix:semicolon
-multiline_comment|/* req, ack, bsy, sel, atn, msg, cd, io */
+multiline_comment|/* req ack bsy sel atn msg cd io    */
 r_if
 c_cond
 (paren

@@ -15,6 +15,7 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &quot;time.h&quot;
 multiline_comment|/* Apparently the RTC stores seconds since 1 Jan 1904 */
 DECL|macro|RTC_OFFSET

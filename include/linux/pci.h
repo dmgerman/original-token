@@ -522,12 +522,20 @@ DECL|member|rom_base_reg
 id|u8
 id|rom_base_reg
 suffix:semicolon
-multiline_comment|/* Which config register controls the ROM */
-DECL|member|regs
-r_int
-r_int
-id|regs
+multiline_comment|/* which config register controls the ROM */
+DECL|member|driver
+r_struct
+id|pci_driver
+op_star
+id|driver
 suffix:semicolon
+multiline_comment|/* which driver has allocated this device */
+DECL|member|driver_data
+r_void
+op_star
+id|driver_data
+suffix:semicolon
+multiline_comment|/* data private to the driver */
 multiline_comment|/* device is compatible with these IDs */
 DECL|member|vendor_compatible
 r_int
@@ -583,7 +591,7 @@ id|name
 l_int|48
 )braket
 suffix:semicolon
-multiline_comment|/* Device name */
+multiline_comment|/* device name */
 DECL|member|slot_name
 r_char
 id|slot_name
@@ -591,17 +599,23 @@ id|slot_name
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* Slot name */
+multiline_comment|/* slot name */
 DECL|member|active
 r_int
 id|active
 suffix:semicolon
-multiline_comment|/* device is active */
+multiline_comment|/* ISAPnP: device is active */
 DECL|member|ro
 r_int
 id|ro
 suffix:semicolon
-multiline_comment|/* Read/Only */
+multiline_comment|/* ISAPnP: read only */
+DECL|member|regs
+r_int
+r_int
+id|regs
+suffix:semicolon
+multiline_comment|/* ISAPnP: supported registers */
 DECL|member|prepare
 r_int
 (paren
@@ -615,6 +629,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* ISAPnP hooks */
 DECL|member|activate
 r_int
 (paren
@@ -1664,6 +1679,130 @@ id|u8
 comma
 id|u8
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/* New-style probing supporting hot-pluggable devices */
+DECL|struct|pci_driver
+r_struct
+id|pci_driver
+(brace
+DECL|member|node
+r_struct
+id|list_head
+id|node
+suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|probe
+r_int
+(paren
+op_star
+id|probe
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* New device inserted, check if known */
+DECL|member|remove
+r_void
+(paren
+op_star
+id|remove
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Device removed */
+DECL|member|suspend
+r_void
+(paren
+op_star
+id|suspend
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Device suspended */
+DECL|member|resume
+r_void
+(paren
+op_star
+id|resume
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Device woken up */
+)brace
+suffix:semicolon
+r_void
+id|pci_register_driver
+c_func
+(paren
+r_struct
+id|pci_driver
+op_star
+)paren
+suffix:semicolon
+r_void
+id|pci_unregister_driver
+c_func
+(paren
+r_struct
+id|pci_driver
+op_star
+)paren
+suffix:semicolon
+r_void
+id|pci_insert_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_struct
+id|pci_bus
+op_star
+)paren
+suffix:semicolon
+r_void
+id|pci_remove_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+)paren
+suffix:semicolon
+r_struct
+id|pci_driver
+op_star
+id|pci_dev_driver
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * simple PCI probing for drivers (drivers/pci/helper.c)&n; */

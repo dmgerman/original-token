@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20 --&t;Removed linux version checking(patch from &n; *&t;&t;&t;Tigran Aivazian). v1.1 includes Alan&squot;s SMP&n; *&t;&t;&t;opdates. We still have problems on SMP though,&n; *&t;&t;&t;but I&squot;m looking into that. &n; *&n; ********************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&t;&t;&t;     &n; *&n; *******************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tlan.h&quot;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -149,7 +149,7 @@ r_static
 r_int
 id|TLanVersionMinor
 op_assign
-l_int|1
+l_int|2
 suffix:semicolon
 DECL|variable|TLanAdapterList
 r_static
@@ -877,6 +877,10 @@ c_cond
 id|priv-&gt;timer.function
 op_ne
 l_int|NULL
+op_logical_and
+id|priv-&gt;timerType
+op_ne
+id|TLAN_TIMER_ACTIVITY
 )paren
 (brace
 id|spin_unlock_irqrestore
@@ -3945,14 +3949,38 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|TLan_SetTimer
+id|priv-&gt;timer.function
+op_assign
+op_amp
+id|TLan_Timer
+suffix:semicolon
+id|priv-&gt;timer.data
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|dev
+suffix:semicolon
+id|priv-&gt;timer.expires
+op_assign
+id|jiffies
+op_plus
+id|TLAN_TIMER_ACT_DELAY
+suffix:semicolon
+id|priv-&gt;timerSetAt
+op_assign
+id|jiffies
+suffix:semicolon
+id|priv-&gt;timerType
+op_assign
+id|TLAN_TIMER_ACTIVITY
+suffix:semicolon
+id|add_timer
 c_func
 (paren
-id|dev
-comma
-id|TLAN_TIMER_ACT_DELAY
-comma
-id|TLAN_TIMER_ACTIVITY
+op_amp
+id|priv-&gt;timer
 )paren
 suffix:semicolon
 )brace
@@ -4482,14 +4510,38 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|TLan_SetTimer
+id|priv-&gt;timer.function
+op_assign
+op_amp
+id|TLan_Timer
+suffix:semicolon
+id|priv-&gt;timer.data
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|dev
+suffix:semicolon
+id|priv-&gt;timer.expires
+op_assign
+id|jiffies
+op_plus
+id|TLAN_TIMER_ACT_DELAY
+suffix:semicolon
+id|priv-&gt;timerSetAt
+op_assign
+id|jiffies
+suffix:semicolon
+id|priv-&gt;timerType
+op_assign
+id|TLAN_TIMER_ACTIVITY
+suffix:semicolon
+id|add_timer
 c_func
 (paren
-id|dev
-comma
-id|TLAN_TIMER_ACT_DELAY
-comma
-id|TLAN_TIMER_ACTIVITY
+op_amp
+id|priv-&gt;timer
 )paren
 suffix:semicolon
 )brace
@@ -5064,7 +5116,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* TLan_HandleRxEOC */
 multiline_comment|/*****************************************************************************&n;******************************************************************************&n;&n;&t;ThunderLAN Driver Timer Function&n;&n;******************************************************************************&n;*****************************************************************************/
-multiline_comment|/***************************************************************&n;&t; *&t;TLan_Timer&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;Nothing&n;&t; *&t;Parms:&n;&t; *&t;&t;data&t;A value given to add timer when&n;&t; *&t;&t;&t;add_timer was called.&n;&t; *&n;&t; *&t;This function handles timed functionality for the&n;&t; *&t;TLAN driver.  The two current timer uses are for&n;&t; *&t;delaying for autonegotionation and driving the ACT LED.&n;&t; *&t;-&t;Autonegotiation requires being allowed about&n;&t; *&t;&t;2 1/2 seconds before attempting to transmit a&n;&t; *&t;&t;packet.  It would be a very bad thing to hang&n;&t; *&t;&t;the kernel this long, so the driver doesn&squot;t&n;&t; *&t;&t;allow transmission &squot;til after this time, for&n;&t; *&t;&t;certain PHYs.  It would be much nicer if all&n;&t; *&t;&t;PHYs were interrupt-capable like the internal&n;&t; *&t;&t;PHY.&n;&t; *&t;-&t;The ACT LED, which shows adapter activity, is&n;&t; *&t;&t;driven by the driver, and so must be left on&n;&t; *&t;&t;for a short period to power up the LED so it&n;&t; *&t;&t;can be seen.  This delay can be changed by&n;&t; *&t;&t;changing the TLAN_TIMER_ACT_DELAY in tlan.h,&n;&t; *&t;&t;if desired.  10 jiffies produces a slightly&n;&t; *&t;&t;sluggish response.&n;&t; *&n;&t; **************************************************************/
+multiline_comment|/***************************************************************&n;&t; *&t;TLan_Timer&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;Nothing&n;&t; *&t;Parms:&n;&t; *&t;&t;data&t;A value given to add timer when&n;&t; *&t;&t;&t;add_timer was called.&n;&t; *&n;&t; *&t;This function handles timed functionality for the&n;&t; *&t;TLAN driver.  The two current timer uses are for&n;&t; *&t;delaying for autonegotionation and driving the ACT LED.&n;&t; *&t;-&t;Autonegotiation requires being allowed about&n;&t; *&t;&t;2 1/2 seconds before attempting to transmit a&n;&t; *&t;&t;packet.  It would be a very bad thing to hang&n;&t; *&t;&t;the kernel this long, so the driver doesn&squot;t&n;&t; *&t;&t;allow transmission &squot;til after this time, for&n;&t; *&t;&t;certain PHYs.  It would be much nicer if all&n;&t; *&t;&t;PHYs were interrupt-capable like the internal&n;&t; *&t;&t;PHY.&n;&t; *&t;-&t;The ACT LED, which shows adapter activity, is&n;&t; *&t;&t;driven by the driver, and so must be left on&n;&t; *&t;&t;for a short period to power up the LED so it&n;&t; *&t;&t;can be seen.  This delay can be changed by&n;&t; *&t;&t;changing the TLAN_TIMER_ACT_DELAY in tlan.h,&n;&t; *&t;&t;if desired.  100 ms  produces a slightly&n;&t; *&t;&t;sluggish response.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_Timer
 r_void
 id|TLan_Timer
@@ -5103,6 +5155,8 @@ suffix:semicolon
 r_int
 r_int
 id|flags
+op_assign
+l_int|0
 suffix:semicolon
 id|priv-&gt;timer.function
 op_assign
@@ -7776,13 +7830,21 @@ id|value
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Wait for 5 jiffies (50 ms) and powerup&n;&t; * This is abitrary.  It is intended to make sure the&n;&t; * tranceiver settles.&n;&t; */
+multiline_comment|/* Wait for 50 ms and powerup&n;&t; * This is abitrary.  It is intended to make sure the&n;&t; * tranceiver settles.&n;&t; */
 id|TLan_SetTimer
 c_func
 (paren
 id|dev
 comma
-l_int|5
+(paren
+l_int|50
+op_div
+(paren
+l_int|1000
+op_div
+id|HZ
+)paren
+)paren
 comma
 id|TLAN_TIMER_PHY_PUP
 )paren
@@ -7848,13 +7910,17 @@ comma
 id|value
 )paren
 suffix:semicolon
-multiline_comment|/* Wait for 50 jiffies (500 ms) and reset the&n;&t; * tranceiver.  The TLAN docs say both 50 ms and&n;&t; * 500 ms, so do the longer, just in case&n;&t; */
+multiline_comment|/* Wait for 500 ms and reset the&n;&t; * tranceiver.  The TLAN docs say both 50 ms and&n;&t; * 500 ms, so do the longer, just in case&n;&t; */
 id|TLan_SetTimer
 c_func
 (paren
 id|dev
 comma
-l_int|50
+(paren
+id|HZ
+op_div
+l_int|2
+)paren
 comma
 id|TLAN_TIMER_PHY_RESET
 )paren
@@ -7976,13 +8042,17 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Wait for 50 jiffies (500 ms) and initialize.&n;&t; * I don&squot;t remember why I wait this long.&n;&t; */
+multiline_comment|/* Wait for 500 ms and initialize.&n;&t; * I don&squot;t remember why I wait this long.&n;&t; */
 id|TLan_SetTimer
 c_func
 (paren
 id|dev
 comma
-l_int|50
+(paren
+id|HZ
+op_div
+l_int|2
+)paren
 comma
 id|TLAN_TIMER_PHY_START_LINK
 )paren
@@ -8187,7 +8257,7 @@ comma
 l_int|0x1200
 )paren
 suffix:semicolon
-multiline_comment|/* Wait for 400 jiffies (4 sec) for autonegotiation&n;&t;&t; * to complete.  The max spec time is less than this&n;&t;&t; * but the card need additional time to start AN.&n;&t;&t; * .5 sec should be plenty extra.&n;&t;&t; */
+multiline_comment|/* Wait for 4 sec for autonegotiation&n;&t;&t; * to complete.  The max spec time is less than this&n;&t;&t; * but the card need additional time to start AN.&n;&t;&t; * .5 sec should be plenty extra.&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -8201,7 +8271,11 @@ c_func
 (paren
 id|dev
 comma
-l_int|400
+(paren
+l_int|4
+op_star
+id|HZ
+)paren
 comma
 id|TLAN_TIMER_PHY_FINISH_AN
 )paren
@@ -8358,13 +8432,13 @@ id|tctl
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Wait for 100 jiffies (1 sec) to give the tranceiver time&n;&t; * to establish link.&n;&t; */
+multiline_comment|/* Wait for 1 sec to give the tranceiver time&n;&t; * to establish link.&n;&t; */
 id|TLan_SetTimer
 c_func
 (paren
 id|dev
 comma
-l_int|100
+id|HZ
 comma
 id|TLAN_TIMER_FINISH_RESET
 )paren
@@ -8441,7 +8515,7 @@ id|MII_GS_AUTOCMPLT
 )paren
 )paren
 (brace
-multiline_comment|/* Wait for 800 jiffies (8 sec) to give the process&n;&t;&t; * more time.  Perhaps we should fail after a while.&n;&t;&t; */
+multiline_comment|/* Wait for 8 sec to give the process&n;&t;&t; * more time.  Perhaps we should fail after a while.&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -8453,7 +8527,11 @@ c_func
 (paren
 id|dev
 comma
-l_int|800
+(paren
+l_int|8
+op_star
+id|HZ
+)paren
 comma
 id|TLAN_TIMER_PHY_FINISH_AN
 )paren
@@ -8668,13 +8746,17 @@ l_string|&quot;TLAN:  Starting internal PHY with HALF-DUPLEX&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Wait for 10 jiffies (100 ms).  No reason in partiticular.&n;&t; */
+multiline_comment|/* Wait for 100 ms.  No reason in partiticular.&n;&t; */
 id|TLan_SetTimer
 c_func
 (paren
 id|dev
 comma
+(paren
+id|HZ
+op_div
 l_int|10
+)paren
 comma
 id|TLAN_TIMER_FINISH_RESET
 )paren
@@ -8734,6 +8816,8 @@ suffix:semicolon
 r_int
 r_int
 id|flags
+op_assign
+l_int|0
 suffix:semicolon
 id|err
 op_assign
@@ -9315,6 +9399,8 @@ suffix:semicolon
 r_int
 r_int
 id|flags
+op_assign
+l_int|0
 suffix:semicolon
 id|TLanPrivateInfo
 op_star
@@ -10003,6 +10089,8 @@ suffix:semicolon
 r_int
 r_int
 id|flags
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|ret
