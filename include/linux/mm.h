@@ -615,26 +615,6 @@ r_int
 id|order
 )paren
 (brace
-multiline_comment|/*  temporary check. */
-r_if
-c_cond
-(paren
-id|contig_page_data.node_zonelists
-(braket
-id|gfp_mask
-)braket
-dot
-id|gfp_mask
-op_ne
-(paren
-id|gfp_mask
-)paren
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Gets optimized away by the compiler.&n;&t; */
 r_if
 c_cond

@@ -1,7 +1,9 @@
 macro_line|#ifndef _LINUX_TYPES_H
 DECL|macro|_LINUX_TYPES_H
 mdefine_line|#define _LINUX_TYPES_H
+macro_line|#ifdef&t;__KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/posix_types.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#ifndef __KERNEL_STRICT_NAMES

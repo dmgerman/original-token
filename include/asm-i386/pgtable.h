@@ -254,7 +254,7 @@ DECL|macro|pmd_bad
 mdefine_line|#define&t;pmd_bad(x)&t;((pmd_val(x) &amp; (~PAGE_MASK &amp; ~_PAGE_USER)) != _KERNPG_TABLE)
 multiline_comment|/*&n; * Permanent address of a page. Obviously must never be&n; * called on a highmem page.&n; */
 DECL|macro|page_address
-mdefine_line|#define page_address(page) ({ if (!(page)-&gt;virtual) BUG(); (page)-&gt;virtual; })
+mdefine_line|#define page_address(page) ((page)-&gt;virtual)
 DECL|macro|pages_to_mb
 mdefine_line|#define pages_to_mb(x) ((x) &gt;&gt; (20-PAGE_SHIFT))
 DECL|macro|pte_page

@@ -1947,6 +1947,10 @@ op_amp
 id|__GFP_WAIT
 )paren
 (brace
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
 id|current-&gt;flags
 op_or_assign
 id|PF_MEMALLOC

@@ -18,7 +18,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/*&n; * Temporary debugging help until all code is converted to the new&n; * waitqueue usage.&n; */
 DECL|macro|WAITQUEUE_DEBUG
-mdefine_line|#define WAITQUEUE_DEBUG 1
+mdefine_line|#define WAITQUEUE_DEBUG 0
 macro_line|#if WAITQUEUE_DEBUG
 r_extern
 r_int
