@@ -277,6 +277,12 @@ r_int
 id|d_reftime
 suffix:semicolon
 multiline_comment|/* last time referenced */
+DECL|member|d_fsdata
+r_void
+op_star
+id|d_fsdata
+suffix:semicolon
+multiline_comment|/* fs-specific data */
 )brace
 suffix:semicolon
 DECL|struct|dentry_operations
@@ -336,6 +342,18 @@ r_void
 (paren
 op_star
 id|d_delete
+)paren
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
+DECL|member|d_release
+r_void
+(paren
+op_star
+id|d_release
 )paren
 (paren
 r_struct

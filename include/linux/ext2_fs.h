@@ -1288,7 +1288,7 @@ r_int
 id|ext2_link
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct

@@ -2012,7 +2012,7 @@ id|link
 )paren
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -2146,7 +2146,7 @@ id|readlink
 )paren
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_char
@@ -2165,7 +2165,7 @@ id|follow_link
 )paren
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -2181,7 +2181,7 @@ id|readpage
 )paren
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -2197,7 +2197,7 @@ id|writepage
 )paren
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -2267,7 +2267,7 @@ id|updatepage
 )paren
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -2295,7 +2295,7 @@ id|revalidate
 )paren
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 )paren
 suffix:semicolon
@@ -2361,7 +2361,7 @@ id|notify_change
 )paren
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -2672,7 +2672,7 @@ id|do_truncate
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_int
@@ -3209,7 +3209,7 @@ id|notify_change
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -3767,7 +3767,7 @@ id|generic_readpage
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -4056,22 +4056,6 @@ comma
 r_struct
 id|iattr
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|notify_change
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|iattr
-op_star
-id|attr
 )paren
 suffix:semicolon
 multiline_comment|/* kludge to get SCSI modules working */

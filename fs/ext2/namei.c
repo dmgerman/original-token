@@ -3968,9 +3968,9 @@ r_int
 id|ext2_link
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|old_dentry
 comma
 r_struct
 id|inode
@@ -3983,6 +3983,13 @@ op_star
 id|dentry
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|old_dentry-&gt;d_inode
+suffix:semicolon
 r_struct
 id|ext2_dir_entry
 op_star

@@ -9,9 +9,9 @@ id|autofs_readlink
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_char
 op_star
@@ -36,7 +36,7 @@ r_struct
 id|autofs_symlink
 op_star
 )paren
-id|inode-&gt;u.generic_ip
+id|dentry-&gt;d_inode-&gt;u.generic_ip
 suffix:semicolon
 id|len
 op_assign
@@ -76,9 +76,9 @@ id|autofs_follow_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|dentry
@@ -98,7 +98,7 @@ r_struct
 id|autofs_symlink
 op_star
 )paren
-id|inode-&gt;u.generic_ip
+id|dentry-&gt;d_inode-&gt;u.generic_ip
 suffix:semicolon
 r_return
 id|lookup_dentry

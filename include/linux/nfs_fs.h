@@ -4,9 +4,9 @@ DECL|macro|_LINUX_NFS_FS_H
 mdefine_line|#define _LINUX_NFS_FS_H
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/sunrpc/debug.h&gt;
+macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
 multiline_comment|/*&n; * Enable debugging support for nfs client.&n; * Requires RPC_DEBUG.&n; */
 macro_line|#ifdef RPC_DEBUG
@@ -29,6 +29,10 @@ mdefine_line|#define NFS_LOOKUP_CACHE_SIZE&t;&t;64
 multiline_comment|/*&n; * superblock magic number for NFS&n; */
 DECL|macro|NFS_SUPER_MAGIC
 mdefine_line|#define NFS_SUPER_MAGIC&t;&t;&t;0x6969
+DECL|macro|NFS_FH
+mdefine_line|#define NFS_FH(dentry)&t;&t;&t;((struct nfs_fh *) ((dentry)-&gt;d_fsdata))
+DECL|macro|NFS_DSERVER
+mdefine_line|#define NFS_DSERVER(dentry)&t;&t;(&amp;(dentry)-&gt;d_sb-&gt;u.nfs_sb.s_server)
 DECL|macro|NFS_SERVER
 mdefine_line|#define NFS_SERVER(inode)&t;&t;(&amp;(inode)-&gt;i_sb-&gt;u.nfs_sb.s_server)
 DECL|macro|NFS_CLIENT
@@ -37,8 +41,6 @@ DECL|macro|NFS_ADDR
 mdefine_line|#define NFS_ADDR(inode)&t;&t;&t;(RPC_PEERADDR(NFS_CLIENT(inode)))
 DECL|macro|NFS_CONGESTED
 mdefine_line|#define NFS_CONGESTED(inode)&t;&t;(RPC_CONGESTED(NFS_CLIENT(inode)))
-DECL|macro|NFS_FH
-mdefine_line|#define NFS_FH(inode)&t;&t;&t;(&amp;(inode)-&gt;u.nfs_i.fhandle)
 DECL|macro|NFS_READTIME
 mdefine_line|#define NFS_READTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_jiffies)
 DECL|macro|NFS_OLDMTIME
@@ -566,7 +568,7 @@ id|nfs_revalidate
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 )paren
 suffix:semicolon
@@ -580,7 +582,7 @@ id|nfs_server
 op_star
 comma
 r_struct
-id|inode
+id|dentry
 op_star
 )paren
 suffix:semicolon
@@ -595,6 +597,11 @@ r_extern
 r_struct
 id|inode_operations
 id|nfs_dir_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|dentry_operations
+id|nfs_dentry_operations
 suffix:semicolon
 r_extern
 r_void
@@ -639,15 +646,12 @@ c_func
 r_struct
 id|file
 op_star
-id|file
 comma
 r_int
-id|cmd
 comma
 r_struct
 id|file_lock
 op_star
-id|fl
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * linux/fs/nfs/write.c&n; */
@@ -657,7 +661,7 @@ id|nfs_writepage
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -730,7 +734,7 @@ id|nfs_updatepage
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -757,21 +761,7 @@ id|nfs_readpage
 c_func
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
-id|page
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|nfs_readpage_sync
-c_func
-(paren
-r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -811,11 +801,18 @@ op_star
 id|server
 comma
 r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+r_struct
 id|inode
 op_star
 id|inode
-)paren
-(brace
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -842,7 +839,7 @@ c_func
 (paren
 id|server
 comma
-id|inode
+id|dentry
 )paren
 suffix:semicolon
 )brace

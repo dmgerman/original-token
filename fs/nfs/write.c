@@ -53,6 +53,13 @@ id|rpc_task
 id|wb_task
 suffix:semicolon
 multiline_comment|/* RPC task */
+DECL|member|wb_dentry
+r_struct
+id|dentry
+op_star
+id|wb_dentry
+suffix:semicolon
+multiline_comment|/* dentry referenced */
 DECL|member|wb_inode
 r_struct
 id|inode
@@ -314,6 +321,11 @@ id|nfs_writepage_sync
 c_func
 (paren
 r_struct
+id|dentry
+op_star
+id|dentry
+comma
+r_struct
 id|inode
 op_star
 id|inode
@@ -332,10 +344,6 @@ r_int
 id|count
 )paren
 (brace
-r_struct
-id|nfs_fattr
-id|fattr
-suffix:semicolon
 r_int
 r_int
 id|wsize
@@ -363,14 +371,18 @@ id|u8
 op_star
 id|buffer
 suffix:semicolon
+r_struct
+id|nfs_fattr
+id|fattr
+suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS:      nfs_writepage_sync(%x/%ld %d@%ld)&bslash;n&quot;
+l_string|&quot;NFS:      nfs_writepage_sync(%s/%s %d@%ld)&bslash;n&quot;
 comma
-id|inode-&gt;i_dev
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|inode-&gt;i_ino
+id|dentry-&gt;d_name.name
 comma
 id|count
 comma
@@ -422,16 +434,16 @@ op_assign
 id|nfs_proc_write
 c_func
 (paren
-id|NFS_SERVER
+id|NFS_DSERVER
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 comma
 id|NFS_FH
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 comma
 id|IS_SWAPFILE
@@ -1128,6 +1140,11 @@ id|create_write_request
 c_func
 (paren
 r_struct
+id|dentry
+op_star
+id|dentry
+comma
+r_struct
 id|inode
 op_star
 id|inode
@@ -1170,11 +1187,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS:      create_write_request(%x/%ld, %ld+%d)&bslash;n&quot;
+l_string|&quot;NFS:      create_write_request(%s/%s, %ld+%d)&bslash;n&quot;
 comma
-id|inode-&gt;i_dev
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|inode-&gt;i_ino
+id|dentry-&gt;d_name.name
 comma
 id|page-&gt;offset
 op_plus
@@ -1269,6 +1286,10 @@ r_goto
 id|out_req
 suffix:semicolon
 multiline_comment|/* Put the task on inode&squot;s writeback request list. */
+id|wreq-&gt;wb_dentry
+op_assign
+id|dentry
+suffix:semicolon
 id|wreq-&gt;wb_inode
 op_assign
 id|inode
@@ -1606,9 +1627,9 @@ id|nfs_writepage
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|page
@@ -1620,7 +1641,9 @@ r_return
 id|nfs_writepage_sync
 c_func
 (paren
-id|inode
+id|dentry
+comma
+id|dentry-&gt;d_inode
 comma
 id|page
 comma
@@ -1637,9 +1660,9 @@ id|nfs_updatepage
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|page
@@ -1664,6 +1687,13 @@ id|sync
 )paren
 (brace
 r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
+r_struct
 id|nfs_wreq
 op_star
 id|req
@@ -1684,11 +1714,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS:      nfs_updatepage(%x/%ld %d@%ld, sync=%d)&bslash;n&quot;
+l_string|&quot;NFS:      nfs_updatepage(%s/%s %d@%ld, sync=%d)&bslash;n&quot;
 comma
-id|inode-&gt;i_dev
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|inode-&gt;i_ino
+id|dentry-&gt;d_name.name
 comma
 id|count
 comma
@@ -1751,6 +1781,8 @@ r_return
 id|nfs_writepage_sync
 c_func
 (paren
+id|dentry
+comma
 id|inode
 comma
 id|page
@@ -1837,6 +1869,8 @@ op_assign
 id|create_write_request
 c_func
 (paren
+id|dentry
+comma
 id|inode
 comma
 id|page
@@ -2822,11 +2856,11 @@ op_assign
 id|req-&gt;wb_page
 suffix:semicolon
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 op_assign
-id|req-&gt;wb_inode
+id|req-&gt;wb_dentry
 suffix:semicolon
 id|dprintk
 c_func
@@ -3007,7 +3041,7 @@ op_assign
 id|NFS_FH
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 suffix:semicolon
 id|req-&gt;wb_args-&gt;offset
@@ -3084,14 +3118,20 @@ r_struct
 id|inode
 op_star
 id|inode
+op_assign
+id|req-&gt;wb_inode
 suffix:semicolon
 r_struct
 id|page
 op_star
 id|page
+op_assign
+id|req-&gt;wb_page
 suffix:semicolon
 r_int
 id|status
+op_assign
+id|task-&gt;tk_status
 suffix:semicolon
 id|dprintk
 c_func
@@ -3100,20 +3140,8 @@ l_string|&quot;NFS: %4d nfs_wback_result (status %d)&bslash;n&quot;
 comma
 id|task-&gt;tk_pid
 comma
-id|task-&gt;tk_status
-)paren
-suffix:semicolon
-id|inode
-op_assign
-id|req-&gt;wb_inode
-suffix:semicolon
-id|page
-op_assign
-id|req-&gt;wb_page
-suffix:semicolon
 id|status
-op_assign
-id|task-&gt;tk_status
+)paren
 suffix:semicolon
 r_if
 c_cond

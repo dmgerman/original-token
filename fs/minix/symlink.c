@@ -11,7 +11,7 @@ id|minix_readlink
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_char
@@ -28,7 +28,7 @@ id|minix_follow_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -104,9 +104,9 @@ id|minix_follow_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|dentry
@@ -114,6 +114,13 @@ op_star
 id|base
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -188,9 +195,9 @@ id|minix_readlink
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_char
 op_star
@@ -227,7 +234,7 @@ op_assign
 id|minix_bread
 c_func
 (paren
-id|inode
+id|dentry-&gt;d_inode
 comma
 l_int|0
 comma

@@ -7,10 +7,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-macro_line|#include &quot;ncplib_kernel.h&quot;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/ncp_fs.h&gt;
+macro_line|#include &quot;ncplib_kernel.h&quot;
 DECL|function|min
 r_static
 r_inline
@@ -255,7 +255,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|result
 )paren
 (brace
@@ -311,63 +310,13 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-(paren
-(paren
+id|access
+op_eq
 id|right
-op_eq
-id|O_RDONLY
-)paren
-op_logical_and
-(paren
-(paren
-id|access
-op_eq
-id|O_RDONLY
-)paren
 op_logical_or
-(paren
 id|access
 op_eq
 id|O_RDWR
-)paren
-)paren
-)paren
-op_logical_or
-(paren
-(paren
-id|right
-op_eq
-id|O_WRONLY
-)paren
-op_logical_and
-(paren
-(paren
-id|access
-op_eq
-id|O_WRONLY
-)paren
-op_logical_or
-(paren
-id|access
-op_eq
-id|O_RDWR
-)paren
-)paren
-)paren
-op_logical_or
-(paren
-(paren
-id|right
-op_eq
-id|O_RDWR
-)paren
-op_logical_and
-(paren
-id|access
-op_eq
-id|O_RDWR
-)paren
-)paren
 )paren
 id|error
 op_assign
@@ -1035,7 +984,7 @@ suffix:semicolon
 )brace
 id|inode-&gt;i_mtime
 op_assign
-id|inode-&gt;i_ctime
+id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon

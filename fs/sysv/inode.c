@@ -4971,9 +4971,9 @@ id|sysv_notify_change
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|iattr
@@ -4981,6 +4981,13 @@ op_star
 id|attr
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_int
 id|error
 suffix:semicolon

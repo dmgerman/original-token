@@ -12,7 +12,7 @@ id|isofs_readlink
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_char
@@ -29,14 +29,12 @@ id|isofs_follow_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
 comma
 r_struct
 id|dentry
 op_star
-id|base
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * symlinks can&squot;t do much...&n; */
@@ -105,9 +103,9 @@ id|isofs_readlink
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_char
 op_star
@@ -140,7 +138,7 @@ op_assign
 id|get_rock_ridge_symlink
 c_func
 (paren
-id|inode
+id|dentry-&gt;d_inode
 )paren
 suffix:semicolon
 r_if
@@ -208,9 +206,9 @@ id|isofs_follow_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|dentry
@@ -227,7 +225,7 @@ op_assign
 id|get_rock_ridge_symlink
 c_func
 (paren
-id|inode
+id|dentry-&gt;d_inode
 )paren
 suffix:semicolon
 r_if

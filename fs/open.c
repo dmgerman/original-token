@@ -276,15 +276,22 @@ id|do_truncate
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_int
 r_int
 id|length
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_int
 id|error
 suffix:semicolon
@@ -314,7 +321,7 @@ op_assign
 id|notify_change
 c_func
 (paren
-id|inode
+id|dentry
 comma
 op_amp
 id|newattrs
@@ -579,7 +586,7 @@ op_assign
 id|do_truncate
 c_func
 (paren
-id|inode
+id|dentry
 comma
 id|length
 )paren
@@ -787,7 +794,7 @@ op_assign
 id|do_truncate
 c_func
 (paren
-id|inode
+id|dentry
 comma
 id|length
 )paren
@@ -982,7 +989,7 @@ op_assign
 id|notify_change
 c_func
 (paren
-id|inode
+id|dentry
 comma
 op_amp
 id|newattrs
@@ -1196,7 +1203,7 @@ op_assign
 id|notify_change
 c_func
 (paren
-id|inode
+id|dentry
 comma
 op_amp
 id|newattrs
@@ -1977,7 +1984,7 @@ op_assign
 id|notify_change
 c_func
 (paren
-id|inode
+id|dentry
 comma
 op_amp
 id|newattrs
@@ -2144,7 +2151,7 @@ op_assign
 id|notify_change
 c_func
 (paren
-id|inode
+id|dentry
 comma
 op_amp
 id|newattrs
@@ -2415,7 +2422,7 @@ op_assign
 id|notify_change
 c_func
 (paren
-id|inode
+id|dentry
 comma
 op_amp
 id|newattrs
@@ -2446,7 +2453,7 @@ op_assign
 id|notify_change
 c_func
 (paren
-id|inode
+id|dentry
 comma
 op_amp
 id|newattrs

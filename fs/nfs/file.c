@@ -313,11 +313,11 @@ id|ppos
 )paren
 (brace
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 op_assign
-id|file-&gt;f_dentry-&gt;d_inode
+id|file-&gt;f_dentry
 suffix:semicolon
 id|ssize_t
 id|result
@@ -327,11 +327,11 @@ c_func
 (paren
 id|VFS
 comma
-l_string|&quot;nfs: read(%x/%ld, %lu@%lu)&bslash;n&quot;
+l_string|&quot;nfs: read(%s/%s, %lu@%lu)&bslash;n&quot;
 comma
-id|inode-&gt;i_dev
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|inode-&gt;i_ino
+id|dentry-&gt;d_name.name
 comma
 (paren
 r_int
@@ -352,13 +352,13 @@ op_assign
 id|nfs_revalidate_inode
 c_func
 (paren
-id|NFS_SERVER
+id|NFS_DSERVER
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 comma
-id|inode
+id|dentry
 )paren
 suffix:semicolon
 r_if
@@ -403,11 +403,11 @@ id|vma
 )paren
 (brace
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 op_assign
-id|file-&gt;f_dentry-&gt;d_inode
+id|file-&gt;f_dentry
 suffix:semicolon
 r_int
 id|status
@@ -417,11 +417,11 @@ c_func
 (paren
 id|VFS
 comma
-l_string|&quot;nfs: mmap(%x/%ld)&bslash;n&quot;
+l_string|&quot;nfs: mmap(%s/%s)&bslash;n&quot;
 comma
-id|inode-&gt;i_dev
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|inode-&gt;i_ino
+id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
 id|status
@@ -429,13 +429,13 @@ op_assign
 id|nfs_revalidate_inode
 c_func
 (paren
-id|NFS_SERVER
+id|NFS_DSERVER
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 comma
-id|inode
+id|dentry
 )paren
 suffix:semicolon
 r_if
@@ -562,11 +562,18 @@ id|ppos
 )paren
 (brace
 r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
+r_struct
 id|inode
 op_star
 id|inode
 op_assign
-id|file-&gt;f_dentry-&gt;d_inode
+id|dentry-&gt;d_inode
 suffix:semicolon
 id|ssize_t
 id|result
@@ -576,11 +583,11 @@ c_func
 (paren
 id|VFS
 comma
-l_string|&quot;nfs: write(%x/%ld (%d), %lu@%lu)&bslash;n&quot;
+l_string|&quot;nfs: write(%s/%s (%d), %lu@%lu)&bslash;n&quot;
 comma
-id|inode-&gt;i_dev
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|inode-&gt;i_ino
+id|dentry-&gt;d_name.name
 comma
 id|inode-&gt;i_count
 comma
@@ -616,6 +623,11 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|result
+op_assign
+op_minus
+id|EBUSY
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -625,30 +637,21 @@ c_func
 id|inode
 )paren
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;NFS: attempt to write to active swap file!&bslash;n&quot;
-)paren
+r_goto
+id|out_swapfile
 suffix:semicolon
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
 id|result
 op_assign
 id|nfs_revalidate_inode
 c_func
 (paren
-id|NFS_SERVER
+id|NFS_DSERVER
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 comma
-id|inode
+id|dentry
 )paren
 suffix:semicolon
 r_if
@@ -659,6 +662,7 @@ id|result
 r_goto
 id|out
 suffix:semicolon
+macro_line|#ifdef NFS_PARANOIA
 multiline_comment|/* N.B. This should be impossible now -- inodes can&squot;t change mode */
 r_if
 c_cond
@@ -684,6 +688,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+macro_line|#endif
 id|result
 op_assign
 id|count
@@ -730,6 +735,17 @@ id|out
 suffix:colon
 r_return
 id|result
+suffix:semicolon
+id|out_swapfile
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;NFS: attempt to write to active swap file!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Lock a (portion of) a file&n; */

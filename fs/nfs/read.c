@@ -116,11 +116,17 @@ id|rsize
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a page synchronously.&n; */
+r_static
 r_int
 DECL|function|nfs_readpage_sync
 id|nfs_readpage_sync
 c_func
 (paren
+r_struct
+id|dentry
+op_star
+id|dentry
+comma
 r_struct
 id|inode
 op_star
@@ -226,7 +232,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS: nfs_proc_read(%s, (%x,%lx), %ld, %d, %p)&bslash;n&quot;
+l_string|&quot;NFS: nfs_proc_read(%s, (%s/%s), %ld, %d, %p)&bslash;n&quot;
 comma
 id|NFS_SERVER
 c_func
@@ -236,9 +242,9 @@ id|inode
 op_member_access_from_pointer
 id|hostname
 comma
-id|inode-&gt;i_dev
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|inode-&gt;i_ino
+id|dentry-&gt;d_name.name
 comma
 id|offset
 comma
@@ -257,7 +263,7 @@ comma
 id|NFS_FH
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 comma
 id|offset
@@ -607,6 +613,11 @@ id|nfs_readpage_async
 c_func
 (paren
 r_struct
+id|dentry
+op_star
+id|dentry
+comma
+r_struct
 id|inode
 op_star
 id|inode
@@ -704,7 +715,7 @@ comma
 id|NFS_FH
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 comma
 id|page-&gt;offset
@@ -806,9 +817,9 @@ id|nfs_readpage
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|page
@@ -816,6 +827,13 @@ op_star
 id|page
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_int
 r_int
 id|address
@@ -894,6 +912,8 @@ op_assign
 id|nfs_readpage_async
 c_func
 (paren
+id|dentry
+comma
 id|inode
 comma
 id|page
@@ -912,6 +932,8 @@ op_assign
 id|nfs_readpage_sync
 c_func
 (paren
+id|dentry
+comma
 id|inode
 comma
 id|page

@@ -761,7 +761,7 @@ op_assign
 id|notify_change
 c_func
 (paren
-id|inode
+id|dentry
 comma
 id|iap
 )paren
@@ -1813,7 +1813,7 @@ suffix:semicolon
 id|notify_change
 c_func
 (paren
-id|inode
+id|dentry
 comma
 op_amp
 id|ia
@@ -2598,7 +2598,7 @@ op_assign
 id|notify_change
 c_func
 (paren
-id|inode
+id|dentry
 comma
 op_amp
 id|newattrs
@@ -2783,7 +2783,7 @@ op_member_access_from_pointer
 id|readlink
 c_func
 (paren
-id|inode
+id|dentry
 comma
 id|buf
 comma
@@ -3136,6 +3136,9 @@ id|ddir
 comma
 op_star
 id|dnew
+comma
+op_star
+id|dold
 suffix:semicolon
 r_struct
 id|inode
@@ -3249,10 +3252,6 @@ id|dnew-&gt;d_inode
 r_goto
 id|dput_and_out
 suffix:semicolon
-id|dest
-op_assign
-id|tfhp-&gt;fh_dentry-&gt;d_inode
-suffix:semicolon
 id|err
 op_assign
 op_minus
@@ -3266,6 +3265,14 @@ id|len
 )paren
 r_goto
 id|dput_and_out
+suffix:semicolon
+id|dold
+op_assign
+id|tfhp-&gt;fh_dentry
+suffix:semicolon
+id|dest
+op_assign
+id|dold-&gt;d_inode
 suffix:semicolon
 id|err
 op_assign
@@ -3340,7 +3347,7 @@ op_member_access_from_pointer
 id|link
 c_func
 (paren
-id|dest
+id|dold
 comma
 id|dirp
 comma

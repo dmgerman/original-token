@@ -352,7 +352,7 @@ op_assign
 id|smb_revalidate_inode
 c_func
 (paren
-id|dir
+id|dentry
 )paren
 suffix:semicolon
 r_if
@@ -702,7 +702,7 @@ op_assign
 id|smb_revalidate_inode
 c_func
 (paren
-id|dir
+id|dentry
 )paren
 suffix:semicolon
 r_return
@@ -888,7 +888,7 @@ op_assign
 id|smb_revalidate_inode
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 op_eq
 l_int|0

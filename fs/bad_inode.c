@@ -12,9 +12,9 @@ id|bad_follow_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|ino
+id|dent
 comma
 r_struct
 id|dentry

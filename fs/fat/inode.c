@@ -4828,9 +4828,9 @@ id|fat_notify_change
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|iattr
@@ -4843,7 +4843,14 @@ id|super_block
 op_star
 id|sb
 op_assign
-id|inode-&gt;i_sb
+id|dentry-&gt;d_sb
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
 suffix:semicolon
 r_int
 id|error

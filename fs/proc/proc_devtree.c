@@ -217,9 +217,9 @@ id|devtree_follow_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|dentry
@@ -243,7 +243,7 @@ r_struct
 id|proc_dir_entry
 op_star
 )paren
-id|inode-&gt;u.generic_ip
+id|dentry-&gt;inode-&gt;u.generic_ip
 suffix:semicolon
 id|link
 op_assign
@@ -272,9 +272,9 @@ id|devtree_readlink
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_char
 op_star
@@ -303,7 +303,7 @@ r_struct
 id|proc_dir_entry
 op_star
 )paren
-id|inode-&gt;u.generic_ip
+id|dentry-&gt;inode-&gt;u.generic_ip
 suffix:semicolon
 id|link
 op_assign

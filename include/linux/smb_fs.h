@@ -202,7 +202,7 @@ id|smb_revalidate_inode
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 )paren
 suffix:semicolon
@@ -220,7 +220,7 @@ id|smb_notify_change
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct

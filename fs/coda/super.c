@@ -59,14 +59,12 @@ id|coda_notify_change
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
 comma
 r_struct
 id|iattr
 op_star
-id|attr
 )paren
 suffix:semicolon
 r_static
@@ -493,6 +491,7 @@ id|sbi-&gt;sbi_root
 op_assign
 id|root
 suffix:semicolon
+multiline_comment|/* N.B. check this for failure */
 id|sb-&gt;s_root
 op_assign
 id|d_alloc_root
@@ -517,8 +516,6 @@ suffix:semicolon
 id|error
 suffix:colon
 id|EXIT
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
@@ -576,6 +573,8 @@ suffix:semicolon
 id|sb-&gt;s_dev
 op_assign
 l_int|0
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -838,9 +837,9 @@ id|coda_notify_change
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|iattr
@@ -848,6 +847,13 @@ op_star
 id|iattr
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_struct
 id|cnode
 op_star

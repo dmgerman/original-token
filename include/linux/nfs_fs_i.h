@@ -14,12 +14,6 @@ r_struct
 id|pipe_inode_info
 id|pipeinfo
 suffix:semicolon
-multiline_comment|/*&n;&t; * The file handle&n;&t; */
-DECL|member|fhandle
-r_struct
-id|nfs_fh
-id|fhandle
-suffix:semicolon
 multiline_comment|/*&n;&t; * Various flags&n;&t; */
 DECL|member|flags
 r_int
