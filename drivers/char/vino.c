@@ -1,5 +1,4 @@
 multiline_comment|/* $Id: vino.c,v 1.4 1999/02/09 23:59:36 ulfc Exp $&n; * drivers/char/vino.c&n; *&n; * (incomplete) Driver for the Vino Video input system found in SGI Indys.&n; *&n; * Copyright (C) 1999 Ulf Carlsson (ulfc@bun.falkenberg.se)&n; *&n; * This isn&squot;t complete yet, please don&squot;t expect any video until I&squot;ve written&n; * some more code.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

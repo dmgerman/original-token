@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;Turbo Channel Services -- Exported Symbols&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/dec/tc.h&gt;
 DECL|variable|get_tc_irq_nr

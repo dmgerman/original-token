@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen&n; *&n; * $Id: $&n; */
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;prom.h&quot;
 multiline_comment|/*&n; * PROM Interface (whichprom.c)&n; */
 r_typedef

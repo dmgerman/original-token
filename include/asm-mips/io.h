@@ -4,7 +4,6 @@ mdefine_line|#define __ASM_MIPS_IO_H
 multiline_comment|/*&n; * Slowdown I/O port space accesses for antique hardware.&n; */
 DECL|macro|CONF_SLOWDOWN_IO
 macro_line|#undef CONF_SLOWDOWN_IO
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/mipsconfig.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 multiline_comment|/*&n; * This file contains the definitions for the MIPS counterpart of the&n; * x86 in/out instructions. This heap of macros and C results in much&n; * better code than the approach of doing it in plain C.  The macros&n; * result in code that is to fast for certain hardware.  On the other&n; * side the performance of the string functions should be improved for&n; * sake of certain devices like EIDE disks that do highspeed polled I/O.&n; *&n; *   Ralf&n; *&n; * This file contains the definitions for the x86 IO instructions&n; * inb/inw/inl/outb/outw/outl and the &quot;string versions&quot; of the same&n; * (insb/insw/insl/outsb/outsw/outsl). You can also use &quot;pausing&quot;&n; * versions of the single-IO instructions (inb_p/inw_p/..).&n; *&n; * This file is not meant to be obfuscating: it&squot;s just complicated&n; * to (a) handle it all in a way that makes gcc able to optimize it&n; * as well as possible and (b) trying to avoid writing the same thing&n; * over and over again with slight variations and possibly making a&n; * mistake somewhere.&n; */

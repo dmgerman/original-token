@@ -1,6 +1,7 @@
 macro_line|#ifndef _NET_DN_RAW_H
 DECL|macro|_NET_DN_RAW_H
 mdefine_line|#define _NET_DN_RAW_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_DECNET_RAW
 r_extern
 r_struct

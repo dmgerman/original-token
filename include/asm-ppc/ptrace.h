@@ -2,6 +2,7 @@ macro_line|#ifndef _PPC_PTRACE_H
 DECL|macro|_PPC_PTRACE_H
 mdefine_line|#define _PPC_PTRACE_H
 multiline_comment|/*&n; * This struct defines the way the registers are stored on the&n; * kernel stack during a system call or other kernel entry.&n; *&n; * this should only contain volatile regs&n; * since we can keep non-volatile in the tss&n; * should set this up when only volatiles are saved&n; * by intr code.&n; *&n; * Since this is going on the stack, *CARE MUST BE TAKEN* to insure&n; * that the overall structure is a multiple of 16 bytes in length.&n; *&n; * Note that the offsets of the fields in this struct correspond with&n; * the PT_* values below.  This simplifies arch/ppc/kernel/ptrace.c.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#ifdef CONFIG_PPC64
 DECL|macro|PPC_REG

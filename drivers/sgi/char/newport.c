@@ -6,7 +6,6 @@ macro_line|#include &lt;asm/gfx.h&gt;
 macro_line|#include &lt;asm/ng1.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/newport.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 DECL|variable|npregs
 r_struct

@@ -6,7 +6,6 @@ DECL|macro|FMT_U64_HEX
 mdefine_line|#define FMT_U64_HEX &quot;0x%08x%08x&quot;
 DECL|macro|U64_VAL
 mdefine_line|#define U64_VAL(pu64) *((u32*)(pu64)+1), *((u32*)(pu64))
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/i2o.h&gt;

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;I2O Configuration Interface Driver&n; *&n; *&t;(C) Copyright 1999   Red Hat Software&n; *&t;&n; *&t;Written by Alan Cox, Building Number Three Ltd&n; *&n; *      Modified 04/20/199 by Deepak Saxena&n; *         - Added basic ioctl() support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; * &t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;

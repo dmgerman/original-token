@@ -584,6 +584,13 @@ id|host-&gt;h_count
 op_assign
 l_int|1
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|host-&gt;h_gracewait
+)paren
+suffix:semicolon
 id|host-&gt;h_state
 op_assign
 l_int|0

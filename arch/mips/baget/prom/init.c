@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov &n; *&n; * $Id$&n; */
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 DECL|variable|arcs_cmdline
 r_char

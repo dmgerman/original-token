@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/ipc/msg.c&n; * Copyright (C) 1992 Krishna Balasubramanian &n; *&n; * Removed all the remaining kerneld mess&n; * Catch the -EFAULT stuff properly&n; * Use GFP_KERNEL for messages as in 1.2&n; * Fixed up the unchecked user space derefs&n; * Copyright (C) 1998 Alan Cox &amp; Andi Kleen&n; *&n; * /proc/sysvipc/msg support (c) 1999 Dragos Acostachioaie &lt;dragos@iname.com&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

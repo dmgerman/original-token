@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Socket Timer Functions&n; *&n; * Author:      Steve Whitehouse &lt;SteveW@ACM.org&gt;&n; *&n; *&n; * Changes:&n; *       Steve Whitehouse      : Made keepalive timer part of the same&n; *                               timer idea.&n; *       Steve Whitehouse      : Added checks for sk-&gt;sock_readers&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;

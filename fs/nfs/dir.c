@@ -3515,6 +3515,15 @@ op_amp
 id|fattr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+id|dir-&gt;i_nlink
+op_increment
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -3625,9 +3634,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_inode-&gt;i_nlink
+id|dir-&gt;i_nlink
 )paren
-id|dentry-&gt;d_inode-&gt;i_nlink
+id|dir-&gt;i_nlink
 op_decrement
 suffix:semicolon
 )brace

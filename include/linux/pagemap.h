@@ -51,8 +51,13 @@ mdefine_line|#define page_cache_release(x)&t;__free_page(x)
 multiline_comment|/*&n; * From a kernel address, get the &quot;struct page *&quot;&n; */
 DECL|macro|page_cache_entry
 mdefine_line|#define page_cache_entry(x)&t;(mem_map + MAP_NR(x))
+r_extern
+r_int
+r_int
+id|page_hash_bits
+suffix:semicolon
 DECL|macro|PAGE_HASH_BITS
-mdefine_line|#define PAGE_HASH_BITS 16
+mdefine_line|#define PAGE_HASH_BITS (page_hash_bits)
 DECL|macro|PAGE_HASH_SIZE
 mdefine_line|#define PAGE_HASH_SIZE (1 &lt;&lt; PAGE_HASH_BITS)
 r_extern
@@ -64,10 +69,17 @@ r_extern
 r_struct
 id|page
 op_star
+op_star
 id|page_hash_table
-(braket
-id|PAGE_HASH_SIZE
-)braket
+suffix:semicolon
+r_extern
+r_void
+id|page_cache_init
+c_func
+(paren
+r_int
+r_int
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * We use a power-of-two hash table to avoid a modulus,&n; * and get a reasonable hash by knowing roughly how the&n; * inode pointer and offsets are distributed (ie, we&n; * roughly know which bits are &quot;significant&quot;)&n; */
 DECL|function|_page_hashfn

@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * memory.c: memory initialisation code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen, Frieder Streffer and Paul M. Antoine&n; *&n; * $Id: $&n; */
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;prom.h&quot;
 r_typedef
