@@ -12663,7 +12663,6 @@ r_goto
 id|done
 suffix:semicolon
 macro_line|#else
-macro_line|#warning ide scsi-emulation selected but no SCSI-subsystem in kernel
 id|drive-&gt;scsi
 op_assign
 l_int|0

@@ -603,10 +603,18 @@ id|header-&gt;bLength
 OL
 l_int|0
 )paren
+(brace
+id|kfree
+c_func
+(paren
+id|bitmap
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 id|descriptor
 op_assign
 (paren
@@ -1538,7 +1546,7 @@ suffix:semicolon
 id|wait_ms
 c_func
 (paren
-l_int|500
+l_int|400
 )paren
 suffix:semicolon
 multiline_comment|/* Reset the port */
@@ -1557,7 +1565,7 @@ suffix:semicolon
 id|wait_ms
 c_func
 (paren
-l_int|500
+l_int|100
 )paren
 suffix:semicolon
 multiline_comment|/* Allocate a new device struct for it */

@@ -346,11 +346,10 @@ r_char
 op_star
 id|data
 suffix:semicolon
-DECL|member|isodesc
-r_struct
-id|usb_isoc_desc
+DECL|member|urb
+id|urb_t
 op_star
-id|isodesc
+id|urb
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -466,6 +465,11 @@ r_struct
 id|usb_device
 op_star
 id|dev
+suffix:semicolon
+DECL|member|iface
+r_int
+r_char
+id|iface
 suffix:semicolon
 DECL|member|lock
 r_struct

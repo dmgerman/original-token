@@ -476,11 +476,6 @@ c_func
 id|mouse-&gt;urb
 )paren
 suffix:semicolon
-multiline_comment|/* never keep a reference to a released IRQ! */
-id|mouse-&gt;irq_handle
-op_assign
-l_int|NULL
-suffix:semicolon
 )brace
 r_return
 l_int|0
@@ -760,6 +755,15 @@ id|mouse
 op_assign
 op_amp
 id|static_mouse_state
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mouse-&gt;present
+)paren
+r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * FIXME - Other mouse drivers handle blocking and nonblocking reads&n;&t; * differently here...&n;&t; */
 r_if
@@ -1357,10 +1361,6 @@ id|mouse-&gt;urb
 )paren
 suffix:semicolon
 )brace
-id|mouse-&gt;irq_handle
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/* this might need work */
 id|mouse-&gt;present
 op_assign
@@ -1421,10 +1421,6 @@ op_assign
 id|mouse-&gt;suspended
 op_assign
 l_int|0
-suffix:semicolon
-id|mouse-&gt;irq_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 id|mouse-&gt;buffer
 op_assign
@@ -1534,11 +1530,6 @@ c_func
 (paren
 id|mouse-&gt;urb
 )paren
-suffix:semicolon
-multiline_comment|/* never keep a reference to a released IRQ! */
-id|mouse-&gt;irq_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
 id|kfree

@@ -1,4 +1,4 @@
-singleline_comment|//$Id: firmware.c,v 1.4 1999/12/13 14:15:28 fliegl Exp $
+singleline_comment|//$Id: firmware.h,v 1.1 1999/12/17 08:55:05 fliegl Exp $
 DECL|variable|firmware
 r_static
 id|INTEL_HEX_RECORD

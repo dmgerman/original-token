@@ -149,9 +149,9 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
+DECL|function|usb_kbd_handle_key
 r_static
 r_void
-DECL|function|usb_kbd_handle_key
 id|usb_kbd_handle_key
 c_func
 (paren
@@ -198,7 +198,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_MAC_KEYBOARD */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_MAC_KEYBOARD */
 id|handle_scancode
 c_func
 (paren
@@ -214,9 +214,9 @@ id|down
 suffix:semicolon
 )brace
 )brace
+DECL|function|usb_kbd_repeat
 r_static
 r_void
-DECL|function|usb_kbd_repeat
 id|usb_kbd_repeat
 c_func
 (paren
@@ -308,9 +308,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|usb_kbd_irq
 r_static
 r_int
-DECL|function|usb_kbd_irq
 id|usb_kbd_irq
 c_func
 (paren
@@ -353,7 +353,7 @@ op_star
 )paren
 id|buffer
 suffix:semicolon
-multiline_comment|/*&n;     * USB_ST_NOERROR is the normal case.&n;     * USB_ST_REMOVED occurs if keyboard disconnected&n;     * On other states, ignore&n;     */
+multiline_comment|/*&n;&t; * USB_ST_NOERROR is the normal case.&n;&t; * USB_ST_REMOVED occurs if keyboard disconnected&n;&t; * On other states, ignore&n;&t; */
 r_switch
 c_cond
 (paren
@@ -452,7 +452,9 @@ r_int
 r_char
 op_star
 )paren
-id|kbd-&gt;down
+id|kbd
+op_member_access_from_pointer
+id|down
 )paren
 suffix:semicolon
 r_if
@@ -729,10 +731,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|usb_kbd_probe
 r_static
 r_void
 op_star
-DECL|function|usb_kbd_probe
 id|usb_kbd_probe
 c_func
 (paren
@@ -938,6 +940,7 @@ c_cond
 id|kbd
 )paren
 id|kfree
+c_func
 (paren
 id|kbd
 )paren
@@ -946,9 +949,9 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+DECL|function|usb_kbd_disconnect
 r_static
 r_void
-DECL|function|usb_kbd_disconnect
 id|usb_kbd_disconnect
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/usb/usb.c&n; *&n; * (C) Copyright Linus Torvalds 1999&n; * (C) Copyright Johannes Erdfelt 1999&n; * (C) Copyright Andreas Gal 1999&n; * (C) Copyright Gregory P. Smith 1999&n; * (C) Copyright Deti Fliegl 1999 (new USB architecture)&n; *&n; * NOTE! This is not actually a driver at all, rather this is&n; * just a collection of helper routines that implement the&n; * generic USB things that the real drivers can use..&n; *&n; * Think of this as a &quot;USB library&quot; rather than anything else.&n; * It should be considered a slave, with no callbacks. Callbacks&n; * are evil.&n; */
+multiline_comment|/*&n; * drivers/usb/usb.c&n; *&n; * (C) Copyright Linus Torvalds 1999&n; * (C) Copyright Johannes Erdfelt 1999&n; * (C) Copyright Andreas Gal 1999&n; * (C) Copyright Gregory P. Smith 1999&n; * (C) Copyright Deti Fliegl 1999 (new USB architecture)&n; *&n; * NOTE! This is not actually a driver at all, rather this is&n; * just a collection of helper routines that implement the&n; * generic USB things that the real drivers can use..&n; *&n; * Think of this as a &quot;USB library&quot; rather than anything else.&n; * It should be considered a slave, with no callbacks. Callbacks&n; * are evil.&n; *&n; * $Id: usb.c,v 1.37 1999/12/17 10:48:08 fliegl Exp $&n; */
 macro_line|#ifndef EXPORT_SYMTAB
 DECL|macro|EXPORT_SYMTAB
 mdefine_line|#define EXPORT_SYMTAB
@@ -357,7 +357,7 @@ comma
 id|interface
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;         * This will go through the list looking for another&n;&t;&t;         * driver that can handle the device&n;&t;&t;         */
+multiline_comment|/*&n;&t;&t;&t; * This will go through the list looking for another&n;&t;&t;&t; * driver that can handle the device&n;&t;&t;&t; */
 id|usb_find_interface_driver
 c_func
 (paren
@@ -2560,14 +2560,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|urb-&gt;status
-op_ne
-op_minus
-id|EINPROGRESS
-)paren
 id|usb_unlink_urb
 c_func
 (paren
@@ -2767,24 +2759,7 @@ id|handle
 op_assign
 l_int|NULL
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;irq: dev:%p pipe:%08X handler:%p period:%d dev_id:%p max:%d&bslash;n&quot;
-comma
-id|dev
-comma
-id|pipe
-comma
-id|handler
-comma
-id|period
-comma
-id|dev_id
-comma
-id|maxsze
-)paren
-suffix:semicolon
+singleline_comment|//printk(&quot;irq: dev:%p pipe:%08X handler:%p period:%d dev_id:%p max:%d&bslash;n&quot;, dev, pipe, handler, period, dev_id, maxsze);
 multiline_comment|/* Check host controller&squot;s bandwidth for this int. request. */
 id|bustime
 op_assign
@@ -4528,6 +4503,8 @@ comma
 id|i
 comma
 id|j
+comma
+id|k
 suffix:semicolon
 r_if
 c_cond
@@ -4634,11 +4611,63 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|as-&gt;extra
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|as-&gt;extra
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|as-&gt;endpoint
 )paren
 r_break
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|k
+op_assign
+l_int|0
+suffix:semicolon
+id|k
+OL
+id|as-&gt;bNumEndpoints
+suffix:semicolon
+id|k
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|as-&gt;endpoint
+(braket
+id|k
+)braket
+dot
+id|extra
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|as-&gt;endpoint
+(braket
+id|k
+)braket
+dot
+id|extra
+)paren
+suffix:semicolon
+)brace
+)brace
 id|kfree
 c_func
 (paren

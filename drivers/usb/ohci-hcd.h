@@ -209,12 +209,8 @@ op_star
 id|ed_rm_list
 suffix:semicolon
 DECL|typedef|ed_t
-DECL|typedef|ped_t
 )brace
 id|ed_t
-comma
-op_star
-id|ped_t
 suffix:semicolon
 multiline_comment|/* TD info field */
 DECL|macro|TD_CC
@@ -279,7 +275,7 @@ mdefine_line|#define TD_BUFFERUNDERRUN  0x0D
 DECL|macro|TD_NOTACCESSED
 mdefine_line|#define TD_NOTACCESSED     0x0F
 DECL|macro|MAXPSW
-mdefine_line|#define MAXPSW 8
+mdefine_line|#define MAXPSW 1
 DECL|struct|td
 r_typedef
 r_struct
@@ -332,16 +328,13 @@ op_star
 id|next_dl_td
 suffix:semicolon
 DECL|member|urb
-id|purb_t
+id|urb_t
+op_star
 id|urb
 suffix:semicolon
 DECL|typedef|td_t
-DECL|typedef|ptd_t
 )brace
 id|td_t
-comma
-op_star
-id|ptd_t
 suffix:semicolon
 multiline_comment|/* TD types */
 DECL|macro|BULK
@@ -715,7 +708,8 @@ r_typedef
 r_struct
 (brace
 DECL|member|ed
-id|ped_t
+id|ed_t
+op_star
 id|ed
 suffix:semicolon
 DECL|member|length
@@ -738,7 +732,8 @@ op_star
 id|wait
 suffix:semicolon
 DECL|member|td
-id|ptd_t
+id|td_t
+op_star
 id|td
 (braket
 l_int|0
@@ -746,12 +741,8 @@ l_int|0
 suffix:semicolon
 singleline_comment|// list pointer to all corresponding TDs associated with this request
 DECL|typedef|urb_priv_t
-DECL|typedef|purb_priv_t
 )brace
 id|urb_priv_t
-comma
-op_star
-id|purb_priv_t
 suffix:semicolon
 DECL|macro|URB_DEL
 mdefine_line|#define URB_DEL 1
@@ -811,7 +802,8 @@ l_int|32
 suffix:semicolon
 multiline_comment|/* load of the 32 Interrupt Chains (for load ballancing)*/
 DECL|member|ed_rm_list
-id|ped_t
+id|ed_t
+op_star
 id|ed_rm_list
 (braket
 l_int|2
@@ -819,17 +811,20 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* lists of all endpoints to be removed */
 DECL|member|ed_bulktail
-id|ped_t
+id|ed_t
+op_star
 id|ed_bulktail
 suffix:semicolon
 multiline_comment|/* last endpoint of bulk list */
 DECL|member|ed_controltail
-id|ped_t
+id|ed_t
+op_star
 id|ed_controltail
 suffix:semicolon
 multiline_comment|/* last endpoint of control list */
 DECL|member|ed_isotail
-id|ped_t
+id|ed_t
+op_star
 id|ed_isotail
 suffix:semicolon
 multiline_comment|/* last endpoint of iso list */
@@ -863,12 +858,8 @@ id|virt_root_hub
 id|rh
 suffix:semicolon
 DECL|typedef|ohci_t
-DECL|typedef|pohci_t
 )brace
 id|ohci_t
-comma
-op_star
-id|pohci_t
 suffix:semicolon
 DECL|macro|NUM_TDS
 mdefine_line|#define NUM_TDS&t;0&t;&t;/* num of preallocated transfer descriptors */
@@ -906,10 +897,12 @@ r_int
 id|ep_link
 c_func
 (paren
-id|pohci_t
+id|ohci_t
+op_star
 id|ohci
 comma
-id|ped_t
+id|ed_t
+op_star
 id|ed
 )paren
 suffix:semicolon
@@ -918,15 +911,18 @@ r_int
 id|ep_unlink
 c_func
 (paren
-id|pohci_t
+id|ohci_t
+op_star
 id|ohci
 comma
-id|ped_t
+id|ed_t
+op_star
 id|ed
 )paren
 suffix:semicolon
 r_static
-id|ped_t
+id|ed_t
+op_star
 id|ep_add_ed
 c_func
 (paren
@@ -956,7 +952,8 @@ id|usb_device
 op_star
 id|usb_dev
 comma
-id|ped_t
+id|ed_t
+op_star
 id|ed
 )paren
 suffix:semicolon
@@ -977,8 +974,9 @@ comma
 r_int
 id|len
 comma
-id|purb_t
-id|purb
+id|urb_t
+op_star
+id|urb
 comma
 r_int
 id|type
@@ -992,8 +990,9 @@ r_void
 id|td_submit_urb
 c_func
 (paren
-id|purb_t
-id|purb
+id|urb_t
+op_star
+id|urb
 )paren
 suffix:semicolon
 multiline_comment|/* root hub */
@@ -1002,8 +1001,9 @@ r_int
 id|rh_submit_urb
 c_func
 (paren
-id|purb_t
-id|purb
+id|urb_t
+op_star
+id|urb
 )paren
 suffix:semicolon
 r_static
@@ -1011,8 +1011,9 @@ r_int
 id|rh_unlink_urb
 c_func
 (paren
-id|purb_t
-id|purb
+id|urb_t
+op_star
+id|urb
 )paren
 suffix:semicolon
 r_static
@@ -1020,8 +1021,9 @@ r_int
 id|rh_init_int_timer
 c_func
 (paren
-id|purb_t
-id|purb
+id|urb_t
+op_star
+id|urb
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG

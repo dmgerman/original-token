@@ -1,24 +1,29 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      dabusb.c  --  dab usb driver.&n; *&n; *      Copyright (C) 1999  Deti Fliegl (deti@fliegl.de)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&n; *  $Id: dabusb.c,v 1.26 1999/12/13 08:40:23 fliegl Exp $&n; *&n; */
+multiline_comment|/*&n; *      dabusb.c  --  dab usb driver.&n; *&n; *      Copyright (C) 1999  Deti Fliegl (deti@fliegl.de)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&n; *  $Id: dabusb.c,v 1.30 1999/12/17 17:50:58 fliegl Exp $&n; *&n; */
 multiline_comment|/*****************************************************************************/
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-singleline_comment|//#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;dabusb.h&quot;
-macro_line|#include &quot;bitstream.c&quot;
-macro_line|#include &quot;firmware.c&quot;
+macro_line|#include &quot;bitstream.h&quot;
+macro_line|#include &quot;firmware.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|NRDABUSB
 mdefine_line|#define NRDABUSB 4
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
+DECL|macro|__init
+mdefine_line|#define __init 
+DECL|macro|__exit
+mdefine_line|#define __exit
+macro_line|#endif
 multiline_comment|/*-------------------------------------------------------------------*/
 DECL|variable|dabusb
 r_static
@@ -77,7 +82,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-singleline_comment|//      printk(KERN_DEBUG MODSTR&quot;dabusb_add_buf_tail %p %p&bslash;n&quot;,src-&gt;next, dst-&gt;next);
 r_if
 c_cond
 (paren
@@ -88,7 +92,6 @@ id|src
 )paren
 (brace
 singleline_comment|// no elements in source buffer
-singleline_comment|//              printk(KERN_DEBUG MODSTR&quot;source list empty&bslash;n&quot;);
 id|ret
 op_assign
 op_minus
@@ -129,6 +132,7 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
+macro_line|#ifdef DEBUG
 DECL|function|dump_urb
 r_static
 r_void
@@ -251,6 +255,7 @@ id|purb-&gt;complete
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*-------------------------------------------------------------------*/
 DECL|function|dabusb_cancel_queue
 r_static
@@ -278,6 +283,7 @@ suffix:semicolon
 id|pbuff_t
 id|b
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -285,6 +291,7 @@ id|MODSTR
 l_string|&quot;dabusb_cancel_queue&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|spin_lock_irqsave
 (paren
 op_amp
@@ -309,7 +316,6 @@ op_assign
 id|p-&gt;next
 )paren
 (brace
-singleline_comment|//              printk(&quot;p:%p&bslash;n&quot;,p);
 id|b
 op_assign
 id|list_entry
@@ -321,8 +327,14 @@ comma
 id|buff_list
 )paren
 suffix:semicolon
-singleline_comment|//              printk(&quot;buff:%p&bslash;n&quot;,b);
-singleline_comment|//              dump_urb(b-&gt;purb);
+macro_line|#ifdef DEBUG
+id|dump_urb
+c_func
+(paren
+id|b-&gt;purb
+)paren
+suffix:semicolon
+macro_line|#endif
 id|usb_unlink_urb
 (paren
 id|b-&gt;purb
@@ -366,6 +378,7 @@ suffix:semicolon
 id|pbuff_t
 id|b
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -373,6 +386,7 @@ id|MODSTR
 l_string|&quot;dabusb_free_queue&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -386,7 +400,6 @@ id|q
 suffix:semicolon
 )paren
 (brace
-singleline_comment|//              printk(&quot;%p&bslash;n&quot;,p);
 id|b
 op_assign
 id|list_entry
@@ -398,7 +411,14 @@ comma
 id|buff_list
 )paren
 suffix:semicolon
-singleline_comment|//              dump_urb(b-&gt;purb);
+macro_line|#ifdef DEBUG
+id|dump_urb
+c_func
+(paren
+id|b-&gt;purb
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -452,6 +472,7 @@ id|pdabusb_t
 id|s
 )paren
 (brace
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -459,6 +480,7 @@ id|MODSTR
 l_string|&quot;dabusb_free_buffers&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|dabusb_free_queue
 (paren
 op_amp
@@ -516,7 +538,16 @@ id|buf
 op_assign
 id|purb-&gt;transfer_buffer
 suffix:semicolon
-singleline_comment|//      printk(KERN_DEBUG MODSTR&quot;dabusb_iso_complete&bslash;n&quot;);
+macro_line|#ifdef DEBUG_ALL
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+id|MODSTR
+l_string|&quot;dabusb_iso_complete&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -761,6 +792,7 @@ r_sizeof
 id|iso_packet_descriptor_t
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -776,6 +808,7 @@ comma
 id|transfer_buffer_length
 )paren
 suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -984,7 +1017,6 @@ op_assign
 id|pipesize
 suffix:semicolon
 )brace
-singleline_comment|//              dump_urb(b-&gt;purb);
 id|buffers
 op_add_assign
 id|transfer_buffer_length
@@ -1034,6 +1066,7 @@ r_int
 id|ep
 )paren
 (brace
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -1041,6 +1074,7 @@ id|MODSTR
 l_string|&quot;dabusb_reset_pipe&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1109,7 +1143,14 @@ op_assign
 op_amp
 id|context
 suffix:semicolon
-singleline_comment|//      dump_urb(purb); 
+macro_line|#ifdef DEBUG_ALL
+id|dump_urb
+c_func
+(paren
+id|purb
+)paren
+suffix:semicolon
+macro_line|#endif
 id|ret
 op_assign
 id|usb_submit_urb
@@ -1169,6 +1210,14 @@ id|usb_unlink_urb
 id|purb
 )paren
 suffix:semicolon
+id|dabusb_reset_pipe
+c_func
+(paren
+id|purb-&gt;dev
+comma
+id|purb-&gt;pipe
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ETIMEDOUT
@@ -1193,8 +1242,22 @@ id|context
 op_assign
 id|purb-&gt;context
 suffix:semicolon
-singleline_comment|//      printk(KERN_DEBUG MODSTR&quot;dabusb_bulk_complete&bslash;n&quot;);
-singleline_comment|//      dump_urb(purb);
+macro_line|#ifdef DEBUG_ALL
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+id|MODSTR
+l_string|&quot;dabusb_bulk_complete&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dump_urb
+c_func
+(paren
+id|purb
+)paren
+suffix:semicolon
+macro_line|#endif
 id|wake_up
 (paren
 op_amp
@@ -1225,7 +1288,16 @@ r_int
 r_int
 id|pipe
 suffix:semicolon
-singleline_comment|//      printk(KERN_DEBUG MODSTR&quot;dabusb_bulk&bslash;n&quot;);
+macro_line|#ifdef DEBUG_ALL
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+id|MODSTR
+l_string|&quot;dabusb_bulk&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1468,7 +1540,6 @@ id|len
 op_rshift
 l_int|8
 suffix:semicolon
-singleline_comment|//      printk(KERN_DEBUG MODSTR&quot;dabusb_control&bslash;n&quot;);
 id|memcpy
 (paren
 id|transfer_buffer
@@ -1570,7 +1641,16 @@ r_char
 id|reset_bit
 )paren
 (brace
-singleline_comment|//printk(&quot;dabusb_8051_reset: %d&bslash;n&quot;,reset_bit);
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;dabusb_8051_reset: %d&bslash;n&quot;
+comma
+id|reset_bit
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|dabusb_writemem
 (paren
@@ -1608,6 +1688,7 @@ id|ptr
 op_assign
 id|firmware
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -1615,6 +1696,7 @@ id|MODSTR
 l_string|&quot;Enter dabusb_loadmem (internal)&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ret
 op_assign
 id|dabusb_8051_reset
@@ -1632,7 +1714,22 @@ op_eq
 l_int|0
 )paren
 (brace
-singleline_comment|//printk(KERN_ERR MODSTR&quot;dabusb_writemem: %04X %p %d)&bslash;n&quot;, ptr-&gt;Address, ptr-&gt;Data, ptr-&gt;Length);
+macro_line|#ifdef DEBUG_ALL
+id|printk
+c_func
+(paren
+id|KERN_ERR
+id|MODSTR
+l_string|&quot;dabusb_writemem: %04X %p %d)&bslash;n&quot;
+comma
+id|ptr-&gt;Address
+comma
+id|ptr-&gt;Data
+comma
+id|ptr-&gt;Length
+)paren
+suffix:semicolon
+macro_line|#endif
 id|ret
 op_assign
 id|dabusb_writemem
@@ -1683,6 +1780,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -1690,6 +1788,7 @@ id|MODSTR
 l_string|&quot;dabusb_loadmem: exit&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|ret
 suffix:semicolon
@@ -1739,6 +1838,7 @@ l_int|3
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -1746,6 +1846,7 @@ id|MODSTR
 l_string|&quot;dabusb_fpga_clear&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|dabusb_bulk
 (paren
@@ -1800,6 +1901,7 @@ l_int|3
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -1807,6 +1909,7 @@ id|MODSTR
 l_string|&quot;dabusb_fpga_init&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|dabusb_bulk
 (paren
@@ -1860,6 +1963,7 @@ id|buf
 op_assign
 id|bitstream
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -1867,6 +1971,7 @@ id|MODSTR
 l_string|&quot;Enter dabusb_fpga_download (internal)&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1920,6 +2025,7 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -1929,6 +2035,7 @@ comma
 id|blen
 )paren
 suffix:semicolon
+macro_line|#endif
 id|b-&gt;data
 (braket
 l_int|0
@@ -2042,6 +2149,7 @@ id|kfree
 id|b
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -2049,6 +2157,7 @@ id|MODSTR
 l_string|&quot;exit dabusb_fpga_download&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|ret
 suffix:semicolon
@@ -2084,6 +2193,7 @@ id|pdabusb_t
 id|s
 )paren
 (brace
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -2091,6 +2201,7 @@ id|MODSTR
 l_string|&quot;dabusb_stop&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|s-&gt;state
 op_assign
 id|_stopped
@@ -2103,6 +2214,7 @@ op_amp
 id|s-&gt;rec_buff_list
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -2112,6 +2224,7 @@ comma
 id|s-&gt;pending_io.counter
 )paren
 suffix:semicolon
+macro_line|#endif
 id|s-&gt;pending_io.counter
 op_assign
 l_int|0
@@ -2140,6 +2253,7 @@ op_ne
 id|_started
 )paren
 (brace
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -2147,6 +2261,7 @@ id|MODSTR
 l_string|&quot;dabusb_startrek&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2215,7 +2330,19 @@ id|s-&gt;free_buff_list
 )paren
 )paren
 (brace
-singleline_comment|//printk(&quot;submitting: end:%p s-&gt;rec_buff_list:%p&bslash;n&quot;, s-&gt;rec_buff_list.prev, &amp;s-&gt;rec_buff_list);
+macro_line|#ifdef DEBUG_ALL
+id|printk
+c_func
+(paren
+l_string|&quot;submitting: end:%p s-&gt;rec_buff_list:%p&bslash;n&quot;
+comma
+id|s-&gt;rec_buff_list.prev
+comma
+op_amp
+id|s-&gt;rec_buff_list
+)paren
+suffix:semicolon
+macro_line|#endif
 id|end
 op_assign
 id|list_entry
@@ -2227,7 +2354,6 @@ comma
 id|buff_list
 )paren
 suffix:semicolon
-singleline_comment|//printk(&quot;pipesize:%d number_of_packets:%d&bslash;n&quot;,pipesize, end-&gt;purb-&gt;number_of_packets);                  
 id|ret
 op_assign
 id|usb_submit_urb
@@ -2280,7 +2406,18 @@ id|s-&gt;pending_io
 )paren
 suffix:semicolon
 )brace
-singleline_comment|//printk(KERN_DEBUG MODSTR&quot;pending_io: %d&bslash;n&quot;,s-&gt;pending_io.counter);
+macro_line|#ifdef DEBUG_ALL
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+id|MODSTR
+l_string|&quot;pending_io: %d&bslash;n&quot;
+comma
+id|s-&gt;pending_io.counter
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_return
 l_int|0
@@ -2335,7 +2472,16 @@ id|purb
 op_assign
 l_int|NULL
 suffix:semicolon
-singleline_comment|//printk(KERN_DEBUG MODSTR&quot;dabusb_read&bslash;n&quot;);
+macro_line|#ifdef DEBUG_ALL
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+id|MODSTR
+l_string|&quot;dabusb_read&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2355,20 +2501,16 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-singleline_comment|//      down(&amp;s-&gt;mutex);
 r_if
 c_cond
 (paren
 op_logical_neg
 id|s-&gt;usbdev
 )paren
-(brace
-singleline_comment|//              up(&amp;s-&gt;mutex);
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -2396,7 +2538,7 @@ id|printk
 (paren
 id|KERN_ERR
 id|MODSTR
-l_string|&quot;shit... rec_buf_list is empty&bslash;n&quot;
+l_string|&quot;error: rec_buf_list is empty&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2426,7 +2568,6 @@ op_eq
 id|USB_ST_URB_PENDING
 )paren
 (brace
-singleline_comment|//printk(&quot;after comp&bslash;n&quot;);
 r_if
 c_cond
 (paren
@@ -2451,14 +2592,12 @@ r_goto
 id|err
 suffix:semicolon
 )brace
-singleline_comment|//printk(&quot;before sleep&bslash;n&quot;);
 id|interruptible_sleep_on
 (paren
 op_amp
 id|s-&gt;wait
 )paren
 suffix:semicolon
-singleline_comment|//printk(&quot;after sleep&bslash;n&quot;);
 r_if
 c_cond
 (paren
@@ -2497,7 +2636,7 @@ id|printk
 (paren
 id|KERN_ERR
 id|MODSTR
-l_string|&quot;shit... still no buffer available.&bslash;n&quot;
+l_string|&quot;error: still no buffer available.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2524,7 +2663,6 @@ r_goto
 id|err
 suffix:semicolon
 )brace
-singleline_comment|//printk(&quot;get pointers %d %d %d&bslash;n&quot;, purb-&gt;actual_length, s-&gt;readptr, count);            
 id|rem
 op_assign
 id|purb-&gt;actual_length
@@ -2548,7 +2686,22 @@ id|cnt
 op_assign
 id|count
 suffix:semicolon
-singleline_comment|//printk(&quot;copy_to_user:%p %p %d&bslash;n&quot;,buf, purb-&gt;transfer_buffer + s-&gt;readptr, cnt);
+macro_line|#ifdef DEBUG_ALL
+id|printk
+c_func
+(paren
+l_string|&quot;copy_to_user:%p %p %d&bslash;n&quot;
+comma
+id|buf
+comma
+id|purb-&gt;transfer_buffer
+op_plus
+id|s-&gt;readptr
+comma
+id|cnt
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2611,7 +2764,6 @@ id|purb-&gt;actual_length
 )paren
 (brace
 singleline_comment|// finished, take next buffer
-singleline_comment|//printk(&quot;next buffer...&bslash;n&quot;);
 r_if
 c_cond
 (paren
@@ -2688,6 +2840,8 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|s
 op_assign
 op_amp
@@ -2734,6 +2888,8 @@ op_amp
 id|O_NONBLOCK
 )paren
 (brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -2754,10 +2910,14 @@ id|signal_pending
 id|current
 )paren
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+)brace
 id|down
 (paren
 op_amp
@@ -2796,6 +2956,8 @@ id|KERN_ERR
 l_string|&quot;dabusb: set_interface failed&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
@@ -2808,8 +2970,6 @@ suffix:semicolon
 id|file-&gt;private_data
 op_assign
 id|s
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -3282,6 +3442,7 @@ suffix:semicolon
 id|pdabusb_t
 id|s
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -3295,6 +3456,7 @@ comma
 id|ifnum
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* the 1234:5678 is just a self assigned test ID */
 r_if
 c_cond
@@ -3593,6 +3755,7 @@ suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|dabusb_init
 r_int
+id|__init
 id|dabusb_init
 (paren
 r_void
@@ -3682,8 +3845,6 @@ op_amp
 id|s-&gt;rec_buff_list
 )paren
 suffix:semicolon
-singleline_comment|//              printk(&quot;s-&gt;free_buff_list:%p&bslash;n&quot;,&amp;s-&gt;free_buff_list);
-singleline_comment|//              printk(&quot;s-&gt;rec_buff_list:%p&bslash;n&quot;,&amp;s-&gt;rec_buff_list);
 )brace
 multiline_comment|/* register misc device */
 id|usb_register
@@ -3692,23 +3853,27 @@ op_amp
 id|dabusb_driver
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_INFO
 l_string|&quot;dabusb_init: driver registered&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
 DECL|function|dabusb_cleanup
 r_void
+id|__exit
 id|dabusb_cleanup
 (paren
 r_void
 )paren
 (brace
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
@@ -3716,6 +3881,7 @@ id|MODSTR
 l_string|&quot;dabusb_cleanup&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|usb_deregister
 (paren
 op_amp
@@ -3744,6 +3910,7 @@ l_string|&quot;i&quot;
 suffix:semicolon
 DECL|function|init_module
 r_int
+id|__init
 id|init_module
 (paren
 r_void
@@ -3757,6 +3924,7 @@ suffix:semicolon
 )brace
 DECL|function|cleanup_module
 r_void
+id|__exit
 id|cleanup_module
 (paren
 r_void

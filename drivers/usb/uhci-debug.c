@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * $Id: uhci-debug.c,v 1.12 1999/12/13 15:24:42 fliegl Exp $&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

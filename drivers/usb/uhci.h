@@ -1,9 +1,11 @@
 macro_line|#ifndef __LINUX_UHCI_H
 DECL|macro|__LINUX_UHCI_H
 mdefine_line|#define __LINUX_UHCI_H
-multiline_comment|/*&n;   $Id: uhci.h,v 1.28 1999/12/14 18:38:26 fliegl Exp $&n; */
+multiline_comment|/*&n;   $Id: uhci.h,v 1.30 1999/12/15 17:57:25 fliegl Exp $&n; */
+DECL|macro|MODNAME
+mdefine_line|#define MODNAME &quot;usb-uhci&quot;
 DECL|macro|MODSTR
-mdefine_line|#define MODSTR &quot;uhci: &quot;
+mdefine_line|#define MODSTR MODNAME&quot;: &quot;
 DECL|macro|VERSTR
 mdefine_line|#define VERSTR &quot;version v0.9 time &quot; __TIME__ &quot; &quot; __DATE__
 multiline_comment|/* Command register */
@@ -283,7 +285,6 @@ comma
 op_star
 id|purb_priv_t
 suffix:semicolon
-macro_line|#ifdef VROOTHUB
 DECL|struct|virt_root_hub
 r_struct
 id|virt_root_hub
@@ -329,7 +330,6 @@ id|rh_int_timer
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|struct|uhci
 r_typedef
 r_struct
@@ -353,18 +353,6 @@ DECL|member|maxports
 r_int
 r_int
 id|maxports
-suffix:semicolon
-DECL|member|control_pid
-r_int
-id|control_pid
-suffix:semicolon
-DECL|member|control_running
-r_int
-id|control_running
-suffix:semicolon
-DECL|member|control_continue
-r_int
-id|control_continue
 suffix:semicolon
 DECL|member|apm_state
 r_int
@@ -442,14 +430,12 @@ DECL|member|td_lock
 id|spinlock_t
 id|td_lock
 suffix:semicolon
-macro_line|#ifdef VROOTHUB
 DECL|member|rh
 r_struct
 id|virt_root_hub
 id|rh
 suffix:semicolon
 singleline_comment|//private data of the virtual root hub
-macro_line|#endif
 DECL|typedef|uhci_t
 DECL|typedef|puhci_t
 )brace
@@ -465,7 +451,6 @@ mdefine_line|#define MAKE_QH_ADDR(a) (virt_to_bus(a)|UHCI_PTR_QH)
 DECL|macro|UHCI_GET_CURRENT_FRAME
 mdefine_line|#define UHCI_GET_CURRENT_FRAME(uhci) (inw ((uhci)-&gt;io_addr + USBFRNUM))
 multiline_comment|/* ------------------------------------------------------------------------------------ &n;   Virtual Root HUB &n;   ------------------------------------------------------------------------------------ */
-macro_line|#ifdef VROOTHUB
 multiline_comment|/* destination of request */
 DECL|macro|RH_INTERFACE
 mdefine_line|#define RH_INTERFACE               0x01
@@ -550,22 +535,5 @@ DECL|macro|RH_NACK
 mdefine_line|#define RH_NACK                    0x00
 DECL|macro|min
 mdefine_line|#define min(a,b) (((a)&lt;(b))?(a):(b))
-r_static
-r_int
-id|rh_submit_urb
-(paren
-id|purb_t
-id|purb
-)paren
-suffix:semicolon
-r_static
-r_int
-id|rh_unlink_urb
-(paren
-id|purb_t
-id|purb
-)paren
-suffix:semicolon
-macro_line|#endif /* VROOTHUB */
 macro_line|#endif
 eof
