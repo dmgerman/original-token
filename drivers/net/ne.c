@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -1856,6 +1857,13 @@ id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* Trigger it... */
+id|udelay
+c_func
+(paren
+l_int|10000
+)paren
+suffix:semicolon
+multiline_comment|/* wait 10ms for interrupt to propagate */
 id|outb_p
 c_func
 (paren

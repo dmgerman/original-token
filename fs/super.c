@@ -3619,6 +3619,13 @@ id|vfsmount
 op_star
 id|vfsmnt
 suffix:semicolon
+multiline_comment|/*&n;&t; * Invalidate the inodes, as some mount options may be changed.&n;&t; * N.B. If we are changing media, we should check the return&n;&t; * from invalidate_inodes ... can&squot;t allow _any_ open files.&n;&t; */
+id|invalidate_inodes
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3814,6 +3821,20 @@ id|dentry
 op_eq
 id|sb-&gt;s_root
 )paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * Shrink the dcache and sync the device.&n;&t;&t;&t; */
+id|shrink_dcache_sb
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
+id|fsync_dev
+c_func
+(paren
+id|sb-&gt;s_dev
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|do_remount_sb
@@ -3826,6 +3847,7 @@ comma
 id|data
 )paren
 suffix:semicolon
+)brace
 id|dput
 c_func
 (paren

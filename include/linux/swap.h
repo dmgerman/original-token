@@ -262,11 +262,15 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|FASTCALL
+c_func
+(paren
 id|swap_free
 c_func
 (paren
 r_int
 r_int
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * vm_ops not present page codes for shared memory.&n; *&n; * Will go away eventually..&n; */

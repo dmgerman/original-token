@@ -1280,6 +1280,9 @@ DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (xtime.tv_sec)
 r_extern
 r_void
+id|FASTCALL
+c_func
+(paren
 id|sleep_on
 c_func
 (paren
@@ -1289,9 +1292,13 @@ op_star
 op_star
 id|p
 )paren
+)paren
 suffix:semicolon
 r_extern
 r_void
+id|FASTCALL
+c_func
+(paren
 id|interruptible_sleep_on
 c_func
 (paren
@@ -1301,9 +1308,13 @@ op_star
 op_star
 id|p
 )paren
+)paren
 suffix:semicolon
 r_extern
 r_void
+id|FASTCALL
+c_func
+(paren
 id|wake_up
 c_func
 (paren
@@ -1313,9 +1324,13 @@ op_star
 op_star
 id|p
 )paren
+)paren
 suffix:semicolon
 r_extern
 r_void
+id|FASTCALL
+c_func
+(paren
 id|wake_up_interruptible
 c_func
 (paren
@@ -1325,9 +1340,13 @@ op_star
 op_star
 id|p
 )paren
+)paren
 suffix:semicolon
 r_extern
 r_void
+id|FASTCALL
+c_func
+(paren
 id|wake_up_process
 c_func
 (paren
@@ -1335,6 +1354,7 @@ r_struct
 id|task_struct
 op_star
 id|tsk
+)paren
 )paren
 suffix:semicolon
 r_extern

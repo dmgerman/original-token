@@ -465,6 +465,23 @@ r_goto
 id|io_error
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|result
+op_ne
+id|wsize
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;NFS: short write, wsize=%u, result=%d&bslash;n&quot;
+comma
+id|wsize
+comma
+id|result
+)paren
+suffix:semicolon
 id|refresh
 op_assign
 l_int|1
@@ -485,6 +502,18 @@ id|count
 op_sub_assign
 id|wsize
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If we&squot;ve extended the file, update the inode&n;&t;&t; * now so we don&squot;t invalidate the cache.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|offset
+OG
+id|inode-&gt;i_size
+)paren
+id|inode-&gt;i_size
+op_assign
+id|offset
+suffix:semicolon
 )brace
 r_while
 c_loop
@@ -494,6 +523,7 @@ id|count
 suffix:semicolon
 id|io_error
 suffix:colon
+multiline_comment|/* N.B. do we want to refresh if there was an error?? (fattr valid?) */
 r_if
 c_cond
 (paren
@@ -501,6 +531,7 @@ id|refresh
 )paren
 (brace
 multiline_comment|/* See comments in nfs_wback_result */
+multiline_comment|/* N.B. I don&squot;t think this is right -- sync writes in order */
 r_if
 c_cond
 (paren
@@ -512,6 +543,19 @@ id|fattr.size
 op_assign
 id|inode-&gt;i_size
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fattr.mtime.seconds
+OL
+id|inode-&gt;i_mtime
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_writepage_sync: prior time??&bslash;n&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Solaris 2.5 server seems to send garbled&n;&t;&t; * fattrs occasionally */
 r_if
 c_cond
@@ -520,6 +564,12 @@ id|inode-&gt;i_ino
 op_eq
 id|fattr.fileid
 )paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * We expect the mtime value to change, and&n;&t;&t;&t; * don&squot;t want to invalidate the caches.&n;&t;&t;&t; */
+id|inode-&gt;i_mtime
+op_assign
+id|fattr.mtime.seconds
+suffix:semicolon
 id|nfs_refresh_inode
 c_func
 (paren
@@ -527,6 +577,18 @@ id|inode
 comma
 op_amp
 id|fattr
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_writepage_sync: inode %ld, got %u?&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+comma
+id|fattr.fileid
 )paren
 suffix:semicolon
 )brace
@@ -991,8 +1053,8 @@ c_cond
 op_logical_neg
 id|wreq
 )paren
-r_return
-l_int|NULL
+r_goto
+id|out_fail
 suffix:semicolon
 id|memset
 c_func
@@ -1047,23 +1109,9 @@ id|task-&gt;tk_status
 OL
 l_int|0
 )paren
-(brace
-id|rpc_release_task
-c_func
-(paren
-id|task
-)paren
+r_goto
+id|out_req
 suffix:semicolon
-id|kfree
-c_func
-(paren
-id|wreq
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 multiline_comment|/* Put the task on inode&squot;s writeback request list. */
 id|wreq-&gt;wb_inode
 op_assign
@@ -1126,6 +1174,25 @@ id|write_queue
 suffix:semicolon
 r_return
 id|wreq
+suffix:semicolon
+id|out_req
+suffix:colon
+id|rpc_release_task
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|wreq
+)paren
+suffix:semicolon
+id|out_fail
+suffix:colon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Schedule a writeback RPC call.&n; * If the server is congested, don&squot;t add to our backlog of queued&n; * requests but call it synchronously.&n; * The function returns true if the page has been unlocked as the&n; * consequence of a synchronous write call.&n; *&n; * FIXME: Here we could walk the inode&squot;s lock list to see whether the&n; * page we&squot;re currently writing to has been write-locked by the caller.&n; * If it is, we could schedule an async write request with a long&n; * delay in order to avoid writing back the page until the lock is&n; * released.&n; */
@@ -1360,6 +1427,24 @@ suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_RUNNING
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|page-&gt;count
+)paren
+op_eq
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;NFS: lost a page&bslash;n&quot;
+)paren
 suffix:semicolon
 id|atomic_dec
 c_func
@@ -2906,15 +2991,30 @@ id|req
 )paren
 )paren
 (brace
+r_struct
+id|nfs_fattr
+op_star
+id|fattr
+op_assign
+id|req-&gt;wb_fattr
+suffix:semicolon
 multiline_comment|/* Update attributes as result of writeback. &n;&t;&t; * Beware: when UDP replies arrive out of order, we&n;&t;&t; * may end up overwriting a previous, bigger file size.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|req-&gt;wb_fattr-&gt;size
+id|fattr-&gt;mtime.seconds
+op_ge
+id|inode-&gt;i_mtime
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fattr-&gt;size
 OL
 id|inode-&gt;i_size
 )paren
-id|req-&gt;wb_fattr-&gt;size
+id|fattr-&gt;size
 op_assign
 id|inode-&gt;i_size
 suffix:semicolon
@@ -2924,16 +3024,39 @@ c_cond
 (paren
 id|inode-&gt;i_ino
 op_eq
-id|req-&gt;wb_fattr-&gt;fileid
+id|fattr-&gt;fileid
 )paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * We expect these values to change, and&n;&t;&t;&t;&t; * don&squot;t want to invalidate the caches.&n;&t;&t;&t;&t; */
+id|inode-&gt;i_size
+op_assign
+id|fattr-&gt;size
+suffix:semicolon
+id|inode-&gt;i_mtime
+op_assign
+id|fattr-&gt;mtime.seconds
+suffix:semicolon
 id|nfs_refresh_inode
 c_func
 (paren
 id|inode
 comma
-id|req-&gt;wb_fattr
+id|fattr
 )paren
 suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_wback_result: inode %ld, got %u?&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+comma
+id|fattr-&gt;fileid
+)paren
+suffix:semicolon
+)brace
 )brace
 id|rpc_release_task
 c_func

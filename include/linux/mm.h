@@ -503,6 +503,9 @@ mdefine_line|#define __get_dma_pages(priority, order) __get_free_pages((priority
 r_extern
 r_int
 r_int
+id|FASTCALL
+c_func
+(paren
 id|__get_free_pages
 c_func
 (paren
@@ -515,6 +518,7 @@ id|gfporder
 comma
 r_int
 id|dma
+)paren
 )paren
 suffix:semicolon
 DECL|function|get_free_page
@@ -561,6 +565,9 @@ DECL|macro|free_page
 mdefine_line|#define free_page(addr) free_pages((addr),0)
 r_extern
 r_void
+id|FASTCALL
+c_func
+(paren
 id|free_pages
 c_func
 (paren
@@ -572,15 +579,20 @@ r_int
 r_int
 id|order
 )paren
+)paren
 suffix:semicolon
 r_extern
 r_void
+id|FASTCALL
+c_func
+(paren
 id|__free_page
 c_func
 (paren
 r_struct
 id|page
 op_star
+)paren
 )paren
 suffix:semicolon
 r_extern

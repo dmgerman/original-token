@@ -117,7 +117,7 @@ l_int|16
 suffix:semicolon
 multiline_comment|/* Use only if you own the IRQ. */
 r_extern
-r_int
+r_void
 id|autoirq_setup
 c_func
 (paren

@@ -145,7 +145,7 @@ l_int|16
 )braket
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|autoirq_setup
 c_func
 (paren
@@ -154,6 +154,7 @@ id|waittime
 )paren
 suffix:semicolon
 r_extern
+r_int
 r_int
 id|autoirq_report
 c_func

@@ -478,6 +478,7 @@ r_int
 id|timeout
 suffix:semicolon
 r_int
+r_int
 id|irqs
 op_assign
 l_int|0
@@ -867,7 +868,7 @@ multiline_comment|/* Mmmm.. multiple IRQs.. don&squot;t know which was ours */
 id|printk
 c_func
 (paren
-l_string|&quot;%s: IRQ probe failed (%d)&bslash;n&quot;
+l_string|&quot;%s: IRQ probe failed (%ld)&bslash;n&quot;
 comma
 id|drive-&gt;name
 comma

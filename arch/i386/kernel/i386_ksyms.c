@@ -263,6 +263,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MCA
 multiline_comment|/* Adapter probing and info methods. */
+DECL|variable|machine_id
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|machine_id
+)paren
+suffix:semicolon
 DECL|variable|mca_find_adapter
 id|EXPORT_SYMBOL
 c_func

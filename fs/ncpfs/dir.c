@@ -921,7 +921,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|file-&gt;f_dentry-&gt;d_inode
+id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_struct
 id|ncp_dirent

@@ -25,6 +25,20 @@ macro_line|#endif
 macro_line|#if NR_IRQS &gt; 64
 macro_line|#  error Unable to handle more than 64 irq levels.
 macro_line|#endif
+multiline_comment|/* PROBE_MASK is the bitset of irqs that we consider for autoprobing: */
+macro_line|#if defined(CONFIG_ALPHA_P2K)
+multiline_comment|/* always mask out unused timer irq 0 and RTC irq 8 */
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK (((1UL &lt;&lt; NR_IRQS) - 1) &amp; ~0x101UL)
+macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
+multiline_comment|/* always mask out unused timer irq 0, &quot;irqs&quot; 20-30, and the EISA cascade: */
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK (((1UL &lt;&lt; NR_IRQS) - 1) &amp; ~0xfff000000001UL)
+macro_line|#else
+multiline_comment|/* always mask out unused timer irq 0: */
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK (((1UL &lt;&lt; NR_IRQS) - 1) &amp; ~1UL)
+macro_line|#endif
 multiline_comment|/* Reserved interrupts.  These must NEVER be requested by any driver!&n; */
 DECL|macro|IS_RESERVED_IRQ
 mdefine_line|#define&t;IS_RESERVED_IRQ(irq)&t;((irq)==2)&t;/* IRQ 2 used by hw cascade */
@@ -2484,6 +2498,24 @@ id|i
 op_decrement
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|PROBE_MASK
+op_amp
+(paren
+l_int|1UL
+op_lshift
+id|i
+)paren
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|action
 op_assign
 id|irq_action
@@ -2507,7 +2539,7 @@ suffix:semicolon
 id|irqs
 op_or_assign
 (paren
-l_int|1
+l_int|1UL
 op_lshift
 id|i
 )paren
@@ -2556,29 +2588,16 @@ id|irqs
 )paren
 (brace
 r_int
+r_int
+id|delay
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
-multiline_comment|/* as irq 0 &amp; 8 handling don&squot;t use this function, i didn&squot;t&n;&t; * bother changing the following: */
 id|irqs
 op_and_assign
 id|irq_mask
-op_amp
-op_complement
-l_int|1
 suffix:semicolon
-multiline_comment|/* always mask out irq 0---it&squot;s the unused timer */
-macro_line|#ifdef CONFIG_ALPHA_P2K
-id|irqs
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-multiline_comment|/* mask out irq 8 since that&squot;s the unused RTC input to PIC */
-macro_line|#endif
 r_if
 c_cond
 (paren
