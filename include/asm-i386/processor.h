@@ -83,6 +83,10 @@ DECL|member|f00f_bug
 r_int
 id|f00f_bug
 suffix:semicolon
+DECL|member|coma_bug
+r_int
+id|coma_bug
+suffix:semicolon
 DECL|member|loops_per_sec
 r_int
 r_int
@@ -306,6 +310,10 @@ l_string|&quot;cc&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *      Cyrix CPU configuration register indexes&n; */
+DECL|macro|CX86_CCR0
+mdefine_line|#define CX86_CCR0 0xc0
+DECL|macro|CX86_CCR1
+mdefine_line|#define CX86_CCR1 0xc1
 DECL|macro|CX86_CCR2
 mdefine_line|#define CX86_CCR2 0xc2
 DECL|macro|CX86_CCR3
@@ -314,10 +322,16 @@ DECL|macro|CX86_CCR4
 mdefine_line|#define CX86_CCR4 0xe8
 DECL|macro|CX86_CCR5
 mdefine_line|#define CX86_CCR5 0xe9
+DECL|macro|CX86_CCR6
+mdefine_line|#define CX86_CCR6 0xea
 DECL|macro|CX86_DIR0
 mdefine_line|#define CX86_DIR0 0xfe
 DECL|macro|CX86_DIR1
 mdefine_line|#define CX86_DIR1 0xff
+DECL|macro|CX86_ARR_BASE
+mdefine_line|#define CX86_ARR_BASE 0xc4
+DECL|macro|CX86_RCR_BASE
+mdefine_line|#define CX86_RCR_BASE 0xdc
 multiline_comment|/*&n; *      Cyrix CPU indexed register access macros&n; */
 DECL|macro|getCx86
 mdefine_line|#define getCx86(reg) ({ outb((reg), 0x22); inb(0x23); })

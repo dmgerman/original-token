@@ -128,6 +128,15 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_USB_OHCI_HCD
+r_int
+id|ohci_hcd_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|do_write_mem
 r_static
 id|ssize_t
@@ -2383,6 +2392,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_USB_OHCI
 id|ohci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_OHCI_HCD
+id|ohci_hcd_init
 c_func
 (paren
 )paren

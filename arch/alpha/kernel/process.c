@@ -744,7 +744,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* Arrange for each exec&squot;ed process to start off with a &n;&t;   clean slate with respect to the FPU.  */
+multiline_comment|/* Arrange for each exec&squot;ed process to start off with a clean slate&n;&t;   with respect to the FPU.  This is all exceptions disabled.  Note&n;           that EV6 defines UNFD valid only with UNDZ, which we don&squot;t want&n;&t;   for IEEE conformance -- so that disabled bit remains in software.  */
 id|current-&gt;tss.flags
 op_and_assign
 op_complement
@@ -754,6 +754,14 @@ id|wrfpcr
 c_func
 (paren
 id|FPCR_DYN_NORMAL
+op_or
+id|FPCR_INVD
+op_or
+id|FPCR_DZED
+op_or
+id|FPCR_OVFD
+op_or
+id|FPCR_INED
 )paren
 suffix:semicolon
 )brace
@@ -862,22 +870,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_void
-id|ret_from_sys_call
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ret_from_smpfork
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Copy an alpha thread..&n; *&n; * Note the &quot;stack_offset&quot; stuff: when returning to kernel mode, we need&n; * to have some extra stack-space for the kernel stack that still exists&n; * after the &quot;ret_from_sys_call&quot;. When returning to user mode, we only&n; * want the space needed by the syscall stack frame (ie &quot;struct pt_regs&quot;).&n; * Use the passed &quot;regs&quot; pointer to determine how much space we need&n; * for a kernel fork().&n; */
 DECL|function|copy_thread
 r_int
@@ -906,6 +898,22 @@ op_star
 id|regs
 )paren
 (brace
+r_extern
+r_void
+id|ret_from_sys_call
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ret_from_smp_fork
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_struct
 id|pt_regs
 op_star
@@ -971,7 +979,6 @@ id|PAGE_SIZE
 op_plus
 (paren
 r_int
-r_int
 )paren
 id|p
 )paren
@@ -994,7 +1001,7 @@ id|childregs-&gt;r20
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* OSF/1 has some strange fork() semantics.. */
+multiline_comment|/* OSF/1 has some strange fork() semantics.  */
 id|regs-&gt;r20
 op_assign
 l_int|0
@@ -1038,7 +1045,7 @@ op_assign
 r_int
 r_int
 )paren
-id|ret_from_smpfork
+id|ret_from_smp_fork
 suffix:semicolon
 macro_line|#else
 id|childstack-&gt;r26
@@ -1142,28 +1149,30 @@ suffix:semicolon
 id|dump-&gt;u_tsize
 op_assign
 (paren
+(paren
 id|current-&gt;mm-&gt;end_code
 op_minus
 id|dump-&gt;start_code
 )paren
 op_rshift
 id|PAGE_SHIFT
+)paren
 suffix:semicolon
 id|dump-&gt;u_dsize
 op_assign
 (paren
+(paren
 id|current-&gt;mm-&gt;brk
 op_plus
-(paren
 id|PAGE_SIZE
 op_minus
 l_int|1
-)paren
 op_minus
 id|dump-&gt;start_data
 )paren
 op_rshift
 id|PAGE_SHIFT
+)paren
 suffix:semicolon
 id|dump-&gt;u_ssize
 op_assign

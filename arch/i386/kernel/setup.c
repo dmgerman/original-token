@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and fix against Cyrix &quot;coma bug&quot; by&n; *      Zoltan Boszormenyi &lt;zboszor@mol.hu&gt; February 1999.&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1424,6 +1424,48 @@ l_int|48
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*  Set MTRR capability flag if appropriate  */
+r_if
+c_cond
+(paren
+id|boot_cpu_data.x86
+op_ne
+l_int|5
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|boot_cpu_data.x86_model
+op_eq
+l_int|9
+)paren
+op_logical_or
+(paren
+(paren
+id|boot_cpu_data.x86_model
+op_eq
+l_int|8
+)paren
+op_logical_and
+(paren
+id|boot_cpu_data.x86_mask
+op_ge
+l_int|8
+)paren
+)paren
+)paren
+(brace
+id|c-&gt;x86_capability
+op_or_assign
+id|X86_FEATURE_MTRR
+suffix:semicolon
+)brace
 r_return
 l_int|1
 suffix:semicolon
@@ -2266,6 +2308,16 @@ id|Cx86_cb
 op_plus
 l_int|1
 suffix:semicolon
+multiline_comment|/* Emulate MTRRs using Cyrix&squot;s ARRs. */
+id|c-&gt;x86_capability
+op_or_assign
+id|X86_FEATURE_MTRR
+suffix:semicolon
+multiline_comment|/* 6x86&squot;s contain this bug */
+id|c-&gt;coma_bug
+op_assign
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -2358,6 +2410,12 @@ id|dir0_msn
 op_increment
 suffix:semicolon
 multiline_comment|/* M II */
+r_else
+id|c-&gt;coma_bug
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* 6x86MX, it has the bug. */
 id|tmp
 op_assign
 (paren
@@ -2423,6 +2481,11 @@ l_int|0x20
 id|c-&gt;x86_model
 )paren
 op_increment
+suffix:semicolon
+multiline_comment|/* Emulate MTRRs using Cyrix&squot;s ARRs. */
+id|c-&gt;x86_capability
+op_or_assign
+id|X86_FEATURE_MTRR
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3703,7 +3766,7 @@ l_string|&quot;10&quot;
 comma
 l_string|&quot;sep&quot;
 comma
-l_string|&quot;12&quot;
+l_string|&quot;mtrr&quot;
 comma
 l_string|&quot;pge&quot;
 comma
@@ -3999,13 +4062,6 @@ l_string|&quot;apic&quot;
 suffix:semicolon
 id|x86_cap_flags
 (braket
-l_int|12
-)braket
-op_assign
-l_string|&quot;mtrr&quot;
-suffix:semicolon
-id|x86_cap_flags
-(braket
 l_int|14
 )braket
 op_assign
@@ -4079,6 +4135,7 @@ l_string|&quot;fdiv_bug&bslash;t: %s&bslash;n&quot;
 l_string|&quot;hlt_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;sep_bug&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;f00f_bug&bslash;t: %s&bslash;n&quot;
+l_string|&quot;coma_bug&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu_exception&bslash;t: %s&bslash;n&quot;
 l_string|&quot;cpuid level&bslash;t: %d&bslash;n&quot;
@@ -4107,6 +4164,13 @@ suffix:colon
 l_string|&quot;no&quot;
 comma
 id|c-&gt;f00f_bug
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|c-&gt;coma_bug
 ques
 c_cond
 l_string|&quot;yes&quot;

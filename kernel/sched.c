@@ -2446,7 +2446,7 @@ comma
 id|prev
 )paren
 suffix:semicolon
-id|schedule_tail
+id|__schedule_tail
 c_func
 (paren
 id|prev

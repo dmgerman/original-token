@@ -253,6 +253,10 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|dev-&gt;hard_header_len
+op_assign
+l_int|16
+suffix:semicolon
 id|dev-&gt;tx_queue_len
 op_assign
 l_int|0

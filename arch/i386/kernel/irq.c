@@ -808,7 +808,7 @@ id|stop_cpu_interrupt
 id|BUILD_SMP_INTERRUPT
 c_func
 (paren
-id|mtrr_interrupt
+id|call_function_interrupt
 )paren
 id|BUILD_SMP_INTERRUPT
 c_func
@@ -3693,13 +3693,13 @@ comma
 id|apic_timer_interrupt
 )paren
 suffix:semicolon
-multiline_comment|/* IPI for MTRR control */
+multiline_comment|/* IPI for generic function call */
 id|set_intr_gate
 c_func
 (paren
-id|MTRR_CHANGE_VECTOR
+id|CALL_FUNCTION_VECTOR
 comma
-id|mtrr_interrupt
+id|call_function_interrupt
 )paren
 suffix:semicolon
 multiline_comment|/* IPI vector for APIC spurious interrupts */

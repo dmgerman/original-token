@@ -443,11 +443,11 @@ c_func
 id|__global_restore_flags
 )paren
 suffix:semicolon
-DECL|variable|mtrr_hook
+DECL|variable|smp_call_function
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|mtrr_hook
+id|smp_call_function
 )paren
 suffix:semicolon
 macro_line|#endif

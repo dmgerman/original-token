@@ -55,6 +55,33 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Call a function on all other processors&n; */
+r_extern
+r_int
+id|smp_call_function
+(paren
+r_void
+(paren
+op_star
+id|func
+)paren
+(paren
+r_void
+op_star
+id|info
+)paren
+comma
+r_void
+op_star
+id|info
+comma
+r_int
+id|retry
+comma
+r_int
+id|wait
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * True once the per process idle is forked&n; */
 r_extern
 r_int
@@ -90,22 +117,24 @@ DECL|macro|MSG_STOP_CPU
 mdefine_line|#define MSG_STOP_CPU&t;&t;0x0002&t;/* Sent to shut down slave CPU&squot;s&n;&t;&t;&t;&t;&t; * when rebooting&n;&t;&t;&t;&t;&t; */
 DECL|macro|MSG_RESCHEDULE
 mdefine_line|#define MSG_RESCHEDULE&t;&t;0x0003&t;/* Reschedule request from master CPU*/
-DECL|macro|MSG_MTRR_CHANGE
-mdefine_line|#define MSG_MTRR_CHANGE         0x0004  /* Change MTRR */
+DECL|macro|MSG_CALL_FUNCTION
+mdefine_line|#define MSG_CALL_FUNCTION       0x0004  /* Call function on all other CPUs */
 macro_line|#else
 multiline_comment|/*&n; *&t;These macros fold the SMP functionality into a single CPU system&n; */
 DECL|macro|smp_num_cpus
-mdefine_line|#define smp_num_cpus&t;&t;&t;1
+mdefine_line|#define smp_num_cpus&t;&t;&t;&t;1
 DECL|macro|smp_processor_id
-mdefine_line|#define smp_processor_id()&t;&t;0
+mdefine_line|#define smp_processor_id()&t;&t;&t;0
 DECL|macro|hard_smp_processor_id
-mdefine_line|#define hard_smp_processor_id()&t;&t;0
+mdefine_line|#define hard_smp_processor_id()&t;&t;&t;0
 DECL|macro|smp_threads_ready
-mdefine_line|#define smp_threads_ready&t;&t;1
+mdefine_line|#define smp_threads_ready&t;&t;&t;1
 DECL|macro|kernel_lock
 mdefine_line|#define kernel_lock()
 DECL|macro|cpu_logical_map
-mdefine_line|#define cpu_logical_map(cpu)&t;&t;0
+mdefine_line|#define cpu_logical_map(cpu)&t;&t;&t;0
+DECL|macro|smp_call_function
+mdefine_line|#define smp_call_function(func,info,retry,wait)
 macro_line|#endif
 macro_line|#endif
 eof

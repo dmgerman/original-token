@@ -14,6 +14,8 @@ DECL|macro|OPC_INTS
 mdefine_line|#define OPC_INTS&t;0x12
 DECL|macro|OPC_INTM
 mdefine_line|#define OPC_INTM&t;0x13
+DECL|macro|OPC_FLTC
+mdefine_line|#define OPC_FLTC&t;0x14
 DECL|macro|OPC_FLTV
 mdefine_line|#define OPC_FLTV&t;0x15
 DECL|macro|OPC_FLTI
@@ -24,41 +26,47 @@ DECL|macro|OPC_MISC
 mdefine_line|#define OPC_MISC&t;0x18
 DECL|macro|OPC_JSR
 mdefine_line|#define&t;OPC_JSR&t;&t;0x1a
-multiline_comment|/*&n; * &quot;Base&quot; function codes for the FLTI-class instructions.  These&n; * instructions all have opcode 0x16.  Note that in most cases these&n; * actually correspond to the &quot;chopped&quot; form of the instruction.  Not&n; * to worry---we extract the qualifier bits separately and deal with&n; * them separately.  Notice that base function code 0x2c is used for&n; * both CVTTS and CVTST.  The other bits in the function code are used&n; * to distinguish the two.&n; */
+DECL|macro|OP_FUN
+mdefine_line|#define OP_FUN(OP,FUN)&t;((OP &lt;&lt; 26) | (FUN &lt;&lt; 5))
+multiline_comment|/*&n; * &quot;Base&quot; function codes for the FLTI-class instructions.&n; * Note that in most cases these actually correspond to the &quot;chopped&quot;&n; * form of the instruction.  Not to worry---we extract the qualifier&n; * bits separately and deal with them separately.  Notice that base&n; * function code 0x2c is used for both CVTTS and CVTST.  The other bits&n; * in the function code are used to distinguish the two.&n; */
 DECL|macro|FLTI_FUNC_ADDS
-mdefine_line|#define FLTI_FUNC_ADDS&t;&t;&t;0x000
+mdefine_line|#define FLTI_FUNC_ADDS&t;&t;&t;OP_FUN(OPC_FLTI, 0x000)
 DECL|macro|FLTI_FUNC_ADDT
-mdefine_line|#define FLTI_FUNC_ADDT&t;&t;&t;0x020
+mdefine_line|#define FLTI_FUNC_ADDT&t;&t;&t;OP_FUN(OPC_FLTI, 0x020)
 DECL|macro|FLTI_FUNC_CMPTEQ
-mdefine_line|#define FLTI_FUNC_CMPTEQ&t;&t;0x025
+mdefine_line|#define FLTI_FUNC_CMPTEQ&t;&t;OP_FUN(OPC_FLTI, 0x025)
 DECL|macro|FLTI_FUNC_CMPTLT
-mdefine_line|#define FLTI_FUNC_CMPTLT&t;&t;0x026
+mdefine_line|#define FLTI_FUNC_CMPTLT&t;&t;OP_FUN(OPC_FLTI, 0x026)
 DECL|macro|FLTI_FUNC_CMPTLE
-mdefine_line|#define FLTI_FUNC_CMPTLE&t;&t;0x027
+mdefine_line|#define FLTI_FUNC_CMPTLE&t;&t;OP_FUN(OPC_FLTI, 0x027)
 DECL|macro|FLTI_FUNC_CMPTUN
-mdefine_line|#define FLTI_FUNC_CMPTUN&t;&t;0x024
+mdefine_line|#define FLTI_FUNC_CMPTUN&t;&t;OP_FUN(OPC_FLTI, 0x024)
 DECL|macro|FLTI_FUNC_CVTTS_or_CVTST
-mdefine_line|#define FLTI_FUNC_CVTTS_or_CVTST&t;0x02c
+mdefine_line|#define FLTI_FUNC_CVTTS_or_CVTST&t;OP_FUN(OPC_FLTI, 0x02c)
 DECL|macro|FLTI_FUNC_CVTTQ
-mdefine_line|#define FLTI_FUNC_CVTTQ&t;&t;&t;0x02f
+mdefine_line|#define FLTI_FUNC_CVTTQ&t;&t;&t;OP_FUN(OPC_FLTI, 0x02f)
 DECL|macro|FLTI_FUNC_CVTQS
-mdefine_line|#define FLTI_FUNC_CVTQS&t;&t;&t;0x03c
+mdefine_line|#define FLTI_FUNC_CVTQS&t;&t;&t;OP_FUN(OPC_FLTI, 0x03c)
 DECL|macro|FLTI_FUNC_CVTQT
-mdefine_line|#define FLTI_FUNC_CVTQT&t;&t;&t;0x03e
+mdefine_line|#define FLTI_FUNC_CVTQT&t;&t;&t;OP_FUN(OPC_FLTI, 0x03e)
 DECL|macro|FLTI_FUNC_DIVS
-mdefine_line|#define FLTI_FUNC_DIVS&t;&t;&t;0x003
+mdefine_line|#define FLTI_FUNC_DIVS&t;&t;&t;OP_FUN(OPC_FLTI, 0x003)
 DECL|macro|FLTI_FUNC_DIVT
-mdefine_line|#define FLTI_FUNC_DIVT&t;&t;&t;0x023
+mdefine_line|#define FLTI_FUNC_DIVT&t;&t;&t;OP_FUN(OPC_FLTI, 0x023)
 DECL|macro|FLTI_FUNC_MULS
-mdefine_line|#define FLTI_FUNC_MULS&t;&t;&t;0x002
+mdefine_line|#define FLTI_FUNC_MULS&t;&t;&t;OP_FUN(OPC_FLTI, 0x002)
 DECL|macro|FLTI_FUNC_MULT
-mdefine_line|#define FLTI_FUNC_MULT&t;&t;&t;0x022
+mdefine_line|#define FLTI_FUNC_MULT&t;&t;&t;OP_FUN(OPC_FLTI, 0x022)
 DECL|macro|FLTI_FUNC_SUBS
-mdefine_line|#define FLTI_FUNC_SUBS&t;&t;&t;0x001
+mdefine_line|#define FLTI_FUNC_SUBS&t;&t;&t;OP_FUN(OPC_FLTI, 0x001)
 DECL|macro|FLTI_FUNC_SUBT
-mdefine_line|#define FLTI_FUNC_SUBT&t;&t;&t;0x021
-DECL|macro|FLTI_FUNC_CVTQL
-mdefine_line|#define FLTI_FUNC_CVTQL&t;&t;&t;0x030&t;/* opcode 0x17 */
+mdefine_line|#define FLTI_FUNC_SUBT&t;&t;&t;OP_FUN(OPC_FLTI, 0x021)
+DECL|macro|FLTC_FUNC_SQRTS
+mdefine_line|#define FLTC_FUNC_SQRTS&t;&t;&t;OP_FUN(OPC_FLTC, 0x00B)
+DECL|macro|FLTC_FUNC_SQRTT
+mdefine_line|#define FLTC_FUNC_SQRTT&t;&t;&t;OP_FUN(OPC_FLTC, 0x02B)
+DECL|macro|FLTL_FUNC_CVTQL
+mdefine_line|#define FLTL_FUNC_CVTQL&t;&t;&t;OP_FUN(OPC_FLTL, 0x030)
 DECL|macro|MISC_TRAPB
 mdefine_line|#define MISC_TRAPB&t;0x0000
 DECL|macro|MISC_EXCB
@@ -235,7 +243,7 @@ id|pc
 (brace
 r_int
 r_int
-id|opcode
+id|op_fun
 comma
 id|fa
 comma
@@ -293,16 +301,6 @@ op_amp
 l_int|0x1f
 suffix:semicolon
 multiline_comment|/* destination register */
-id|func
-op_assign
-(paren
-id|insn
-op_rshift
-l_int|5
-)paren
-op_amp
-l_int|0x7ff
-suffix:semicolon
 id|fb
 op_assign
 (paren
@@ -323,11 +321,37 @@ l_int|21
 op_amp
 l_int|0x1f
 suffix:semicolon
-id|opcode
+id|func
 op_assign
+(paren
 id|insn
 op_rshift
-l_int|26
+l_int|5
+)paren
+op_amp
+l_int|0x7ff
+suffix:semicolon
+id|mode
+op_assign
+(paren
+id|insn
+op_rshift
+l_int|5
+)paren
+op_amp
+l_int|0xc0
+suffix:semicolon
+id|op_fun
+op_assign
+id|insn
+op_amp
+id|OP_FUN
+c_func
+(paren
+l_int|0x3f
+comma
+l_int|0x3f
+)paren
 suffix:semicolon
 id|va
 op_assign
@@ -353,12 +377,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Try the operation in software.  First, obtain the rounding&n;&t; * mode...&n;&t; */
-id|mode
-op_assign
-id|func
-op_amp
-l_int|0xc0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -414,13 +432,10 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* least 6 bits contain operation code: */
 r_switch
 c_cond
 (paren
-id|func
-op_amp
-l_int|0x3f
+id|op_fun
 )paren
 (brace
 r_case
@@ -496,7 +511,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|FLTI_FUNC_CVTQL
+id|FLTL_FUNC_CVTQL
 suffix:colon
 multiline_comment|/*&n;&t;&t; * Notice: We can get here only due to an integer&n;&t;&t; * overflow.  Such overflows are reported as invalid&n;&t;&t; * ops.  We return the result the hw would have&n;&t;&t; * computed.&n;&t;&t; */
 id|vc
@@ -785,6 +800,42 @@ id|vc
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|FLTC_FUNC_SQRTS
+suffix:colon
+id|res
+op_assign
+id|ieee_SQRTS
+c_func
+(paren
+id|mode
+comma
+id|vb
+comma
+op_amp
+id|vc
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|FLTC_FUNC_SQRTT
+suffix:colon
+id|res
+op_assign
+id|ieee_SQRTT
+c_func
+(paren
+id|mode
+comma
+id|vb
+comma
+op_amp
+id|vc
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|printk
@@ -837,15 +888,6 @@ id|ieee_swcr_to_fpcr
 c_func
 (paren
 id|fpcw
-op_or
-(paren
-op_complement
-id|fpcw
-op_amp
-id|IEEE_STATUS_MASK
-)paren
-op_rshift
-l_int|16
 )paren
 suffix:semicolon
 id|wrfpcr
@@ -1032,6 +1074,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|OPC_FLTC
+suffix:colon
+r_case
 id|OPC_FLTV
 suffix:colon
 r_case
@@ -1066,16 +1111,6 @@ id|write_mask
 r_if
 c_cond
 (paren
-(paren
-id|opcode
-op_eq
-id|OPC_FLTI
-op_logical_or
-id|opcode
-op_eq
-id|OPC_FLTL
-)paren
-op_logical_and
 id|alpha_fp_emul
 c_func
 (paren

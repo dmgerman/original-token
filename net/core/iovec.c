@@ -142,6 +142,7 @@ suffix:semicolon
 id|ct
 op_increment
 )paren
+(brace
 id|err
 op_add_assign
 id|iov
@@ -151,6 +152,19 @@ id|ct
 dot
 id|iov_len
 suffix:semicolon
+multiline_comment|/* Goal is not to verify user data, but to prevent returning&n;&t;&t;   negative value, which is interpreted as errno.&n;&t;&t;   Overflow is still possible, but it is harmless.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|err
+OL
+l_int|0
+)paren
+r_return
+op_minus
+id|EMSGSIZE
+suffix:semicolon
+)brace
 id|out
 suffix:colon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/*  Generic MTRR (Memory Type Range Register) ioctls.&n;&n;    Copyright (C) 1997-1998  Richard Gooch&n;&n;    This library is free software; you can redistribute it and/or&n;    modify it under the terms of the GNU Library General Public&n;    License as published by the Free Software Foundation; either&n;    version 2 of the License, or (at your option) any later version.&n;&n;    This library is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;    Library General Public License for more details.&n;&n;    You should have received a copy of the GNU Library General Public&n;    License along with this library; if not, write to the Free&n;    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Richard Gooch may be reached by email at  rgooch@atnf.csiro.au&n;    The postal address is:&n;      Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.&n;*/
+multiline_comment|/*  Generic MTRR (Memory Type Range Register) ioctls.&n;&n;    Copyright (C) 1997-1999  Richard Gooch&n;&n;    This library is free software; you can redistribute it and/or&n;    modify it under the terms of the GNU Library General Public&n;    License as published by the Free Software Foundation; either&n;    version 2 of the License, or (at your option) any later version.&n;&n;    This library is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;    Library General Public License for more details.&n;&n;    You should have received a copy of the GNU Library General Public&n;    License along with this library; if not, write to the Free&n;    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Richard Gooch may be reached by email at  rgooch@atnf.csiro.au&n;    The postal address is:&n;      Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.&n;*/
 macro_line|#ifndef _LINUX_MTRR_H
 DECL|macro|_LINUX_MTRR_H
 mdefine_line|#define _LINUX_MTRR_H
@@ -62,13 +62,15 @@ multiline_comment|/*  Type of region   */
 suffix:semicolon
 multiline_comment|/*  These are the various ioctls  */
 DECL|macro|MTRRIOC_ADD_ENTRY
-mdefine_line|#define MTRRIOC_ADD_ENTRY        _IOW(MTRR_IOCTL_BASE, 0, struct mtrr_sentry)
+mdefine_line|#define MTRRIOC_ADD_ENTRY        _IOW(MTRR_IOCTL_BASE,  0, struct mtrr_sentry)
 DECL|macro|MTRRIOC_SET_ENTRY
-mdefine_line|#define MTRRIOC_SET_ENTRY        _IOW(MTRR_IOCTL_BASE, 1, struct mtrr_sentry)
+mdefine_line|#define MTRRIOC_SET_ENTRY        _IOW(MTRR_IOCTL_BASE,  1, struct mtrr_sentry)
 DECL|macro|MTRRIOC_DEL_ENTRY
-mdefine_line|#define MTRRIOC_DEL_ENTRY        _IOW(MTRR_IOCTL_BASE, 2, struct mtrr_sentry)
+mdefine_line|#define MTRRIOC_DEL_ENTRY        _IOW(MTRR_IOCTL_BASE,  2, struct mtrr_sentry)
 DECL|macro|MTRRIOC_GET_ENTRY
 mdefine_line|#define MTRRIOC_GET_ENTRY        _IOWR(MTRR_IOCTL_BASE, 3, struct mtrr_gentry)
+DECL|macro|MTRRIOC_KILL_ENTRY
+mdefine_line|#define MTRRIOC_KILL_ENTRY       _IOW(MTRR_IOCTL_BASE,  4, struct mtrr_sentry)
 multiline_comment|/*  These are the region types  */
 DECL|macro|MTRR_TYPE_UNCACHABLE
 mdefine_line|#define MTRR_TYPE_UNCACHABLE 0
@@ -121,7 +123,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*  The following functions are for use by other drivers  */
-macro_line|# if defined(CONFIG_MTRR) || defined(CONFIG_MTRR_MODULE)
+macro_line|# ifdef CONFIG_MTRR
 r_extern
 r_int
 id|mtrr_add

@@ -27,8 +27,10 @@ c_func
 l_int|1
 op_plus
 id|ms
+op_star
+id|HZ
 op_div
-l_int|10
+l_int|1000
 )paren
 suffix:semicolon
 )brace

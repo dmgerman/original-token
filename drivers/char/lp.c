@@ -83,7 +83,7 @@ DECL|macro|LP_NO_ACKING
 mdefine_line|#define&t;LP_NO_ACKING(status)&t;((status) &amp; LP_PACK)
 multiline_comment|/* Test if the printer has error conditions */
 DECL|macro|LP_NO_ERROR
-mdefine_line|#define LP_NO_ERROR(status)&t;&t;&t;&t;&t;&bslash;&n;&t; (((status) &amp; (LP_POUTPA|LP_PSELECD|LP_PERRORP)) ==&t;&bslash;&n;&t; (LP_PSELECD|LP_PERRORP))
+mdefine_line|#define LP_NO_ERROR(status)&t;((status) &amp; LP_PERRORP)
 DECL|macro|LP_DEBUG
 macro_line|#undef LP_DEBUG
 DECL|macro|LP_READ_DEBUG
@@ -911,6 +911,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|status
+op_amp
+id|LP_PERRORP
+)paren
+multiline_comment|/* No error. */
+id|last
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
 (paren
 id|status
 op_amp
@@ -977,16 +990,6 @@ suffix:semicolon
 )brace
 )brace
 r_else
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|status
-op_amp
-id|LP_PERRORP
-)paren
-)paren
 (brace
 r_if
 c_cond
@@ -1004,18 +1007,13 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;lp%d on fire!&bslash;n&quot;
+l_string|&quot;lp%d on fire&bslash;n&quot;
 comma
 id|minor
 )paren
 suffix:semicolon
 )brace
 )brace
-r_else
-id|last
-op_assign
-l_int|0
-suffix:semicolon
 id|lp_table
 (braket
 id|minor

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.107 1999/04/28 16:08:12 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.108 1999/05/08 21:48:59 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&t;&t;Andrea Arcangeli:&t;SYNACK carry ts_recent in tsecr.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 r_extern
@@ -1837,6 +1837,9 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+comma
+op_star
+id|old_next_skb
 suffix:semicolon
 r_int
 r_int
@@ -1865,6 +1868,8 @@ multiline_comment|/* Input control flow will see that this was retransmitted&n;&
 r_for
 c_loop
 (paren
+id|old_next_skb
+op_assign
 id|skb
 op_assign
 id|skb_peek
@@ -1898,12 +1903,38 @@ id|skb
 op_assign
 id|skb-&gt;next
 )paren
+(brace
+r_int
+id|resend_skb
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Our goal is to push out the packets which we&n;&t;&t; * sent already, but are being chopped up now to&n;&t;&t; * account for the PMTU information we have.&n;&t;&t; *&n;&t;&t; * As we resend the queue, packets are fragmented&n;&t;&t; * into two pieces, and when we try to send the&n;&t;&t; * second piece it may be collapsed together with&n;&t;&t; * a subsequent packet, and so on.  -DaveM&n;&t;&t; */
 r_if
 c_cond
 (paren
+id|old_next_skb
+op_ne
+id|skb
+op_logical_or
 id|skb-&gt;len
 OG
 id|mss
+)paren
+id|resend_skb
+op_assign
+l_int|1
+suffix:semicolon
+id|old_next_skb
+op_assign
+id|skb-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|resend_skb
+op_ne
+l_int|0
 )paren
 id|tcp_retransmit_skb
 c_func
@@ -1913,6 +1944,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|update_retrans_head
 r_static

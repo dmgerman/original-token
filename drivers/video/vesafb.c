@@ -2905,7 +2905,6 @@ comma
 l_string|&quot;vga+&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MTRR
 r_if
 c_cond
 (paren
@@ -2927,7 +2926,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#endif
 id|strcpy
 c_func
 (paren

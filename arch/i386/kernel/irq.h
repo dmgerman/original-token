@@ -147,8 +147,8 @@ DECL|macro|STOP_CPU_VECTOR
 mdefine_line|#define STOP_CPU_VECTOR&t;&t;0x40
 DECL|macro|LOCAL_TIMER_VECTOR
 mdefine_line|#define LOCAL_TIMER_VECTOR&t;0x41
-DECL|macro|MTRR_CHANGE_VECTOR
-mdefine_line|#define MTRR_CHANGE_VECTOR&t;0x50
+DECL|macro|CALL_FUNCTION_VECTOR
+mdefine_line|#define CALL_FUNCTION_VECTOR&t;0x50
 multiline_comment|/*&n; * First APIC vector available to drivers: (vectors 0x51-0xfe)&n; */
 DECL|macro|IRQ0_TRAP_VECTOR
 mdefine_line|#define IRQ0_TRAP_VECTOR&t;0x51
@@ -287,14 +287,6 @@ c_func
 r_int
 id|vector
 )paren
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|smp_send_mtrr
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 r_extern

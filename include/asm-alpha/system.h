@@ -295,15 +295,20 @@ id|noreturn
 )paren
 suffix:semicolon
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next) do {&t;&t;&t;&t;&t;&bslash;&n;&t;current = next;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;alpha_switch_to((unsigned long) &amp;current-&gt;tss - IDENT_ADDR);&t;&bslash;&n;} while (0)
+mdefine_line|#define switch_to(prev,next,last)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long pcbb;&t;&t;&t;&t;&bslash;&n;&t;current = (next);&t;&t;&t;&t;&bslash;&n;&t;pcbb = virt_to_phys(&amp;current-&gt;tss);&t;&t;&bslash;&n;&t;(last) = alpha_switch_to(pcbb, (prev));&t;&t;&bslash;&n;} while (0)
 r_extern
-r_void
+r_struct
+id|task_struct
+op_star
 id|alpha_switch_to
 c_func
 (paren
 r_int
 r_int
-id|pctxp
+comma
+r_struct
+id|task_struct
+op_star
 )paren
 suffix:semicolon
 DECL|macro|mb
@@ -316,6 +321,40 @@ DECL|macro|imb
 mdefine_line|#define imb() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0 #imb&quot; : : &quot;i&quot; (PAL_imb) : &quot;memory&quot;)
 DECL|macro|draina
 mdefine_line|#define draina() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0 #draina&quot; : : &quot;i&quot; (PAL_draina) : &quot;memory&quot;)
+DECL|enum|implver_enum
+r_enum
+id|implver_enum
+(brace
+DECL|enumerator|IMPLVER_EV4
+id|IMPLVER_EV4
+comma
+DECL|enumerator|IMPLVER_EV5
+id|IMPLVER_EV5
+comma
+DECL|enumerator|IMPLVER_EV6
+id|IMPLVER_EV6
+)brace
+suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_GENERIC
+DECL|macro|implver
+mdefine_line|#define implver()&t;&t;&t;&t;&bslash;&n;({ unsigned long __implver;&t;&t;&t;&bslash;&n;   __asm__ (&quot;implver %0&quot; : &quot;=r&quot;(__implver));&t;&bslash;&n;   (enum implver_enum) __implver; })
+macro_line|#else
+multiline_comment|/* Try to eliminate some dead code.  */
+macro_line|#ifdef CONFIG_ALPHA_EV4
+DECL|macro|implver
+mdefine_line|#define implver() IMPLVER_EV4
+macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_EV5
+DECL|macro|implver
+mdefine_line|#define implver() IMPLVER_EV5
+macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_EV6
+DECL|macro|implver
+mdefine_line|#define implver() IMPLVER_EV6
+macro_line|#endif
+macro_line|#endif
+DECL|macro|amask
+mdefine_line|#define amask(mask)&t;&t;&t;&t;&t;&t;&bslash;&n;({ unsigned long __amask, __input = (mask);&t;&t;&t;&bslash;&n;   __asm__ (&quot;amask %1,%0&quot; : &quot;=r&quot;(__amask) : &quot;rI&quot;(__input));&t;&bslash;&n;   __amask; })
 r_static
 r_inline
 r_int

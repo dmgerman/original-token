@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.27 1999/03/25 10:04:06 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
+multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.28 1999/05/08 20:00:16 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -3201,6 +3201,16 @@ suffix:semicolon
 id|ifa-&gt;ifa_scope
 op_assign
 id|RT_SCOPE_HOST
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|ifa-&gt;ifa_label
+comma
+id|dev-&gt;name
+comma
+id|IFNAMSIZ
+)paren
 suffix:semicolon
 id|inet_insert_ifa
 c_func

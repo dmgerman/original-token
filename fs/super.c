@@ -4926,6 +4926,15 @@ id|sb-&gt;s_flags
 op_assign
 id|root_mountflags
 suffix:semicolon
+id|sema_init
+c_func
+(paren
+op_amp
+id|sb-&gt;s_vfs_rename_sem
+comma
+l_int|1
+)paren
+suffix:semicolon
 id|vfsmnt
 op_assign
 id|add_vfsmnt
