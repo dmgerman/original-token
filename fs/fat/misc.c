@@ -507,9 +507,11 @@ id|bh
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * fat_add_cluster tries to allocate a new cluster and adds it to the file&n; * represented by inode. The cluster is zero-initialized.&n; */
-DECL|function|fat_add_cluster
-r_int
-id|fat_add_cluster
+DECL|function|fat_add_cluster1
+r_struct
+id|buffer_head
+op_star
+id|fat_add_cluster1
 c_func
 (paren
 r_struct
@@ -546,6 +548,11 @@ r_struct
 id|buffer_head
 op_star
 id|bh
+comma
+op_star
+id|res
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|cluster_size
@@ -580,8 +587,7 @@ op_eq
 id|MSDOS_ROOT_INO
 )paren
 r_return
-op_minus
-id|ENOSPC
+id|res
 suffix:semicolon
 )brace
 r_if
@@ -597,8 +603,7 @@ op_member_access_from_pointer
 id|free_clusters
 )paren
 r_return
-op_minus
-id|ENOSPC
+id|res
 suffix:semicolon
 id|lock_fat
 c_func
@@ -743,8 +748,7 @@ id|sb
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|ENOSPC
+id|res
 suffix:semicolon
 )brace
 id|fat_access
@@ -925,8 +929,7 @@ l_string|&quot;File without EOF&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|ENOSPC
+id|res
 suffix:semicolon
 )brace
 )brace
@@ -1152,6 +1155,17 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|res
+)paren
+id|res
+op_assign
+id|bh
+suffix:semicolon
+r_else
 id|fat_brelse
 c_func
 (paren
@@ -1272,6 +1286,50 @@ id|inode
 )paren
 suffix:semicolon
 )brace
+r_return
+id|res
+suffix:semicolon
+)brace
+DECL|function|fat_add_cluster
+r_int
+id|fat_add_cluster
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_struct
+id|buffer_head
+op_star
+id|bh
+op_assign
+id|fat_add_cluster1
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bh
+)paren
+r_return
+op_minus
+id|ENOSPC
+suffix:semicolon
+id|fat_brelse
+c_func
+(paren
+id|inode-&gt;i_sb
+comma
+id|bh
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1694,10 +1752,10 @@ l_int|9
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Returns the inode number of the directory entry at offset pos. If bh is&n;   non-NULL, it is brelse&squot;d before. Pos is incremented. The buffer header is&n;   returned in bh. */
-DECL|function|fat_get_entry
+multiline_comment|/* Returns the inode number of the directory entry at offset pos. If bh is&n;   non-NULL, it is brelse&squot;d before. Pos is incremented. The buffer header is&n;   returned in bh.&n;   AV. Most often we do it item-by-item. Makes sense to optimize.&n;   AV. OK, there we go: if both bh and de are non-NULL we assume that we just&n;   AV. want the next entry (took one explicit de=NULL in vfat/namei.c).&n;   AV. It&squot;s done in fat_get_entry() (inlined), here the slow case lives.&n;   AV. Additionally, when we return -1 (i.e. reached the end of directory)&n;   AV. we make bh NULL. &n; */
+DECL|function|fat__get_entry
 r_int
-id|fat_get_entry
+id|fat__get_entry
 c_func
 (paren
 r_struct
@@ -1720,6 +1778,10 @@ id|msdos_dir_entry
 op_star
 op_star
 id|de
+comma
+r_int
+op_star
+id|ino
 )paren
 (brace
 r_struct
@@ -1757,6 +1819,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_star
+id|bh
+)paren
+id|fat_brelse
+c_func
+(paren
+id|sb
+comma
+op_star
+id|bh
+)paren
+suffix:semicolon
+op_star
+id|bh
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
 (paren
 id|sector
 op_assign
@@ -1790,6 +1872,13 @@ id|bh
 )paren
 )paren
 suffix:semicolon
+id|PRINTK
+(paren
+(paren
+l_string|&quot;get_entry sector apres brelse&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1808,28 +1897,6 @@ r_sizeof
 (paren
 r_struct
 id|msdos_dir_entry
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|bh
-)paren
-id|fat_brelse
-c_func
-(paren
-id|sb
-comma
-op_star
-id|bh
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-l_string|&quot;get_entry sector apres brelse&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1895,7 +1962,9 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-r_return
+op_star
+id|ino
+op_assign
 (paren
 id|sector
 op_lshift
@@ -1916,6 +1985,9 @@ op_rshift
 id|MSDOS_DIR_BITS
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Now an ugly part: this set of directory scan routines works on clusters&n; * rather than on inodes and sectors. They are necessary to locate the &squot;..&squot;&n; * directory &quot;inode&quot;. raw_scan_sector operates in four modes:&n; *&n; * name     number   ino      action&n; * -------- -------- -------- -------------------------------------------------&n; * non-NULL -        X        Find an entry with that name&n; * NULL     non-NULL non-NULL Find an entry whose data starts at *number&n; * NULL     non-NULL NULL     Count subdirectories in *number. (*)&n; * NULL     NULL     non-NULL Find an empty entry&n; *&n; * (*) The return code should be ignored. It DOES NOT indicate success or&n; *     failure. *number has to be initialized to zero.&n; *&n; * - = not used, X = a value is returned unless NULL&n; *&n; * If res_bh is non-NULL, the buffer is not deallocated but returned to the&n; * caller on success. res_de is set accordingly.&n; *&n; * If cont is non-zero, raw_found continues with the entry after the one&n; * res_bh/res_de point to.&n; */
@@ -1924,7 +1996,7 @@ mdefine_line|#define RSS_NAME /* search for name */ &bslash;&n;    done = !strnc
 DECL|macro|RSS_START
 mdefine_line|#define RSS_START /* search for start cluster */ &bslash;&n;    done = !IS_FREE(data[entry].name) &bslash;&n;      &amp;&amp; ( &bslash;&n;           ( &bslash;&n;             (MSDOS_SB(sb)-&gt;fat_bits != 32) ? 0 : (CF_LE_W(data[entry].starthi) &lt;&lt; 16) &bslash;&n;           ) &bslash;&n;           | CF_LE_W(data[entry].start) &bslash;&n;         ) == *number;
 DECL|macro|RSS_FREE
-mdefine_line|#define RSS_FREE /* search for free entry */ &bslash;&n;    { &bslash;&n;&t;done = IS_FREE(data[entry].name); &bslash;&n;&t;if (done) { &bslash;&n;&t;    inode = iget(sb,sector*MSDOS_DPS+entry); &bslash;&n;&t;    if (inode) { &bslash;&n;&t;    /* Directory slots of busy deleted files aren&squot;t available yet. */ &bslash;&n;&t;&t;done = !MSDOS_I(inode)-&gt;i_busy; &bslash;&n;&t;&t;iput(inode); &bslash;&n;&t;    } &bslash;&n;&t;} &bslash;&n;    }
+mdefine_line|#define RSS_FREE /* search for free entry */ &bslash;&n;    { &bslash;&n;&t;done = IS_FREE(data[entry].name); &bslash;&n;    }
 DECL|macro|RSS_COUNT
 mdefine_line|#define RSS_COUNT /* count subdirectories */ &bslash;&n;    { &bslash;&n;&t;done = 0; &bslash;&n;&t;if (!IS_FREE(data[entry].name) &amp;&amp; (data[entry].attr &amp; ATTR_DIR)) &bslash;&n;&t;    (*number)++; &bslash;&n;    }
 DECL|function|raw_scan_sector
@@ -1965,9 +2037,6 @@ id|msdos_dir_entry
 op_star
 op_star
 id|res_de
-comma
-r_char
-id|scantype
 )paren
 (brace
 r_struct
@@ -1979,11 +2048,6 @@ r_struct
 id|msdos_dir_entry
 op_star
 id|data
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
 suffix:semicolon
 r_int
 id|entry
@@ -2044,42 +2108,6 @@ id|name
 )paren
 (brace
 id|RSS_NAME
-r_if
-c_cond
-(paren
-id|done
-op_logical_and
-id|scantype
-)paren
-(brace
-multiline_comment|/* scantype != SCAN_ANY */
-id|done
-op_assign
-(paren
-id|data
-(braket
-id|entry
-)braket
-dot
-id|attr
-op_amp
-id|ATTR_HIDDEN
-)paren
-ques
-c_cond
-(paren
-id|scantype
-op_eq
-id|SCAN_HID
-)paren
-suffix:colon
-(paren
-id|scantype
-op_eq
-id|SCAN_NOTHID
-)paren
-suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -2252,9 +2280,6 @@ id|msdos_dir_entry
 op_star
 op_star
 id|res_de
-comma
-r_char
-id|scantype
 )paren
 (brace
 r_int
@@ -2315,8 +2340,6 @@ comma
 id|res_bh
 comma
 id|res_de
-comma
-id|scantype
 )paren
 )paren
 op_ge
@@ -2370,9 +2393,6 @@ id|msdos_dir_entry
 op_star
 op_star
 id|res_de
-comma
-r_char
-id|scantype
 )paren
 (brace
 r_int
@@ -2457,8 +2477,6 @@ comma
 id|res_bh
 comma
 id|res_de
-comma
-id|scantype
 )paren
 )paren
 op_ge
@@ -2563,9 +2581,6 @@ id|msdos_dir_entry
 op_star
 op_star
 id|res_de
-comma
-r_char
-id|scantype
 )paren
 (brace
 r_if
@@ -2589,8 +2604,6 @@ comma
 id|res_bh
 comma
 id|res_de
-comma
-id|scantype
 )paren
 suffix:semicolon
 r_else
@@ -2608,12 +2621,10 @@ comma
 id|res_bh
 comma
 id|res_de
-comma
-id|scantype
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * fat_parent_ino returns the inode number of the parent directory of dir.&n; * File creation has to be deferred while fat_parent_ino is running to&n; * prevent renames.&n; */
+multiline_comment|/*&n; * fat_parent_ino returns the inode number of the parent directory of dir.&n; * File creation has to be deferred while fat_parent_ino is running to&n; * prevent renames.&n; *&n; * AV. Bad, bad, bad... We need a mapping that would give us inode by&n; * first cluster. Sheeeeit... OK, we can do it on fat_fill_inode() and&n; * update on fat_add_cluster(). When will we remove it? fat_clear_inode()&n; * and fat_truncate() to zero?&n; */
 DECL|function|fat_parent_ino
 r_int
 id|fat_parent_ino
@@ -2718,8 +2729,6 @@ comma
 l_int|NULL
 comma
 l_int|NULL
-comma
-id|SCAN_ANY
 )paren
 )paren
 OL
@@ -2794,8 +2803,6 @@ comma
 l_int|NULL
 comma
 l_int|NULL
-comma
-id|SCAN_ANY
 )paren
 )paren
 OL
@@ -2890,8 +2897,6 @@ comma
 l_int|NULL
 comma
 l_int|NULL
-comma
-id|SCAN_ANY
 )paren
 )paren
 OL
@@ -3008,8 +3013,6 @@ comma
 l_int|NULL
 comma
 l_int|NULL
-comma
-id|SCAN_ANY
 )paren
 suffix:semicolon
 )brace
@@ -3064,8 +3067,6 @@ comma
 l_int|NULL
 comma
 l_int|NULL
-comma
-id|SCAN_ANY
 )paren
 suffix:semicolon
 )brace
@@ -3104,9 +3105,6 @@ comma
 r_int
 op_star
 id|ino
-comma
-r_char
-id|scantype
 )paren
 (brace
 r_int
@@ -3136,8 +3134,6 @@ comma
 id|res_bh
 comma
 id|res_de
-comma
-id|scantype
 )paren
 suffix:semicolon
 r_return

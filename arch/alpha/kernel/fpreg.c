@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * kernel/fpreg.c&n; *&n; * (C) Copyright 1998 Linus Torvalds&n; */
-macro_line|#ifdef __alpha_cix__
+multiline_comment|/*&n; * arch/alpha/kernel/fpreg.c&n; *&n; * (C) Copyright 1998 Linus Torvalds&n; */
+macro_line|#if defined(__alpha_cix__) || defined(__alpha_fix__)
 DECL|macro|STT
 mdefine_line|#define STT(reg,val)  asm volatile (&quot;ftoit $f&quot;#reg&quot;,%0&quot; : &quot;=r&quot;(val));
 macro_line|#else
@@ -447,7 +447,7 @@ r_return
 id|val
 suffix:semicolon
 )brace
-macro_line|#ifdef __alpha_cix__
+macro_line|#if defined(__alpha_cix__) || defined(__alpha_fix__)
 DECL|macro|LDT
 mdefine_line|#define LDT(reg,val)  asm volatile (&quot;itoft %0,$f&quot;#reg : : &quot;r&quot;(val));
 macro_line|#else

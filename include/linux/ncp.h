@@ -275,10 +275,6 @@ DECL|macro|aDELETEINHIBIT
 mdefine_line|#define aDELETEINHIBIT&t; (ntohl(1L&lt;&lt;(18-8)))
 DECL|macro|aDONTCOMPRESS
 mdefine_line|#define aDONTCOMPRESS&t; (nothl(1L&lt;&lt;(27-24)))
-DECL|macro|NCP_MIN_SYMLINK_SIZE
-mdefine_line|#define NCP_MIN_SYMLINK_SIZE&t;8
-DECL|macro|NCP_MAX_SYMLINK_SIZE
-mdefine_line|#define NCP_MAX_SYMLINK_SIZE&t;512
 DECL|macro|AR_READ
 mdefine_line|#define AR_READ      (ntohs(0x0100))
 DECL|macro|AR_WRITE

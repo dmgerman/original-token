@@ -1098,44 +1098,6 @@ r_return
 id|start_mem
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
-multiline_comment|/*&n; * paging_init_secondary(), called ONLY by secondary CPUs,&n; * sets up current-&gt;tss contents appropriately and does a load_PCB.&n; * note that current should be pointing at the idle thread task struct&n; * for this CPU.&n; */
-r_void
-DECL|function|paging_init_secondary
-id|paging_init_secondary
-c_func
-(paren
-r_void
-)paren
-(brace
-id|current-&gt;tss.ptbr
-op_assign
-id|init_task.tss.ptbr
-suffix:semicolon
-id|current-&gt;tss.pal_flags
-op_assign
-l_int|1
-suffix:semicolon
-id|current-&gt;tss.flags
-op_assign
-l_int|0
-suffix:semicolon
-id|load_PCB
-c_func
-(paren
-op_amp
-id|current-&gt;tss
-)paren
-suffix:semicolon
-id|tbia
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif /* __SMP__ */
 macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM)
 r_void
 DECL|function|srm_paging_stop

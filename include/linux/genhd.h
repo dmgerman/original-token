@@ -14,7 +14,7 @@ macro_line|#if defined(__sparc__) || defined(CONFIG_SMD_DISKLABEL)
 DECL|macro|CONFIG_SUN_PARTITION
 mdefine_line|#define CONFIG_SUN_PARTITION 1
 macro_line|#endif
-macro_line|#if defined(CONFIG_SGI)
+macro_line|#if defined(CONFIG_SGI) || defined(CONFIG_SGI_DISKLABEL)
 DECL|macro|CONFIG_SGI_PARTITION
 mdefine_line|#define CONFIG_SGI_PARTITION 1
 macro_line|#endif

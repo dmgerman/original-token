@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  ncp_fs_sb.h&n; *&n; *  Copyright (C) 1995, 1996 by Vo
 macro_line|#ifndef _NCP_FS_SB
 DECL|macro|_NCP_FS_SB
 mdefine_line|#define _NCP_FS_SB
+macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;linux/ncp_mount.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#ifdef __KERNEL__
@@ -84,9 +85,10 @@ r_int
 id|lock
 suffix:semicolon
 multiline_comment|/* To prevent mismatch in protocols. */
-DECL|member|wait
-id|wait_queue_head_t
-id|wait
+DECL|member|sem
+r_struct
+id|semaphore
+id|sem
 suffix:semicolon
 DECL|member|current_size
 r_int

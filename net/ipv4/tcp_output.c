@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.108 1999/05/08 21:48:59 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.109 1999/05/14 23:10:13 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&t;&t;Andrea Arcangeli:&t;SYNACK carry ts_recent in tsecr.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 r_extern
@@ -1047,6 +1047,23 @@ id|skb-&gt;len
 comma
 l_int|0
 )paren
+suffix:semicolon
+multiline_comment|/* Looks stupid, but our code really uses when of&n;&t; * skbs, which it never sent before. --ANK&n;&t; */
+id|TCP_SKB_CB
+c_func
+(paren
+id|buff
+)paren
+op_member_access_from_pointer
+id|when
+op_assign
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|when
 suffix:semicolon
 multiline_comment|/* Link BUFF into the send queue. */
 id|__skb_append

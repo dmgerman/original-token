@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.164 1999/05/08 21:09:52 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.165 1999/05/14 23:10:08 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; *&t;&t;Andi Kleen:&t;&t;Process packets with PSH set in the&n; *&t;&t;&t;&t;&t;fast path.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -2587,23 +2587,6 @@ op_amp
 id|sk-&gt;write_queue
 )paren
 suffix:semicolon
-id|__u32
-id|when
-op_assign
-id|tp-&gt;rto
-op_minus
-(paren
-id|tcp_time_stamp
-op_minus
-id|TCP_SKB_CB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
-id|when
-)paren
-suffix:semicolon
 multiline_comment|/* Some data was ACK&squot;d, if still retransmitting (due to a&n;&t; * timeout), resend more of the retransmit queue.  The&n;&t; * congestion window is handled properly by that code.&n;&t; */
 r_if
 c_cond
@@ -2630,6 +2613,37 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|__u32
+id|when
+op_assign
+id|tp-&gt;rto
+op_minus
+(paren
+id|tcp_time_stamp
+op_minus
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|when
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|__s32
+)paren
+id|when
+OL
+l_int|0
+)paren
+id|when
+op_assign
+l_int|1
+suffix:semicolon
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -2742,12 +2756,6 @@ id|tp-&gt;snd_una
 )paren
 r_goto
 id|uninteresting_ack
-suffix:semicolon
-id|dst_confirm
-c_func
-(paren
-id|sk-&gt;dst_cache
-)paren
 suffix:semicolon
 multiline_comment|/* If there is data set flag 1 */
 r_if
@@ -3097,6 +3105,29 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* It is not a brain fart, I thought a bit now. 8)&n;&t; *&n;&t; * Forward progress is indicated, if:&n;&t; *   1. the ack acknowledges new data.&n;&t; *   2. or the ack is duplicate, but it is caused by new segment&n;&t; *      arrival. This case is filtered by:&n;&t; *      - it contains no data, syn or fin.&n;&t; *      - it does not update window.&n;&t; *   3. or new SACK. It is difficult to check, so that we ignore it.&n;&t; *&n;&t; * Forward progress is also indicated by arrival new data,&n;&t; * which was caused by window open from our side. This case is more&n;&t; * difficult and it is made (alas, incorrectly) in tcp_data_queue().&n;&t; *                                              --ANK (990513)&n;&t; */
+r_if
+c_cond
+(paren
+id|ack
+op_ne
+id|tp-&gt;snd_una
+op_logical_or
+(paren
+id|flag
+op_eq
+l_int|0
+op_logical_and
+op_logical_neg
+id|th-&gt;fin
+)paren
+)paren
+id|dst_confirm
+c_func
+(paren
+id|sk-&gt;dst_cache
+)paren
+suffix:semicolon
 multiline_comment|/* Remember the highest ack received. */
 id|tp-&gt;snd_una
 op_assign
@@ -7489,6 +7520,53 @@ c_cond
 id|th-&gt;ack
 )paren
 (brace
+multiline_comment|/* rfc793:&n;&t;&t;&t; * &quot;If the state is SYN-SENT then&n;&t;&t;&t; *    first check the ACK bit&n;&t;&t;&t; *      If the ACK bit is set&n;&t;&t;&t; *&t;  If SEG.ACK =&lt; ISS, or SEG.ACK &gt; SND.NXT, send&n;&t;&t;&t; *        a reset (unless the RST bit is set, if so drop&n;&t;&t;&t; *        the segment and return)&quot;&n;&t;&t;&t; *&n;&t;&t;&t; *  I cite this place to emphasize one essential&n;&t;&t;&t; *  detail, this check is different of one&n;&t;&t;&t; *  in established state: SND.UNA &lt;= SEG.ACK &lt;= SND.NXT.&n;&t;&t;&t; *  SEG_ACK == SND.UNA == ISS is invalid in SYN-SENT,&n;&t;&t;&t; *  because we have no previous data sent before SYN.&n;&t;&t;&t; *                                        --ANK(990513)&n;&t;&t;&t; *&n;&t;&t;&t; *  We do not send data with SYN, so that RFC-correct&n;&t;&t;&t; *  test reduces to:&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;zapped
+op_logical_or
+id|TCP_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|ack_seq
+op_ne
+id|tp-&gt;snd_nxt
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* Now ACK is acceptable.&n;&t;&t;&t; *&n;&t;&t;&t; * &quot;If the RST bit is set&n;&t;&t;&t; *    If the ACK was acceptable then signal the user &quot;error:&n;&t;&t;&t; *    connection reset&quot;, drop the segment, enter CLOSED state,&n;&t;&t;&t; *    delete TCB, and return.&quot;&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|th-&gt;rst
+)paren
+(brace
+id|tcp_reset
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_goto
+id|discard
+suffix:semicolon
+)brace
+multiline_comment|/* rfc793:&n;&t;&t;&t; *   &quot;fifth, if neither of the SYN or RST bits is set then&n;&t;&t;&t; *    drop the segment and return.&quot;&n;&t;&t;&t; *&n;&t;&t;&t; *    See note below!&n;&t;&t;&t; *                                        --ANK(990513)&n;&t;&t;         */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|th-&gt;syn
+)paren
+r_goto
+id|discard
+suffix:semicolon
+multiline_comment|/* rfc793:&n;&t;&t;&t; *   &quot;If the SYN bit is on ...&n;&t;&t;&t; *    are acceptable then ...&n;&t;&t;&t; *    (our SYN has been ACKed), change the connection&n;&t;&t;&t; *    state to ESTABLISHED...&quot;&n;&t;&t;&t; *&n;&t;&t;&t; * Do you see? SYN-less ACKs in SYN-SENT state are&n;&t;&t;&t; * completely ignored.&n;&t;&t;&t; *&n;&t;&t;&t; * The bug causing stalled SYN-SENT sockets&n;&t;&t;&t; * was here: tcp_ack advanced snd_una and canceled&n;&t;&t;&t; * retransmit timer, so that bare ACK received&n;&t;&t;&t; * in SYN-SENT state (even with invalid ack==ISS,&n;&t;&t;&t; * because tcp_ack check is too weak for SYN-SENT)&n;&t;&t;&t; * causes moving socket to invalid semi-SYN-SENT,&n;&t;&t;&t; * semi-ESTABLISHED state and connection hangs.&n;&t;&t;&t; *&n;&t;&t;&t; * There exist buggy stacks, which really send&n;&t;&t;&t; * such ACKs: f.e. 202.226.91.94 (okigate.oki.co.jp)&n;&t;&t;&t; * Actually, if this host did not try to get something&n;&t;&t;&t; * from ftp.inr.ac.ru I&squot;d never find this bug 8)&n;&t;&t;&t; *&n;&t;&t;&t; *                                     --ANK (990514)&n;&t;&t;&t; */
 id|tp-&gt;snd_wl1
 op_assign
 id|TCP_SKB_CB
@@ -7499,11 +7577,6 @@ id|skb
 op_member_access_from_pointer
 id|seq
 suffix:semicolon
-multiline_comment|/* We got an ack, but it&squot;s not a good ack. */
-r_if
-c_cond
-(paren
-op_logical_neg
 id|tcp_ack
 c_func
 (paren
@@ -7529,39 +7602,7 @@ id|ack_seq
 comma
 id|len
 )paren
-)paren
-(brace
-r_return
-l_int|1
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|th-&gt;rst
-)paren
-(brace
-id|tcp_reset
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-r_goto
-id|discard
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|th-&gt;syn
-)paren
-(brace
-r_goto
-id|discard
-suffix:semicolon
-)brace
 multiline_comment|/* Ok.. it&squot;s good. Set up sequence numbers and&n;&t;&t;&t; * move to established.&n;&t;&t;&t; */
 id|tp-&gt;rcv_nxt
 op_assign

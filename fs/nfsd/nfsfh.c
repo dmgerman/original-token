@@ -1598,6 +1598,25 @@ id|sb
 r_goto
 id|out_page
 suffix:semicolon
+id|result
+op_assign
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENOSYS
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sb-&gt;s_op-&gt;read_inode
+)paren
+multiline_comment|/* No working iget(), e.g. FAT */
+r_goto
+id|out_page
+suffix:semicolon
 id|root
 op_assign
 id|dget

@@ -154,6 +154,8 @@ DECL|macro|SPECIALIX_NORMAL_MAJOR
 mdefine_line|#define SPECIALIX_NORMAL_MAJOR 75
 DECL|macro|SPECIALIX_CALLOUT_MAJOR
 mdefine_line|#define SPECIALIX_CALLOUT_MAJOR 76
+DECL|macro|I2O_MAJOR
+mdefine_line|#define I2O_MAJOR&t;&t;80&t;/* 80-&gt;87 */
 DECL|macro|IDE6_MAJOR
 mdefine_line|#define IDE6_MAJOR&t;88
 DECL|macro|IDE7_MAJOR

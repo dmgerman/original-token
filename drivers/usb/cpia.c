@@ -6077,9 +6077,9 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This should be a separate module.&n; */
-DECL|function|cpia_init
+DECL|function|usb_cpia_init
 r_int
-id|cpia_init
+id|usb_cpia_init
 c_func
 (paren
 r_void

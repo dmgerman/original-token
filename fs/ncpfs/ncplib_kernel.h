@@ -19,6 +19,10 @@ macro_line|#endif
 macro_line|#include &lt;linux/ncp.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
+DECL|macro|NCP_MIN_SYMLINK_SIZE
+mdefine_line|#define NCP_MIN_SYMLINK_SIZE&t;8
+DECL|macro|NCP_MAX_SYMLINK_SIZE
+mdefine_line|#define NCP_MAX_SYMLINK_SIZE&t;512
 r_int
 id|ncp_negotiate_buffersize
 c_func
@@ -85,8 +89,36 @@ r_char
 op_star
 )paren
 suffix:semicolon
+DECL|function|ncp_read_bounce_size
+r_static
+r_inline
 r_int
-id|ncp_read
+id|ncp_read_bounce_size
+c_func
+(paren
+id|__u32
+id|size
+)paren
+(brace
+r_return
+r_sizeof
+(paren
+r_struct
+id|ncp_reply_header
+)paren
+op_plus
+l_int|2
+op_plus
+l_int|2
+op_plus
+id|size
+op_plus
+l_int|8
+suffix:semicolon
+)brace
+suffix:semicolon
+r_int
+id|ncp_read_bounce
 c_func
 (paren
 r_struct
@@ -106,33 +138,15 @@ op_star
 comma
 r_int
 op_star
-)paren
-suffix:semicolon
-r_int
-id|ncp_write
-c_func
-(paren
-r_struct
-id|ncp_server
-op_star
 comma
-r_const
-r_char
+r_void
 op_star
+id|bounce
 comma
 id|__u32
-comma
-id|__u16
-comma
-r_const
-r_char
-op_star
-comma
-r_int
-op_star
+id|bouncelen
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NCPFS_EXTRAS
 r_int
 id|ncp_read_kernel
 c_func
@@ -180,7 +194,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif
 r_int
 id|ncp_obtain_info
 c_func

@@ -4,6 +4,127 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &quot;usb.h&quot;
+macro_line|#ifdef CONFIG_USB_UHCI
+r_int
+id|uhci_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_OHCI
+r_int
+id|ohci_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_OHCI_HCD
+r_int
+id|ohci_hcd_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|function|usb_init
+r_int
+id|usb_init
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_USB_UHCI
+id|uhci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_OHCI
+id|ohci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_OHCI_HCD
+id|ohci_hcd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_MOUSE
+id|usb_mouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_KBD
+id|usb_kbd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_AUDIO
+id|usb_audio_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_ACM
+id|usb_acm_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_CPIA
+id|usb_cpia_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|usb_hub_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_drivers
+r_void
+id|cleanup_drivers
+c_func
+(paren
+r_void
+)paren
+(brace
+id|hub_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_USB_MOUSE
+id|usb_mouse_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 multiline_comment|/*&n; * We have a per-interface &quot;registered driver&quot; list.&n; */
 r_static
 id|LIST_HEAD
@@ -2546,8 +2667,6 @@ id|dev
 r_int
 r_int
 id|cfgno
-comma
-id|size
 suffix:semicolon
 r_int
 r_char
@@ -2580,6 +2699,10 @@ id|cfgno
 op_increment
 )paren
 (brace
+r_int
+r_int
+id|size
+suffix:semicolon
 multiline_comment|/* Get the first 8 bytes - guaranteed */
 r_if
 c_cond
@@ -2688,7 +2811,9 @@ id|dev
 comma
 id|buffer
 comma
-id|size
+id|bufptr
+op_minus
+id|buffer
 )paren
 suffix:semicolon
 )brace

@@ -1204,6 +1204,9 @@ r_return
 id|usb_dev
 suffix:semicolon
 )brace
+multiline_comment|/* FIXME! */
+DECL|macro|sohci_bulk_msg
+mdefine_line|#define sohci_bulk_msg NULL
 DECL|variable|sohci_device_operations
 r_struct
 id|usb_operations
@@ -1215,6 +1218,8 @@ comma
 id|sohci_usb_deallocate
 comma
 id|sohci_control_msg
+comma
+id|sohci_bulk_msg
 comma
 id|sohci_request_irq
 comma
@@ -6292,13 +6297,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-r_int
-id|usb_mouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|cleanup_module
 r_void
@@ -6386,32 +6384,6 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_USB_MOUSE
-id|usb_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_KBD&t;&t;
-id|usb_kbd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;
-id|hub_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_USB_AUDIO&t;&t;
-id|usb_audio_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;
 macro_line|#ifdef CONFIG_APM
 id|apm_register_callback
 c_func
@@ -6428,26 +6400,5 @@ suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
-)brace
-DECL|function|cleanup_drivers
-r_void
-id|cleanup_drivers
-c_func
-(paren
-r_void
-)paren
-(brace
-id|hub_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_USB_MOUSE
-id|usb_mouse_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 eof

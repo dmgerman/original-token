@@ -284,6 +284,7 @@ c_func
 (paren
 id|result
 )paren
+suffix:semicolon
 r_return
 id|result
 suffix:semicolon

@@ -475,8 +475,8 @@ l_int|1
 suffix:semicolon
 )brace
 r_void
-DECL|function|disable_irq
-id|disable_irq
+DECL|function|disable_irq_nosync
+id|disable_irq_nosync
 c_func
 (paren
 r_int
@@ -504,6 +504,24 @@ id|restore_flags
 c_func
 (paren
 id|flags
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|disable_irq
+id|disable_irq
+c_func
+(paren
+r_int
+r_int
+id|irq_nr
+)paren
+(brace
+multiline_comment|/* This works non-SMP, and SMP until we write code to distribute&n;&t;   interrupts to more that cpu 0.  */
+id|disable_irq_nosync
+c_func
+(paren
+id|irq_nr
 )paren
 suffix:semicolon
 )brace

@@ -564,6 +564,7 @@ macro_line|#include &lt;linux/nfs_fs_i.h&gt;
 macro_line|#include &lt;linux/sysv_fs_i.h&gt;
 macro_line|#include &lt;linux/affs_fs_i.h&gt;
 macro_line|#include &lt;linux/ufs_fs_i.h&gt;
+macro_line|#include &lt;linux/efs_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/romfs_fs_i.h&gt;
 macro_line|#include &lt;linux/smb_fs_i.h&gt;
@@ -888,6 +889,11 @@ DECL|member|ufs_i
 r_struct
 id|ufs_inode_info
 id|ufs_i
+suffix:semicolon
+DECL|member|efs_i
+r_struct
+id|efs_inode_info
+id|efs_i
 suffix:semicolon
 DECL|member|romfs_i
 r_struct
@@ -1412,6 +1418,7 @@ macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/sysv_fs_sb.h&gt;
 macro_line|#include &lt;linux/affs_fs_sb.h&gt;
 macro_line|#include &lt;linux/ufs_fs_sb.h&gt;
+macro_line|#include &lt;linux/efs_fs_sb.h&gt;
 macro_line|#include &lt;linux/romfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/smb_fs_sb.h&gt;
 macro_line|#include &lt;linux/hfs_fs_sb.h&gt;
@@ -1579,6 +1586,11 @@ DECL|member|ufs_sb
 r_struct
 id|ufs_sb_info
 id|ufs_sb
+suffix:semicolon
+DECL|member|efs_sb
+r_struct
+id|efs_sb_info
+id|efs_sb
 suffix:semicolon
 DECL|member|romfs_sb
 r_struct
@@ -3645,6 +3657,31 @@ c_func
 r_struct
 id|inode
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|inode
+op_star
+id|igrab
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_extern
+id|ino_t
+id|iunique
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+comma
+id|ino_t
 )paren
 suffix:semicolon
 r_extern

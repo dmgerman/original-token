@@ -1317,6 +1317,7 @@ id|TOGGLE_AUTO
 comma
 id|OHCI_TD_ROUND
 comma
+op_amp
 id|dev-&gt;data
 comma
 id|DATA_BUF_LEN
@@ -2183,6 +2184,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* FIXME! */
+DECL|macro|ohci_bulk_msg
+mdefine_line|#define ohci_bulk_msg NULL
 multiline_comment|/*&n; * functions for the generic USB driver&n; */
 DECL|variable|ohci_device_operations
 r_struct
@@ -2195,6 +2199,8 @@ comma
 id|ohci_usb_deallocate
 comma
 id|ohci_control_msg
+comma
+id|ohci_bulk_msg
 comma
 id|ohci_request_irq
 comma
@@ -2462,6 +2468,32 @@ id|OHCI_USB_BLE
 comma
 op_amp
 id|ohci-&gt;regs-&gt;control
+)paren
+suffix:semicolon
+multiline_comment|/* Force global power enable -gal@cs.uni-magdeburg.de */
+multiline_comment|/* &n;&t; * This turns on global power switching for all the ports&n;&t; * and tells the HC that all of the ports should be powered on&n;&t; * all of the time.&n;&t; *&n;&t; * TODO: This could be battery draining for laptops.. We&n;&t; *       should implement power switching.&n;&t; */
+id|writel_set
+c_func
+(paren
+id|OHCI_ROOT_A_NPS
+comma
+op_amp
+id|ohci-&gt;regs-&gt;roothub.a
+)paren
+suffix:semicolon
+id|writel_mask
+c_func
+(paren
+op_complement
+(paren
+(paren
+id|__u32
+)paren
+id|OHCI_ROOT_A_PSM
+)paren
+comma
+op_amp
+id|ohci-&gt;regs-&gt;roothub.a
 )paren
 suffix:semicolon
 multiline_comment|/* Turn on power to the root hub ports (thanks Roman!) */
@@ -3961,7 +3993,7 @@ c_func
 op_amp
 id|dev-&gt;ed
 (braket
-id|ED_INT_32
+id|ED_INT_1
 )braket
 )paren
 suffix:semicolon
@@ -3985,7 +4017,7 @@ c_cond
 (paren
 id|i
 op_amp
-l_int|1
+l_int|16
 )paren
 id|dev-&gt;hcca-&gt;int_table
 (braket
@@ -3998,57 +4030,10 @@ c_func
 op_amp
 id|dev-&gt;ed
 (braket
-id|ED_INT_16
+id|ED_INT_32
 )braket
 )paren
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|i
-op_amp
-l_int|2
-)paren
-id|dev-&gt;hcca-&gt;int_table
-(braket
-id|i
-)braket
-op_assign
-id|virt_to_bus
-c_func
-(paren
-op_amp
-id|dev-&gt;ed
-(braket
-id|ED_INT_8
-)braket
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|i
-op_amp
-l_int|4
-)paren
-id|dev-&gt;hcca-&gt;int_table
-(braket
-id|i
-)braket
-op_assign
-id|virt_to_bus
-c_func
-(paren
-op_amp
-id|dev-&gt;ed
-(braket
-id|ED_INT_4
-)braket
-)paren
-suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
@@ -4067,17 +4052,16 @@ c_func
 op_amp
 id|dev-&gt;ed
 (braket
-id|ED_INT_2
+id|ED_INT_16
 )braket
 )paren
 suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
 id|i
 op_amp
-l_int|16
+l_int|4
 )paren
 id|dev-&gt;hcca-&gt;int_table
 (braket
@@ -4090,7 +4074,51 @@ c_func
 op_amp
 id|dev-&gt;ed
 (braket
-id|ED_INT_1
+id|ED_INT_8
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_amp
+l_int|2
+)paren
+id|dev-&gt;hcca-&gt;int_table
+(braket
+id|i
+)braket
+op_assign
+id|virt_to_bus
+c_func
+(paren
+op_amp
+id|dev-&gt;ed
+(braket
+id|ED_INT_4
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_amp
+l_int|1
+)paren
+id|dev-&gt;hcca-&gt;int_table
+(braket
+id|i
+)braket
+op_assign
+id|virt_to_bus
+c_func
+(paren
+op_amp
+id|dev-&gt;ed
+(braket
+id|ED_INT_2
 )braket
 )paren
 suffix:semicolon
@@ -4670,7 +4698,7 @@ suffix:semicolon
 multiline_comment|/* handle_apm_event() */
 macro_line|#endif
 macro_line|#ifdef OHCI_TIMER
-multiline_comment|/*&n; * Inspired by I&#xfffd;aky&squot;s driver.  This function is a timer routine that&n; * is called OHCI_TIMER_FREQ times per second.  It polls the root hub&n; * for status changes as on my system things are acting a bit odd at&n; * the moment..&n; */
+multiline_comment|/*&n; * Inspired by I&#xfffd;aky&squot;s driver.  This function is a timer routine that&n; * is called every OHCI_TIMER_FREQ ms.  It polls the root hub for&n; * status changes as on my system the RHSC interrupt just doesn&squot;t&n; * play well with others.. (so RHSC is turned off by default in this&n; * driver)&n; * [my controller is a &quot;SiS 7001 USB (rev 16)&quot;]&n; * -greg&n; */
 DECL|function|ohci_timer_func
 r_static
 r_void
@@ -4699,7 +4727,7 @@ c_func
 id|ohci
 )paren
 suffix:semicolon
-multiline_comment|/* press the snooze button... */
+multiline_comment|/* set the next timer */
 id|mod_timer
 c_func
 (paren
@@ -4709,9 +4737,13 @@ comma
 id|jiffies
 op_plus
 (paren
+(paren
 id|OHCI_TIMER_FREQ
 op_star
 id|HZ
+)paren
+op_div
+l_int|1000
 )paren
 )paren
 suffix:semicolon
@@ -4788,9 +4820,13 @@ op_assign
 id|jiffies
 op_plus
 (paren
+(paren
 id|OHCI_TIMER_FREQ
 op_star
 id|HZ
+)paren
+op_div
+l_int|1000
 )paren
 suffix:semicolon
 id|ohci_timer.data
@@ -4804,6 +4840,13 @@ suffix:semicolon
 id|ohci_timer.function
 op_assign
 id|ohci_timer_func
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|ohci_timer
+)paren
 suffix:semicolon
 macro_line|#endif
 id|retval
@@ -5179,33 +5222,6 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* TODO check module params here to determine what to load */
-macro_line|#ifdef CONFIG_USB_MOUSE
-id|usb_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_KBD&t;&t;
-id|usb_kbd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;
-id|hub_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_USB_AUDIO&t;&t;
-id|usb_audio_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;
 macro_line|#ifdef CONFIG_APM
 id|apm_register_callback
 c_func

@@ -25,13 +25,6 @@ c_func
 id|msdos_mkdir
 )paren
 suffix:semicolon
-DECL|variable|msdos_read_inode
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|msdos_read_inode
-)paren
-suffix:semicolon
 DECL|variable|msdos_rename
 id|EXPORT_SYMBOL
 c_func
@@ -51,13 +44,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|msdos_unlink
-)paren
-suffix:semicolon
-DECL|variable|msdos_unlink_umsdos
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|msdos_unlink_umsdos
 )paren
 suffix:semicolon
 DECL|variable|msdos_read_super

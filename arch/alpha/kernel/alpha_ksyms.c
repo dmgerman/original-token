@@ -150,6 +150,13 @@ c_func
 id|disable_irq
 )paren
 suffix:semicolon
+DECL|variable|disable_irq_nosync
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|disable_irq_nosync
+)paren
+suffix:semicolon
 DECL|variable|screen_info
 id|EXPORT_SYMBOL
 c_func

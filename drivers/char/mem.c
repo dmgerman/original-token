@@ -110,27 +110,10 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_USB_UHCI
-r_int
-id|uhci_init
-c_func
-(paren
+macro_line|#ifdef CONFIG_USB
+r_extern
 r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_OHCI
-r_int
-id|ohci_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_OHCI_HCD
-r_int
-id|ohci_hcd_init
+id|usb_init
 c_func
 (paren
 r_void
@@ -2383,27 +2366,11 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_USB
-macro_line|#ifdef CONFIG_USB_UHCI
-id|uhci_init
+id|usb_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_OHCI
-id|ohci_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_OHCI_HCD
-id|ohci_hcd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 macro_line|#if defined (CONFIG_FB)
 id|fbmem_init

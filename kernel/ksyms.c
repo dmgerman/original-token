@@ -423,6 +423,20 @@ c_func
 id|__fput
 )paren
 suffix:semicolon
+DECL|variable|igrab
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|igrab
+)paren
+suffix:semicolon
+DECL|variable|iunique
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|iunique
+)paren
+suffix:semicolon
 DECL|variable|iget
 id|EXPORT_SYMBOL
 c_func
@@ -898,6 +912,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__pollwait
+)paren
+suffix:semicolon
+DECL|variable|ROOT_DEV
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ROOT_DEV
 )paren
 suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)

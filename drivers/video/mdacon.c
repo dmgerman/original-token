@@ -2597,8 +2597,12 @@ op_amp
 id|mda_con
 comma
 id|mda_first_vc
+op_minus
+l_int|1
 comma
 id|mda_last_vc
+op_minus
+l_int|1
 comma
 l_int|0
 )paren

@@ -928,21 +928,15 @@ suffix:semicolon
 multiline_comment|/* 0 -&gt; no parent, 1 to n -&gt; parent=parent_dev+1 */
 multiline_comment|/* fields formerly in dmabuf.c */
 DECL|member|in_sleeper
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|in_sleeper
 suffix:semicolon
 DECL|member|out_sleeper
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|out_sleeper
 suffix:semicolon
 DECL|member|poll_sleeper
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|poll_sleeper
 suffix:semicolon
 multiline_comment|/* fields formerly in audio.c */

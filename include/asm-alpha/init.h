@@ -15,6 +15,6 @@ mdefine_line|#define __FINIT&t;&t;.previous
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA&t;.section&t;.data.init,&quot;a&quot;
 DECL|macro|__cacheline_aligned
-mdefine_line|#define __cacheline_aligned __attribute__((__aligned__(L1_CACHE_BYTES)))
+mdefine_line|#define __cacheline_aligned __attribute__((__aligned__(32)))
 macro_line|#endif
 eof

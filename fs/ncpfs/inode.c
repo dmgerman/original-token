@@ -1511,6 +1511,20 @@ l_int|NULL
 r_goto
 id|out_no_server
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|server
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|server
+)paren
+)paren
+suffix:semicolon
 id|NCP_SBP
 c_func
 (paren
@@ -1523,71 +1537,35 @@ id|server-&gt;ncp_filp
 op_assign
 id|ncp_filp
 suffix:semicolon
-id|server-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
-id|init_waitqueue_head
+multiline_comment|/*&t;server-&gt;lock = 0;&t;*/
+id|init_MUTEX
 c_func
 (paren
 op_amp
-id|server-&gt;wait
+id|server-&gt;sem
 )paren
 suffix:semicolon
 id|server-&gt;packet
 op_assign
 l_int|NULL
 suffix:semicolon
-id|server-&gt;buffer_size
-op_assign
-l_int|0
-suffix:semicolon
-id|server-&gt;conn_status
-op_assign
-l_int|0
-suffix:semicolon
-id|server-&gt;root_dentry
-op_assign
-l_int|NULL
-suffix:semicolon
-id|server-&gt;root_setuped
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/*&t;server-&gt;buffer_size = 0;&t;*/
+multiline_comment|/*&t;server-&gt;conn_status = 0;&t;*/
+multiline_comment|/*&t;server-&gt;root_dentry = NULL;&t;*/
+multiline_comment|/*&t;server-&gt;root_setuped = 0;&t;*/
 macro_line|#ifdef CONFIG_NCPFS_PACKET_SIGNING
-id|server-&gt;sign_wanted
-op_assign
-l_int|0
-suffix:semicolon
-id|server-&gt;sign_active
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/*&t;server-&gt;sign_wanted = 0;&t;*/
+multiline_comment|/*&t;server-&gt;sign_active = 0;&t;*/
 macro_line|#endif
 id|server-&gt;auth.auth_type
 op_assign
 id|NCP_AUTH_NONE
 suffix:semicolon
-id|server-&gt;auth.object_name_len
-op_assign
-l_int|0
-suffix:semicolon
-id|server-&gt;auth.object_name
-op_assign
-l_int|NULL
-suffix:semicolon
-id|server-&gt;auth.object_type
-op_assign
-l_int|0
-suffix:semicolon
-id|server-&gt;priv.len
-op_assign
-l_int|0
-suffix:semicolon
-id|server-&gt;priv.data
-op_assign
-l_int|NULL
-suffix:semicolon
+multiline_comment|/*&t;server-&gt;auth.object_name_len = 0;&t;*/
+multiline_comment|/*&t;server-&gt;auth.object_name = NULL;&t;*/
+multiline_comment|/*&t;server-&gt;auth.object_type = 0;&t;&t;*/
+multiline_comment|/*&t;server-&gt;priv.len = 0;&t;&t;&t;*/
+multiline_comment|/*&t;server-&gt;priv.data = NULL;&t;&t;*/
 id|server-&gt;m
 op_assign
 op_star
@@ -3039,7 +3017,7 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
-id|ncp_write
+id|ncp_write_kernel
 c_func
 (paren
 id|NCP_SERVER

@@ -1646,16 +1646,6 @@ op_amp
 id|pcicmd
 )paren
 suffix:semicolon
-id|pci_write_config_byte
-c_func
-(paren
-id|dev
-comma
-l_int|0x80
-comma
-l_int|0x80
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1265,6 +1265,20 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|smp_percpu_timer_interrupt
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|smp_boot_cpuid
+suffix:semicolon
 multiline_comment|/* bios32.c */
 r_extern
 r_void
@@ -1396,11 +1410,10 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|__start_cpu
+id|__smp_callin
 c_func
 (paren
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* entry.S */

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/affs_fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
+macro_line|#include &lt;linux/efs_fs.h&gt;
 macro_line|#include &lt;linux/romfs_fs.h&gt;
 macro_line|#include &lt;linux/auto_fs.h&gt;
 macro_line|#include &lt;linux/qnx4_fs.h&gt;
@@ -194,6 +195,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_UFS_FS
 id|init_ufs_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_EFS_FS
+id|init_efs_fs
 c_func
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * kernel/traps.c&n; *&n; * (C) Copyright 1994 Linus Torvalds&n; */
+multiline_comment|/*&n; * arch/alpha/kernel/traps.c&n; *&n; * (C) Copyright 1994 Linus Torvalds&n; */
 multiline_comment|/*&n; * This file initializes the trap entry points&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -429,6 +429,19 @@ l_int|8
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|printk
+c_func
+(paren
+l_string|&quot;CPU %d &quot;
+comma
+id|hard_smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -647,15 +660,15 @@ multiline_comment|/* Software-completion summary bit is set, so try to&n;&t;&t; 
 r_if
 c_cond
 (paren
-id|implver
+op_logical_neg
+id|amask
 c_func
 (paren
+id|AMASK_PRECISE_TRAP
 )paren
-op_eq
-id|IMPLVER_EV6
 )paren
 (brace
-multiline_comment|/* Whee!  EV6 has precice exceptions.  */
+multiline_comment|/* 21264 (except pass 1) has precise exceptions.  */
 r_if
 c_cond
 (paren
@@ -688,11 +701,6 @@ r_return
 suffix:semicolon
 )brace
 )brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#if 0
 id|printk
 c_func
@@ -730,11 +738,6 @@ comma
 id|current
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1060,11 +1063,6 @@ id|pt_regs
 id|regs
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|die_if_kernel
 c_func
 (paren
@@ -1084,11 +1082,6 @@ c_func
 id|SIGILL
 comma
 id|current
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1766,11 +1759,6 @@ comma
 id|pc
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1779,11 +1767,6 @@ comma
 id|pc
 comma
 id|newpc
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 (paren
@@ -2619,11 +2602,6 @@ OL
 l_int|5
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2642,11 +2620,6 @@ comma
 id|opcode
 comma
 id|reg
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -3451,11 +3424,6 @@ op_sub_assign
 l_int|4
 suffix:semicolon
 multiline_comment|/* make pc point to faulting insn */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|send_sig
 c_func
 (paren
@@ -3466,11 +3434,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 id|give_sigbus
@@ -3478,11 +3441,6 @@ suffix:colon
 id|regs-&gt;pc
 op_sub_assign
 l_int|4
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|send_sig
 c_func
@@ -3492,11 +3450,6 @@ comma
 id|current
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

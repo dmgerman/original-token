@@ -180,9 +180,16 @@ suffix:semicolon
 multiline_comment|/* get the head_td */
 DECL|macro|ed_head_td
 mdefine_line|#define ed_head_td(ed)&t;((ed)-&gt;_head_td &amp; 0xfffffff0)
-multiline_comment|/* save the carry flag while setting the head_td */
+multiline_comment|/* save the carry &amp; halted flag while setting the head_td */
 DECL|macro|set_ed_head_td
 mdefine_line|#define set_ed_head_td(ed, td)&t;((ed)-&gt;_head_td = (td) | ((ed)-&gt;_head_td &amp; 3))
+multiline_comment|/* Control the ED&squot;s halted flag */
+DECL|macro|ohci_halt_ed
+mdefine_line|#define ohci_halt_ed(ed)&t;((ed)-&gt;_head_td |= 1)
+DECL|macro|ohci_unhalt_ed
+mdefine_line|#define ohci_unhalt_ed(ed)&t;((ed)-&gt;_head_td &amp;= ~(__u32)1)
+DECL|macro|ohci_ed_halted
+mdefine_line|#define ohci_ed_halted(ed)&t;((ed)-&gt;_head_td &amp; 1)
 DECL|macro|OHCI_ED_SKIP
 mdefine_line|#define OHCI_ED_SKIP&t;(1 &lt;&lt; 14)
 DECL|macro|OHCI_ED_MPS
@@ -489,10 +496,10 @@ l_int|32
 suffix:semicolon
 multiline_comment|/* &n; * Read a MMIO register and re-write it after ANDing with (m)&n; */
 DECL|macro|writel_mask
-mdefine_line|#define writel_mask(m, a) writel( (readl((__u32)(a))) &amp; (__u32)(m), (__u32)(a) )
+mdefine_line|#define writel_mask(m, a) writel( (readl((unsigned long)(a))) &amp; (__u32)(m), (unsigned long)(a) )
 multiline_comment|/*&n; * Read a MMIO register and re-write it after ORing with (b)&n; */
 DECL|macro|writel_set
-mdefine_line|#define writel_set(b, a) writel( (readl((__u32)(a))) | (__u32)(b), (__u32)(a) )
+mdefine_line|#define writel_set(b, a) writel( (readl((unsigned long)(a))) | (__u32)(b), (unsigned long)(a) )
 DECL|macro|PORT_CCS
 mdefine_line|#define PORT_CCS&t;(1)&t;&t;/* port current connect status */
 DECL|macro|PORT_PES
@@ -530,6 +537,12 @@ DECL|macro|OHCI_ROOT_OCIC
 mdefine_line|#define OHCI_ROOT_OCIC&t;(1 &lt;&lt; 17)&t;/* Overcurrent indicator change */
 DECL|macro|OHCI_ROOT_CRWE
 mdefine_line|#define OHCI_ROOT_CRWE&t;(1 &lt;&lt; 31)&t;/* Clear RemoteWakeupEnable */
+multiline_comment|/*&n; * Root hub A register masks&n; */
+DECL|macro|OHCI_ROOT_A_NPS
+mdefine_line|#define OHCI_ROOT_A_NPS&t;(1 &lt;&lt; 9)
+DECL|macro|OHCI_ROOT_A_PSM
+mdefine_line|#define OHCI_ROOT_A_PSM&t;(1 &lt;&lt; 8)
+multiline_comment|/*&n; * Root hub B register masks&n; */
 multiline_comment|/*&n; * Interrupt register masks&n; */
 DECL|macro|OHCI_INTR_SO
 mdefine_line|#define OHCI_INTR_SO&t;(1)
@@ -611,9 +624,11 @@ multiline_comment|/* List of interrupt active TDs for this OHCI */
 )brace
 suffix:semicolon
 DECL|macro|OHCI_TIMER
-mdefine_line|#define OHCI_TIMER
+mdefine_line|#define OHCI_TIMER&t;&t;/* enable the OHCI timer */
 DECL|macro|OHCI_TIMER_FREQ
-mdefine_line|#define OHCI_TIMER_FREQ&t;(1)&t;&t;/* frequency of OHCI status checks */
+mdefine_line|#define OHCI_TIMER_FREQ&t;(234)&t;/* ms between each root hub status check */
+DECL|macro|OHCI_RHSC_INT
+macro_line|#undef OHCI_RHSC_INT&t;&t;/* don&squot;t use root hub status interrupts */
 multiline_comment|/* Debugging code */
 r_void
 id|show_ohci_ed

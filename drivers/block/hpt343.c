@@ -1874,16 +1874,6 @@ l_int|0x0011
 )paren
 suffix:semicolon
 macro_line|#endif
-id|pci_write_config_byte
-c_func
-(paren
-id|dev
-comma
-id|HPT343_PCI_INIT_REG
-comma
-l_int|0x80
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

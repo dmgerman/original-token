@@ -1857,9 +1857,9 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This should be a separate module.&n; */
-DECL|function|hub_init
+DECL|function|usb_hub_init
 r_int
-id|hub_init
+id|usb_hub_init
 c_func
 (paren
 r_void

@@ -154,14 +154,16 @@ l_string|&quot; Notify jacques@solucorp.qc.ca&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|inode-&gt;i_count
+op_eq
+l_int|1
+)paren
 id|inode-&gt;u.umsdos_i.i_patched
 op_assign
 l_int|0
-suffix:semicolon
-id|fat_put_inode
-(paren
-id|inode
-)paren
 suffix:semicolon
 )brace
 DECL|function|UMSDOS_put_super
@@ -533,41 +535,6 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Load an inode from disk.&n; */
-multiline_comment|/* #Specification: Inode / post initialisation&n; * To completely initialise an inode, we need access to the owner&n; * directory, so we can locate more info in the EMD file. This is&n; * not available the first time the inode is accessed, so we use&n; * a value in the inode to tell if it has been finally initialised.&n; * &n; * New inodes are obtained by the lookup and create routines, and&n; * each of these must ensure that the inode gets patched.&n; */
-DECL|function|UMSDOS_read_inode
-r_void
-id|UMSDOS_read_inode
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;UMSDOS_read_inode %p ino = %lu &quot;
-comma
-id|inode
-comma
-id|inode-&gt;i_ino
-)paren
-)paren
-suffix:semicolon
-id|msdos_read_inode
-(paren
-id|inode
-)paren
-suffix:semicolon
-multiline_comment|/* inode needs patching */
-id|inode-&gt;u.umsdos_i.i_patched
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 r_int
@@ -1108,7 +1075,7 @@ id|super_operations
 id|umsdos_sops
 op_assign
 (brace
-id|UMSDOS_read_inode
+l_int|NULL
 comma
 multiline_comment|/* read_inode */
 id|UMSDOS_write_inode
@@ -1133,7 +1100,11 @@ id|fat_statfs
 comma
 multiline_comment|/* statfs */
 l_int|NULL
+comma
 multiline_comment|/* remount_fs */
+id|fat_clear_inode
+comma
+multiline_comment|/* clear_inode */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Read the super block of an Extended MS-DOS FS.&n; */
@@ -1202,7 +1173,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;UMSDOS dentry-pre 0.84 &quot;
+l_string|&quot;UMSDOS 0.85 &quot;
 l_string|&quot;(compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION
@@ -1347,6 +1318,10 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check for an alternate root if we&squot;re the root device.&n; */
+r_extern
+id|kdev_t
+id|ROOT_DEV
+suffix:semicolon
 DECL|function|check_pseudo_root
 r_static
 r_struct
@@ -1369,14 +1344,13 @@ comma
 op_star
 id|init
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check whether we&squot;re mounted as the root device.&n;&t; * If so, this should be the only superblock.&n;&t; */
+multiline_comment|/*&n;&t; * Check whether we&squot;re mounted as the root device.&n;&t; * must check like this, because we can be used with initrd&n;&t; */
 r_if
 c_cond
 (paren
-id|sb-&gt;s_list.next-&gt;next
+id|sb-&gt;s_dev
 op_ne
-op_amp
-id|sb-&gt;s_list
+id|ROOT_DEV
 )paren
 r_goto
 id|out_noroot

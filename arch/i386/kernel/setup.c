@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and fix against Cyrix &quot;coma bug&quot; by&n; *      Zoltan Boszormenyi &lt;zboszor@mol.hu&gt; February 1999.&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and fix against Cyrix &quot;coma bug&quot; by&n; *      Zoltan Boszormenyi &lt;zboszor@mol.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 199.&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3705,6 +3705,11 @@ id|lv
 comma
 id|hv
 )paren
+suffix:semicolon
+multiline_comment|/* Emulate MTRRs using Centaur&squot;s MCR. */
+id|c-&gt;x86_capability
+op_or_assign
+id|X86_FEATURE_MTRR
 suffix:semicolon
 )brace
 id|printk

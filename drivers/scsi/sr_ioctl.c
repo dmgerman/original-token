@@ -473,21 +473,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|SCpnt-&gt;sense_buffer
 (braket
 l_int|12
 )braket
 op_eq
 l_int|0x20
-op_logical_or
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|12
-)braket
-op_eq
-l_int|0x24
-)paren
 op_logical_and
 id|SCpnt-&gt;sense_buffer
 (braket
@@ -498,7 +489,6 @@ l_int|0x00
 )paren
 (brace
 multiline_comment|/* sense: Invalid command operation code */
-multiline_comment|/* or Invalid field in cdb */
 id|err
 op_assign
 op_minus

@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  linux/fs/hpfs/hpfs.h&n; *&n; *  HPFS structures by Chris Smith, 1993&n; *&n; *  a little bit modified by Mikulas Patocka, 1998-1999&n; */
 multiline_comment|/* The paper&n;&n;     Duncan, Roy&n;     Design goals and implementation of the new High Performance File System&n;     Microsoft Systems Journal  Sept 1989  v4 n5 p1(13)&n;&n;   describes what HPFS looked like when it was new, and it is the source&n;   of most of the information given here.  The rest is conjecture.&n;&n;   For definitive information on the Duncan paper, see it, not this file.&n;   For definitive information on HPFS, ask somebody else -- this is guesswork.&n;   There are certain to be many mistakes. */
 multiline_comment|/* Notation */
 DECL|typedef|secno
@@ -26,6 +27,8 @@ suffix:semicolon
 multiline_comment|/* sector number of an anode */
 multiline_comment|/* sector 0 */
 multiline_comment|/* The boot block is very like a FAT boot block, except that the&n;   29h signature byte is 28h instead, and the ID string is &quot;HPFS&quot;. */
+DECL|macro|BB_MAGIC
+mdefine_line|#define BB_MAGIC 0xaa55
 DECL|struct|hpfs_boot_block
 r_struct
 id|hpfs_boot_block
@@ -195,11 +198,25 @@ r_int
 id|magic1
 suffix:semicolon
 multiline_comment|/* fa53 e9c5, more magic? */
-DECL|member|huh202
-r_int
-id|huh202
-suffix:semicolon
+multiline_comment|/*unsigned huh202;*/
 multiline_comment|/* ?? 202 = N. of B. in 1.00390625 S.*/
+DECL|member|version
+r_char
+id|version
+suffix:semicolon
+multiline_comment|/* version of a filesystem  usually 2 */
+DECL|member|funcversion
+r_char
+id|funcversion
+suffix:semicolon
+multiline_comment|/* functional version - oldest version&n;  &t;&t;&t;&t;&t;   of filesystem that can understand&n;&t;&t;&t;&t;&t;   this disk */
+DECL|member|zero
+r_int
+r_int
+r_int
+id|zero
+suffix:semicolon
+multiline_comment|/* 0 */
 DECL|member|root
 id|fnode_secno
 id|root
@@ -240,11 +257,13 @@ id|time_t
 id|last_chkdsk
 suffix:semicolon
 multiline_comment|/* date last checked, 0 if never */
-DECL|member|zero4
-r_int
-id|zero4
-suffix:semicolon
+multiline_comment|/*unsigned zero4;*/
 multiline_comment|/* 0 */
+DECL|member|last_optimize
+id|time_t
+id|last_optimize
+suffix:semicolon
+multiline_comment|/* date last optimized, 0 if never */
 DECL|member|n_dir_band
 id|secno
 id|n_dir_band
@@ -265,19 +284,19 @@ id|secno
 id|dir_band_bitmap
 suffix:semicolon
 multiline_comment|/* free space map, 1 dnode per bit */
-DECL|member|zero5
-r_int
-id|zero5
+DECL|member|volume_name
+r_char
+id|volume_name
 (braket
-l_int|8
+l_int|32
 )braket
 suffix:semicolon
-multiline_comment|/* 0 */
-DECL|member|scratch_dnodes
+multiline_comment|/* not used */
+DECL|member|user_id_table
 id|secno
-id|scratch_dnodes
+id|user_id_table
 suffix:semicolon
-multiline_comment|/* ?? 8 preallocated sectors near dir&n;&t;&t;&t;&t;&t;   band, 4-aligned. */
+multiline_comment|/* 8 preallocated sectors - user id */
 DECL|member|zero6
 r_int
 id|zero6
@@ -313,13 +332,36 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* 0 clean, 1 &quot;improperly stopped&quot; */
-DECL|member|flag1234
-r_int
-id|flag1234
-suffix:colon
-l_int|4
-suffix:semicolon
+multiline_comment|/*unsigned flag1234: 4;*/
 multiline_comment|/* unknown flags */
+DECL|member|sparedir_used
+r_int
+id|sparedir_used
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* spare dirblks used */
+DECL|member|hotfixes_used
+r_int
+id|hotfixes_used
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* hotfixes used */
+DECL|member|bad_sector
+r_int
+id|bad_sector
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* bad sector, corrupted disk (???) */
+DECL|member|bad_bitmap
+r_int
+id|bad_bitmap
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* bad bitmap */
 DECL|member|fast
 r_int
 id|fast
@@ -327,13 +369,73 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* partition was fast formatted */
-DECL|member|flag6to31
+DECL|member|old_wrote
 r_int
-id|flag6to31
+id|old_wrote
 suffix:colon
-l_int|26
+l_int|1
 suffix:semicolon
-multiline_comment|/* unknown flags */
+multiline_comment|/* old version wrote to partion */
+DECL|member|old_wrote_1
+r_int
+id|old_wrote_1
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* old version wrote to partion (?) */
+DECL|member|install_dasd_limits
+r_int
+id|install_dasd_limits
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* HPFS386 flags */
+DECL|member|resynch_dasd_limits
+r_int
+id|resynch_dasd_limits
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|dasd_limits_operational
+r_int
+id|dasd_limits_operational
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|multimedia_active
+r_int
+id|multimedia_active
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|dce_acls_active
+r_int
+id|dce_acls_active
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|dasd_limits_dirty
+r_int
+id|dasd_limits_dirty
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|flag67
+r_int
+id|flag67
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|mm_contlgulty
+r_int
+r_char
+id|mm_contlgulty
+suffix:semicolon
+DECL|member|unused
+r_int
+r_char
+id|unused
+suffix:semicolon
 DECL|member|hotfix_map
 id|secno
 id|hotfix_map
@@ -369,14 +471,18 @@ r_int
 id|n_code_pages
 suffix:semicolon
 multiline_comment|/* number of code pages */
-DECL|member|large_numbers
-r_int
-id|large_numbers
-(braket
-l_int|2
-)braket
-suffix:semicolon
+multiline_comment|/*unsigned large_numbers[2];*/
 multiline_comment|/* ?? */
+DECL|member|super_crc
+r_int
+id|super_crc
+suffix:semicolon
+multiline_comment|/* on HPFS386 and LAN Server this is&n;  &t;&t;&t;&t;&t;   checksum of superblock, on normal&n;&t;&t;&t;&t;&t;   OS/2 unused */
+DECL|member|spare_crc
+r_int
+id|spare_crc
+suffix:semicolon
+multiline_comment|/* on HPFS386 checksum of spareblock */
 DECL|member|zero1
 r_int
 id|zero1
@@ -384,11 +490,12 @@ id|zero1
 l_int|15
 )braket
 suffix:semicolon
+multiline_comment|/* unused */
 DECL|member|spare_dnodes
 id|dnode_secno
 id|spare_dnodes
 (braket
-l_int|20
+l_int|100
 )braket
 suffix:semicolon
 multiline_comment|/* emergency free dnode list */
@@ -396,7 +503,7 @@ DECL|member|zero2
 r_int
 id|zero2
 (braket
-l_int|81
+l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/* room for more? */
@@ -574,9 +681,18 @@ r_int
 id|first_free
 suffix:semicolon
 multiline_comment|/* offset from start of dnode to&n;&t;&t;&t;&t;&t;   first free dir entry */
+DECL|member|root_dnode
+r_int
+id|root_dnode
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Is it root dnode? */
 DECL|member|increment_me
 r_int
 id|increment_me
+suffix:colon
+l_int|31
 suffix:semicolon
 multiline_comment|/* some kind of activity counter?&n;&t;&t;&t;&t;&t;   Neither HPFS.IFS nor CHKDSK cares&n;&t;&t;&t;&t;&t;   if you change this word */
 DECL|member|up
@@ -617,9 +733,9 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* set on phony ^A^A (&quot;.&quot;) entry */
-DECL|member|flag1
+DECL|member|has_acl
 r_int
-id|flag1
+id|has_acl
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -637,21 +753,23 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* set on phony &bslash;377 entry */
-DECL|member|flag4
+DECL|member|has_ea
 r_int
-id|flag4
+id|has_ea
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|flag5
+multiline_comment|/* entry has EA */
+DECL|member|has_xtd_perm
 r_int
-id|flag5
+id|has_xtd_perm
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|flag6
+multiline_comment|/* has extended perm list (???) */
+DECL|member|has_explicit_acl
 r_int
-id|flag6
+id|has_explicit_acl
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -747,10 +865,20 @@ r_int
 id|ea_size
 suffix:semicolon
 multiline_comment|/* total EA length, bytes */
-DECL|member|zero1
+DECL|member|no_of_acls
 r_int
 r_char
-id|zero1
+id|no_of_acls
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* number of ACL&squot;s */
+DECL|member|reserver
+r_int
+r_char
+id|reserver
+suffix:colon
+l_int|5
 suffix:semicolon
 DECL|member|ix
 r_int
@@ -773,111 +901,6 @@ multiline_comment|/* file name */
 multiline_comment|/* dnode_secno down;&t;  btree down pointer, if present,&n;     &t;&t;&t;  follows name on next word boundary, or maybe it&n;&t;&t;&t;  precedes next dirent, which is on a word boundary. */
 )brace
 suffix:semicolon
-multiline_comment|/* The b-tree down pointer from a dir entry */
-DECL|function|de_down_pointer
-r_static
-r_inline
-id|dnode_secno
-id|de_down_pointer
-(paren
-r_struct
-id|hpfs_dirent
-op_star
-id|de
-)paren
-(brace
-r_return
-op_star
-(paren
-id|dnode_secno
-op_star
-)paren
-(paren
-(paren
-r_void
-op_star
-)paren
-id|de
-op_plus
-id|de-&gt;length
-op_minus
-l_int|4
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* The first dir entry in a dnode */
-DECL|function|dnode_first_de
-r_static
-r_inline
-r_struct
-id|hpfs_dirent
-op_star
-id|dnode_first_de
-(paren
-r_struct
-id|dnode
-op_star
-id|dnode
-)paren
-(brace
-r_return
-(paren
-r_void
-op_star
-)paren
-id|dnode-&gt;dirent
-suffix:semicolon
-)brace
-multiline_comment|/* The end+1 of the dir entries */
-DECL|function|dnode_end_de
-r_static
-r_inline
-r_struct
-id|hpfs_dirent
-op_star
-id|dnode_end_de
-(paren
-r_struct
-id|dnode
-op_star
-id|dnode
-)paren
-(brace
-r_return
-(paren
-r_void
-op_star
-)paren
-id|dnode
-op_plus
-id|dnode-&gt;first_free
-suffix:semicolon
-)brace
-multiline_comment|/* The dir entry after dir entry de */
-DECL|function|de_next_de
-r_static
-r_inline
-r_struct
-id|hpfs_dirent
-op_star
-id|de_next_de
-(paren
-r_struct
-id|hpfs_dirent
-op_star
-id|de
-)paren
-(brace
-r_return
-(paren
-r_void
-op_star
-)paren
-id|de
-op_plus
-id|de-&gt;length
-suffix:semicolon
-)brace
 multiline_comment|/* B+ tree: allocation info in fnodes and anodes */
 multiline_comment|/* dnodes point to fnodes which are responsible for listing the sectors&n;   assigned to the file.  This is done with trees of (length,address)&n;   pairs.  (Actually triples, of (length, file-address, disk-address)&n;   which can represent holes.  Find out if HPFS does that.)&n;   At any rate, fnodes contain a small tree; if subtrees are needed&n;   they occupy essentially a full block in anodes.  A leaf-level tree node&n;   has 3-word entries giving sector runs, a non-leaf node has 2-word&n;   entries giving subtree pointers.  A flag in the header says which. */
 DECL|struct|bplus_leaf_node
@@ -921,12 +944,13 @@ DECL|struct|bplus_header
 r_struct
 id|bplus_header
 (brace
-DECL|member|flag0
+DECL|member|hbff
 r_int
-id|flag0
+id|hbff
 suffix:colon
 l_int|1
 suffix:semicolon
+multiline_comment|/* high bit of first free entry offset */
 DECL|member|flag1
 r_int
 id|flag1
@@ -959,12 +983,13 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* ? we&squot;re pointed to by an fnode,&n;&t;&t;&t;&t;&t;   the data btree or some ea or the&n;&t;&t;&t;&t;&t;   main ea bootage pointer ea_secno */
 multiline_comment|/* also can get set in fnodes, which&n;&t;&t;&t;&t;&t;   may be a chkdsk glitch or may mean&n;&t;&t;&t;&t;&t;   this bit is irrelevant in fnodes,&n;&t;&t;&t;&t;&t;   or this interpretation is all wet */
-DECL|member|flag6
+DECL|member|binary_search
 r_int
-id|flag6
+id|binary_search
 suffix:colon
 l_int|1
 suffix:semicolon
+multiline_comment|/* suggest binary search (unused) */
 DECL|member|internal
 r_int
 id|internal
@@ -1024,8 +1049,8 @@ id|u
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* fnode: root of allocation b+ tree, and EAs */
-multiline_comment|/* Every file and every directory has one fnode, pointed to by the directory&n;   entry and pointing to the file&squot;s sectors or directory&squot;s root dnode.  EAs&n;   are also stored here, and there are said to be ACLs somewhere here too. */
+multiline_comment|/* fnode: root of allocation b+ tree, and EA&squot;s */
+multiline_comment|/* Every file and every directory has one fnode, pointed to by the directory&n;   entry and pointing to the file&squot;s sectors or directory&squot;s root dnode.  EA&squot;s&n;   are also stored here, and there are said to be ACL&squot;s somewhere here too. */
 DECL|macro|FNODE_MAGIC
 mdefine_line|#define FNODE_MAGIC 0xf7e40aae
 DECL|struct|fnode
@@ -1044,6 +1069,7 @@ id|zero1
 l_int|2
 )braket
 suffix:semicolon
+multiline_comment|/* read history */
 DECL|member|len
 DECL|member|name
 r_int
@@ -1061,13 +1087,29 @@ id|fnode_secno
 id|up
 suffix:semicolon
 multiline_comment|/* pointer to file&squot;s directory fnode */
-DECL|member|zero2
-r_int
-id|zero2
-(braket
-l_int|3
-)braket
+multiline_comment|/*unsigned zero2[3];*/
+DECL|member|acl_size_l
+id|secno
+id|acl_size_l
 suffix:semicolon
+DECL|member|acl_secno
+id|secno
+id|acl_secno
+suffix:semicolon
+DECL|member|acl_size_s
+r_int
+r_int
+id|acl_size_s
+suffix:semicolon
+DECL|member|acl_anode
+r_char
+id|acl_anode
+suffix:semicolon
+DECL|member|zero2
+r_char
+id|zero2
+suffix:semicolon
+multiline_comment|/* history bit count */
 DECL|member|ea_size_l
 r_int
 id|ea_size_l
@@ -1219,26 +1261,37 @@ DECL|member|n_needea
 r_int
 id|n_needea
 suffix:semicolon
-multiline_comment|/* number of EAs with NEEDEA set */
-DECL|member|zero4
-r_int
-id|zero4
+multiline_comment|/* number of EA&squot;s with NEEDEA set */
+DECL|member|user_id
+r_char
+id|user_id
 (braket
-l_int|4
+l_int|16
 )braket
 suffix:semicolon
+multiline_comment|/* unused */
 DECL|member|ea_offs
 r_int
 id|ea_offs
 suffix:semicolon
 multiline_comment|/* offset from start of fnode&n;&t;&t;&t;&t;&t;   to first fnode-resident ea */
-DECL|member|zero5
-r_int
-id|zero5
-(braket
-l_int|2
-)braket
+DECL|member|dasd_limit_treshhold
+r_char
+id|dasd_limit_treshhold
 suffix:semicolon
+DECL|member|dasd_limit_delta
+r_char
+id|dasd_limit_delta
+suffix:semicolon
+DECL|member|dasd_limit
+r_int
+id|dasd_limit
+suffix:semicolon
+DECL|member|dasd_usage
+r_int
+id|dasd_usage
+suffix:semicolon
+multiline_comment|/*unsigned zero5[2];*/
 DECL|member|ea
 r_int
 r_char
@@ -1247,7 +1300,7 @@ id|ea
 l_int|316
 )braket
 suffix:semicolon
-multiline_comment|/* zero or more EAs, packed together&n;&t;&t;&t;&t;&t;   with no alignment padding.&n;&t;&t;&t;&t;&t;   (Do not use this name, get here&n;&t;&t;&t;&t;&t;   via fnode + ea_offs. I think.) */
+multiline_comment|/* zero or more EA&squot;s, packed together&n;&t;&t;&t;&t;&t;   with no alignment padding.&n;&t;&t;&t;&t;&t;   (Do not use this name, get here&n;&t;&t;&t;&t;&t;   via fnode + ea_offs. I think.) */
 )brace
 suffix:semicolon
 multiline_comment|/* anode: 99.44% pure allocation tree */
@@ -1378,160 +1431,16 @@ r_int
 id|valuelen
 suffix:semicolon
 multiline_comment|/* length of value, bytes */
-multiline_comment|/*&n;    unsigned char name[namelen];&t;ASCII attrib name&n;    unsigned char nul;&t;&t;&t;terminating &squot;&bslash;0&squot;, not counted&n;    unsigned char value[valuelen];&t;value, arbitrary&n;      if this.indirect, valuelen is 8 and the value is&n;        unsigned length;&t;&t;real length of value, bytes&n;        secno secno;&t;&t;&t;sector address where it starts&n;      if this.anode, the above sector number is the root of an anode tree&n;        which points to the value.&n;  */
-)brace
-suffix:semicolon
-DECL|function|ea_name
-r_static
-r_inline
+DECL|member|name
 r_int
 r_char
-op_star
-id|ea_name
-(paren
-r_struct
-id|extended_attribute
-op_star
-id|ea
-)paren
-(brace
-r_return
-(paren
-r_void
-op_star
-)paren
-id|ea
-op_plus
-r_sizeof
-op_star
-id|ea
-suffix:semicolon
-)brace
-DECL|function|ea_value
-r_static
-r_inline
-r_int
-r_char
-op_star
-id|ea_value
-(paren
-r_struct
-id|extended_attribute
-op_star
-id|ea
-)paren
-(brace
-r_return
-(paren
-r_void
-op_star
-)paren
-id|ea
-op_plus
-r_sizeof
-op_star
-id|ea
-op_plus
-id|ea-&gt;namelen
-op_plus
-l_int|1
-suffix:semicolon
-)brace
-r_static
-r_inline
-r_struct
-id|extended_attribute
-op_star
-DECL|function|ea_next_ea
-id|ea_next_ea
-(paren
-r_struct
-id|extended_attribute
-op_star
-id|ea
-)paren
-(brace
-r_return
-(paren
-r_void
-op_star
-)paren
-id|ea
-op_plus
-r_sizeof
-op_star
-id|ea
-op_plus
-id|ea-&gt;namelen
-op_plus
-l_int|1
-op_plus
-id|ea-&gt;valuelen
-suffix:semicolon
-)brace
-DECL|function|ea_indirect_length
-r_static
-r_inline
-r_int
-id|ea_indirect_length
-(paren
-r_struct
-id|extended_attribute
-op_star
-id|ea
-)paren
-(brace
-r_int
-op_star
-id|v
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|ea_value
-(paren
-id|ea
-)paren
-suffix:semicolon
-r_return
-id|v
+id|name
 (braket
 l_int|0
 )braket
 suffix:semicolon
+multiline_comment|/*&n;    unsigned char name[namelen];&t;ascii attrib name&n;    unsigned char nul;&t;&t;&t;terminating &squot;&bslash;0&squot;, not counted&n;    unsigned char value[valuelen];&t;value, arbitrary&n;      if this.indirect, valuelen is 8 and the value is&n;        unsigned length;&t;&t;real length of value, bytes&n;        secno secno;&t;&t;&t;sector address where it starts&n;      if this.anode, the above sector number is the root of an anode tree&n;        which points to the value.&n;  */
 )brace
-DECL|function|ea_indirect_secno
-r_static
-r_inline
-id|secno
-id|ea_indirect_secno
-(paren
-r_struct
-id|extended_attribute
-op_star
-id|ea
-)paren
-(brace
-r_int
-op_star
-id|v
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|ea_value
-(paren
-id|ea
-)paren
 suffix:semicolon
-r_return
-id|v
-(braket
-l_int|1
-)braket
-suffix:semicolon
-)brace
 multiline_comment|/*&n;   Local Variables:&n;   comment-column: 40&n;   End:&n;*/
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/fat/cache.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; */
+multiline_comment|/*&n; *  linux/fs/fat/cache.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Mar 1999. AV. Changed cache, so that it uses the starting cluster instead&n; *&t;of inode number.&n; *  May 1999. AV. Fixed the bogosity with FAT32 (read &quot;FAT28&quot;). Fscking lusers.&n; */
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -353,6 +353,11 @@ op_rshift
 l_int|2
 )braket
 )paren
+suffix:semicolon
+multiline_comment|/* Fscking Microsoft marketing department. Their &quot;32&quot; is 28. */
+id|next
+op_and_assign
+l_int|0xfffffff
 suffix:semicolon
 r_if
 c_cond
@@ -1020,30 +1025,25 @@ id|fat_cache
 op_star
 id|walk
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+r_int
+id|first
+op_assign
+id|MSDOS_I
 c_func
 (paren
-l_string|&quot;cache lookup: &lt;%s,%d&gt; %d (%d,%d) -&gt; &quot;
-comma
-id|kdevname
-c_func
-(paren
-id|inode-&gt;i_dev
+id|inode
 )paren
-comma
-id|inode-&gt;i_ino
-comma
-id|cluster
-comma
-op_star
-id|f_clu
-comma
-op_star
-id|d_clu
-)paren
+op_member_access_from_pointer
+id|i_start
 suffix:semicolon
-macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|first
+)paren
+r_return
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1064,9 +1064,9 @@ id|inode-&gt;i_dev
 op_eq
 id|walk-&gt;device
 op_logical_and
-id|walk-&gt;ino
+id|walk-&gt;start_cluster
 op_eq
-id|inode-&gt;i_ino
+id|first
 op_logical_and
 id|walk-&gt;file_cluster
 op_le
@@ -1165,7 +1165,7 @@ c_func
 id|walk-&gt;device
 )paren
 comma
-id|walk-&gt;ino
+id|walk-&gt;start_cluster
 comma
 id|walk-&gt;file_cluster
 comma
@@ -1213,26 +1213,17 @@ comma
 op_star
 id|last
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+r_int
+id|first
+op_assign
+id|MSDOS_I
 c_func
 (paren
-l_string|&quot;cache add: &lt;%s,%d&gt; %d (%d)&bslash;n&quot;
-comma
-id|kdevname
-c_func
-(paren
-id|inode-&gt;i_dev
+id|inode
 )paren
-comma
-id|inode-&gt;i_ino
-comma
-id|f_clu
-comma
-id|d_clu
-)paren
+op_member_access_from_pointer
+id|i_start
 suffix:semicolon
-macro_line|#endif
 id|last
 op_assign
 l_int|NULL
@@ -1263,9 +1254,9 @@ id|inode-&gt;i_dev
 op_eq
 id|walk-&gt;device
 op_logical_and
-id|walk-&gt;ino
+id|walk-&gt;start_cluster
 op_eq
-id|inode-&gt;i_ino
+id|first
 op_logical_and
 id|walk-&gt;file_cluster
 op_eq
@@ -1333,9 +1324,9 @@ id|walk-&gt;device
 op_assign
 id|inode-&gt;i_dev
 suffix:semicolon
-id|walk-&gt;ino
+id|walk-&gt;start_cluster
 op_assign
-id|inode-&gt;i_ino
+id|first
 suffix:semicolon
 id|walk-&gt;file_cluster
 op_assign
@@ -1382,6 +1373,17 @@ id|fat_cache
 op_star
 id|walk
 suffix:semicolon
+r_int
+id|first
+op_assign
+id|MSDOS_I
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|i_start
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1402,9 +1404,9 @@ id|walk-&gt;device
 op_eq
 id|inode-&gt;i_dev
 op_logical_and
-id|walk-&gt;ino
+id|walk-&gt;start_cluster
 op_eq
-id|inode-&gt;i_ino
+id|first
 )paren
 id|walk-&gt;device
 op_assign
@@ -1822,6 +1824,7 @@ c_cond
 (paren
 id|last
 )paren
+(brace
 id|fat_access
 c_func
 (paren
@@ -1836,8 +1839,21 @@ id|inode-&gt;i_sb
 )paren
 )paren
 suffix:semicolon
+id|fat_cache_inval_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
 r_else
 (brace
+id|fat_cache_inval_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|MSDOS_I
 c_func
 (paren
@@ -1971,12 +1987,6 @@ id|unlock_fat
 c_func
 (paren
 id|inode-&gt;i_sb
-)paren
-suffix:semicolon
-id|fat_cache_inval_inode
-c_func
-(paren
-id|inode
 )paren
 suffix:semicolon
 r_return
