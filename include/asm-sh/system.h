@@ -22,7 +22,7 @@ macro_line|#else
 DECL|macro|prepare_to_switch
 mdefine_line|#define prepare_to_switch()&t;do { } while(0)
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next,last) do { &bslash;&n; register struct task_struct *__last; &bslash;&n; register unsigned long *__ts1 __asm__ (&quot;$r1&quot;) = &amp;prev-&gt;thread.sp; &bslash;&n; register unsigned long *__ts2 __asm__ (&quot;$r2&quot;) = &amp;prev-&gt;thread.pc; &bslash;&n; register unsigned long *__ts4 __asm__ (&quot;$r4&quot;) = (unsigned long *)prev; &bslash;&n; register unsigned long *__ts5 __asm__ (&quot;$r5&quot;) = (unsigned long *)next; &bslash;&n; register unsigned long *__ts6 __asm__ (&quot;$r6&quot;) = &amp;next-&gt;thread.sp; &bslash;&n; register unsigned long __ts7 __asm__ (&quot;$r7&quot;) = next-&gt;thread.pc; &bslash;&n; __asm__ __volatile__ (&quot;.balign 4&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;stc.l&t;$gbr, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;sts.l&t;$pr, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r8, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r9, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r10, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r11, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r12, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r13, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r14, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r15, @$r1&t;! save SP&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r6, $r15&t;! change to new stack&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;%0, @-$r15&t;! push R0 onto new stack&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mova&t;1f, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;%0, @$r2&t;! save PC&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;2f, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;jmp&t;@%0&t;&t;! call __switch_to&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot; lds&t;$r7, $pr&t;!  with return to new PC&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;.balign&t;4&bslash;n&quot;&t;&bslash;&n;&t;&t;       &quot;2:&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;.long&t;&quot; &quot;__switch_to&bslash;n&quot; &bslash;&n;&t;&t;       &quot;1:&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, %0&t;! pop R0 from new stack&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r14&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r13&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r12&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r11&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r10&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r9&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r8&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;lds.l&t;@$r15+, $pr&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;ldc.l&t;@$r15+, $gbr&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       :&quot;=&amp;z&quot; (__last) &bslash;&n;&t;&t;       :&quot;0&quot; (prev), &bslash;&n;&t;&t;&t;&quot;r&quot; (__ts1), &quot;r&quot; (__ts2), &bslash;&n;&t;&t;&t;&quot;r&quot; (__ts4), &quot;r&quot; (__ts5), &quot;r&quot; (__ts6), &quot;r&quot; (__ts7) &bslash;&n;&t;&t;       :&quot;r3&quot;); &bslash;&n;  last = __last; &bslash;&n;} while (0)
+mdefine_line|#define switch_to(prev,next,last) do { &bslash;&n; register struct task_struct *__last; &bslash;&n; register unsigned long *__ts1 __asm__ (&quot;r1&quot;) = &amp;prev-&gt;thread.sp; &bslash;&n; register unsigned long *__ts2 __asm__ (&quot;r2&quot;) = &amp;prev-&gt;thread.pc; &bslash;&n; register unsigned long *__ts4 __asm__ (&quot;r4&quot;) = (unsigned long *)prev; &bslash;&n; register unsigned long *__ts5 __asm__ (&quot;r5&quot;) = (unsigned long *)next; &bslash;&n; register unsigned long *__ts6 __asm__ (&quot;r6&quot;) = &amp;next-&gt;thread.sp; &bslash;&n; register unsigned long __ts7 __asm__ (&quot;r7&quot;) = next-&gt;thread.pc; &bslash;&n; __asm__ __volatile__ (&quot;.balign 4&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;stc.l&t;$gbr, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;sts.l&t;$pr, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r8, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r9, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r10, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r11, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r12, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r13, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r14, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;$r15, @$r1&t;! save SP&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r6, $r15&t;! change to new stack&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;%0, @-$r15&t;! push R0 onto new stack&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mova&t;1f, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;%0, @$r2&t;! save PC&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;2f, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;jmp&t;@%0&t;&t;! call __switch_to&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot; lds&t;$r7, $pr&t;!  with return to new PC&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;.balign&t;4&bslash;n&quot;&t;&bslash;&n;&t;&t;       &quot;2:&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;.long&t;&quot; &quot;__switch_to&bslash;n&quot; &bslash;&n;&t;&t;       &quot;1:&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, %0&t;! pop R0 from new stack&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r14&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r13&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r12&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r11&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r10&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r9&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@$r15+, $r8&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;lds.l&t;@$r15+, $pr&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;ldc.l&t;@$r15+, $gbr&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       :&quot;=&amp;z&quot; (__last) &bslash;&n;&t;&t;       :&quot;0&quot; (prev), &bslash;&n;&t;&t;&t;&quot;r&quot; (__ts1), &quot;r&quot; (__ts2), &bslash;&n;&t;&t;&t;&quot;r&quot; (__ts4), &quot;r&quot; (__ts5), &quot;r&quot; (__ts6), &quot;r&quot; (__ts7) &bslash;&n;&t;&t;       :&quot;r3&quot;, &quot;t&quot;); &bslash;&n;  last = __last; &bslash;&n;} while (0)
 macro_line|#endif
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;)
@@ -86,13 +86,28 @@ DECL|macro|rmb
 mdefine_line|#define rmb()&t;mb()
 DECL|macro|wmb
 mdefine_line|#define wmb()&t;__asm__ __volatile__ (&quot;&quot;: : :&quot;memory&quot;)
+macro_line|#ifdef CONFIG_SMP
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;mb()
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;rmb()
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;wmb()
+macro_line|#else
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;barrier()
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;barrier()
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;barrier()
+macro_line|#endif
 DECL|macro|set_mb
 mdefine_line|#define set_mb(var, value) do { xchg(&amp;var, value); } while (0)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(var, value) do { var = value; wmb(); } while (0)
 multiline_comment|/* Interrupt Control */
 DECL|function|__sti
-r_extern
+r_static
 id|__inline__
 r_void
 id|__sti
@@ -138,7 +153,7 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 DECL|function|__cli
-r_extern
+r_static
 id|__inline__
 r_void
 id|__cli
@@ -247,7 +262,7 @@ DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __restore_flags(x)
 macro_line|#endif
 DECL|function|xchg_u32
-r_extern
+r_static
 id|__inline__
 r_int
 r_int
@@ -297,7 +312,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|xchg_u8
-r_extern
+r_static
 id|__inline__
 r_int
 r_int

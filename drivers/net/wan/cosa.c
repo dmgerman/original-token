@@ -922,8 +922,7 @@ id|size
 )paren
 suffix:semicolon
 r_static
-r_int
-r_int
+id|loff_t
 id|cosa_lseek
 c_func
 (paren
@@ -932,8 +931,7 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
+id|loff_t
 id|offset
 comma
 r_int
@@ -3367,8 +3365,7 @@ suffix:semicolon
 )brace
 DECL|function|cosa_lseek
 r_static
-r_int
-r_int
+id|loff_t
 id|cosa_lseek
 c_func
 (paren
@@ -3377,8 +3374,7 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
+id|loff_t
 id|offset
 comma
 r_int
@@ -5581,6 +5577,7 @@ comma
 id|cmd
 comma
 (paren
+r_int
 r_int
 )paren
 id|ifr-&gt;ifr_data

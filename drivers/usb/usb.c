@@ -2527,7 +2527,7 @@ id|claimed
 id|warn
 c_func
 (paren
-l_string|&quot;USB device %d (prod/vend 0x%x/0x%x) is not claimed by any active driver.&quot;
+l_string|&quot;USB device %d (vend/prod 0x%x/0x%x) is not claimed by any active driver.&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -5719,7 +5719,7 @@ r_int
 id|devnum
 suffix:semicolon
 singleline_comment|// FIXME needs locking for SMP!!
-multiline_comment|/* why? this is called only from the hub thread, &n;&t; * which hopefully doesn&squot;t run on multiple CPU&squot;s simulatenously 8-)&n;&t; */
+multiline_comment|/* why? this is called only from the hub thread, &n;&t; * which hopefully doesn&squot;t run on multiple CPU&squot;s simultaneously 8-)&n;&t; */
 id|dev-&gt;descriptor.bMaxPacketSize0
 op_assign
 l_int|8
@@ -7964,7 +7964,9 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;USB device not accepting new address (error=%d)&quot;
+l_string|&quot;USB device not accepting new address=%d (error=%d)&quot;
+comma
+id|dev-&gt;devnum
 comma
 id|err
 )paren
@@ -8162,7 +8164,9 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;unable to get configuration (error=%d)&quot;
+l_string|&quot;unable to get device %d configuration (error=%d)&quot;
+comma
+id|dev-&gt;devnum
 comma
 id|err
 )paren
@@ -8216,7 +8220,9 @@ id|err
 id|err
 c_func
 (paren
-l_string|&quot;failed to set default configuration (error=%d)&quot;
+l_string|&quot;failed to set device %d default configuration (error=%d)&quot;
+comma
+id|dev-&gt;devnum
 comma
 id|err
 )paren

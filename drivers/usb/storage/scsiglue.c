@@ -572,9 +572,6 @@ l_int|0
 )braket
 suffix:semicolon
 r_int
-id|result
-suffix:semicolon
-r_int
 id|i
 suffix:semicolon
 multiline_comment|/* we use the usb_reset_device() function to handle this for us */

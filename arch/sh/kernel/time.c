@@ -1141,6 +1141,8 @@ l_string|&quot;1&quot;
 (paren
 l_int|0
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 id|cli

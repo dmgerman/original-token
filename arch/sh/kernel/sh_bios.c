@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sh_bios.c,v 1.2 2000/07/26 04:37:32 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/sh_bios.c&n; *  C interface for trapping into the standard LinuxSH BIOS.&n; *&n; *  Copyright (C) 2000 Greg Banks, Mitch Davis&n; *&n; */
+multiline_comment|/* $Id: sh_bios.c,v 1.3 2000/09/30 03:43:30 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/sh_bios.c&n; *  C interface for trapping into the standard LinuxSH BIOS.&n; *&n; *  Copyright (C) 2000 Greg Banks, Mitch Davis&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sh_bios.h&gt;
 macro_line|#ifdef CONFIG_SH_STANDARD_BIOS
@@ -41,7 +41,7 @@ id|r0
 id|__asm__
 c_func
 (paren
-l_string|&quot;$r0&quot;
+l_string|&quot;r0&quot;
 )paren
 op_assign
 id|func
@@ -52,7 +52,7 @@ id|r4
 id|__asm__
 c_func
 (paren
-l_string|&quot;$r4&quot;
+l_string|&quot;r4&quot;
 )paren
 op_assign
 id|arg0
@@ -63,7 +63,7 @@ id|r5
 id|__asm__
 c_func
 (paren
-l_string|&quot;$r5&quot;
+l_string|&quot;r5&quot;
 )paren
 op_assign
 id|arg1
@@ -74,7 +74,7 @@ id|r6
 id|__asm__
 c_func
 (paren
-l_string|&quot;$r6&quot;
+l_string|&quot;r6&quot;
 )paren
 op_assign
 id|arg2
@@ -85,7 +85,7 @@ id|r7
 id|__asm__
 c_func
 (paren
-l_string|&quot;$r7&quot;
+l_string|&quot;r7&quot;
 )paren
 op_assign
 id|arg3

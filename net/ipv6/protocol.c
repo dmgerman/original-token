@@ -18,8 +18,6 @@ r_struct
 id|inet6_protocol
 op_star
 id|inet6_protocol_base
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|inet6_protos
 r_struct
@@ -29,10 +27,6 @@ id|inet6_protos
 (braket
 id|MAX_INET_PROTOS
 )braket
-op_assign
-(brace
-l_int|NULL
-)brace
 suffix:semicolon
 DECL|function|inet6_add_protocol
 r_void

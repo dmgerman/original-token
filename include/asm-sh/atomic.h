@@ -3,7 +3,6 @@ DECL|macro|__ASM_SH_ATOMIC_H
 mdefine_line|#define __ASM_SH_ATOMIC_H
 multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_SMP
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef
@@ -16,19 +15,6 @@ suffix:semicolon
 )brace
 id|atomic_t
 suffix:semicolon
-macro_line|#else
-DECL|member|counter
-DECL|typedef|atomic_t
-r_typedef
-r_struct
-(brace
-r_int
-id|counter
-suffix:semicolon
-)brace
-id|atomic_t
-suffix:semicolon
-macro_line|#endif
 DECL|macro|ATOMIC_INIT
 mdefine_line|#define ATOMIC_INIT(i)&t;( (atomic_t) { (i) } )
 DECL|macro|atomic_read
@@ -36,12 +22,9 @@ mdefine_line|#define atomic_read(v)&t;&t;((v)-&gt;counter)
 DECL|macro|atomic_set
 mdefine_line|#define atomic_set(v,i)&t;&t;((v)-&gt;counter = (i))
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
-DECL|macro|__atomic_fool_gcc
-mdefine_line|#define __atomic_fool_gcc(x) (*(volatile struct { int a[100]; } *)x)
 multiline_comment|/*&n; * To get proper branch prediction for the main line, we must branch&n; * forward to code at the end of this object&squot;s .text section, then&n; * branch back to restart the operation.&n; */
 DECL|function|atomic_add
-r_extern
+r_static
 id|__inline__
 r_void
 id|atomic_add
@@ -82,7 +65,7 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|atomic_sub
-r_extern
+r_static
 id|__inline__
 r_void
 id|atomic_sub
@@ -123,7 +106,7 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|atomic_add_return
-r_extern
+r_static
 id|__inline__
 r_int
 id|atomic_add_return
@@ -182,7 +165,7 @@ id|temp
 suffix:semicolon
 )brace
 DECL|function|atomic_sub_return
-r_extern
+r_static
 id|__inline__
 r_int
 id|atomic_sub_return
@@ -253,7 +236,7 @@ mdefine_line|#define atomic_inc(v) atomic_add(1,(v))
 DECL|macro|atomic_dec
 mdefine_line|#define atomic_dec(v) atomic_sub(1,(v))
 DECL|function|atomic_clear_mask
-r_extern
+r_static
 id|__inline__
 r_void
 id|atomic_clear_mask
@@ -296,7 +279,7 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|atomic_set_mask
-r_extern
+r_static
 id|__inline__
 r_void
 id|atomic_set_mask

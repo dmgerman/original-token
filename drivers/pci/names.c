@@ -385,5 +385,5 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_PCI_NAMES */
 eof

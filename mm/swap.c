@@ -134,6 +134,23 @@ op_assign
 id|PAGE_AGE_MAX
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * We use this (minimal) function in the case where we&n; * know we can&squot;t deactivate the page (yet).&n; */
+DECL|function|age_page_down_ageonly
+r_void
+id|age_page_down_ageonly
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+id|page-&gt;age
+op_div_assign
+l_int|2
+suffix:semicolon
+)brace
 DECL|function|age_page_down_nolock
 r_void
 id|age_page_down_nolock
@@ -247,6 +264,19 @@ op_star
 id|page
 )paren
 (brace
+multiline_comment|/*&n;&t; * One for the cache, one for the extra reference the&n;&t; * caller has and (maybe) one for the buffers.&n;&t; *&n;&t; * This isn&squot;t perfect, but works for just about everything.&n;&t; * Besides, as long as we don&squot;t move unfreeable pages to the&n;&t; * inactive_clean list it doesn&squot;t need to be perfect...&n;&t; */
+r_int
+id|maxcount
+op_assign
+(paren
+id|page-&gt;buffers
+ques
+c_cond
+l_int|3
+suffix:colon
+l_int|2
+)paren
+suffix:semicolon
 id|page-&gt;age
 op_assign
 l_int|0
@@ -261,17 +291,13 @@ c_func
 id|page
 )paren
 op_logical_and
-(paren
 id|page_count
 c_func
 (paren
 id|page
 )paren
 op_le
-l_int|2
-op_logical_or
-id|page-&gt;buffers
-)paren
+id|maxcount
 op_logical_and
 op_logical_neg
 id|page_ramdisk
@@ -281,7 +307,7 @@ id|page
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * We can move the page to the inactive_dirty list&n;&t;&t; * if we know there is backing store available.&n;&t;&t; *&n;&t;&t; * We also move pages here that we cannot free yet,&n;&t;&t; * but may be able to free later - because most likely&n;&t;&t; * we&squot;re holding an extra reference on the page which&n;&t;&t; * will be dropped right after deactivate_page().&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * We can move the page to the inactive_dirty list&n;&t;&t; * if we have the strong suspicion that they might&n;&t;&t; * become freeable in the near future.&n;&t;&t; *&n;&t;&t; * That is, the page has buffer heads attached (that&n;&t;&t; * need to be cleared away) and/or the function calling&n;&t;&t; * us has an extra reference count on the page.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -308,7 +334,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * If the page is clean and immediately reusable,&n;&t;&t; * we can move it to the inactive_clean list.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Only if we are SURE the page is clean and immediately&n;&t;&t; * reusable, we move it to the inactive_clean list.&n;&t;&t; */
 )brace
 r_else
 r_if
@@ -442,6 +468,18 @@ r_else
 (brace
 multiline_comment|/*&n;&t;&t; * The page was not on any list, so we take care&n;&t;&t; * not to do anything.&n;&t;&t; */
 )brace
+multiline_comment|/* Make sure the page gets a fair chance at staying active. */
+r_if
+c_cond
+(paren
+id|page-&gt;age
+OL
+id|PAGE_AGE_START
+)paren
+id|page-&gt;age
+op_assign
+id|PAGE_AGE_START
+suffix:semicolon
 )brace
 DECL|function|activate_page
 r_void

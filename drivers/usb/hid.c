@@ -6322,6 +6322,10 @@ dot
 id|dr
 )paren
 suffix:semicolon
+id|hid-&gt;urbout.dev
+op_assign
+id|hid-&gt;dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6620,6 +6624,10 @@ op_increment
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|hid-&gt;urb.dev
+op_assign
+id|hid-&gt;dev
 suffix:semicolon
 r_if
 c_cond

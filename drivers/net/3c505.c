@@ -56,8 +56,9 @@ mdefine_line|#define INVALID_PCB_MSG(len) &bslash;&n;&t;printk(invalid_pcb_msg, 
 DECL|variable|__initdata
 r_static
 r_char
-op_star
 id|search_msg
+(braket
+)braket
 id|__initdata
 op_assign
 l_string|&quot;%s: Looking for 3c505 adapter at address %#x...&quot;
@@ -65,8 +66,9 @@ suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_char
-op_star
 id|stilllooking_msg
+(braket
+)braket
 id|__initdata
 op_assign
 l_string|&quot;still looking...&quot;
@@ -74,8 +76,9 @@ suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_char
-op_star
 id|found_msg
+(braket
+)braket
 id|__initdata
 op_assign
 l_string|&quot;found.&bslash;n&quot;
@@ -83,8 +86,9 @@ suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_char
-op_star
 id|notfound_msg
+(braket
+)braket
 id|__initdata
 op_assign
 l_string|&quot;not found (reason = %d)&bslash;n&quot;
@@ -92,8 +96,9 @@ suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_char
-op_star
 id|couldnot_msg
+(braket
+)braket
 id|__initdata
 op_assign
 l_string|&quot;%s: 3c505 not found&bslash;n&quot;

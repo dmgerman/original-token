@@ -293,11 +293,6 @@ id|link
 (braket
 id|ACE_MAX_MOD_PARMS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|trace
 r_static
@@ -306,11 +301,6 @@ id|trace
 (braket
 id|ACE_MAX_MOD_PARMS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|tx_coal_tick
 r_static
@@ -319,11 +309,6 @@ id|tx_coal_tick
 (braket
 id|ACE_MAX_MOD_PARMS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|rx_coal_tick
 r_static
@@ -332,11 +317,6 @@ id|rx_coal_tick
 (braket
 id|ACE_MAX_MOD_PARMS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|max_tx_desc
 r_static
@@ -345,11 +325,6 @@ id|max_tx_desc
 (braket
 id|ACE_MAX_MOD_PARMS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|max_rx_desc
 r_static
@@ -358,11 +333,6 @@ id|max_rx_desc
 (braket
 id|ACE_MAX_MOD_PARMS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|tx_ratio
 r_static
@@ -371,11 +341,6 @@ id|tx_ratio
 (braket
 id|ACE_MAX_MOD_PARMS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|dis_pci_mem_inval
 r_static
@@ -403,13 +368,13 @@ comma
 l_int|1
 )brace
 suffix:semicolon
-DECL|variable|version
+DECL|variable|__initdata
 r_static
-r_const
 r_char
-id|__initdata
-op_star
 id|version
+(braket
+)braket
+id|__initdata
 op_assign
 l_string|&quot;acenic.c: v0.47 09/18/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
 l_string|&quot;                            http://home.cern.ch/~jes/gige/acenic.html&bslash;n&quot;
@@ -420,16 +385,12 @@ r_struct
 id|net_device
 op_star
 id|root_dev
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_int
 id|probed
 id|__initdata
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef NEW_NETINIT
 DECL|function|acenic_probe

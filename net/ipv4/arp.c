@@ -4350,16 +4350,19 @@ id|dev-&gt;type
 suffix:colon
 l_int|0
 suffix:semicolon
-id|size
-op_assign
+(brace
+r_char
+id|tbuf
+(braket
+l_int|16
+)braket
+suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|buffer
-op_plus
-id|len
+id|tbuf
 comma
-l_string|&quot;%u.%u.%u.%u0x%-10x0x%-10x%s&quot;
+l_string|&quot;%u.%u.%u.%u&quot;
 comma
 id|NIPQUAD
 c_func
@@ -4371,6 +4374,20 @@ op_star
 )paren
 id|n-&gt;key
 )paren
+)paren
+suffix:semicolon
+id|size
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;%-16s 0x%-10x0x%-10x%s&quot;
+comma
+id|tbuf
 comma
 id|hatype
 comma
@@ -4381,6 +4398,7 @@ comma
 l_string|&quot;00:00:00:00:00:00&quot;
 )paren
 suffix:semicolon
+)brace
 id|size
 op_add_assign
 id|sprintf
@@ -4392,9 +4410,7 @@ id|len
 op_plus
 id|size
 comma
-l_string|&quot;     %-17s %s&bslash;n&quot;
-comma
-l_string|&quot;*&quot;
+l_string|&quot;     *        %-16s&bslash;n&quot;
 comma
 id|dev
 ques

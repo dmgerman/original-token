@@ -14,15 +14,15 @@ DECL|macro|SCIx_RXI_IRQ
 mdefine_line|#define SCIx_RXI_IRQ 1
 DECL|macro|SCIx_TXI_IRQ
 mdefine_line|#define SCIx_TXI_IRQ 2
-multiline_comment|/*                     ERI, RXI, TXI,  */
+multiline_comment|/*                     ERI, RXI, TXI, BRI */
 DECL|macro|SCI_IRQS
-mdefine_line|#define SCI_IRQS      { 23,  24,  25 }
+mdefine_line|#define SCI_IRQS      { 23,  24,  25,   0 }
 DECL|macro|SH3_SCIF_IRQS
-mdefine_line|#define SH3_SCIF_IRQS { 56,  57,  59 }
+mdefine_line|#define SH3_SCIF_IRQS { 56,  57,  59,  58 }
 DECL|macro|SH3_IRDA_IRQS
-mdefine_line|#define SH3_IRDA_IRQS { 52,  53,  55 }
+mdefine_line|#define SH3_IRDA_IRQS { 52,  53,  55,  54 }
 DECL|macro|SH4_SCIF_IRQS
-mdefine_line|#define SH4_SCIF_IRQS { 40,  41,  43 }
+mdefine_line|#define SH4_SCIF_IRQS { 40,  41,  43,  42 }
 macro_line|#if defined(CONFIG_CPU_SUBTYPE_SH7708)
 DECL|macro|SCI_NPORTS
 macro_line|# define SCI_NPORTS 1
@@ -58,6 +58,8 @@ DECL|macro|SCSPTR2
 macro_line|# define SCSPTR2 0xFFE80020 /* 16 bit SCIF */
 DECL|macro|SCLSR2
 macro_line|# define SCLSR2  0xFFE80024 /* 16 bit SCIF */
+DECL|macro|SCIF_ORER
+macro_line|# define SCIF_ORER 0x0001   /* overrun error bit */
 DECL|macro|SCSCR_INIT
 macro_line|# define SCSCR_INIT(port) (((port)-&gt;type == PORT_SCI) ? &bslash;&n;&t;0x30 /* TIE=0,RIE=0,TE=1,RE=1 */ : &bslash;&n;&t;0x38 /* TIE=0,RIE=0,TE=1,RE=1,REIE=1 */ )
 DECL|macro|SCI_AND_SCIF
@@ -124,12 +126,22 @@ DECL|macro|SCxSR_RDxF
 macro_line|# define SCxSR_RDxF(port)               SCI_RDRF
 DECL|macro|SCxSR_TDxE
 macro_line|# define SCxSR_TDxE(port)               SCI_TDRE
+DECL|macro|SCxSR_ORER
+macro_line|# define SCxSR_ORER(port)&t;&t;SCI_ORER
+DECL|macro|SCxSR_FER
+macro_line|# define SCxSR_FER(port)&t;&t;SCI_FER
+DECL|macro|SCxSR_PER
+macro_line|# define SCxSR_PER(port)&t;&t;SCI_PER
+DECL|macro|SCxSR_BRK
+macro_line|# define SCxSR_BRK(port)&t;&t;0x00
 DECL|macro|SCxSR_RDxF_CLEAR
 macro_line|# define SCxSR_RDxF_CLEAR(port)&t;&t;0xbc
 DECL|macro|SCxSR_ERROR_CLEAR
 macro_line|# define SCxSR_ERROR_CLEAR(port)&t;0xc4
 DECL|macro|SCxSR_TDxE_CLEAR
 macro_line|# define SCxSR_TDxE_CLEAR(port)&t;&t;0x78
+DECL|macro|SCxSR_BREAK_CLEAR
+macro_line|# define SCxSR_BREAK_CLEAR(port)   &t;0xc4
 macro_line|#elif defined(SCIF_ONLY) 
 DECL|macro|SCxSR_TEND
 macro_line|# define SCxSR_TEND(port)&t;&t;SCIF_TEND
@@ -139,12 +151,22 @@ DECL|macro|SCxSR_RDxF
 macro_line|# define SCxSR_RDxF(port)               SCIF_RDF
 DECL|macro|SCxSR_TDxE
 macro_line|# define SCxSR_TDxE(port)               SCIF_TDFE
+DECL|macro|SCxSR_ORER
+macro_line|# define SCxSR_ORER(port)&t;&t;0x0000
+DECL|macro|SCxSR_FER
+macro_line|# define SCxSR_FER(port)&t;&t;SCIF_FER
+DECL|macro|SCxSR_PER
+macro_line|# define SCxSR_PER(port)&t;&t;SCIF_PER
+DECL|macro|SCxSR_BRK
+macro_line|# define SCxSR_BRK(port)&t;&t;SCIF_BRK
 DECL|macro|SCxSR_RDxF_CLEAR
 macro_line|# define SCxSR_RDxF_CLEAR(port)&t;&t;0x00fc
 DECL|macro|SCxSR_ERROR_CLEAR
-macro_line|# define SCxSR_ERROR_CLEAR(port)&t;0x0063
+macro_line|# define SCxSR_ERROR_CLEAR(port)&t;0x0073
 DECL|macro|SCxSR_TDxE_CLEAR
 macro_line|# define SCxSR_TDxE_CLEAR(port)&t;&t;0x00df
+DECL|macro|SCxSR_BREAK_CLEAR
+macro_line|# define SCxSR_BREAK_CLEAR(port)   &t;0x00e3
 macro_line|#else
 DECL|macro|SCxSR_TEND
 macro_line|# define SCxSR_TEND(port)&t; (((port)-&gt;type == PORT_SCI) ? SCI_TEND   : SCIF_TEND)
@@ -154,12 +176,22 @@ DECL|macro|SCxSR_RDxF
 macro_line|# define SCxSR_RDxF(port)        (((port)-&gt;type == PORT_SCI) ? SCI_RDRF   : SCIF_RDF)
 DECL|macro|SCxSR_TDxE
 macro_line|# define SCxSR_TDxE(port)        (((port)-&gt;type == PORT_SCI) ? SCI_TDRE   : SCIF_TDFE)
+DECL|macro|SCxSR_ORER
+macro_line|# define SCxSR_ORER(port)        (((port)-&gt;type == PORT_SCI) ? SCI_ORER   : 0x0000)
+DECL|macro|SCxSR_FER
+macro_line|# define SCxSR_FER(port)         (((port)-&gt;type == PORT_SCI) ? SCI_FER    : SCIF_FER)
+DECL|macro|SCxSR_PER
+macro_line|# define SCxSR_PER(port)         (((port)-&gt;type == PORT_SCI) ? SCI_PER    : SCIF_PER)
+DECL|macro|SCxSR_BRK
+macro_line|# define SCxSR_BRK(port)         (((port)-&gt;type == PORT_SCI) ? 0x00       : SCIF_BRK)
 DECL|macro|SCxSR_RDxF_CLEAR
 macro_line|# define SCxSR_RDxF_CLEAR(port)&t; (((port)-&gt;type == PORT_SCI) ? 0xbc : 0x00fc)
 DECL|macro|SCxSR_ERROR_CLEAR
-macro_line|# define SCxSR_ERROR_CLEAR(port) (((port)-&gt;type == PORT_SCI) ? 0xc4 : 0x0063)
+macro_line|# define SCxSR_ERROR_CLEAR(port) (((port)-&gt;type == PORT_SCI) ? 0xc4 : 0x0073)
 DECL|macro|SCxSR_TDxE_CLEAR
 macro_line|# define SCxSR_TDxE_CLEAR(port)  (((port)-&gt;type == PORT_SCI) ? 0x78 : 0x00df)
+DECL|macro|SCxSR_BREAK_CLEAR
+macro_line|# define SCxSR_BREAK_CLEAR(port) (((port)-&gt;type == PORT_SCI) ? 0xc4 : 0x00e3)
 macro_line|#endif
 multiline_comment|/* SCFCR */
 DECL|macro|SCFCR_RFRST
@@ -208,10 +240,10 @@ r_int
 r_char
 id|irqs
 (braket
-l_int|3
+l_int|4
 )braket
 suffix:semicolon
-multiline_comment|/* ERI, RXI, TXI */
+multiline_comment|/* ERI, RXI, TXI, BRI */
 DECL|member|init_pins
 r_void
 (paren
@@ -428,6 +460,191 @@ DECL|macro|sci_in
 mdefine_line|#define sci_in(port, reg) sci_##reg##_in(port)
 DECL|macro|sci_out
 mdefine_line|#define sci_out(port, reg, value) sci_##reg##_out(port, value)
+macro_line|#if defined(CONFIG_CPU_SUBTYPE_SH7708)
+DECL|function|sci_rxd_in
+r_static
+r_inline
+r_int
+id|sci_rxd_in
+c_func
+(paren
+r_struct
+id|sci_port
+op_star
+id|port
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|port-&gt;base
+op_eq
+l_int|0xfffffe80
+)paren
+r_return
+id|ctrl_inb
+c_func
+(paren
+id|SCSPTR
+)paren
+op_amp
+l_int|0x01
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+multiline_comment|/* SCI */
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#elif defined(CONFIG_CPU_SUBTYPE_SH7707) || defined(CONFIG_CPU_SUBTYPE_SH7709)
+r_static
+r_inline
+r_int
+id|sci_rxd_in
+c_func
+(paren
+r_struct
+id|sci_port
+op_star
+id|port
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|port-&gt;base
+op_eq
+l_int|0xfffffe80
+)paren
+r_return
+id|ctrl_inb
+c_func
+(paren
+id|SCPDR
+)paren
+op_amp
+l_int|0x01
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+multiline_comment|/* SCI */
+r_if
+c_cond
+(paren
+id|port-&gt;base
+op_eq
+l_int|0xa4000150
+)paren
+r_return
+id|ctrl_inb
+c_func
+(paren
+id|SCPDR
+)paren
+op_amp
+l_int|0x10
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+multiline_comment|/* SCIF */
+r_if
+c_cond
+(paren
+id|port-&gt;base
+op_eq
+l_int|0xa4000140
+)paren
+r_return
+id|ctrl_inb
+c_func
+(paren
+id|SCPDR
+)paren
+op_amp
+l_int|0x04
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+multiline_comment|/* IRDA */
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#elif defined(CONFIG_CPU_SUBTYPE_SH7750)
+r_static
+r_inline
+r_int
+id|sci_rxd_in
+c_func
+(paren
+r_struct
+id|sci_port
+op_star
+id|port
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|port-&gt;base
+op_eq
+l_int|0xffe00000
+)paren
+r_return
+id|ctrl_inb
+c_func
+(paren
+id|SCSPTR1
+)paren
+op_amp
+l_int|0x01
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+multiline_comment|/* SCI */
+r_if
+c_cond
+(paren
+id|port-&gt;base
+op_eq
+l_int|0xffe80000
+)paren
+r_return
+id|ctrl_inw
+c_func
+(paren
+id|SCSPTR2
+)paren
+op_amp
+l_int|0x0001
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+multiline_comment|/* SCIF */
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Values for the BitRate Register (SCBRR)&n; *&n; * The values are actually divisors for a frequency which can&n; * be internal to the SH3 (14.7456MHz) or derived from an external&n; * clock source.  This driver assumes the internal clock is used;&n; * to support using an external clock source, config options or&n; * possibly command-line options would need to be added.&n; *&n; * Also, to support speeds below 2400 (why?) the lower 2 bits of&n; * the SCSMR register would also need to be set to non-zero values.&n; *&n; * -- Greg Banks 27Feb2000&n; *&n; * Answer: The SCBRR register is only eight bits, and the value in&n; * it gets larger with lower baud rates. At around 2400 (depending on&n; * the peripherial module clock) you run out of bits. However the&n; * lower two bits of SCSMR allow the module clock to be divided down,&n; * scaling the value which is needed in SCBRR.&n; *&n; * -- Stuart Menefy - 23 May 2000&n; *&n; * I meant, why would anyone bother with bitrates below 2400.&n; *&n; * -- Greg Banks - 7Jul2000&n; *&n; * You &quot;speedist&quot;!  How will I use my 110bps ASR-33 teletype with paper&n; * tape reader as a console!&n; *&n; * -- Mitch Davis - 15 Jul 2000&n; */
 DECL|macro|PCLK
 mdefine_line|#define PCLK           (current_cpu_data.module_clock)
@@ -443,6 +660,8 @@ DECL|macro|BPS_19200
 mdefine_line|#define BPS_19200      SCBRR_VALUE(19200)
 DECL|macro|BPS_38400
 mdefine_line|#define BPS_38400      SCBRR_VALUE(38400)
+DECL|macro|BPS_57600
+mdefine_line|#define BPS_57600      SCBRR_VALUE(57600)
 DECL|macro|BPS_115200
 mdefine_line|#define BPS_115200     SCBRR_VALUE(115200)
 eof

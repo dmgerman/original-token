@@ -1695,21 +1695,11 @@ id|last_irq_sums
 (braket
 id|NR_CPUS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 comma
 id|alert_counter
 (braket
 id|NR_CPUS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/*&n;&t; * Since current-&gt; is always on the stack, and we always switch&n;&t; * the stack NMI-atomically, it&squot;s safe to use smp_processor_id().&n;&t; */
 r_int

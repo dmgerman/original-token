@@ -400,7 +400,16 @@ r_int
 id|__sc0
 id|__asm__
 (paren
-l_string|&quot;$r3&quot;
+l_string|&quot;r0&quot;
+)paren
+suffix:semicolon
+r_register
+r_int
+r_int
+id|__sc3
+id|__asm__
+(paren
+l_string|&quot;r3&quot;
 )paren
 op_assign
 id|__NR_clone
@@ -411,7 +420,7 @@ r_int
 id|__sc4
 id|__asm__
 (paren
-l_string|&quot;$r4&quot;
+l_string|&quot;r4&quot;
 )paren
 op_assign
 (paren
@@ -427,7 +436,7 @@ r_int
 id|__sc5
 id|__asm__
 (paren
-l_string|&quot;$r5&quot;
+l_string|&quot;r5&quot;
 )paren
 op_assign
 l_int|0
@@ -438,7 +447,7 @@ r_int
 id|__sc8
 id|__asm__
 (paren
-l_string|&quot;$r8&quot;
+l_string|&quot;r8&quot;
 )paren
 op_assign
 (paren
@@ -452,7 +461,7 @@ r_int
 id|__sc9
 id|__asm__
 (paren
-l_string|&quot;$r9&quot;
+l_string|&quot;r9&quot;
 )paren
 op_assign
 (paren
@@ -475,7 +484,7 @@ l_string|&quot; mov&t;$r8, $r4&bslash;n&bslash;t&quot;
 multiline_comment|/* push argument */
 l_string|&quot;mov&t;$r0, $r4&bslash;n&bslash;t&quot;
 multiline_comment|/* return value to arg of exit */
-l_string|&quot;mov&t;%2, $r3&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;%1, $r3&bslash;n&bslash;t&quot;
 multiline_comment|/* exit */
 l_string|&quot;trapa&t;#0x11&bslash;n&quot;
 l_string|&quot;1:&quot;
@@ -485,14 +494,14 @@ l_string|&quot;=z&quot;
 id|__sc0
 )paren
 suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|__sc0
-)paren
-comma
 l_string|&quot;i&quot;
 (paren
 id|__NR_exit
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|__sc3
 )paren
 comma
 l_string|&quot;r&quot;
@@ -516,6 +525,8 @@ id|__sc9
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return

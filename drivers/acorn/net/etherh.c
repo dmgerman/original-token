@@ -84,8 +84,9 @@ suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_char
-op_star
 id|version
+(braket
+)braket
 id|__initdata
 op_assign
 l_string|&quot;etherh [500/600/600A] ethernet driver (c) 2000 R.M.King v1.07&bslash;n&quot;

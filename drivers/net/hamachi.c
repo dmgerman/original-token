@@ -7530,17 +7530,6 @@ id|i
 )braket
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-id|hmp-&gt;rx_skbuff
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|free
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 id|dev_kfree_skb
 c_func
 (paren
@@ -7649,7 +7638,6 @@ suffix:semicolon
 multiline_comment|/* We should lock this segment of code for SMP eventually, although&n;&t;   the vulnerability window is very small and statistics are&n;&t;   non-critical. */
 multiline_comment|/* Ok, what goes here?  This appears to be stuck at 21 packets&n;           according to ifconfig.  It does get incremented in hamachi_tx(),&n;           so I think I&squot;ll comment it out here and see if better things&n;           happen.&n;        */
 multiline_comment|/* hmp-&gt;stats.tx_packets&t;= readl(ioaddr + 0x000); */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20119
 id|hmp-&gt;stats.rx_bytes
 op_assign
 id|readl
@@ -7672,7 +7660,6 @@ l_int|0x3B0
 )paren
 suffix:semicolon
 multiline_comment|/* Total Uni+Brd+Multi */
-macro_line|#endif
 id|hmp-&gt;stats.multicast
 op_assign
 id|readl

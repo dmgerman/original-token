@@ -92,12 +92,7 @@ r_int
 id|irq
 )paren
 (brace
-id|enable_imask_irq
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
+multiline_comment|/* Nothing to do */
 r_return
 l_int|0
 suffix:semicolon
@@ -172,6 +167,8 @@ id|ip
 op_lshift
 l_int|4
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 )brace
@@ -301,12 +298,7 @@ r_int
 id|irq
 )paren
 (brace
-id|disable_imask_irq
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
+multiline_comment|/* Nothing to do */
 )brace
 DECL|function|make_imask_irq
 r_void

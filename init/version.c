@@ -7,15 +7,12 @@ DECL|macro|version
 mdefine_line|#define version(a) Version_ ## a
 DECL|macro|version_string
 mdefine_line|#define version_string(a) version(a)
-DECL|variable|LINUX_VERSION_CODE
 r_int
 id|version_string
 c_func
 (paren
 id|LINUX_VERSION_CODE
 )paren
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|system_utsname
 r_struct

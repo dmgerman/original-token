@@ -327,6 +327,16 @@ op_star
 suffix:semicolon
 r_extern
 r_void
+id|age_page_down_ageonly
+c_func
+(paren
+r_struct
+id|page
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|deactivate_page
 c_func
 (paren

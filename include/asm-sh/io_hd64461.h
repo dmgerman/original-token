@@ -263,6 +263,12 @@ DECL|macro|__writew
 macro_line|# define __writew&t;&t;generic_writew
 DECL|macro|__writel
 macro_line|# define __writel&t;&t;generic_writel
+DECL|macro|__isa_port2addr
+macro_line|# define __isa_port2addr&t;generic_isa_port2addr
+DECL|macro|__ioremap
+macro_line|# define __ioremap&t;&t;generic_ioremap
+DECL|macro|__iounmap
+macro_line|# define __iounmap&t;&t;generic_iounmap
 macro_line|#endif
 macro_line|#endif /* _ASM_SH_IO_HD64461_H */
 eof

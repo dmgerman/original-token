@@ -33,6 +33,8 @@ l_string|&quot;0&quot;
 (paren
 id|loops
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 )brace

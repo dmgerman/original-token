@@ -7,8 +7,9 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#ifndef MAX_HWIFS
+multiline_comment|/* Should never have less than 2, ide-pci.c(ide_match_hwif) requires it */
 DECL|macro|MAX_HWIFS
-mdefine_line|#define MAX_HWIFS&t;1
+mdefine_line|#define MAX_HWIFS&t;2
 macro_line|#endif
 DECL|macro|ide__sti
 mdefine_line|#define ide__sti()&t;__sti()

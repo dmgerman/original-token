@@ -2,7 +2,7 @@ macro_line|#ifndef __ASM_SH_PAGE_H
 DECL|macro|__ASM_SH_PAGE_H
 mdefine_line|#define __ASM_SH_PAGE_H
 multiline_comment|/*&n; * Copyright (C) 1999  Niibe Yutaka&n; */
-multiline_comment|/*&n;   [ P0/U0 (virtual) ]&t;&t;0x00000000     &lt;------ User space&n;   [ P1 (fixed)   cached ]&t;0x80000000     &lt;------ Kernel space&n;   [ P2 (fixed)  non-cachable]&t;0xA0000000     &lt;------ Physical access&n;   [ P3 (virtual) cached]&t;0xC0000000     &lt;------ not used&n;   [ P4 control   ]&t;&t;0xE0000000&n; */
+multiline_comment|/*&n;   [ P0/U0 (virtual) ]&t;&t;0x00000000     &lt;------ User space&n;   [ P1 (fixed)   cached ]&t;0x80000000     &lt;------ Kernel space&n;   [ P2 (fixed)  non-cachable]&t;0xA0000000     &lt;------ Physical access&n;   [ P3 (virtual) cached]&t;0xC0000000     &lt;------ vmalloced area&n;   [ P4 control   ]&t;&t;0xE0000000&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* PAGE_SHIFT determines the page size */
 DECL|macro|PAGE_SHIFT
@@ -19,10 +19,45 @@ DECL|macro|clear_page
 mdefine_line|#define clear_page(page)&t;memset((void *)(page), 0, PAGE_SIZE)
 DECL|macro|copy_page
 mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
+macro_line|#if defined(__sh3__)
 DECL|macro|clear_user_page
 mdefine_line|#define clear_user_page(page, vaddr)&t;clear_page(page)
 DECL|macro|copy_user_page
 mdefine_line|#define copy_user_page(to, from, vaddr)&t;copy_page(to, from)
+macro_line|#elif defined(__SH4__)
+r_extern
+r_void
+id|clear_user_page
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_int
+r_int
+id|address
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|copy_user_page
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|address
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte
 DECL|typedef|pte_t
@@ -96,7 +131,7 @@ multiline_comment|/*&n; * IF YOU CHANGE THIS, PLEASE ALSO CHANGE&n; *&n; *&t;arc
 DECL|macro|__MEMORY_START
 mdefine_line|#define __MEMORY_START&t;&t;CONFIG_MEMORY_START
 DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;&t;(0x80000000)
+mdefine_line|#define PAGE_OFFSET&t;&t;(0x80000000UL)
 DECL|macro|__pa
 mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x)-PAGE_OFFSET)
 DECL|macro|__va

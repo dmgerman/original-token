@@ -13,7 +13,7 @@ DECL|macro|PCIBIOS_MIN_MEM
 mdefine_line|#define PCIBIOS_MIN_MEM&t;&t;0x10000000
 macro_line|#endif
 DECL|function|pcibios_set_master
-r_extern
+r_static
 r_inline
 r_void
 id|pcibios_set_master
@@ -28,7 +28,7 @@ id|dev
 multiline_comment|/* No special bus mastering setup handling */
 )brace
 DECL|function|pcibios_penalize_isa_irq
-r_extern
+r_static
 r_inline
 r_void
 id|pcibios_penalize_isa_irq
@@ -93,7 +93,7 @@ id|dma_handle
 suffix:semicolon
 multiline_comment|/* Map a single buffer of the indicated size for DMA in streaming mode.&n; * The 32-bit bus address to use is returned.&n; *&n; * Once the device is given the dma address, the device owns this memory&n; * until either pci_unmap_single or pci_dma_sync_single is performed.&n; */
 DECL|function|pci_map_single
-r_extern
+r_static
 r_inline
 id|dma_addr_t
 id|pci_map_single
@@ -125,7 +125,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Unmap a single streaming mode DMA translation.  The dma_addr and size&n; * must match what was provided for in a previous pci_map_single call.  All&n; * other usages are undefined.&n; *&n; * After this call, reads by the cpu to the buffer are guarenteed to see&n; * whatever the device wrote there.&n; */
 DECL|function|pci_unmap_single
-r_extern
+r_static
 r_inline
 r_void
 id|pci_unmap_single
@@ -150,7 +150,7 @@ multiline_comment|/* Nothing to do */
 )brace
 multiline_comment|/* Map a set of buffers described by scatterlist in streaming&n; * mode for DMA.  This is the scather-gather version of the&n; * above pci_map_single interface.  Here the scatter gather list&n; * elements are each tagged with the appropriate dma address&n; * and length.  They are obtained via sg_dma_{address,length}(SG).&n; *&n; * NOTE: An implementation may be able to use a smaller number of&n; *       DMA address/length pairs than there are SG table elements.&n; *       (for example via virtual mapping capabilities)&n; *       The routine returns the number of addr/length pairs actually&n; *       used, at most nents.&n; *&n; * Device ownership issues as mentioned above for pci_map_single are&n; * the same here.&n; */
 DECL|function|pci_map_sg
-r_extern
+r_static
 r_inline
 r_int
 id|pci_map_sg
@@ -179,7 +179,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Unmap a set of streaming mode DMA translations.&n; * Again, cpu read rules concerning calls here are the same as for&n; * pci_unmap_single() above.&n; */
 DECL|function|pci_unmap_sg
-r_extern
+r_static
 r_inline
 r_void
 id|pci_unmap_sg
@@ -206,7 +206,7 @@ multiline_comment|/* Nothing to do */
 )brace
 multiline_comment|/* Make physical memory consistent for a single&n; * streaming mode DMA translation after a transfer.&n; *&n; * If you perform a pci_map_single() but wish to interrogate the&n; * buffer using the cpu, yet do not wish to teardown the PCI dma&n; * mapping, you must call this function before doing so.  At the&n; * next point you give the PCI dma address back to the card, the&n; * device again owns the buffer.&n; */
 DECL|function|pci_dma_sync_single
-r_extern
+r_static
 r_inline
 r_void
 id|pci_dma_sync_single
@@ -231,7 +231,7 @@ multiline_comment|/* Nothing to do */
 )brace
 multiline_comment|/* Make physical memory consistent for a set of streaming&n; * mode DMA translations after a transfer.&n; *&n; * The same as pci_dma_sync_single but for a scatter-gather list,&n; * same rules and usage.&n; */
 DECL|function|pci_dma_sync_sg
-r_extern
+r_static
 r_inline
 r_void
 id|pci_dma_sync_sg

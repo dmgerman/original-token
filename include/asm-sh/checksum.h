@@ -207,6 +207,8 @@ l_string|&quot;0&quot;
 (paren
 id|sum
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return
@@ -294,6 +296,8 @@ l_string|&quot;2&quot;
 (paren
 id|ihl
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return
@@ -405,6 +409,8 @@ l_string|&quot;0&quot;
 (paren
 id|sum
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return
@@ -600,6 +606,8 @@ l_string|&quot;0&quot;
 (paren
 id|sum
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return

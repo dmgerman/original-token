@@ -130,12 +130,6 @@ id|pgprot_t
 id|prot
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|vm_struct
-op_star
-id|vmlist
-suffix:semicolon
 multiline_comment|/*&n; *&t;Allocate any pages&n; */
 DECL|function|vmalloc
 r_static

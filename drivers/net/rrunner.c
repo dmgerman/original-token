@@ -88,13 +88,13 @@ macro_line|#include &quot;rrunner.h&quot;
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
 multiline_comment|/*&n; * Implementation notes:&n; *&n; * The DMA engine only allows for DMA within physical 64KB chunks of&n; * memory. The current approach of the driver (and stack) is to use&n; * linear blocks of memory for the skbuffs. However, as the data block&n; * is always the first part of the skb and skbs are 2^n aligned so we&n; * are guarantted to get the whole block within one 64KB align 64KB&n; * chunk.&n; *&n; * On the long term, relying on being able to allocate 64KB linear&n; * chunks of memory is not feasible and the skb handling code and the&n; * stack will need to know about I/O vectors or something similar.&n; */
-DECL|variable|version
+DECL|variable|__initdata
 r_static
-r_const
 r_char
-id|__initdata
-op_star
 id|version
+(braket
+)braket
+id|__initdata
 op_assign
 l_string|&quot;rrunner.c: v0.22 03/01/2000  Jes Sorensen (Jes.Sorensen@cern.ch)&bslash;n&quot;
 suffix:semicolon

@@ -70,6 +70,8 @@ id|__src
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return
@@ -167,6 +169,8 @@ id|__n
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return
@@ -247,6 +251,8 @@ l_string|&quot;1&quot;
 (paren
 id|__ct
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return
@@ -283,6 +289,16 @@ suffix:semicolon
 r_int
 r_int
 id|__dummy
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|__n
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -340,6 +356,8 @@ id|__cs
 op_plus
 id|__n
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return

@@ -187,7 +187,8 @@ c_cond
 op_logical_neg
 id|onlist
 )paren
-id|age_page_down
+multiline_comment|/* The page is still mapped, so it can&squot;t be freeable... */
+id|age_page_down_ageonly
 c_func
 (paren
 id|page
@@ -1416,7 +1417,7 @@ op_amp
 id|TASK_INTERRUPTIBLE
 )paren
 op_logical_or
-id|time_before
+id|time_after
 c_func
 (paren
 id|p-&gt;sleep_time
@@ -1855,6 +1856,10 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|page-&gt;age
+op_assign
+id|PAGE_AGE_START
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1902,10 +1907,8 @@ id|page
 suffix:semicolon
 )brace
 multiline_comment|/**&n; * page_launder - clean dirty inactive pages, move to inactive_clean list&n; * @gfp_mask: what operations we are allowed to do&n; * @sync: should we wait synchronously for the cleaning of pages&n; *&n; * When this function is called, we are most likely low on free +&n; * inactive_clean pages. Since we want to refill those pages as&n; * soon as possible, we&squot;ll make two loops over the inactive list,&n; * one to move the already cleaned pages to the inactive_clean lists&n; * and one to (often asynchronously) clean the dirty inactive pages.&n; *&n; * In situations where kswapd cannot keep up, user processes will&n; * end up calling this function. Since the user process needs to&n; * have a page before it can continue with its allocation, we&squot;ll&n; * do synchronous page flushing in that case.&n; *&n; * This code is heavily inspired by the FreeBSD source code. Thanks&n; * go out to Matthew Dillon.&n; */
-DECL|macro|MAX_SYNC_LAUNDER
-mdefine_line|#define MAX_SYNC_LAUNDER&t;(1 &lt;&lt; page_cluster)
 DECL|macro|MAX_LAUNDER
-mdefine_line|#define MAX_LAUNDER &t;&t;(MAX_SYNC_LAUNDER * 4)
+mdefine_line|#define MAX_LAUNDER &t;&t;(4 * (1 &lt;&lt; page_cluster))
 DECL|function|page_launder
 r_int
 id|page_launder
@@ -1919,8 +1922,6 @@ id|sync
 )paren
 (brace
 r_int
-id|synclaunder
-comma
 id|launder_loop
 comma
 id|maxscan
@@ -1928,6 +1929,9 @@ comma
 id|cleaned_pages
 comma
 id|maxlaunder
+suffix:semicolon
+r_int
+id|can_get_io_locks
 suffix:semicolon
 r_struct
 id|list_head
@@ -1939,11 +1943,14 @@ id|page
 op_star
 id|page
 suffix:semicolon
-id|launder_loop
+multiline_comment|/*&n;&t; * We can only grab the IO locks (eg. for flushing dirty&n;&t; * buffers to disk) if __GFP_IO is set.&n;&t; */
+id|can_get_io_locks
 op_assign
-l_int|0
+id|gfp_mask
+op_amp
+id|__GFP_IO
 suffix:semicolon
-id|synclaunder
+id|launder_loop
 op_assign
 l_int|0
 suffix:semicolon
@@ -1953,19 +1960,6 @@ l_int|0
 suffix:semicolon
 id|cleaned_pages
 op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|gfp_mask
-op_amp
-id|__GFP_IO
-)paren
-)paren
-r_return
 l_int|0
 suffix:semicolon
 id|dirty_page_rescan
@@ -2166,10 +2160,11 @@ c_cond
 (paren
 id|launder_loop
 op_logical_and
-id|synclaunder
-op_decrement
-OG
+id|maxlaunder
+op_eq
 l_int|0
+op_logical_and
+id|sync
 )paren
 id|wait
 op_assign
@@ -2392,6 +2387,8 @@ multiline_comment|/*&n;&t; * If we don&squot;t have enough free pages, we loop b
 r_if
 c_cond
 (paren
+id|can_get_io_locks
+op_logical_and
 op_logical_neg
 id|launder_loop
 op_logical_and
@@ -2405,17 +2402,15 @@ id|launder_loop
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* If we cleaned pages, never do synchronous IO. */
 r_if
 c_cond
 (paren
-id|sync
-op_logical_and
-op_logical_neg
 id|cleaned_pages
 )paren
-id|synclaunder
+id|sync
 op_assign
-id|MAX_SYNC_LAUNDER
+l_int|0
 suffix:semicolon
 multiline_comment|/* We only do a few &quot;out of order&quot; flushes. */
 id|maxlaunder
@@ -2573,7 +2568,33 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|age_page_down_nolock
+id|age_page_down_ageonly
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Since we don&squot;t hold a reference on the page&n;&t;&t;&t; * ourselves, we have to do our test a bit more&n;&t;&t;&t; * strict then deactivate_page(). This is needed&n;&t;&t;&t; * since otherwise the system could hang shuffling&n;&t;&t;&t; * unfreeable pages from the active list to the&n;&t;&t;&t; * inactive_dirty list and back again...&n;&t;&t;&t; *&n;&t;&t;&t; * SUBTLE: we can have buffer pages with count 1.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|page_count
+c_func
+(paren
+id|page
+)paren
+op_le
+(paren
+id|page-&gt;buffers
+ques
+c_cond
+l_int|2
+suffix:colon
+l_int|1
+)paren
+)paren
+(brace
+id|deactivate_page_nolock
 c_func
 (paren
 id|page
@@ -2583,6 +2604,14 @@ id|page_active
 op_assign
 l_int|0
 suffix:semicolon
+)brace
+r_else
+(brace
+id|page_active
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;&t;&t; * If the page is still on the active list, move it&n;&t;&t; * to the other end of the list. Otherwise it was&n;&t;&t; * deactivated by age_page_down and we exit successfully.&n;&t;&t; */
 r_if
@@ -2672,35 +2701,25 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Are we low on truly free pages? */
-r_if
-c_cond
-(paren
-id|nr_free_pages
-c_func
-(paren
-)paren
-OL
-id|freepages.min
-)paren
-r_return
+r_int
+id|freetarget
+op_assign
 id|freepages.high
-op_minus
-id|nr_free_pages
-c_func
-(paren
-)paren
+op_plus
+id|inactive_target
+op_div
+l_int|3
 suffix:semicolon
-multiline_comment|/* Are we low on free pages over-all? */
+multiline_comment|/* Are we low on free pages globally? */
 r_if
 c_cond
 (paren
 id|freeable
 OL
-id|freepages.high
+id|freetarget
 )paren
 r_return
-id|freepages.high
+id|freetarget
 op_minus
 id|freeable
 suffix:semicolon
@@ -3366,10 +3385,6 @@ id|wait
 op_assign
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
 id|do_try_to_free_pages
 c_func
 (paren
@@ -3377,10 +3392,7 @@ id|GFP_KSWAPD
 comma
 id|wait
 )paren
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t;&t; * if (out_of_memory()) {&n;&t;&t;&t;&t; * &t;try again a few times;&n;&t;&t;&t;&t; * &t;oom_kill();&n;&t;&t;&t;&t; * }&n;&t;&t;&t;&t; */
-)brace
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Do some (very minimal) background scanning. This&n;&t;&t; * will scan all pages on the active list once&n;&t;&t; * every minute. This clears old referenced bits&n;&t;&t; * and moves unused pages to the inactive list.&n;&t;&t; */
 id|refill_inactive_scan
@@ -3456,6 +3468,7 @@ comma
 id|HZ
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * TODO: insert out of memory check &amp; oom killer&n;&t;&t; * invocation in an else branch here.&n;&t;&t; */
 )brace
 )brace
 DECL|function|wakeup_kswapd
@@ -3567,7 +3580,7 @@ id|TASK_RUNNING
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Called by non-kswapd processes when they want more&n; * memory.&n; *&n; * In a perfect world, this should just wake up kswapd&n; * and return. We don&squot;t actually want to swap stuff out&n; * from user processes, because the locking issues are&n; * nasty to the extreme (file write locks, and MM locking)&n; *&n; * One option might be to let kswapd do all the page-out&n; * and VM page table scanning that needs locking, and this&n; * process thread could do just the mmap shrink stage that&n; * can be done by just dropping cached pages without having&n; * any deadlock issues.&n; */
+multiline_comment|/*&n; * Called by non-kswapd processes when they want more&n; * memory but are unable to sleep on kswapd because&n; * they might be holding some IO locks ...&n; */
 DECL|function|try_to_free_pages
 r_int
 id|try_to_free_pages
@@ -3590,6 +3603,11 @@ id|gfp_mask
 op_amp
 id|__GFP_WAIT
 )paren
+(brace
+id|current-&gt;flags
+op_or_assign
+id|PF_MEMALLOC
+suffix:semicolon
 id|ret
 op_assign
 id|do_try_to_free_pages
@@ -3600,6 +3618,12 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_MEMALLOC
+suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon

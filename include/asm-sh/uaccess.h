@@ -27,7 +27,7 @@ DECL|macro|__addr_ok
 mdefine_line|#define __addr_ok(addr) ((unsigned long)(addr) &lt; (current-&gt;addr_limit.seg))
 multiline_comment|/*&n; * Uhhuh, this needs 33-bit arithmetic. We have a carry..&n; *&n; * sum := addr + size;  carry? --&gt; flag = true;&n; * if (sum &gt;= addr_limit) flag = true;&n; */
 DECL|macro|__range_ok
-mdefine_line|#define __range_ok(addr,size) ({ &bslash;&n;&t;unsigned long flag,sum; &bslash;&n;&t;__asm__(&quot;clrt; addc %3, %1; movt %0; cmp/hi %4, %1; rotcl %0&quot; &bslash;&n;&t;&t;:&quot;=&amp;r&quot; (flag), &quot;=r&quot; (sum) &bslash;&n;&t;&t;:&quot;1&quot; (addr), &quot;r&quot; ((int)(size)), &quot;r&quot; (current-&gt;addr_limit.seg)); &bslash;&n;&t;flag; })
+mdefine_line|#define __range_ok(addr,size) ({&t;&t;&t;&t;&t;      &bslash;&n;&t;unsigned long flag,sum; &t;&t;&t;&t;&t;      &bslash;&n;&t;__asm__(&quot;clrt; addc %3, %1; movt %0; cmp/hi %4, %1; rotcl %0&quot;&t;      &bslash;&n;&t;&t;:&quot;=&amp;r&quot; (flag), &quot;=r&quot; (sum) &t;&t;&t;&t;      &bslash;&n;&t;&t;:&quot;1&quot; (addr), &quot;r&quot; ((int)(size)), &quot;r&quot; (current-&gt;addr_limit.seg) &bslash;&n;&t;&t;:&quot;t&quot;); &t;&t;&t;&t;&t;&t;&t;      &bslash;&n;&t;flag; })
 DECL|macro|access_ok
 mdefine_line|#define access_ok(type,addr,size) (__range_ok(addr,size) == 0)
 DECL|macro|__access_ok
@@ -115,7 +115,7 @@ mdefine_line|#define __put_user_nocheck(x,ptr,size) ({ &bslash;&n;long __pu_err;
 DECL|macro|__put_user_check
 mdefine_line|#define __put_user_check(x,ptr,size) ({ &bslash;&n;long __pu_err; &bslash;&n;__typeof__(*(ptr)) __pu_val; &bslash;&n;long __pu_addr; &bslash;&n;__pu_val = (x); &bslash;&n;__pu_addr = (long) (ptr); &bslash;&n;__asm__(&quot;&quot;:&quot;=r&quot; (__pu_err)); &bslash;&n;if (__access_ok(__pu_addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __put_user_asm(&quot;b&quot;); break; &bslash;&n;case 2: __put_user_asm(&quot;w&quot;); break; &bslash;&n;case 4: __put_user_asm(&quot;l&quot;); break; &bslash;&n;default: __put_user_unknown(); break; &bslash;&n;} } __pu_err; })
 DECL|macro|__put_user_asm
-mdefine_line|#define __put_user_asm(insn) &bslash;&n;({ &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;1:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.&quot; insn &quot;&t;%1, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;#0, %0&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;n&quot; &bslash;&n;&t;&quot;.section&t;.fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;3:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.l&t;4f, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp&t;@%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;%3, %0&bslash;n&quot; &bslash;&n;&t;&quot;4:&t;.long&t;2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&bslash;n&quot; &bslash;&n;&t;&quot;.section&t;__ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long&t;1b, 3b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&quot; &bslash;&n;&t;:&quot;=&amp;r&quot; (__pu_err) &bslash;&n;&t;:&quot;r&quot; (__pu_val), &quot;m&quot; (__m(__pu_addr)), &quot;i&quot; (-EFAULT)); })
+mdefine_line|#define __put_user_asm(insn) &bslash;&n;({ &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;1:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.&quot; insn &quot;&t;%1, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;#0, %0&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;n&quot; &bslash;&n;&t;&quot;.section&t;.fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;3:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.l&t;4f, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp&t;@%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;%3, %0&bslash;n&quot; &bslash;&n;&t;&quot;4:&t;.long&t;2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&bslash;n&quot; &bslash;&n;&t;&quot;.section&t;__ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long&t;1b, 3b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&quot; &bslash;&n;&t;:&quot;=&amp;r&quot; (__pu_err) &bslash;&n;&t;:&quot;r&quot; (__pu_val), &quot;m&quot; (__m(__pu_addr)), &quot;i&quot; (-EFAULT) &bslash;&n;        :&quot;memory&quot;); })
 r_extern
 r_void
 id|__put_user_unknown
@@ -230,6 +230,8 @@ id|res
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return
@@ -312,6 +314,10 @@ l_string|&quot;r&quot;
 (paren
 l_int|0
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
+comma
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return
@@ -426,6 +432,8 @@ id|EFAULT
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
+comma
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return
@@ -517,6 +525,8 @@ l_string|&quot;i&quot;
 op_minus
 id|EFAULT
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return

@@ -1041,7 +1041,7 @@ id|limit
 r_default
 suffix:colon
 r_case
-l_int|0
+id|PAGES_MIN
 suffix:colon
 id|water_mark
 op_assign
@@ -1050,7 +1050,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|1
+id|PAGES_LOW
 suffix:colon
 id|water_mark
 op_assign
@@ -1059,7 +1059,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|2
+id|PAGES_HIGH
 suffix:colon
 id|water_mark
 op_assign
@@ -1205,7 +1205,7 @@ id|direct_reclaim
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * Are we low on inactive pages?&n;&t; */
+multiline_comment|/*&n;&t; * If we are about to get low on free pages and we also have&n;&t; * an inactive page shortage, wake up kswapd.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1224,6 +1224,33 @@ c_func
 )paren
 )paren
 id|wakeup_kswapd
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * If we are about to get low on free pages and cleaning&n;&t; * the inactive_dirty pages would fix the situation,&n;&t; * wake up bdflush.&n;&t; */
+r_else
+r_if
+c_cond
+(paren
+id|free_shortage
+c_func
+(paren
+)paren
+op_logical_and
+id|nr_inactive_dirty_pages
+OG
+id|free_shortage
+c_func
+(paren
+)paren
+op_logical_and
+id|nr_inactive_dirty_pages
+OG
+id|freepages.high
+)paren
+id|wakeup_bdflush
 c_func
 (paren
 l_int|0
@@ -1370,13 +1397,37 @@ id|page
 r_return
 id|page
 suffix:semicolon
-multiline_comment|/*&n;&t; * OK, none of the zones on our zonelist has lots&n;&t; * of pages free.&n;&t; *&n;&t; * We wake up kswapd, in the hope that kswapd will&n;&t; * resolve this situation before memory gets tight.&n;&t; */
+multiline_comment|/*&n;&t; * OK, none of the zones on our zonelist has lots&n;&t; * of pages free.&n;&t; *&n;&t; * We wake up kswapd, in the hope that kswapd will&n;&t; * resolve this situation before memory gets tight.&n;&t; *&n;&t; * We also yield the CPU, because that:&n;&t; * - gives kswapd a chance to do something&n;&t; * - slows down allocations, in particular the&n;&t; *   allocations from the fast allocator that&squot;s&n;&t; *   causing the problems ...&n;&t; * - ... which minimises the impact the &quot;bad guys&quot;&n;&t; *   have on the rest of the system&n;&t; * - if we don&squot;t have __GFP_IO set, kswapd may be&n;&t; *   able to free some memory we can&squot;t free ourselves&n;&t; */
 id|wakeup_kswapd
 c_func
 (paren
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_WAIT
+)paren
+(brace
+id|__set_current_state
+c_func
+(paren
+id|TASK_RUNNING
+)paren
+suffix:semicolon
+id|current-&gt;policy
+op_or_assign
+id|SCHED_YIELD
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * After waking up kswapd, we try to allocate a page&n;&t; * from any zone which isn&squot;t critical yet.&n;&t; *&n;&t; * Kswapd should, in most situations, bring the situation&n;&t; * back to normal in no time.&n;&t; */
 id|page
 op_assign
@@ -1529,7 +1580,48 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;&t;&t; * When we arrive here, we are really tight on memory.&n;&t;&t; *&n;&t;&t; * We wake up kswapd and sleep until kswapd wakes us&n;&t;&t; * up again. After that we loop back to the start.&n;&t;&t; *&n;&t;&t; * We have to do this because something else might eat&n;&t;&t; * the memory kswapd frees for us (interrupts, other&n;&t;&t; * processes, etc).&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * When we arrive here, we are really tight on memory.&n;&t;&t; *&n;&t;&t; * We wake up kswapd and sleep until kswapd wakes us&n;&t;&t; * up again. After that we loop back to the start.&n;&t;&t; *&n;&t;&t; * We have to do this because something else might eat&n;&t;&t; * the memory kswapd frees for us and we need to be&n;&t;&t; * reliable. Note that we don&squot;t loop back for higher&n;&t;&t; * order allocations since it is possible that kswapd&n;&t;&t; * simply cannot free a large enough contiguous area&n;&t;&t; * of memory *ever*.&n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|gfp_mask
+op_amp
+(paren
+id|__GFP_WAIT
+op_or
+id|__GFP_IO
+)paren
+)paren
+op_eq
+(paren
+id|__GFP_WAIT
+op_or
+id|__GFP_IO
+)paren
+)paren
+(brace
+id|wakeup_kswapd
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+id|memory_pressure
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|order
+)paren
+r_goto
+id|try_again
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If __GFP_IO isn&squot;t set, we can&squot;t wait on kswapd because&n;&t;&t; * kswapd just might need some IO locks /we/ are holding ...&n;&t;&t; *&n;&t;&t; * SUBTLE: The scheduling point above makes sure that&n;&t;&t; * kswapd does get the chance to free memory we can&squot;t&n;&t;&t; * free ourselves...&n;&t;&t; */
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -1538,25 +1630,6 @@ op_amp
 id|__GFP_WAIT
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Give other processes a chance to run:&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|current-&gt;need_resched
-)paren
-(brace
-id|__set_current_state
-c_func
-(paren
-id|TASK_RUNNING
-)paren
-suffix:semicolon
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 id|try_to_free_pages
 c_func
 (paren
@@ -1566,12 +1639,18 @@ suffix:semicolon
 id|memory_pressure
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|order
+)paren
 r_goto
 id|try_again
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Final phase: allocate anything we can!&n;&t; *&n;&t; * This is basically reserved for PF_MEMALLOC and&n;&t; * GFP_ATOMIC allocations...&n;&t; */
+multiline_comment|/*&n;&t; * Final phase: allocate anything we can!&n;&t; *&n;&t; * Higher order allocations, GFP_ATOMIC allocations and&n;&t; * recursive allocations (PF_MEMALLOC) end up here.&n;&t; *&n;&t; * Only recursive allocations can use the very last pages&n;&t; * in the system, otherwise it would be just too easy to&n;&t; * deadlock the system...&n;&t; */
 id|zone
 op_assign
 id|zonelist-&gt;zones
@@ -1619,6 +1698,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * SUBTLE: direct_reclaim is only possible if the task&n;&t;&t; * becomes PF_MEMALLOC while looping above. This will&n;&t;&t; * happen when the OOM killer selects this task for&n;&t;&t; * instant execution...&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1631,6 +1711,33 @@ c_func
 (paren
 id|z
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|page
+)paren
+r_return
+id|page
+suffix:semicolon
+multiline_comment|/* XXX: is pages_min/4 a good amount to reserve for this? */
+r_if
+c_cond
+(paren
+id|z-&gt;free_pages
+OL
+id|z-&gt;pages_min
+op_div
+l_int|4
+op_logical_and
+op_logical_neg
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_MEMALLOC
+)paren
+)paren
+r_continue
 suffix:semicolon
 r_if
 c_cond
@@ -1658,15 +1765,13 @@ id|page
 suffix:semicolon
 )brace
 multiline_comment|/* No luck.. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|order
-)paren
-id|show_free_areas
+id|printk
 c_func
 (paren
+id|KERN_ERR
+l_string|&quot;__alloc_pages: %lu-order allocation failed.&bslash;n&quot;
+comma
+id|order
 )paren
 suffix:semicolon
 r_return
@@ -2050,6 +2155,22 @@ suffix:semicolon
 id|sum
 op_add_assign
 id|nr_inactive_dirty_pages
+suffix:semicolon
+multiline_comment|/*&n;&t; * Keep our write behind queue filled, even if&n;&t; * kswapd lags a bit right now.&n;&t; */
+r_if
+c_cond
+(paren
+id|sum
+OL
+id|freepages.high
+op_plus
+id|inactive_target
+)paren
+id|sum
+op_assign
+id|freepages.high
+op_plus
+id|inactive_target
 suffix:semicolon
 multiline_comment|/*&n;&t; * We don&squot;t want dirty page writebehind to put too&n;&t; * much pressure on the working set, but we want it&n;&t; * to be possible to have some dirty pages in the&n;&t; * working set without upsetting the writebehind logic.&n;&t; */
 id|sum

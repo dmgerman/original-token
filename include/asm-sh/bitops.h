@@ -6,7 +6,7 @@ macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* For __swab32 */
 macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|function|set_bit
-r_extern
+r_static
 id|__inline__
 r_void
 id|set_bit
@@ -70,8 +70,13 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * clear_bit() doesn&squot;t provide any barrier for the compiler.&n; */
+DECL|macro|smp_mb__before_clear_bit
+mdefine_line|#define smp_mb__before_clear_bit()&t;barrier()
+DECL|macro|smp_mb__after_clear_bit
+mdefine_line|#define smp_mb__after_clear_bit()&t;barrier()
 DECL|function|clear_bit
-r_extern
+r_static
 id|__inline__
 r_void
 id|clear_bit
@@ -137,7 +142,7 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|change_bit
-r_extern
+r_static
 id|__inline__
 r_void
 id|change_bit
@@ -202,7 +207,7 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|test_and_set_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|test_and_set_bit
@@ -283,7 +288,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|test_and_clear_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|test_and_clear_bit
@@ -365,7 +370,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|test_and_change_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|test_and_change_bit
@@ -446,7 +451,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|test_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|test_bit
@@ -491,7 +496,7 @@ l_int|31
 suffix:semicolon
 )brace
 DECL|function|ffz
-r_extern
+r_static
 id|__inline__
 r_int
 r_int
@@ -535,6 +540,8 @@ l_string|&quot;1&quot;
 (paren
 id|word
 )paren
+suffix:colon
+l_string|&quot;t&quot;
 )paren
 suffix:semicolon
 r_return
@@ -542,7 +549,7 @@ id|result
 suffix:semicolon
 )brace
 DECL|function|find_next_zero_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|find_next_zero_bit
@@ -748,7 +755,7 @@ DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit(addr, size, offset) &bslash;&n;                find_next_zero_bit((addr), (size), (offset))
 macro_line|#else
 DECL|function|ext2_set_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|ext2_set_bit
@@ -834,7 +841,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|ext2_clear_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|ext2_clear_bit
@@ -921,7 +928,7 @@ id|retval
 suffix:semicolon
 )brace
 DECL|function|ext2_test_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|ext2_test_bit
@@ -987,7 +994,7 @@ suffix:semicolon
 DECL|macro|ext2_find_first_zero_bit
 mdefine_line|#define ext2_find_first_zero_bit(addr, size) &bslash;&n;        ext2_find_next_zero_bit((addr), (size), 0)
 DECL|function|ext2_find_next_zero_bit
-r_extern
+r_static
 id|__inline__
 r_int
 r_int

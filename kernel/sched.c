@@ -209,26 +209,32 @@ id|this_mm
 r_int
 id|weight
 suffix:semicolon
-multiline_comment|/*&n;&t; * Realtime process, select the first one on the&n;&t; * runqueue (taking priorities within processes&n;&t; * into account).&n;&t; */
+multiline_comment|/*&n;&t; * select the current process after every other&n;&t; * runnable process, but before the idle thread.&n;&t; * Also, dont trigger a counter recalculation.&n;&t; */
+id|weight
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|p-&gt;policy
-op_ne
-id|SCHED_OTHER
+op_amp
+id|SCHED_YIELD
 )paren
-(brace
-id|weight
-op_assign
-l_int|1000
-op_plus
-id|p-&gt;rt_priority
-suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Give the process a first-approximation goodness value&n;&t; * according to the number of clock-ticks it has left.&n;&t; *&n;&t; * Don&squot;t do any other calculations if the time slice is&n;&t; * over..&n;&t; */
+multiline_comment|/*&n;&t; * Non-RT process - normal case first.&n;&t; */
+r_if
+c_cond
+(paren
+id|p-&gt;policy
+op_eq
+id|SCHED_OTHER
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Give the process a first-approximation goodness value&n;&t;&t; * according to the number of clock-ticks it has left.&n;&t;&t; *&n;&t;&t; * Don&squot;t do any other calculations if the time slice is&n;&t;&t; * over..&n;&t;&t; */
 id|weight
 op_assign
 id|p-&gt;counter
@@ -278,58 +284,21 @@ l_int|20
 op_minus
 id|p-&gt;nice
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Realtime process, select the first one on the&n;&t; * runqueue (taking priorities within processes&n;&t; * into account).&n;&t; */
+id|weight
+op_assign
+l_int|1000
+op_plus
+id|p-&gt;rt_priority
+suffix:semicolon
 id|out
 suffix:colon
 r_return
 id|weight
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * subtle. We want to discard a yielded process only if it&squot;s being&n; * considered for a reschedule. Wakeup-time &squot;queries&squot; of the scheduling&n; * state do not count. Another optimization we do: sched_yield()-ed&n; * processes are runnable (and thus will be considered for scheduling)&n; * right when they are calling schedule(). So the only place we need&n; * to care about SCHED_YIELD is when we calculate the previous process&squot;&n; * goodness ...&n; */
-DECL|function|prev_goodness
-r_static
-r_inline
-r_int
-id|prev_goodness
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|p
-comma
-r_int
-id|this_cpu
-comma
-r_struct
-id|mm_struct
-op_star
-id|this_mm
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|p-&gt;policy
-op_amp
-id|SCHED_YIELD
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * select the current process after every other&n;&t;&t; * runnable process, but before the idle thread.&n;&t;&t; * Also, dont trigger a counter recalculation.&n;&t;&t; */
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_return
-id|goodness
-c_func
-(paren
-id|p
-comma
-id|this_cpu
-comma
-id|this_mm
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * the &squot;goodness value&squot; of replacing a process on a given CPU.&n; * positive value means &squot;replace&squot;, zero or negative means &squot;dont&squot;.&n; */
@@ -1832,7 +1801,7 @@ id|still_running
 suffix:colon
 id|c
 op_assign
-id|prev_goodness
+id|goodness
 c_func
 (paren
 id|prev

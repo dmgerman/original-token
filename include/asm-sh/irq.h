@@ -50,6 +50,8 @@ DECL|macro|SCIF_ERI_IRQ
 mdefine_line|#define SCIF_ERI_IRQ&t;56
 DECL|macro|SCIF_RXI_IRQ
 mdefine_line|#define SCIF_RXI_IRQ&t;57
+DECL|macro|SCIF_BRI_IRQ
+mdefine_line|#define SCIF_BRI_IRQ&t;58
 DECL|macro|SCIF_TXI_IRQ
 mdefine_line|#define SCIF_TXI_IRQ&t;59
 DECL|macro|SCIF_IPR_ADDR
@@ -62,6 +64,8 @@ DECL|macro|IRDA_ERI_IRQ
 mdefine_line|#define IRDA_ERI_IRQ&t;52
 DECL|macro|IRDA_RXI_IRQ
 mdefine_line|#define IRDA_RXI_IRQ&t;53
+DECL|macro|IRDA_BRI_IRQ
+mdefine_line|#define IRDA_BRI_IRQ&t;54
 DECL|macro|IRDA_TXI_IRQ
 mdefine_line|#define IRDA_TXI_IRQ&t;55
 DECL|macro|IRDA_IPR_ADDR
@@ -75,6 +79,8 @@ DECL|macro|SCIF_ERI_IRQ
 mdefine_line|#define SCIF_ERI_IRQ&t;40
 DECL|macro|SCIF_RXI_IRQ
 mdefine_line|#define SCIF_RXI_IRQ&t;41
+DECL|macro|SCIF_BRI_IRQ
+mdefine_line|#define SCIF_BRI_IRQ&t;42
 DECL|macro|SCIF_TXI_IRQ
 mdefine_line|#define SCIF_TXI_IRQ&t;43
 DECL|macro|SCIF_IPR_ADDR

@@ -193,59 +193,59 @@ DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 DECL|macro|VMALLOC_END
 mdefine_line|#define VMALLOC_END&t;P4SEG
-DECL|macro|_PAGE_PRESENT
-mdefine_line|#define _PAGE_PRESENT&t;0x001  /* software: page is present */
-DECL|macro|_PAGE_ACCESSED
-mdefine_line|#define _PAGE_ACCESSED&t;0x002  /* software: page referenced */
+multiline_comment|/*&t;&t;&t;0x001     WT-bit on SH-4, 0 on SH-3 */
+DECL|macro|_PAGE_HW_SHARED
+mdefine_line|#define _PAGE_HW_SHARED&t;0x002  /* SH-bit  : page is shared among processes */
 DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY&t;0x004  /* D-bit   : page changed */
 DECL|macro|_PAGE_CACHABLE
 mdefine_line|#define _PAGE_CACHABLE&t;0x008  /* C-bit   : cachable */
-multiline_comment|/*&t;&t; &t;0x010     SZ-bit  : size of page */
+multiline_comment|/*&t;&t;&t;0x010     SZ0-bit : Size of page */
 DECL|macro|_PAGE_RW
 mdefine_line|#define _PAGE_RW&t;0x020  /* PR0-bit : write access allowed */
 DECL|macro|_PAGE_USER
 mdefine_line|#define _PAGE_USER&t;0x040  /* PR1-bit : user space access allowed */
+multiline_comment|/*&t;&t;&t;0x080     SZ1-bit : Size of page (on SH-4) */
+DECL|macro|_PAGE_PRESENT
+mdefine_line|#define _PAGE_PRESENT&t;0x100  /* V-bit   : page is valid */
 DECL|macro|_PAGE_PROTNONE
-mdefine_line|#define _PAGE_PROTNONE&t;0x080  /* software: if not present */
-multiline_comment|/*&t;&t;&t;0x100     V-bit   : page is valid */
-multiline_comment|/*&t;&t;&t;0x200     can be used as software flag */
-multiline_comment|/*&t;&t;&t;0x400     can be used as software flag */
-multiline_comment|/*&t;&t;&t;0x800     can be used as software flag */
-macro_line|#if defined(__sh3__)
+mdefine_line|#define _PAGE_PROTNONE&t;0x200  /* software: if not present  */
+DECL|macro|_PAGE_ACCESSED
+mdefine_line|#define _PAGE_ACCESSED &t;0x400  /* software: page referenced */
+DECL|macro|_PAGE_U0_SHARED
+mdefine_line|#define _PAGE_U0_SHARED 0x800  /* software: page is shared in user space */
 multiline_comment|/* Mask which drop software flags */
 DECL|macro|_PAGE_FLAGS_HARDWARE_MASK
-mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff06c
-multiline_comment|/* Flags defalult: SZ=1 (4k-byte), C=0 (non-cachable), SH=0 (not shared) */
-DECL|macro|_PAGE_FLAGS_HARDWARE_DEFAULT
-mdefine_line|#define _PAGE_FLAGS_HARDWARE_DEFAULT&t;0x00000110
+mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff1ff
+multiline_comment|/* Hardware flags: SZ=1 (4k-byte) */
+DECL|macro|_PAGE_FLAGS_HARD
+mdefine_line|#define _PAGE_FLAGS_HARD&t;&t;0x00000010
+macro_line|#if defined(__sh3__)
+DECL|macro|_PAGE_SHARED
+mdefine_line|#define _PAGE_SHARED&t;_PAGE_HW_SHARED
 macro_line|#elif defined(__SH4__)
-multiline_comment|/* Mask which drops software flags */
-DECL|macro|_PAGE_FLAGS_HARDWARE_MASK
-mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff06c
-multiline_comment|/* Flags defalult: SZ=01 (4k-byte), C=0 (non-cachable), SH=0 (not shared), WT=0 */
-DECL|macro|_PAGE_FLAGS_HARDWARE_DEFAULT
-mdefine_line|#define _PAGE_FLAGS_HARDWARE_DEFAULT&t;0x00000110
+DECL|macro|_PAGE_SHARED
+mdefine_line|#define _PAGE_SHARED&t;_PAGE_U0_SHARED
 macro_line|#endif
 DECL|macro|_PAGE_TABLE
 mdefine_line|#define _PAGE_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|_KERNPG_TABLE
 mdefine_line|#define _KERNPG_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|_PAGE_CHG_MASK
-mdefine_line|#define _PAGE_CHG_MASK&t;(PTE_MASK | _PAGE_ACCESSED | _PAGE_CACHABLE | _PAGE_DIRTY)
+mdefine_line|#define _PAGE_CHG_MASK&t;(PTE_MASK | _PAGE_ACCESSED | _PAGE_CACHABLE | _PAGE_DIRTY | _PAGE_SHARED)
 DECL|macro|PAGE_NONE
-mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PROTNONE | _PAGE_CACHABLE |_PAGE_ACCESSED)
+mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PROTNONE | _PAGE_CACHABLE |_PAGE_ACCESSED | _PAGE_FLAGS_HARD)
 DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_CACHABLE |_PAGE_ACCESSED)
+mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_CACHABLE |_PAGE_ACCESSED | _PAGE_SHARED | _PAGE_FLAGS_HARD)
 DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_CACHABLE | _PAGE_ACCESSED)
+mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_CACHABLE | _PAGE_ACCESSED | _PAGE_FLAGS_HARD)
 DECL|macro|PAGE_READONLY
-mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_CACHABLE | _PAGE_ACCESSED)
+mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_CACHABLE | _PAGE_ACCESSED | _PAGE_FLAGS_HARD)
 DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_CACHABLE | _PAGE_DIRTY | _PAGE_ACCESSED)
+mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_CACHABLE | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_HW_SHARED | _PAGE_FLAGS_HARD)
 DECL|macro|PAGE_KERNEL_RO
-mdefine_line|#define PAGE_KERNEL_RO&t;__pgprot(_PAGE_PRESENT | _PAGE_CACHABLE | _PAGE_DIRTY | _PAGE_ACCESSED)
-multiline_comment|/*&n; * As i386 and MIPS, SuperH can&squot;t do page protection for execute, and&n; * considers that the same are read.  Also, write permissions imply&n; * read permissions. This is the closest we can get..  &n; */
+mdefine_line|#define PAGE_KERNEL_RO&t;__pgprot(_PAGE_PRESENT | _PAGE_CACHABLE | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_HW_SHARED | _PAGE_FLAGS_HARD)
+multiline_comment|/*&n; * As i386 and MIPS, SuperH can&squot;t do page protection for execute, and&n; * considers that the same as a read.  Also, write permissions imply&n; * read permissions. This is the closest we can get..  &n; */
 DECL|macro|__P000
 mdefine_line|#define __P000&t;PAGE_NONE
 DECL|macro|__P001
@@ -429,6 +429,29 @@ id|pte
 )paren
 op_amp
 id|_PAGE_RW
+suffix:semicolon
+)brace
+)def_block
+DECL|function|pte_shared
+r_extern
+r_inline
+r_int
+(def_block
+id|pte_shared
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_SHARED
 suffix:semicolon
 )brace
 )def_block
@@ -868,16 +891,17 @@ id|pte
 )paren
 suffix:semicolon
 multiline_comment|/* Encode and de-code a swap entry */
+multiline_comment|/*&n; * NOTE: We should set ZEROs at the position of _PAGE_PRESENT&n; *       and _PAGE_PROTONOE bits&n; */
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(x)&t;&t;&t;(((x).val &gt;&gt; 1) &amp; 0x3f)
+mdefine_line|#define SWP_TYPE(x)&t;&t;((x).val &amp; 0xff)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(x)&t;&t;&t;((x).val &gt;&gt; 8)
+mdefine_line|#define SWP_OFFSET(x)&t;&t;((x).val &gt;&gt; 10)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type, offset)&t;&t;((swp_entry_t) { ((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8) })
+mdefine_line|#define SWP_ENTRY(type, offset)&t;((swp_entry_t) { (type) | ((offset) &lt;&lt; 10) })
 DECL|macro|pte_to_swp_entry
-mdefine_line|#define pte_to_swp_entry(pte)&t;&t;((swp_entry_t) { pte_val(pte) })
+mdefine_line|#define pte_to_swp_entry(pte)&t;((swp_entry_t) { pte_val(pte) })
 DECL|macro|swp_entry_to_pte
-mdefine_line|#define swp_entry_to_pte(x)&t;&t;((pte_t) { (x).val })
+mdefine_line|#define swp_entry_to_pte(x)&t;((pte_t) { (x).val })
 DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap

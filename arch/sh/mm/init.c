@@ -1057,6 +1057,16 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
+id|flush_page_to_ram
+c_func
+(paren
+id|virt_to_page
+c_func
+(paren
+id|empty_zero_page
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* this will put all low memory onto the freelists */
 id|totalram_pages
 op_add_assign

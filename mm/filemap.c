@@ -40,11 +40,6 @@ op_star
 op_star
 id|page_hash_table
 suffix:semicolon
-DECL|variable|lru_cache
-r_struct
-id|list_head
-id|lru_cache
-suffix:semicolon
 DECL|variable|pagecache_lock
 id|spinlock_t
 id|pagecache_lock
