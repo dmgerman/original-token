@@ -535,6 +535,9 @@ c_cond
 (paren
 op_logical_neg
 id|to
+op_logical_or
+op_logical_neg
+id|to-&gt;ldisc.chars_in_buffer
 )paren
 r_return
 l_int|0

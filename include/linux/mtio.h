@@ -144,6 +144,35 @@ DECL|macro|MT_ISSCSI1
 mdefine_line|#define MT_ISSCSI1&t;&t;0x71&t;/* Generic ANSI SCSI-1 tape unit */
 DECL|macro|MT_ISSCSI2
 mdefine_line|#define MT_ISSCSI2&t;&t;0x72&t;/* Generic ANSI SCSI-2 tape unit */
+multiline_comment|/* QIC-40/QIC-80 ftape supported drives.&n; * 20bit vendor ID + 0x800000&n; */
+DECL|macro|MT_ISFTAPE_UNKNOWN
+mdefine_line|#define MT_ISFTAPE_UNKNOWN      0x800000
+DECL|macro|MT_ISCMSDJ10_DJ20
+mdefine_line|#define MT_ISCMSDJ10_DJ20       0x800047
+DECL|macro|MT_ISCMSDJ10_DJ20_NEW
+mdefine_line|#define MT_ISCMSDJ10_DJ20_NEW   0x8011c4
+DECL|macro|MT_ISARCHIVE_5580I
+mdefine_line|#define MT_ISARCHIVE_5580I      0x800005
+DECL|macro|MT_ISARCHIVE_XL9250I
+mdefine_line|#define MT_ISARCHIVE_XL9250I    0x80014a
+DECL|macro|MT_ISARCHIVE_31250Q
+mdefine_line|#define MT_ISARCHIVE_31250Q     0x800146
+DECL|macro|MT_ISINSIGHT_80
+mdefine_line|#define MT_ISINSIGHT_80&t;        0x810005
+DECL|macro|MT_ISCONNER_C250MQT
+mdefine_line|#define MT_ISCONNER_C250MQT     0x80014c
+DECL|macro|MT_ISWANGTEK_2040F
+mdefine_line|#define MT_ISWANGTEK_2040F      0x8001c1
+DECL|macro|MT_ISWANGTEK_2080F
+mdefine_line|#define MT_ISWANGTEK_2080F      0x8001c8
+DECL|macro|MT_ISIOMEGA_250
+mdefine_line|#define MT_ISIOMEGA_250         0x808880
+DECL|macro|MT_ISSUMMIT_SE150
+mdefine_line|#define MT_ISSUMMIT_SE150       0x800180
+DECL|macro|MT_ISSUMMIT_SE250
+mdefine_line|#define MT_ISSUMMIT_SE250       0x800181
+DECL|macro|MT_ISESCOM_IDTBU120E
+mdefine_line|#define MT_ISESCOM_IDTBU120E    0x800140
 DECL|struct|mt_tape_info
 r_struct
 id|mt_tape_info
@@ -162,7 +191,7 @@ multiline_comment|/* descriptive name */
 )brace
 suffix:semicolon
 DECL|macro|MT_TAPE_INFO
-mdefine_line|#define MT_TAPE_INFO&t;{ &bslash;&n;&t;{MT_ISUNKNOWN,&t;&t;&quot;Unknown type of tape device&quot;}, &bslash;&n;&t;{MT_ISQIC02,&t;&t;&quot;Generic QIC-02 tape streamer&quot;}, &bslash;&n;&t;{MT_ISWT5150,&t;&t;&quot;Wangtek 5150, QIC-150&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_5945L2,&t;&quot;Archive 5945L-2&quot;}, &bslash;&n;&t;{MT_ISCMSJ500,&t;&t;&quot;CMS Jumbo 500&quot;}, &bslash;&n;&t;{MT_ISTDC3610,&t;&t;&quot;Tandberg TDC 3610, QIC-24&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_VP60I,&t;&quot;Archive VP60i, QIC-02&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2150L,&t;&quot;Archive Viper 2150L&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2060L,&t;&quot;Archive Viper 2060L&quot;}, &bslash;&n;&t;{MT_ISWT5099EEN24,&t;&quot;Wangtek 5099-een24, 60MB&quot;}, &bslash;&n;&t;{MT_ISEVEREX_FT40A,&t;&quot;Everex FT40A, QIC-40&quot;}, &bslash;&n;&t;{MT_ISSCSI1,&t;&t;&quot;Generic SCSI-1 tape&quot;}, &bslash;&n;&t;{MT_ISSCSI2,&t;&t;&quot;Generic SCSI-2 tape&quot;}, &bslash;&n;&t;{0, NULL} &bslash;&n;}
+mdefine_line|#define MT_TAPE_INFO&t;{ &bslash;&n;&t;{MT_ISUNKNOWN,&t;&t;&quot;Unknown type of tape device&quot;}, &bslash;&n;&t;{MT_ISQIC02,&t;&t;&quot;Generic QIC-02 tape streamer&quot;}, &bslash;&n;&t;{MT_ISWT5150,&t;&t;&quot;Wangtek 5150, QIC-150&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_5945L2,&t;&quot;Archive 5945L-2&quot;}, &bslash;&n;&t;{MT_ISCMSJ500,&t;&t;&quot;CMS Jumbo 500&quot;}, &bslash;&n;&t;{MT_ISTDC3610,&t;&t;&quot;Tandberg TDC 3610, QIC-24&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_VP60I,&t;&quot;Archive VP60i, QIC-02&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2150L,&t;&quot;Archive Viper 2150L&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2060L,&t;&quot;Archive Viper 2060L&quot;}, &bslash;&n;&t;{MT_ISWT5099EEN24,&t;&quot;Wangtek 5099-een24, 60MB&quot;}, &bslash;&n;&t;{MT_ISEVEREX_FT40A,&t;&quot;Everex FT40A, QIC-40&quot;}, &bslash;&n;&t;{MT_ISSCSI1,&t;&t;&quot;Generic SCSI-1 tape&quot;}, &bslash;&n;&t;{MT_ISSCSI2,&t;&t;&quot;Generic SCSI-2 tape&quot;}, &bslash;&n;&t;{MT_ISFTAPE_UNKNOWN,&t;&quot;Unknown floppy interface tape drive&quot;},&bslash;&n;&t;{MT_ISCMSDJ10_DJ20,&t;&quot;Colorado DJ-10/DJ-20&quot;},&bslash;&n;&t;{MT_ISCMSDJ10_DJ20_NEW, &quot;Colorado DJ-10/DJ-20 (new)&quot;},&bslash;&n;&t;{MT_ISARCHIVE_5580I,&t;&quot;Archive 5580i&quot;},&bslash;&n;        {MT_ISARCHIVE_XL9250I,  &quot;Archive XL9250i [Conner/Escom]&quot;},&bslash;&n;&t;{MT_ISARCHIVE_31250Q,&t;&quot;Escom/Archive 31250Q&quot;},&bslash;&n;        {MT_ISINSIGHT_80,&t;&quot;Insight 80 Mb&quot;},&bslash;&n;        {MT_ISCONNER_C250MQT,   &quot;Conner C250MQT&quot;},&bslash;&n;        {MT_ISWANGTEK_2040F,&t;&quot;Wangtek 3040F&quot;},&bslash;&n;        {MT_ISWANGTEK_2080F,&t;&quot;Wangtek 3080F&quot;},&bslash;&n;        {MT_ISIOMEGA_250,       &quot;Iomega 250&quot;},&bslash;&n;        {MT_ISSUMMIT_SE150,&t;&quot;Summit SE 150&quot;},&bslash;&n;        {MT_ISSUMMIT_SE250,&t;&quot;Summit SE 250/Mountain FS8000&quot;},&bslash;&n;        {MT_ISESCOM_IDTBU120E,  &quot;Identity IDTBU120E, Escom?&quot;},&bslash;&n;&t;{0, NULL} &bslash;&n;}
 multiline_comment|/* structure for MTIOCPOS - mag tape get position command */
 DECL|struct|mtpos
 r_struct

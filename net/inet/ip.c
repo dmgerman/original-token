@@ -4992,18 +4992,6 @@ r_char
 op_star
 id|ptr
 suffix:semicolon
-multiline_comment|/* All buffers without an owner socket get freed */
-r_if
-c_cond
-(paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-id|free
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* Sanity check */
 r_if
 c_cond
@@ -5089,6 +5077,18 @@ op_increment
 suffix:semicolon
 )brace
 r_else
+id|free
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* All buffers without an owner socket get freed */
+r_if
+c_cond
+(paren
+id|sk
+op_eq
+l_int|NULL
+)paren
 id|free
 op_assign
 l_int|1

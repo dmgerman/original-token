@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/sys.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
@@ -39,6 +38,26 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_int
+id|request_dma
+c_func
+(paren
+r_int
+r_int
+id|dmanr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_dma
+c_func
+(paren
+r_int
+r_int
+id|dmanr
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|do_execve
@@ -467,6 +486,12 @@ multiline_comment|/* interrupt handling */
 id|X
 c_func
 (paren
+id|irqaction
+)paren
+comma
+id|X
+c_func
+(paren
 id|request_irq
 )paren
 comma
@@ -486,6 +511,19 @@ id|X
 c_func
 (paren
 id|bh_mask
+)paren
+comma
+multiline_comment|/* dma handling */
+id|X
+c_func
+(paren
+id|request_dma
+)paren
+comma
+id|X
+c_func
+(paren
+id|free_dma
 )paren
 comma
 multiline_comment|/* process management */

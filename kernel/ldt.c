@@ -237,7 +237,6 @@ id|limit
 op_add_assign
 id|base
 suffix:semicolon
-macro_line|#ifdef&t;NOTDEF_KLUDGE
 r_if
 c_cond
 (paren
@@ -253,7 +252,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

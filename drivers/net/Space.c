@@ -193,6 +193,16 @@ id|device
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|de620_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
 r_static
 r_int
 DECL|function|ethif_probe
@@ -357,9 +367,17 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#ifdef CONFIG_DE600
+macro_line|#ifdef CONFIG_DE600&t;&t;/* D-Link DE-600 adapter */
 op_logical_and
 id|de600_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_DE620&t;&t;/* D-Link DE-620 adapter */
+op_logical_and
+id|de620_probe
 c_func
 (paren
 id|dev

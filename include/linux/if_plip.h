@@ -24,6 +24,11 @@ r_int
 r_int
 id|trigger
 suffix:semicolon
+DECL|member|unit
+r_int
+r_int
+id|unit
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|PLIP_GET_TIMEOUT

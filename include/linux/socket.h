@@ -69,6 +69,8 @@ mdefine_line|#define AF_IPX&t;&t;4
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;8&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
+DECL|macro|PF_UNSPEC
+mdefine_line|#define PF_UNSPEC&t;AF_UNSPEC
 DECL|macro|PF_UNIX
 mdefine_line|#define PF_UNIX&t;&t;AF_UNIX
 DECL|macro|PF_INET

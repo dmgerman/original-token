@@ -4887,6 +4887,15 @@ c_func
 (paren
 id|tty
 comma
+id|TIME_CHAR
+c_func
+(paren
+id|tty
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
 id|MIN_CHAR
 c_func
 (paren

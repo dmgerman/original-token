@@ -3003,7 +3003,7 @@ id|O_NONBLOCK
 )paren
 r_return
 op_minus
-id|EINPROGRESS
+id|EALREADY
 suffix:semicolon
 multiline_comment|/* Connecting is currently in progress */
 r_if
@@ -4999,7 +4999,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;NET3 TCP/IP protcols stack v016&bslash;n&quot;
+l_string|&quot;NET3 TCP/IP protocols stack v016&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Tell SOCKET that we are alive... &n;&t; */

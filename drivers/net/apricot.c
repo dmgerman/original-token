@@ -2702,7 +2702,6 @@ id|APRICOT_TOTAL_SIZE
 r_return
 id|mem_start
 suffix:semicolon
-multiline_comment|/* very similar to the SMC card except that the checksum is 0x200 */
 r_for
 c_loop
 (paren
@@ -2729,12 +2728,13 @@ op_plus
 id|i
 )paren
 suffix:semicolon
+multiline_comment|/* checksum is a multiple of 0x100, got this wrong first time&n;       some machines have 0x100, some 0x200. The DOS driver doesn&squot;t&n;       even bother with the checksum */
 r_if
 c_cond
 (paren
 id|checksum
-op_ne
-l_int|0x200
+op_mod
+l_int|0x100
 )paren
 r_return
 id|mem_start

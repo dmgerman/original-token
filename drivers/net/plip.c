@@ -316,6 +316,11 @@ r_int
 r_int
 id|nibble_us
 suffix:semicolon
+DECL|member|unit_us
+r_int
+r_int
+id|unit_us
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Routines used internally. */
@@ -4206,6 +4211,10 @@ id|pc-&gt;nibble
 op_assign
 id|nl-&gt;nibble_us
 suffix:semicolon
+id|pc-&gt;unit
+op_assign
+id|nl-&gt;unit_us
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -4218,6 +4227,10 @@ suffix:semicolon
 id|nl-&gt;nibble_us
 op_assign
 id|pc-&gt;nibble
+suffix:semicolon
+id|nl-&gt;unit_us
+op_assign
+id|pc-&gt;unit
 suffix:semicolon
 r_break
 suffix:semicolon

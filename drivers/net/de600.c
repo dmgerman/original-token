@@ -4,9 +4,9 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;de600.c: $Revision: 1.35 $,  Bjorn Ekwall (bj0rn@blox.se)&bslash;n&quot;
+l_string|&quot;de600.c: $Revision: 1.39 $,  Bjorn Ekwall (bj0rn@blox.se)&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*&n; *&t;de600.c&n; *&n; *&t;Linux driver for the D-Link DE-600 Ethernet pocket adapter.&n; *&n; *&t;Portions (C) Copyright 1993 by Bjorn Ekwall&n; *&t;The Author may be reached as bj0rn@blox.se&n; *&n; *&t;Based on adapter information gathered from DE600.ASM by D-Link Inc.,&n; *&t;as included on disk C in the v.2.11 of PC/TCP from FTP Software.&n; *&t;For DE600.asm:&n; *&t;&t;Portions (C) Copyright 1990 D-Link, Inc.&n; *&t;&t;Copyright, 1988-1992, Russell Nelson, Crynwr Software&n; *&n; *&t;Adapted to the sample network driver core for linux,&n; *&t;written by: Donald Becker &lt;becker@super.org&gt;&n; *&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n; *&n; *&t;compile-command:&n; *&t;&quot;gcc -D__KERNEL__  -Wall -Wstrict-prototypes -O6 -fomit-frame-pointer &bslash;&n; *&t; -m486 -c de600.c&n; *&n; **************************************************************/
+multiline_comment|/*&n; *&t;de600.c&n; *&n; *&t;Linux driver for the D-Link DE-600 Ethernet pocket adapter.&n; *&n; *&t;Portions (C) Copyright 1993, 1994 by Bjorn Ekwall&n; *&t;The Author may be reached as bj0rn@blox.se&n; *&n; *&t;Based on adapter information gathered from DE600.ASM by D-Link Inc.,&n; *&t;as included on disk C in the v.2.11 of PC/TCP from FTP Software.&n; *&t;For DE600.asm:&n; *&t;&t;Portions (C) Copyright 1990 D-Link, Inc.&n; *&t;&t;Copyright, 1988-1992, Russell Nelson, Crynwr Software&n; *&n; *&t;Adapted to the sample network driver core for linux,&n; *&t;written by: Donald Becker &lt;becker@super.org&gt;&n; *&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n; *&n; *&t;compile-command:&n; *&t;&quot;gcc -D__KERNEL__  -Wall -Wstrict-prototypes -O6 -fomit-frame-pointer &bslash;&n; *&t; -m486 -c de600.c&n; *&n; **************************************************************/
 multiline_comment|/*&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2, or (at your option)&n; *&t;any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; **************************************************************/
 multiline_comment|/* Add another &quot;; SLOW_DOWN_IO&quot; here if your adapter won&squot;t work OK: */
 DECL|macro|DE600_SLOW_DOWN
@@ -14,7 +14,15 @@ mdefine_line|#define DE600_SLOW_DOWN SLOW_DOWN_IO; SLOW_DOWN_IO; SLOW_DOWN_IO
 multiline_comment|/*&n; * If you still have trouble reading/writing to the adapter,&n; * modify the following &quot;#define&quot;: (see &lt;asm/io.h&gt; for more info)&n;#define REALLY_SLOW_IO&n; */
 DECL|macro|SLOW_IO_BY_JUMPING
 mdefine_line|#define SLOW_IO_BY_JUMPING /* Looks &quot;better&quot; than dummy write to port 0x80 :-) */
-multiline_comment|/*&n; * For fix to TCP &quot;slowdown&quot;, take a look at the &quot;#define DE600_MAX_WINDOW&quot;&n; * near the end of the file...&n; */
+multiline_comment|/*&n; * If you want to enable automatic continuous checking for the DE600,&n; * keep this #define enabled.&n; * It doesn&squot;t cost much per packet, so I think it is worth it!&n; * If you disagree, comment away the #define, and live with it...&n; *&n; */
+DECL|macro|CHECK_LOST_DE600
+mdefine_line|#define CHECK_LOST_DE600
+multiline_comment|/*&n; * Enable this #define if you want the adapter to do a &quot;ifconfig down&quot; on&n; * itself when we have detected that something is possibly wrong with it.&n; * The default behaviour is to retry with &quot;adapter_init()&quot; until success.&n; * This should be used for debugging purposes only.&n; * (Depends on the CHECK_LOST_DE600 above)&n; *&n; */
+DECL|macro|SHUTDOWN_WHEN_LOST
+mdefine_line|#define SHUTDOWN_WHEN_LOST
+multiline_comment|/*&n; * See comment at &quot;de600_rspace()&quot;!&n; * This is an *ugly* hack, but for now it achieves its goal of&n; * faking a TCP flow-control that will not flood the poor DE600.&n; *&n; * Tricks TCP to announce a small max window (max 2 fast packets please :-)&n; *&n; * Comment away at your own risk!&n; */
+DECL|macro|FAKE_SMALL_MAX
+mdefine_line|#define FAKE_SMALL_MAX
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifdef DE600_DEBUG
 DECL|macro|PRINTK
@@ -26,7 +34,6 @@ DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 DECL|variable|de600_debug
-r_static
 r_int
 r_int
 id|de600_debug
@@ -50,12 +57,31 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#ifdef FAKE_SMALL_MAX
+r_static
+r_int
+r_int
+id|de600_rspace
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+suffix:semicolon
+macro_line|#include &quot;../../net/inet/sock.h&quot;
 macro_line|#endif
 DECL|macro|netstats
 mdefine_line|#define netstats enet_statistics
+DECL|typedef|byte
+r_typedef
+r_int
+r_char
+id|byte
+suffix:semicolon
 multiline_comment|/**************************************************&n; *                                                *&n; * Definition of D-Link Ethernet Pocket adapter   *&n; *                                                *&n; **************************************************/
 multiline_comment|/*&n; * D-Link Ethernet pocket adapter ports&n; */
 multiline_comment|/*&n; * OK, so I&squot;m cheating, but there are an awful lot of&n; * reads and writes in order to get anything in and out&n; * of the DE-600 with 4 bits at a time in the parallel port,&n; * so every saved instruction really helps :-)&n; *&n; * That is, I don&squot;t care what the device struct says&n; * but hope that Space.c will keep the rest of the drivers happy.&n; */
@@ -146,24 +172,9 @@ DECL|macro|RUNT
 mdefine_line|#define RUNT 60&t;&t;/* Too small Ethernet packet */
 multiline_comment|/**************************************************&n; *                                                *&n; *             End of definition                  *&n; *                                                *&n; **************************************************/
 multiline_comment|/*&n; * Index to functions, as function prototypes.&n; */
-macro_line|#if 0
-multiline_comment|/* For tricking tcp.c to announce a small max window (max 2 fast packets please :-) */
-r_static
-r_int
-r_int
-id|de600_rspace
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Routines used internally. (See &quot;convenience macros&quot;) */
 r_static
-r_int
+id|byte
 id|de600_read_status
 c_func
 (paren
@@ -174,8 +185,7 @@ id|dev
 )paren
 suffix:semicolon
 r_static
-r_int
-r_char
+id|byte
 id|de600_read_byte
 c_func
 (paren
@@ -299,7 +309,7 @@ id|dev
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|adapter_init
 c_func
 (paren
@@ -362,6 +372,13 @@ id|free_tx_pages
 op_assign
 id|TX_PAGES
 suffix:semicolon
+DECL|variable|was_down
+r_static
+r_int
+id|was_down
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * Convenience macros/functions for D-Link adapter&n; */
 DECL|macro|select_prn
 mdefine_line|#define select_prn() outb_p(SELECT_PRN, COMMAND_PORT); DE600_SLOW_DOWN
@@ -384,7 +401,7 @@ DECL|macro|tx_page_adr
 mdefine_line|#define tx_page_adr(a) (((a) + 1) * MEM_2K)
 r_static
 r_inline
-r_int
+id|byte
 DECL|function|de600_read_status
 id|de600_read_status
 c_func
@@ -395,7 +412,7 @@ op_star
 id|dev
 )paren
 (brace
-r_int
+id|byte
 id|status
 suffix:semicolon
 id|outb_p
@@ -430,8 +447,7 @@ suffix:semicolon
 )brace
 r_static
 r_inline
-r_int
-r_char
+id|byte
 DECL|function|de600_read_byte
 id|de600_read_byte
 c_func
@@ -447,8 +463,7 @@ id|dev
 )paren
 (brace
 multiline_comment|/* dev used by macros */
-r_int
-r_char
+id|byte
 id|lo
 suffix:semicolon
 (paren
@@ -531,13 +546,6 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#if 0
-r_extern
-r_struct
-id|proto
-id|tcp_prot
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -574,20 +582,24 @@ macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
+id|dev-&gt;start
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|adapter_init
 c_func
 (paren
 id|dev
 )paren
+)paren
+(brace
+r_return
+l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * Yes, I know!&n;&t; * This is really not nice, but since a machine that uses DE-600&n;&t; * rarely uses any other TCP/IP connection device simultaneously,&n;&t; * this hack shouldn&squot;t really slow anything up.&n;&t; * (I don&squot;t know about slip though... but it won&squot;t break it)&n;&t; *&n;&t; * This fix is better than changing in tcp.h IMHO&n;&t; */
-macro_line|#if 0&t; 
-id|tcp_prot.rspace
-op_assign
-id|de600_rspace
-suffix:semicolon
-multiline_comment|/* was: sock_rspace */
-macro_line|#endif
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -637,6 +649,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;start
+)paren
+(brace
 id|free_irq
 c_func
 (paren
@@ -658,13 +676,7 @@ macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 0
-id|tcp_prot.rspace
-op_assign
-id|sock_rspace
-suffix:semicolon
-multiline_comment|/* see comment above! */
-macro_line|#endif
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -759,8 +771,7 @@ suffix:semicolon
 r_int
 id|tickssofar
 suffix:semicolon
-r_int
-r_char
+id|byte
 op_star
 id|buffer
 op_assign
@@ -824,12 +835,20 @@ l_string|&quot;network cable problem&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Restart the adapter. */
+r_if
+c_cond
+(paren
 id|adapter_init
 c_func
 (paren
 id|dev
 )paren
+)paren
+(brace
+r_return
+l_int|1
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Start real output */
 id|PRINTK
@@ -897,6 +916,63 @@ op_mod
 id|TX_PAGES
 suffix:semicolon
 multiline_comment|/* Next free tx page */
+macro_line|#ifdef CHECK_LOST_DE600
+multiline_comment|/* This costs about 40 instructions per packet... */
+id|de600_setup_address
+c_func
+(paren
+id|NODE_ADDRESS
+comma
+id|RW_ADDR
+)paren
+suffix:semicolon
+id|de600_read_byte
+c_func
+(paren
+id|READ_DATA
+comma
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|was_down
+op_logical_or
+(paren
+id|de600_read_byte
+c_func
+(paren
+id|READ_DATA
+comma
+id|dev
+)paren
+op_ne
+l_int|0xde
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|adapter_init
+c_func
+(paren
+id|dev
+)paren
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 id|de600_setup_address
 c_func
 (paren
@@ -945,7 +1021,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* allow more packets into adapter */
-multiline_comment|/* Send page and generate an interrupt */
+multiline_comment|/* Send page and generate a faked interrupt */
 id|de600_setup_address
 c_func
 (paren
@@ -980,6 +1056,32 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* interrupts back on */
+macro_line|#ifdef FAKE_SMALL_MAX
+multiline_comment|/* This will &quot;patch&quot; the socket TCP proto at an early moment */
+r_if
+c_cond
+(paren
+id|skb-&gt;sk
+op_logical_and
+(paren
+id|skb-&gt;sk-&gt;protocol
+op_eq
+id|IPPROTO_TCP
+)paren
+op_logical_and
+(paren
+id|skb-&gt;sk-&gt;prot-&gt;rspace
+op_ne
+op_amp
+id|de600_rspace
+)paren
+)paren
+id|skb-&gt;sk-&gt;prot-&gt;rspace
+op_assign
+id|de600_rspace
+suffix:semicolon
+multiline_comment|/* Ugh! */
+macro_line|#endif
 id|dev_kfree_skb
 (paren
 id|skb
@@ -1032,8 +1134,7 @@ id|irq2dev_map
 id|irq
 )braket
 suffix:semicolon
-r_int
-r_char
+id|byte
 id|irq_status
 suffix:semicolon
 r_int
@@ -1110,7 +1211,7 @@ id|PRINTK
 c_func
 (paren
 (paren
-l_string|&quot;de600_interrupt (%2.2X)&bslash;n&quot;
+l_string|&quot;de600_interrupt (%02X)&bslash;n&quot;
 comma
 id|irq_status
 )paren
@@ -1192,7 +1293,7 @@ op_logical_or
 op_increment
 id|boguscount
 OL
-l_int|10
+l_int|100
 )paren
 op_logical_and
 id|retrig
@@ -1464,6 +1565,7 @@ OG
 l_int|1535
 )paren
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -1474,6 +1576,22 @@ comma
 id|size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|size
+OG
+l_int|10000
+)paren
+id|adapter_init
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|skb
 op_assign
 id|alloc_skb
@@ -1820,7 +1938,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;, Ethernet Address: %2.2X&quot;
+l_string|&quot;, Ethernet Address: %02X&quot;
 comma
 id|dev-&gt;dev_addr
 (braket
@@ -1845,7 +1963,7 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;:%2.2X&quot;
+l_string|&quot;:%02X&quot;
 comma
 id|dev-&gt;dev_addr
 (braket
@@ -1913,7 +2031,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|adapter_init
 id|adapter_init
 c_func
@@ -1927,23 +2045,19 @@ id|dev
 r_int
 id|i
 suffix:semicolon
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
 )paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Transmit busy...  */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
 suffix:semicolon
 id|select_nic
 c_func
@@ -1966,6 +2080,119 @@ c_func
 (paren
 id|STOP_RESET
 )paren
+suffix:semicolon
+macro_line|#ifdef CHECK_LOST_DE600
+multiline_comment|/* Check if it is still there... */
+multiline_comment|/* Get the some bytes of the adapter ethernet address from the ROM */
+id|de600_setup_address
+c_func
+(paren
+id|NODE_ADDRESS
+comma
+id|RW_ADDR
+)paren
+suffix:semicolon
+id|de600_read_byte
+c_func
+(paren
+id|READ_DATA
+comma
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|de600_read_byte
+c_func
+(paren
+id|READ_DATA
+comma
+id|dev
+)paren
+op_ne
+l_int|0xde
+)paren
+op_logical_or
+(paren
+id|de600_read_byte
+c_func
+(paren
+id|READ_DATA
+comma
+id|dev
+)paren
+op_ne
+l_int|0x15
+)paren
+)paren
+(brace
+multiline_comment|/* was: if (de600_read_status(dev) &amp; 0xf0) { */
+id|printk
+c_func
+(paren
+l_string|&quot;Something has happened to the DE-600!  Please check it&quot;
+macro_line|#ifdef SHUTDOWN_WHEN_LOST
+l_string|&quot; and do a new ifconfig&quot;
+macro_line|#endif /* SHUTDOWN_WHEN_LOST */
+l_string|&quot;!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef SHUTDOWN_WHEN_LOST
+multiline_comment|/* Goodbye, cruel world... */
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_UP
+suffix:semicolon
+id|de600_close
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif /* SHUTDOWN_WHEN_LOST */
+id|was_down
+op_assign
+l_int|1
+suffix:semicolon
+id|dev-&gt;tbusy
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Transmit busy...  */
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* failed */
+)brace
+macro_line|#endif /* CHECK_LOST_DE600 */
+r_if
+c_cond
+(paren
+id|was_down
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Thanks, I feel much better now!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|was_down
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Transmit busy...  */
+id|dev-&gt;interrupt
+op_assign
+l_int|0
 suffix:semicolon
 id|tx_fifo_in
 op_assign
@@ -2038,22 +2265,32 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* OK */
 )brace
-macro_line|#if 0
+macro_line|#ifdef FAKE_SMALL_MAX
 multiline_comment|/*&n; *&t;The new router code (coming soon 8-) ) will fix this properly.&n; */
+DECL|macro|DE600_MIN_WINDOW
 mdefine_line|#define DE600_MIN_WINDOW 1024
+DECL|macro|DE600_MAX_WINDOW
 mdefine_line|#define DE600_MAX_WINDOW 2048
+DECL|macro|DE600_TCP_WINDOW_DIFF
 mdefine_line|#define DE600_TCP_WINDOW_DIFF 1024
-multiline_comment|/*&n; * Copied from sock.c&n; *&n; * Sets a lower max receive window in order to achieve &lt;= 2&n; * packets arriving at the adapter in fast succession.&n; * (No way that a DE-600 can cope with an ethernet saturated with its packets :-)&n; *&n; * Since there are only 2 receive buffers in the DE-600&n; * and it takes some time to copy from the adapter,&n; * this is absolutely necessary for any TCP performance whatsoever!&n; *&n; */
+multiline_comment|/*&n; * Copied from &quot;net/inet/sock.c&quot;&n; *&n; * Sets a lower max receive window in order to achieve &lt;= 2&n; * packets arriving at the adapter in fast succession.&n; * (No way that a DE-600 can keep up with a net saturated&n; *  with packets homing in on it :-( )&n; *&n; * Since there are only 2 receive buffers in the DE-600&n; * and it takes some time to copy from the adapter,&n; * this is absolutely necessary for any TCP performance whatsoever!&n; *&n; * Note that the returned window info will never be smaller than&n; * DE600_MIN_WINDOW, i.e. 1024&n; * This differs from the standard function, that can return an&n; * arbitraily small window!&n; */
+DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
 r_static
 r_int
 r_int
+DECL|function|de600_rspace
 id|de600_rspace
 c_func
 (paren
@@ -2074,19 +2311,13 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n; * Hack! You might want to play with commenting away the following line,&n; * if you know what you do!&n; */
-id|sk-&gt;max_unacked
-op_assign
-id|DE600_MAX_WINDOW
-op_minus
-id|DE600_TCP_WINDOW_DIFF
-suffix:semicolon
+multiline_comment|/*&n; * Hack! You might want to play with commenting away the following line,&n; * if you know what you do!&n;  &t;sk-&gt;max_unacked = DE600_MAX_WINDOW - DE600_TCP_WINDOW_DIFF;&n; */
 r_if
 c_cond
 (paren
 id|sk-&gt;rmem_alloc
 op_ge
-id|SK_RMEM_MAX
+id|sk-&gt;rcvbuf
 op_minus
 l_int|2
 op_star
@@ -2101,14 +2332,13 @@ id|min
 c_func
 (paren
 (paren
-id|SK_RMEM_MAX
+id|sk-&gt;rcvbuf
 op_minus
 id|sk-&gt;rmem_alloc
 )paren
 op_div
 l_int|2
-op_minus
-id|DE600_MIN_WINDOW
+multiline_comment|/*-DE600_MIN_WINDOW*/
 comma
 id|DE600_MAX_WINDOW
 )paren
@@ -2132,6 +2362,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+"&f;"
 macro_line|#ifdef MODULE
 DECL|variable|kernel_version
 r_char
@@ -2141,6 +2372,14 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|nullname
+r_static
+r_char
+id|nullname
+(braket
+l_int|8
+)braket
+suffix:semicolon
 DECL|variable|de600_dev
 r_static
 r_struct
@@ -2148,8 +2387,7 @@ id|device
 id|de600_dev
 op_assign
 (brace
-l_string|&quot;        &quot;
-multiline_comment|/*&quot;de600&quot;*/
+id|nullname
 comma
 l_int|0
 comma
