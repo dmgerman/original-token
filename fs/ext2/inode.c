@@ -3399,9 +3399,6 @@ id|inode-&gt;i_sb
 op_minus
 id|inode-&gt;i_size
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|block_zero_page
 c_func
 (paren
@@ -3411,10 +3408,6 @@ id|inode-&gt;i_size
 comma
 id|tail
 )paren
-op_ne
-l_int|0
-)paren
-r_return
 suffix:semicolon
 id|n
 op_assign

@@ -5442,6 +5442,7 @@ op_star
 )paren
 id|arg
 )paren
+)paren
 r_return
 op_minus
 id|EFAULT
