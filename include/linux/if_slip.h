@@ -12,5 +12,14 @@ DECL|macro|SL_OPT_SIXBIT
 mdefine_line|#define&t;&t;SL_OPT_SIXBIT&t;&t;2
 DECL|macro|SL_OPT_ADAPTIVE
 mdefine_line|#define&t;&t;SL_OPT_ADAPTIVE&t;&t;8
+multiline_comment|/*&n; *&t;VSV = ioctl for keepalive &amp; outfill in SLIP driver &n; */
+DECL|macro|SIOCSKEEPALIVE
+mdefine_line|#define SIOCSKEEPALIVE&t;(SIOCDEVPRIVATE)&t;&t;/* Set keepalive timeout in sec */
+DECL|macro|SIOCGKEEPALIVE
+mdefine_line|#define SIOCGKEEPALIVE&t;(SICODEVPRIVATE+1)&t;&t;/* Get keepalive timeout */
+DECL|macro|SIOCSOUTFILL
+mdefine_line|#define SIOCSOUTFILL&t;(SIOCDEVPRIVATE+2)&t;&t;/* Set outfill timeout */
+DECL|macro|SIOCGOUTFILL
+mdefine_line|#define&t;SIOCGOUTFILL&t;(SIOCDEVPRIVATE+3)&t;&t;/* Get outfill timeout */
 macro_line|#endif
 eof

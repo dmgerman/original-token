@@ -16,6 +16,12 @@ DECL|macro|FREE_READ
 mdefine_line|#define FREE_READ&t;1
 DECL|macro|FREE_WRITE
 mdefine_line|#define FREE_WRITE&t;0
+DECL|macro|CHECKSUM_NONE
+mdefine_line|#define CHECKSUM_NONE 0
+DECL|macro|CHECKSUM_HW
+mdefine_line|#define CHECKSUM_HW 1
+DECL|macro|CHECKSUM_UNNECESSARY
+mdefine_line|#define CHECKSUM_UNNECESSARY 2
 DECL|struct|sk_buff_head
 r_struct
 id|sk_buff_head

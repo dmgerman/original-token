@@ -20,6 +20,8 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
+DECL|macro|LOOPBACK_MTU
+mdefine_line|#define LOOPBACK_MTU (PAGE_SIZE*7/8)
 DECL|function|loopback_xmit
 r_static
 r_int
@@ -229,6 +231,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifndef LOOPBACK_MUST_CHECKSUM
+id|skb-&gt;ip_summed
+op_assign
+id|CHECKSUM_UNNECESSARY
+suffix:semicolon
+macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -326,20 +334,10 @@ id|dev
 r_int
 id|i
 suffix:semicolon
-macro_line|#if LINUS_EVER_SOLVES_THE_LARGE_ATOMIC_BUFFER_ISSUE
 id|dev-&gt;mtu
 op_assign
-l_int|7900
+id|LOOPBACK_MTU
 suffix:semicolon
-multiline_comment|/* MTU&t;&t;&t;*/
-macro_line|#else
-multiline_comment|/*&n; *&t;If Alpha uses 8K pages then I guess 7K would be good for it.&n; */
-id|dev-&gt;mtu
-op_assign
-l_int|2000
-suffix:semicolon
-multiline_comment|/* Kept under 1 page    */
-macro_line|#endif&t;
 id|dev-&gt;tbusy
 op_assign
 l_int|0

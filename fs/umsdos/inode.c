@@ -86,7 +86,7 @@ op_star
 id|sb
 )paren
 (brace
-id|fat_put_super
+id|msdos_put_super
 c_func
 (paren
 id|sb
@@ -1171,7 +1171,7 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|sb
 op_assign
-id|fat_read_super
+id|msdos_read_super
 c_func
 (paren
 id|s

@@ -66,6 +66,7 @@ r_break
 suffix:semicolon
 r_do
 (brace
+macro_line|#ifdef __SMP_PROF__&t;&t;
 id|smp_spins
 (braket
 id|smp_processor_id
@@ -75,6 +76,7 @@ c_func
 )braket
 op_increment
 suffix:semicolon
+macro_line|#endif&t;&t;&t;
 multiline_comment|/*&n;&t;&t;&t; *&t;Doing test_bit here doesn&squot;t lock the bus &n;&t;&t;&t; */
 r_if
 c_cond

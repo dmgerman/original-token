@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/msdos/dir.c&n; *  MS-DOS directory handling functions&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Hidden files 1995 by Albert Cahalan &lt;albert@ccs.neu.edu&gt; &lt;adc@coe.neu.edu&gt;&n; *&n; *  VFAT extensions by Gordon Chaffee, merged with msdos fs by Henrik Storner&n; */
+multiline_comment|/*&n; *  linux/fs/fat/dir.c&n; *&n; *  directory handling functions for fat-based filesystems&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Hidden files 1995 by Albert Cahalan &lt;albert@ccs.neu.edu&gt; &lt;adc@coe.neu.edu&gt;&n; *&n; *  VFAT extensions by Gordon Chaffee, merged with msdos fs by Henrik Storner&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

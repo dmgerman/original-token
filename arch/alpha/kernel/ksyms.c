@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * linux/arch/alpha/kernel/ksyms.c&n; *&n; * Export the alpha-specific functions that are needed for loadable&n; * modules.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|# include &lt;asm/io.h&gt;
 macro_line|# include &lt;asm/hwrpb.h&gt;

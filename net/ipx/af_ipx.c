@@ -9236,7 +9236,7 @@ comma
 id|ipx_recvmsg
 )brace
 suffix:semicolon
-multiline_comment|/* Called by ddi.c on kernel start up */
+multiline_comment|/* Called by protocol.c on kernel start up */
 DECL|variable|ipx_8023_packet_type
 r_static
 r_struct

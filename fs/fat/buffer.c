@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/msdos/buffer.c&n; *&n; *&n; */
+multiline_comment|/*&n; * linux/fs/fat/buffer.c&n; *&n; *&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

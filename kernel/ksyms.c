@@ -192,6 +192,20 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_void
+id|dump_thread
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+r_struct
+id|user
+op_star
+)paren
+suffix:semicolon
 DECL|variable|symbol_table
 r_struct
 id|symbol_table
@@ -475,6 +489,12 @@ comma
 id|X
 c_func
 (paren
+id|sys_close
+)paren
+comma
+id|X
+c_func
+(paren
 id|close_fp
 )paren
 comma
@@ -596,12 +616,6 @@ id|X
 c_func
 (paren
 id|dcache_add
-)paren
-comma
-id|X
-c_func
-(paren
-id|aout_core_dump
 )paren
 comma
 id|X
@@ -1237,6 +1251,37 @@ c_func
 id|sock_unregister
 )paren
 comma
+multiline_comment|/* Socket layer support routines */
+id|X
+c_func
+(paren
+id|skb_recv_datagram
+)paren
+comma
+id|X
+c_func
+(paren
+id|skb_free_datagram
+)paren
+comma
+id|X
+c_func
+(paren
+id|skb_copy_datagram
+)paren
+comma
+id|X
+c_func
+(paren
+id|skb_copy_datagram_iovec
+)paren
+comma
+id|X
+c_func
+(paren
+id|datagram_select
+)paren
+comma
 macro_line|#ifdef CONFIG_FIREWALL
 multiline_comment|/* Firewall registration */
 id|X
@@ -1734,6 +1779,25 @@ id|dump_fpu
 )paren
 comma
 macro_line|#endif
+multiline_comment|/* bimfm_aout */
+id|X
+c_func
+(paren
+id|dump_thread
+)paren
+comma
+id|X
+c_func
+(paren
+id|get_write_access
+)paren
+comma
+id|X
+c_func
+(paren
+id|put_write_access
+)paren
+comma
 multiline_comment|/********************************************************&n;&t; * Do not add anything below this line,&n;&t; * as the stacked modules depend on this!&n;&t; */
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace

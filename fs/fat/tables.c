@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/msdos/tables.c&n; *&n; * ASCII / Unicode translation tables for VFAT filename handling.&n; * By Gordon Chaffee.&n; */
+multiline_comment|/*&n; * linux/fs/fat/tables.c&n; *&n; * ASCII / Unicode translation tables for VFAT filename handling.&n; * By Gordon Chaffee.&n; *&n; * Note: This file is used by all fat-based filesystems.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;tables.h&quot;

@@ -2423,11 +2423,7 @@ macro_line|#ifdef CONFIG_IP_ACCT
 id|ip_fw_chk
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
-id|skb-&gt;data
+id|iph
 comma
 id|dev
 comma

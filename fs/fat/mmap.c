@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;fs/msdos/mmap.c&n; *&n; *&t;Written by Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&t;Inspired by fs/nfs/mmap.c (Jon Tombs 15 Aug 1993)&n; *&n; *&t;msdos mmap handling&n; */
+multiline_comment|/*&n; *&t;linux/fs/fat/mmap.c&n; *&n; *&t;Written by Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&t;Inspired by fs/nfs/mmap.c (Jon Tombs 15 Aug 1993)&n; *&n; *&t;mmap handling for fat-based filesystems&n; */
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

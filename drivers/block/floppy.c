@@ -16784,7 +16784,7 @@ c_cond
 (paren
 id|r
 op_ne
-l_int|17
+l_int|16
 )paren
 (brace
 id|printk

@@ -2112,7 +2112,11 @@ id|uh-&gt;check
 op_logical_and
 (paren
 (paren
+(paren
 id|skb-&gt;ip_summed
+op_eq
+id|CHECKSUM_HW
+)paren
 op_logical_and
 id|udp_check
 c_func
@@ -2130,8 +2134,11 @@ id|skb-&gt;csum
 )paren
 op_logical_or
 (paren
-op_logical_neg
+(paren
 id|skb-&gt;ip_summed
+op_eq
+id|CHECKSUM_NONE
+)paren
 op_logical_and
 id|udp_check
 c_func
@@ -2159,6 +2166,7 @@ l_int|0
 )paren
 )paren
 )paren
+multiline_comment|/* skip if CHECKSUM_UNNECESSARY */
 )paren
 )paren
 (brace

@@ -148,8 +148,8 @@ DECL|macro|HDIO_GET_IDENTITY
 mdefine_line|#define HDIO_GET_IDENTITY &t;0x0307&t;/* get IDE identification info */
 DECL|macro|HDIO_GET_KEEPSETTINGS
 mdefine_line|#define HDIO_GET_KEEPSETTINGS &t;0x0308&t;/* get keep-settings-on-reset flag */
-DECL|macro|HDIO_GET_CHIPSET
-mdefine_line|#define HDIO_GET_CHIPSET&t;0x0309&t;/* get current interface type setting */
+DECL|macro|HDIO_GET_32BIT
+mdefine_line|#define HDIO_GET_32BIT &t;&t;0x0309&t;/* get current io_32bit setting */
 DECL|macro|HDIO_GET_NOWERR
 mdefine_line|#define HDIO_GET_NOWERR&t;&t;0x030a&t;/* get ignore-write-error flag */
 DECL|macro|HDIO_GET_DMA
@@ -158,17 +158,19 @@ DECL|macro|HDIO_DRIVE_CMD
 mdefine_line|#define HDIO_DRIVE_CMD&t;&t;0x031f&t;/* execute a special drive command */
 multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x032n/0x033n */
 DECL|macro|HDIO_SET_MULTCOUNT
-mdefine_line|#define HDIO_SET_MULTCOUNT&t;0x0321&t;/* set IDE blockmode */
+mdefine_line|#define HDIO_SET_MULTCOUNT&t;0x0321&t;/* change IDE blockmode */
 DECL|macro|HDIO_SET_UNMASKINTR
 mdefine_line|#define HDIO_SET_UNMASKINTR&t;0x0322&t;/* permit other irqs during I/O */
 DECL|macro|HDIO_SET_KEEPSETTINGS
 mdefine_line|#define HDIO_SET_KEEPSETTINGS&t;0x0323&t;/* keep ioctl settings on reset */
-DECL|macro|HDIO_SET_CHIPSET
-mdefine_line|#define HDIO_SET_CHIPSET&t;0x0324&t;/* optimise driver for interface type */
+DECL|macro|HDIO_SET_32BIT
+mdefine_line|#define HDIO_SET_32BIT&t;&t;0x0324&t;/* change io_32bit flags */
 DECL|macro|HDIO_SET_NOWERR
-mdefine_line|#define HDIO_SET_NOWERR&t;&t;0x0325&t;/* set ignore-write-error flag */
+mdefine_line|#define HDIO_SET_NOWERR&t;&t;0x0325&t;/* change ignore-write-error flag */
 DECL|macro|HDIO_SET_DMA
-mdefine_line|#define HDIO_SET_DMA&t;&t;0x0326&t;/* set use-dma flag */
+mdefine_line|#define HDIO_SET_DMA&t;&t;0x0326&t;/* change use-dma flag */
+DECL|macro|HDIO_SET_PIO_MODE
+mdefine_line|#define HDIO_SET_PIO_MODE&t;0x0327&t;/* reconfig interface to new speed */
 multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */
 DECL|struct|hd_driveid
 r_struct

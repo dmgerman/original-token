@@ -18,30 +18,6 @@ macro_line|#ifndef FAKE_FDISK_FOR_EZDRIVE&t;&t;/* 1 to help linux fdisk with EZD
 DECL|macro|FAKE_FDISK_FOR_EZDRIVE
 mdefine_line|#define FAKE_FDISK_FOR_EZDRIVE &t;1&t;/* 0 to reduce kernel size */
 macro_line|#endif
-macro_line|#ifndef SUPPORT_RZ1000&t;&t;&t;/* 1 to support RZ1000 chipset */
-DECL|macro|SUPPORT_RZ1000
-mdefine_line|#define SUPPORT_RZ1000&t;&t;1&t;/* 0 to reduce kernel size */
-macro_line|#endif
-macro_line|#ifndef SUPPORT_UMC8672&t;&t;&t;/* 1 to support UMC8672 chipset */
-DECL|macro|SUPPORT_UMC8672
-mdefine_line|#define SUPPORT_UMC8672&t;&t;1&t;/* 0 to reduce kernel size */
-macro_line|#endif
-macro_line|#ifndef SUPPORT_HT6560B&t;&t;&t;/* 1 to support HT6560B chipset */
-DECL|macro|SUPPORT_HT6560B
-mdefine_line|#define SUPPORT_HT6560B&t;&t;1&t;/* 0 to reduce kernel size */
-macro_line|#endif
-macro_line|#ifndef SUPPORT_QD6580&t;&t;&t;/* 1 to support QD6580 chipset */
-DECL|macro|SUPPORT_QD6580
-mdefine_line|#define SUPPORT_QD6580&t;&t;1&t;/* 0 to reduce kernel size */
-macro_line|#endif
-macro_line|#ifndef SUPPORT_DTC2278&t;&t;&t;/* 1 to support DTC2278 chipset */
-DECL|macro|SUPPORT_DTC2278
-mdefine_line|#define SUPPORT_DTC2278&t;&t;1&t;/* 0 to reduce kernel size */
-macro_line|#ifndef SET_DTC2278_MODE4
-DECL|macro|SET_DTC2278_MODE4
-mdefine_line|#define SET_DTC2278_MODE4&t;0&t;/* 1 to init primary i/f for PIO mode4 */
-macro_line|#endif
-macro_line|#endif
 macro_line|#ifndef FANCY_STATUS_DUMPS&t;&t;/* 1 for human-readable drive errors */
 DECL|macro|FANCY_STATUS_DUMPS
 mdefine_line|#define FANCY_STATUS_DUMPS&t;1&t;/* 0 to reduce kernel size */
@@ -603,11 +579,18 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* set multmode count */
+DECL|member|set_pio
+r_int
+id|set_pio
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* set pio mode */
 DECL|member|reserved
 r_int
 id|reserved
 suffix:colon
-l_int|5
+l_int|4
 suffix:semicolon
 multiline_comment|/* unused */
 DECL|member|b
@@ -682,15 +665,6 @@ id|special_t
 id|special
 suffix:semicolon
 multiline_comment|/* special action flags */
-macro_line|#if FAKE_FDISK_FOR_EZDRIVE
-DECL|member|ezdrive
-r_int
-id|ezdrive
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* flag: partitioned with ezdrive */
-macro_line|#endif /* FAKE_FDISK_FOR_EZDRIVE */
 DECL|member|present
 r_int
 id|present
@@ -719,20 +693,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* currently doing revalidate_disk() */
-DECL|member|vlb_32bit
-r_int
-id|vlb_32bit
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* use 32bit in/out for data */
-DECL|member|vlb_sync
-r_int
-id|vlb_sync
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* needed for some 32bit chip sets */
 DECL|member|removeable
 r_int
 id|removeable
@@ -747,6 +707,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* disk is using dma for read/write */
+DECL|member|forced_geom
+r_int
+id|forced_geom
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* 1 if hdx=c,h,s was given at boot */
 DECL|member|unmask
 r_int
 id|unmask
@@ -754,6 +721,22 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* flag: okay to unmask other irqs */
+DECL|member|autotune
+r_int
+id|autotune
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* 1=autotune, 2=noautotune, 0=default */
+macro_line|#if FAKE_FDISK_FOR_EZDRIVE
+DECL|member|remap_0_to_1
+r_int
+id|remap_0_to_1
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: partitioned with ezdrive */
+macro_line|#endif /* FAKE_FDISK_FOR_EZDRIVE */
 DECL|member|media
 id|ide_media_t
 id|media
@@ -764,12 +747,6 @@ id|select_t
 id|select
 suffix:semicolon
 multiline_comment|/* basic drive/head select reg value */
-DECL|member|hwif
-r_void
-op_star
-id|hwif
-suffix:semicolon
-multiline_comment|/* actually (ide_hwif_t *) */
 DECL|member|ctl
 id|byte
 id|ctl
@@ -790,11 +767,16 @@ id|byte
 id|mult_req
 suffix:semicolon
 multiline_comment|/* requested multiple sector setting */
-DECL|member|chipset
+DECL|member|pio_req
 id|byte
-id|chipset
+id|pio_req
 suffix:semicolon
-multiline_comment|/* interface chipset access method */
+multiline_comment|/* requested multiple sector setting */
+DECL|member|io_32bit
+id|byte
+id|io_32bit
+suffix:semicolon
+multiline_comment|/* 0=16-bit, 1=32-bit, 2/3=32bit+sync */
 DECL|member|bad_wstat
 id|byte
 id|bad_wstat
@@ -842,6 +824,12 @@ r_int
 id|cyl
 suffix:semicolon
 multiline_comment|/* &quot;real&quot; number of cyls */
+DECL|member|hwif
+r_void
+op_star
+id|hwif
+suffix:semicolon
+multiline_comment|/* actually (ide_hwif_t *) */
 DECL|member|wqueue
 r_struct
 id|wait_queue
@@ -877,14 +865,14 @@ r_struct
 id|cdrom_info
 id|cdrom_info
 suffix:semicolon
-multiline_comment|/* from ide-cd.c */
+multiline_comment|/* for ide-cd.c */
 macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
-macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE&t;&t;/* ide-tape specific data */
-multiline_comment|/*&n; *&t;Most of our global data which we need to save even as we leave the&n; *&t;driver due to an interrupt or a timer event is stored here.&n; *&n; *&t;Additional global variables which provide the link between the&n; *&t;character device interface to this structure are defined in&n; *&t;ide-tape.c&n; */
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
 DECL|member|tape
 id|idetape_tape_t
 id|tape
 suffix:semicolon
+multiline_comment|/* for ide-tape.c */
 macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 DECL|typedef|ide_drive_t
 )brace
@@ -929,6 +917,66 @@ comma
 id|ide_drive_t
 op_star
 )paren
+suffix:semicolon
+multiline_comment|/*&n; * An ide_tuneproc_t() is used to set the speed of an IDE interface&n; * to a particular PIO mode.  The &quot;byte&quot; parameter is used&n; * to select the PIO mode by number (0,1,2,3,4,5), and a value of 255&n; * indicates that the interface driver should &quot;auto-tune&quot; the PIO mode&n; * according to the drive capabilities in drive-&gt;id;&n; *&n; * Not all interface types support tuning, and not all of those&n; * support all possible PIO settings.  They may silently ignore&n; * or round values as they see fit.&n; */
+DECL|typedef|ide_tuneproc_t
+r_typedef
+r_void
+(paren
+id|ide_tuneproc_t
+)paren
+(paren
+id|ide_drive_t
+op_star
+comma
+id|byte
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * This is used to provide HT6560B interface support.&n; * It will probably also be used by the DC4030VL driver.&n; */
+DECL|typedef|ide_selectproc_t
+r_typedef
+r_void
+(paren
+id|ide_selectproc_t
+)paren
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * hwif_chipset_t is used to keep track of the specific hardware&n; * chipset used by each IDE interface, if known.&n; */
+DECL|enumerator|ide_unknown
+DECL|enumerator|ide_generic
+DECL|enumerator|ide_triton
+r_typedef
+r_enum
+(brace
+id|ide_unknown
+comma
+id|ide_generic
+comma
+id|ide_triton
+comma
+DECL|enumerator|ide_cmd640
+DECL|enumerator|ide_dtc2278
+DECL|enumerator|ide_ali14xx
+id|ide_cmd640
+comma
+id|ide_dtc2278
+comma
+id|ide_ali14xx
+comma
+DECL|enumerator|ide_qd6580
+DECL|enumerator|ide_umc8672
+DECL|enumerator|ide_ht6560b
+id|ide_qd6580
+comma
+id|ide_umc8672
+comma
+id|ide_ht6560b
+)brace
+DECL|typedef|hwif_chipset_t
+id|hwif_chipset_t
 suffix:semicolon
 DECL|struct|hwif_s
 r_typedef
@@ -975,6 +1023,20 @@ op_star
 id|gd
 suffix:semicolon
 multiline_comment|/* gendisk structure */
+DECL|member|tuneproc
+id|ide_tuneproc_t
+op_star
+id|tuneproc
+suffix:semicolon
+multiline_comment|/* routine to tune PIO mode for drives */
+macro_line|#ifdef CONFIG_BLK_DEV_HT6560B
+DECL|member|selectproc
+id|ide_selectproc_t
+op_star
+id|selectproc
+suffix:semicolon
+multiline_comment|/* tweaks hardware to select drive */
+macro_line|#endif /* CONFIG_BLK_DEV_HT6560B */
 DECL|member|dmaproc
 id|ide_dmaproc_t
 op_star
@@ -1004,11 +1066,6 @@ id|byte
 id|major
 suffix:semicolon
 multiline_comment|/* our major number */
-DECL|member|select
-id|byte
-id|select
-suffix:semicolon
-multiline_comment|/* pri/sec hwif select for ht6560b */
 DECL|member|name
 r_char
 id|name
@@ -1017,6 +1074,16 @@ l_int|5
 )braket
 suffix:semicolon
 multiline_comment|/* name of interface, eg. &quot;ide0&quot; */
+DECL|member|index
+id|byte
+id|index
+suffix:semicolon
+multiline_comment|/* 0 for ide0; 1 for ide1; ... */
+DECL|member|chipset
+id|hwif_chipset_t
+id|chipset
+suffix:semicolon
+multiline_comment|/* sub-module for tuning.. */
 DECL|member|noprobe
 r_int
 id|noprobe
@@ -1136,6 +1203,24 @@ DECL|typedef|ide_hwgroup_t
 )brace
 id|ide_hwgroup_t
 suffix:semicolon
+multiline_comment|/*&n; * ide_hwifs[] is the master data structure used to keep track&n; * of just about everything in ide.c.  Whenever possible, routines&n; * should be using pointers to a drive (ide_drive_t *) or &n; * pointers to a hwif (ide_hwif_t *), rather than indexing this&n; * structure directly (the allocation/layout may change!).&n; */
+macro_line|#ifdef _IDE_C
+DECL|variable|ide_hwifs
+id|ide_hwif_t
+id|ide_hwifs
+(braket
+id|MAX_HWIFS
+)braket
+suffix:semicolon
+multiline_comment|/* master data repository */
+macro_line|#else
+r_extern
+id|ide_hwif_t
+id|ide_hwifs
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * One final include file, which references some of the data/defns from above&n; */
 DECL|macro|IDE_DRIVER
 mdefine_line|#define IDE_DRIVER&t;/* &quot;parameter&quot; for blk.h */
@@ -1275,10 +1360,9 @@ r_int
 id|timeout
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is called from genhd.c to correct DiskManager/EZ-Drive geometries&n; */
+multiline_comment|/*&n; * This routine is called from the partition-table code in genhd.c&n; * to &quot;convert&quot; a drive to a logical geometry with fewer than 1024 cyls.&n; *&n; * The second parameter, &quot;xparm&quot;, determines exactly how the translation&n; * will be handled:&n; *&t;&t; 0 = convert to CHS with fewer than 1024 cyls&n; *&t;&t;&t;using the same method as Ontrack DiskManager.&n; *&t;&t; 1 = same as &quot;0&quot;, plus offset everything by 63 sectors.&n; *&t;&t;-1 = similar to &quot;0&quot;, plus redirect sector 0 to sector 1.&n; *&t;&t;&gt;1 = convert to a CHS geometry with &quot;xparm&quot; heads.&n; *&n; * Returns 0 if the translation was not possible, if the device was not&n; * an IDE disk drive, or if a geometry was &quot;forced&quot; on the commandline.&n; * Returns 1 if the geometry translation was successful.&n; */
 r_int
 id|ide_xlate_1024
-c_func
 (paren
 id|kdev_t
 comma

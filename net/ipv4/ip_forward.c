@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast routing.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1045,10 +1045,74 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_IP_MROUTE
 )brace
 macro_line|#endif&t;&t;&t;
+)brace
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+(paren
+id|fw_res
+op_assign
+id|call_out_firewall
+c_func
+(paren
+id|PF_INET
+comma
+id|skb2
+comma
+id|iph
+)paren
+)paren
+OL
+id|FW_ACCEPT
+)paren
+(brace
+multiline_comment|/* FW_ACCEPT and FW_MASQUERADE are treated equal:&n;&t;&t;&t;   masquerading is only supported via forward rules */
+r_if
+c_cond
+(paren
+id|fw_res
+op_eq
+id|FW_REJECT
+)paren
+id|icmp_send
+c_func
+(paren
+id|skb2
+comma
+id|ICMP_DEST_UNREACH
+comma
+id|ICMP_HOST_UNREACH
+comma
+l_int|0
+comma
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+op_ne
+id|skb2
+)paren
+id|kfree_skb
+c_func
+(paren
+id|skb2
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 id|ip_statistics.IpForwDatagrams
 op_increment
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1341,7 +1405,7 @@ c_func
 (paren
 id|iph
 comma
-id|dev
+id|dev2
 comma
 id|ip_acct_chain
 comma

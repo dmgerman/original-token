@@ -23,6 +23,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|binfmt_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_ROOT_NFS
 r_extern
 r_int
@@ -86,6 +94,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|binfmt_setup
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_EXT_FS
 id|init_ext_fs
 c_func
@@ -114,6 +127,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_UMSDOS_FS
+id|init_umsdos_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_FAT_FS
 id|init_fat_fs
 c_func
@@ -130,13 +150,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_VFAT_FS
 id|init_vfat_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_UMSDOS_FS
-id|init_umsdos_fs
 c_func
 (paren
 )paren

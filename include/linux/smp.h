@@ -117,8 +117,7 @@ id|smp_idle_map
 suffix:semicolon
 multiline_comment|/* map with idle cpus */
 macro_line|#else
-DECL|variable|smp_spins
-id|exern
+r_extern
 r_volatile
 r_int
 r_int

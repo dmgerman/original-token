@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * slip.h&t;Define the SLIP device driver interface and constants.&n; *&n; * NOTE:&t;THIS FILE WILL BE MOVED TO THE LINUX INCLUDE DIRECTORY&n; *&t;&t;AS SOON AS POSSIBLE!&n; *&n; * Version:&t;@(#)slip.h&t;1.2.0&t;03/28/93&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Added slip mtu field.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from net2e)&n; *&t;&t;Alan Cox&t;:&t;Added SL_SLIP_LOTS&n; *&t;Dmitry Gorodchanin&t;:&t;A lot of changes in the &squot;struct slip&squot;&n; *&t;Dmitry Gorodchanin&t;:&t;Added CSLIP statistics.&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; */
+multiline_comment|/*&n; * slip.h&t;Define the SLIP device driver interface and constants.&n; *&n; * NOTE:&t;THIS FILE WILL BE MOVED TO THE LINUX INCLUDE DIRECTORY&n; *&t;&t;AS SOON AS POSSIBLE!&n; *&n; * Version:&t;@(#)slip.h&t;1.2.0&t;03/28/93&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Added slip mtu field.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from net2e)&n; *&t;&t;Alan Cox&t;:&t;Added SL_SLIP_LOTS&n; *&t;Dmitry Gorodchanin&t;:&t;A lot of changes in the &squot;struct slip&squot;&n; *&t;Dmitry Gorodchanin&t;:&t;Added CSLIP statistics.&n; *&t;Stanislav Voronyi&t;:&t;Make line checking as created by&n; *&t;&t;&t;&t;&t;Igor Chechik, RELCOM Corp.&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; */
 macro_line|#ifndef _LINUX_SLIP_H
 DECL|macro|_LINUX_SLIP_H
 mdefine_line|#define _LINUX_SLIP_H
@@ -192,6 +192,10 @@ DECL|macro|SLF_ESCAPE
 mdefine_line|#define SLF_ESCAPE&t;1               /* ESC received                 */
 DECL|macro|SLF_ERROR
 mdefine_line|#define SLF_ERROR&t;2               /* Parity, etc. error           */
+DECL|macro|SLF_KEEPTEST
+mdefine_line|#define SLF_KEEPTEST&t;4&t;&t;/* Keepalive test flag&t;&t;*/
+DECL|macro|SLF_OUTWAIT
+mdefine_line|#define SLF_OUTWAIT&t;8&t;&t;/* is outpacket was flag&t;*/
 DECL|member|mode
 r_int
 r_char
@@ -210,6 +214,30 @@ DECL|macro|SL_MODE_AX25
 mdefine_line|#define SL_MODE_AX25&t;4
 DECL|macro|SL_MODE_ADAPTIVE
 mdefine_line|#define SL_MODE_ADAPTIVE 8
+macro_line|#ifdef CONFIG_SLIP_SMART  
+DECL|member|outfill
+r_int
+r_char
+id|outfill
+suffix:semicolon
+multiline_comment|/* # of sec betwen outfill packet */
+DECL|member|keepalive
+r_int
+r_char
+id|keepalive
+suffix:semicolon
+multiline_comment|/* keepalive seconds&t;&t;*/
+DECL|member|outfill_timer
+r_struct
+id|timer_list
+id|outfill_timer
+suffix:semicolon
+DECL|member|keepalive_timer
+r_struct
+id|timer_list
+id|keepalive_timer
+suffix:semicolon
+macro_line|#endif  
 )brace
 suffix:semicolon
 DECL|macro|SLIP_MAGIC

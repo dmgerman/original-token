@@ -19,30 +19,6 @@ macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/unistd.h&gt;
-DECL|typedef|sysfun_p
-r_typedef
-r_int
-(paren
-op_star
-id|sysfun_p
-)paren
-(paren
-r_int
-comma
-dot
-dot
-dot
-)paren
-suffix:semicolon
-r_extern
-id|sysfun_p
-id|sys_call_table
-(braket
-)braket
-suffix:semicolon
-DECL|macro|SYS
-mdefine_line|#define SYS(name)&t;(sys_call_table[__NR_##name])
 DECL|macro|DLINFO_ITEMS
 mdefine_line|#define DLINFO_ITEMS 12
 macro_line|#include &lt;linux/elf.h&gt;
@@ -93,8 +69,8 @@ id|elf_fpregset_t
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Please do not change the default core dump format to ELF when most people&n; * do not have a gdb capable of interpreting ELF core files.  Once a gdb has&n; * been released that understands ELF, *THEN* switch the core dump format.&n; */
 DECL|variable|elf_format
+r_static
 r_struct
 id|linux_binfmt
 id|elf_format
@@ -124,6 +100,71 @@ id|elf_core_dump
 macro_line|#endif
 )brace
 suffix:semicolon
+DECL|function|set_brk
+r_static
+r_void
+id|set_brk
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+id|start
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|start
+)paren
+suffix:semicolon
+id|end
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|end
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|end
+op_le
+id|start
+)paren
+r_return
+suffix:semicolon
+id|do_mmap
+c_func
+(paren
+l_int|NULL
+comma
+id|start
+comma
+id|end
+op_minus
+id|start
+comma
+id|PROT_READ
+op_or
+id|PROT_WRITE
+op_or
+id|PROT_EXEC
+comma
+id|MAP_FIXED
+op_or
+id|MAP_PRIVATE
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* We need to explicitly zero any fractional pages&n;   after the data section (i.e. bss).  This would&n;   contain the junk from the file that should not&n;   be in memory */
 DECL|function|padzero
 r_static
@@ -1145,11 +1186,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Now use mmap to map the library into memory. */
-id|SYS
+id|sys_close
 c_func
-(paren
-id|close
-)paren
 (paren
 id|elf_exec_fileno
 )paren
@@ -2774,11 +2812,8 @@ op_ne
 id|INTERPRETER_AOUT
 )paren
 (brace
-id|SYS
+id|sys_close
 c_func
-(paren
-id|close
-)paren
 (paren
 id|elf_exec_fileno
 )paren
@@ -2989,30 +3024,13 @@ id|current-&gt;mm-&gt;start_stack
 op_assign
 id|bprm-&gt;p
 suffix:semicolon
-multiline_comment|/* Calling sys_brk effectively mmaps the pages that we need for the bss and break&n;&t;   sections */
-id|current-&gt;mm-&gt;brk
-op_assign
-(paren
-id|elf_bss
-op_plus
-l_int|0xfff
-)paren
-op_amp
-l_int|0xfffff000
-suffix:semicolon
-id|SYS
+multiline_comment|/* Calling set_brk effectively mmaps the pages that we need for the bss and break&n;&t;   sections */
+id|set_brk
 c_func
 (paren
-id|brk
-)paren
-(paren
-(paren
+id|elf_bss
+comma
 id|elf_brk
-op_plus
-l_int|0xfff
-)paren
-op_amp
-l_int|0xfffff000
 )paren
 suffix:semicolon
 id|padzero
@@ -5672,6 +5690,23 @@ r_return
 id|has_dumped
 suffix:semicolon
 )brace
+DECL|function|init_elf_binfmt
+r_int
+id|init_elf_binfmt
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|register_binfmt
+c_func
+(paren
+op_amp
+id|elf_format
+)paren
+suffix:semicolon
+)brace
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -5683,11 +5718,9 @@ r_void
 (brace
 multiline_comment|/* Install the COFF, ELF and XOUT loaders.&n;&t; * N.B. We *rely* on the table being the right size with the&n;&t; * right number of free slots...&n;&t; */
 r_return
-id|register_binfmt
+id|init_elf_binfmt
 c_func
 (paren
-op_amp
-id|elf_format
 )paren
 suffix:semicolon
 )brace

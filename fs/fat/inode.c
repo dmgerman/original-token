@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/msdos/inode.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *  VFAT extensions by Gordon Chaffee, merged with msdos fs by Henrik Storner&n; */
+multiline_comment|/*&n; *  linux/fs/fat/inode.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *  VFAT extensions by Gordon Chaffee, merged with msdos fs by Henrik Storner&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;

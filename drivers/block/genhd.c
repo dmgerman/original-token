@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Code extracted from&n; *  linux/kernel/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; *&n; *  Support for DiskManager v6.0x added by Mark Lord (mlord@bnr.ca)&n; *  with information provided by OnTrack.  This now works for linux fdisk&n; *  and LILO, as well as loadlin and bootln.  Note that disks other than&n; *  /dev/hda *must* have a &quot;DOS&quot; type 0x51 partition in the first slot (hda1).&n; *&n; *  More flexible handling of extended partitions - aeb, 950831&n; */
+multiline_comment|/*&n; *  Code extracted from&n; *  linux/kernel/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; *&n; *  Support for DiskManager v6.0x added by Mark Lord (mlord@bnr.ca)&n; *  with information provided by OnTrack.  This now works for linux fdisk&n; *  and LILO, as well as loadlin and bootln.  Note that disks other than&n; *  /dev/hda *must* have a &quot;DOS&quot; type 0x51 partition in the first slot (hda1).&n; *&n; *  More flexible handling of extended partitions - aeb, 950831&n; *&n; *  Check partition table on IDE disks for common CHS translations&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
@@ -736,7 +736,7 @@ l_int|1
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_int
-id|tested_for_dm6
+id|tested_for_xlate
 op_assign
 l_int|0
 suffix:semicolon
@@ -830,16 +830,16 @@ id|data
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
-multiline_comment|/*&n;&t; *  Check for Disk Manager v6.0x (or EZ-DRIVE) with geometry translation&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|tested_for_dm6
+id|tested_for_xlate
 op_increment
 )paren
 (brace
-multiline_comment|/* only check for DM6 *once* */
+multiline_comment|/* Do this only once per disk */
+multiline_comment|/*&n;&t;&t; * Look for various forms of IDE disk geometry translation&n;&t;&t; */
 r_extern
 r_int
 id|ide_xlate_1024
@@ -854,7 +854,22 @@ r_char
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* check for various &quot;disk managers&quot; which do strange things */
+r_int
+r_int
+id|sig
+op_assign
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|data
+op_plus
+l_int|2
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -925,24 +940,6 @@ multiline_comment|/* start over with new MBR */
 )brace
 )brace
 r_else
-(brace
-multiline_comment|/* look for DM6 signature in MBR, courtesy of OnTrack */
-r_int
-r_int
-id|sig
-op_assign
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-id|data
-op_plus
-l_int|2
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -983,6 +980,7 @@ l_int|2
 )paren
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; * DM6 signature in MBR, courtesy of OnTrack&n;&t;&t;&t; */
 (paren
 r_void
 )paren
@@ -997,8 +995,6 @@ l_string|&quot; [DM6:MBR]&quot;
 suffix:semicolon
 )brace
 r_else
-(brace
-multiline_comment|/* look for DM6 AUX partition type in slot 1 */
 r_if
 c_cond
 (paren
@@ -1011,6 +1007,7 @@ op_eq
 id|DM6_AUX3PARTITION
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; * DM6 on other than the first (boot) drive&n;&t;&t;&t; */
 (paren
 r_void
 )paren
@@ -1024,6 +1021,94 @@ comma
 l_string|&quot; [DM6:AUX]&quot;
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t;&t; * Examine the partition table for common translations.&n;&t;&t;&t; * This is necessary for drives for situations where&n;&t;&t;&t; * the translated geometry is unavailable from the BIOS.&n;&t;&t;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_struct
+id|partition
+op_star
+id|q
+op_assign
+op_amp
+id|p
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|NR_SECTS
+c_func
+(paren
+id|q
+)paren
+op_logical_and
+id|q-&gt;sector
+op_eq
+l_int|1
+op_logical_and
+id|q-&gt;end_sector
+op_eq
+l_int|63
+)paren
+(brace
+r_int
+r_int
+id|heads
+op_assign
+id|q-&gt;end_head
+op_plus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|heads
+op_eq
+l_int|32
+op_logical_or
+id|heads
+op_eq
+l_int|64
+op_logical_or
+id|heads
+op_eq
+l_int|128
+)paren
+(brace
+(paren
+r_void
+)paren
+id|ide_xlate_1024
+c_func
+(paren
+id|dev
+comma
+id|heads
+comma
+l_string|&quot; [PTBL]&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 )brace
 )brace

@@ -1627,12 +1627,28 @@ c_func
 l_string|&quot;&bslash;twm geometry $w +$winx+$winy&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;   *&t;We have a cunning plan....&n;   */
+r_if
+c_cond
+(paren
+id|access
+c_func
+(paren
+l_string|&quot;/usr/lib/tk4.0&quot;
+comma
+l_int|0
+)paren
+op_eq
+l_int|0
+)paren
+(brace
 id|printf
 c_func
 (paren
 l_string|&quot;&bslash;twm resizable $w no yes&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;   * Now that the whole window is in place, we need to wait for an &quot;update&quot;&n;   * so we can tell the canvas what its virtual size should be.&n;   *&n;   * Unfortunately, this causes some ugly screen-flashing because the whole&n;   * window is drawn, and then it is immediately resized.  It seems&n;   * unavoidable, though, since &quot;frame&quot; objects won&squot;t tell us their size&n;   * until after an update, and &quot;canvas&quot; objects can&squot;t automatically pack&n;   * around frames.  Sigh.&n;   */
 id|printf
 c_func

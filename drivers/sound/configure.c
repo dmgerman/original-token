@@ -2793,7 +2793,7 @@ id|OPT_GUS
 comma
 l_string|&quot;GUS_BASE&quot;
 comma
-l_string|&quot;I/O base for Gravis UltraSound (GUS)&quot;
+l_string|&quot;I/O base for GUS&quot;
 comma
 id|FMT_HEX
 comma

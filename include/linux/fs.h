@@ -2356,10 +2356,6 @@ op_star
 id|first_file
 suffix:semicolon
 r_extern
-r_int
-id|nr_files
-suffix:semicolon
-r_extern
 r_struct
 id|super_block
 id|super_blocks

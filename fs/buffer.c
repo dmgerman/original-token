@@ -18,13 +18,13 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|NR_SIZES
-mdefine_line|#define NR_SIZES 4
+mdefine_line|#define NR_SIZES 5
 DECL|variable|buffersize_index
 r_static
 r_char
 id|buffersize_index
 (braket
-l_int|9
+l_int|17
 )braket
 op_assign
 (brace
@@ -50,6 +50,29 @@ op_minus
 l_int|1
 comma
 l_int|3
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+l_int|4
 )brace
 suffix:semicolon
 DECL|variable|bufferindex_size
@@ -69,6 +92,8 @@ comma
 l_int|2048
 comma
 l_int|4096
+comma
+l_int|8192
 )brace
 suffix:semicolon
 DECL|macro|BUFSIZE_INDEX
@@ -391,7 +416,7 @@ id|bdf_prm
 op_assign
 (brace
 (brace
-l_int|25
+l_int|60
 comma
 l_int|500
 comma
@@ -2383,6 +2408,17 @@ id|dev
 )paren
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|size
+OG
+id|PAGE_SIZE
+)paren
+id|size
+op_assign
+l_int|0
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2408,6 +2444,9 @@ l_int|2048
 suffix:colon
 r_case
 l_int|4096
+suffix:colon
+r_case
+l_int|8192
 suffix:colon
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/msdos/cache.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; */
+multiline_comment|/*&n; *  linux/fs/fat/cache.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; */
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

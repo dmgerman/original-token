@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/msdos/vfat.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Windows95/Windows NT compatible extended MSDOS filesystem&n; *    by Gordon Chaffee Copyright (C) 1995&n; */
+multiline_comment|/*&n; *  linux/fs/vfat/namei.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Windows95/Windows NT compatible extended MSDOS filesystem&n; *    by Gordon Chaffee Copyright (C) 1995&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;

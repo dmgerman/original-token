@@ -17,6 +17,12 @@ id|apic_reg
 )paren
 comma
 multiline_comment|/* Needed internally for the I386 inlines */
+id|X
+c_func
+(paren
+id|cpu_data
+)paren
+comma
 macro_line|#endif
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
