@@ -44,6 +44,10 @@ id|elf_fpregset_t
 op_star
 )paren
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|rtc_lock
+suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
@@ -590,6 +594,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|irq_stat
+)paren
+suffix:semicolon
+DECL|variable|rtc_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|rtc_lock
 )paren
 suffix:semicolon
 eof

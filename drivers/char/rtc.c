@@ -49,12 +49,9 @@ c_func
 id|rtc_wait
 )paren
 suffix:semicolon
-DECL|variable|rtc_lock
-r_static
+r_extern
 id|spinlock_t
 id|rtc_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|variable|rtc_irq_timer
 r_static
@@ -318,7 +315,7 @@ l_int|31
 )brace
 suffix:semicolon
 macro_line|#ifndef __alpha__
-multiline_comment|/*&n; *&t;A very tiny interrupt handler. It runs with SA_INTERRUPT set,&n; *&t;so that there is no possibility of conflicting with the&n; *&t;set_rtc_mmss() call that happens during some timer interrupts.&n; *&t;(See ./arch/XXXX/kernel/time.c for the set_rtc_mmss() function.)&n; */
+multiline_comment|/*&n; *&t;A very tiny interrupt handler. It runs with SA_INTERRUPT set,&n; *&t;but there is possibility of conflicting with the set_rtc_mmss()&n; *&t;call (the rtc irq and the timer irq can easily run at the same&n; *&t;time in two different CPUs). So we need to serializes&n; *&t;accesses to the chip with the rtc_lock spinlock that each&n; *&t;architecture should implement in the timer code.&n; *&t;(See ./arch/XXXX/kernel/time.c for the set_rtc_mmss() function.)&n; */
 DECL|function|rtc_interrupt
 r_static
 r_void

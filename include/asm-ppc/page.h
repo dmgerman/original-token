@@ -165,6 +165,10 @@ op_star
 id|from
 )paren
 suffix:semicolon
+DECL|macro|clear_user_page
+mdefine_line|#define clear_user_page(page, vaddr)&t;clear_page(page)
+DECL|macro|copy_user_page
+mdefine_line|#define copy_user_page(to, from, vaddr)&t;copy_page(to, from)
 multiline_comment|/* map phys-&gt;virtual and virtual-&gt;phys for RAM pages */
 DECL|function|___pa
 r_static

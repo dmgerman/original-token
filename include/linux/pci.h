@@ -2122,6 +2122,7 @@ c_func
 r_struct
 id|pci_driver
 op_star
+id|drv
 )paren
 (brace
 r_return
@@ -2138,6 +2139,7 @@ c_func
 r_struct
 id|pci_driver
 op_star
+id|drv
 )paren
 (brace
 )brace

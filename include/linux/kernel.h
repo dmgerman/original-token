@@ -11,10 +11,14 @@ DECL|macro|barrier
 mdefine_line|#define barrier() __asm__ __volatile__(&quot;&quot;: : :&quot;memory&quot;)
 DECL|macro|INT_MAX
 mdefine_line|#define INT_MAX&t;&t;((int)(~0U&gt;&gt;1))
+DECL|macro|INT_MIN
+mdefine_line|#define INT_MIN&t;&t;(-INT_MAX - 1)
 DECL|macro|UINT_MAX
 mdefine_line|#define UINT_MAX&t;(~0U)
 DECL|macro|LONG_MAX
 mdefine_line|#define LONG_MAX&t;((long)(~0UL&gt;&gt;1))
+DECL|macro|LONG_MIN
+mdefine_line|#define LONG_MIN&t;(-LONG_MAX - 1)
 DECL|macro|ULONG_MAX
 mdefine_line|#define ULONG_MAX&t;(~0UL)
 DECL|macro|STACK_MAGIC

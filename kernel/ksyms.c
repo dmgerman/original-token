@@ -1828,6 +1828,13 @@ c_func
 id|map_user_kiobuf
 )paren
 suffix:semicolon
+DECL|variable|unmap_kiobuf
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unmap_kiobuf
+)paren
+suffix:semicolon
 DECL|variable|lock_kiovec
 id|EXPORT_SYMBOL
 c_func

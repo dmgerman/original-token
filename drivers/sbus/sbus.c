@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.83 1999/10/18 01:47:01 zaitcev Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.84 2000/03/15 01:51:16 davem Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -927,6 +927,10 @@ suffix:semicolon
 id|this_dev-&gt;child-&gt;bus
 op_assign
 id|sbus
+suffix:semicolon
+id|this_dev-&gt;child-&gt;next
+op_assign
+l_int|0
 suffix:semicolon
 id|fill_sbus_device
 c_func
@@ -2014,6 +2018,10 @@ id|this_dev-&gt;child-&gt;bus
 op_assign
 id|sbus
 suffix:semicolon
+id|this_dev-&gt;child-&gt;next
+op_assign
+l_int|0
+suffix:semicolon
 id|fill_sbus_device
 c_func
 (paren
@@ -2136,6 +2144,10 @@ multiline_comment|/* Fill it */
 id|this_dev-&gt;child-&gt;bus
 op_assign
 id|sbus
+suffix:semicolon
+id|this_dev-&gt;child-&gt;next
+op_assign
+l_int|0
 suffix:semicolon
 id|fill_sbus_device
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mman.h,v 1.1 1996/12/02 00:07:29 davem Exp $ */
+multiline_comment|/* $Id: mman.h,v 1.2 2000/03/15 02:44:26 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMAN_H__
 DECL|macro|__SPARC64_MMAN_H__
 mdefine_line|#define __SPARC64_MMAN_H__
@@ -59,6 +59,18 @@ DECL|macro|MC_LOCKAS
 mdefine_line|#define MC_LOCKAS       5  /* Lock an entire address space of the calling process */
 DECL|macro|MC_UNLOCKAS
 mdefine_line|#define MC_UNLOCKAS     6  /* Unlock entire address space of calling process */
+DECL|macro|MADV_NORMAL
+mdefine_line|#define MADV_NORMAL&t;0x0&t;&t;/* default page-in behavior */
+DECL|macro|MADV_RANDOM
+mdefine_line|#define MADV_RANDOM&t;0x1&t;&t;/* page-in minimum required */
+DECL|macro|MADV_SEQUENTIAL
+mdefine_line|#define MADV_SEQUENTIAL&t;0x2&t;&t;/* read-ahead aggressively */
+DECL|macro|MADV_WILLNEED
+mdefine_line|#define MADV_WILLNEED&t;0x3&t;&t;/* pre-fault pages */
+DECL|macro|MADV_DONTNEED
+mdefine_line|#define MADV_DONTNEED&t;0x4&t;&t;/* discard these pages */
+DECL|macro|MADV_FREE
+mdefine_line|#define MADV_FREE&t;0x5&t;&t;/* (Solaris) contents can be freed */
 multiline_comment|/* compatibility flags */
 DECL|macro|MAP_ANON
 mdefine_line|#define MAP_ANON&t;MAP_ANONYMOUS

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *   olympic.c (c) 1999 Peter De Schrijver All Rights Reserved&n; *&t;&t;   1999 Mike Phillips (phillim@amtrak.com)&n; *&n; *  Linux driver for IBM PCI tokenring cards based on the Pit/Pit-Phy/Olympic&n; *  chipset. &n; *&n; *  Base Driver Skeleton:&n; *      Written 1993-94 by Donald Becker.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *  Thanks to Erik De Cock, Adrian Bridgett and Frank Fiene for their &n; *  assistance and perserverance with the testing of this driver.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; * &n; *  4/27/99 - Alpha Release 0.1.0&n; *            First release to the public&n; *&n; *  6/8/99  - Official Release 0.2.0   &n; *            Merged into the kernel code &n; *  8/18/99 - Updated driver for 2.3.13 kernel to use new pci&n; *&t;      resource. Driver also reports the card name returned by&n; *            the pci resource.&n; *  1/11/00 - Added spinlocks for smp&n; *  2/23/00 - Updated to dev_kfree_irq &n; *&n; *  To Do:&n; *&n; *  If Problems do Occur&n; *  Most problems can be rectified by either closing and opening the interface&n; *  (ifconfig down and up) or rmmod and insmod&squot;ing the driver (a bit difficult&n; *  if compiled into the kernel).&n; */
+multiline_comment|/*&n; *   olympic.c (c) 1999 Peter De Schrijver All Rights Reserved&n; *&t;&t;   1999 Mike Phillips (phillim@amtrak.com)&n; *&n; *  Linux driver for IBM PCI tokenring cards based on the Pit/Pit-Phy/Olympic&n; *  chipset. &n; *&n; *  Base Driver Skeleton:&n; *      Written 1993-94 by Donald Becker.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *  Thanks to Erik De Cock, Adrian Bridgett and Frank Fiene for their &n; *  assistance and perserverance with the testing of this driver.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; * &n; *  4/27/99 - Alpha Release 0.1.0&n; *            First release to the public&n; *&n; *  6/8/99  - Official Release 0.2.0   &n; *            Merged into the kernel code &n; *  8/18/99 - Updated driver for 2.3.13 kernel to use new pci&n; *&t;      resource. Driver also reports the card name returned by&n; *            the pci resource.&n; *  1/11/00 - Added spinlocks for smp&n; *  2/23/00 - Updated to dev_kfree_irq &n; *  3/10/00 - Fixed FDX enable which triggered other bugs also &n; *            squashed.&n; *&n; *  To Do:&n; *&n; *  If Problems do Occur&n; *  Most problems can be rectified by either closing and opening the interface&n; *  (ifconfig down and up) or rmmod and insmod&squot;ing the driver (a bit difficult&n; *  if compiled into the kernel).&n; */
 multiline_comment|/* Change OLYMPIC_DEBUG to 1 to get verbose, and I mean really verbose, messages */
 DECL|macro|OLYMPIC_DEBUG
 mdefine_line|#define OLYMPIC_DEBUG 0
@@ -30,14 +30,14 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &quot;olympic.h&quot;
-multiline_comment|/* I&squot;ve got to put some intelligence into the version number so that Peter and I know&n; * which version of the code somebody has got. &n; * Version Number = a.b.c.d  where a.b.c is the level of code and d is the latest author.&n; * So 0.0.1.pds = Peter, 0.0.1.mlp = Mike&n; * &n; * Official releases will only have an a.b.c version number format.&n; */
+multiline_comment|/* I&squot;ve got to put some intelligence into the version number so that Peter and I know&n; * which version of the code somebody has got. &n; * Version Number = a.b.c.d  where a.b.c is the level of code and d is the latest author.&n; * So 0.0.1.pds = Peter, 0.0.1.mlp = Mike&n; * &n; * Official releases will only have an a.b.c version number format. &n; */
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;Olympic.c v0.3.2 2/23/00 - Peter De Schrijver &amp; Mike Phillips&quot;
+l_string|&quot;Olympic.c v0.5.0 3/10/00 - Peter De Schrijver &amp; Mike Phillips&quot;
 suffix:semicolon
 DECL|variable|open_maj_error
 r_static
@@ -1367,6 +1367,45 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|olympic_priv-&gt;olympic_message_level
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|readb
+c_func
+(paren
+id|init_srb
+op_plus
+l_int|2
+)paren
+op_amp
+l_int|0x40
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Olympic: Adapter is FDX capable.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Olympic: Adapter cannot do FDX.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
 id|uaa_addr
 op_assign
 id|ntohs
@@ -1880,7 +1919,11 @@ macro_line|#else
 id|writew
 c_func
 (paren
+id|ntohs
+c_func
+(paren
 id|OPEN_ADAPTER_ENABLE_FDX
+)paren
 comma
 id|init_srb
 op_plus
@@ -5285,22 +5328,13 @@ id|IFF_PROMISC
 )paren
 id|options
 op_or_assign
-(paren
-l_int|3
-op_lshift
-l_int|5
-)paren
+l_int|0x61
 suffix:semicolon
-multiline_comment|/* All LLC and MAC frames, all through the main rx channel */
 r_else
 id|options
 op_and_assign
 op_complement
-(paren
-l_int|3
-op_lshift
-l_int|5
-)paren
+l_int|0x61
 suffix:semicolon
 multiline_comment|/* Only issue the srb if there is a change in options */
 r_if
@@ -6378,6 +6412,9 @@ suffix:semicolon
 id|__u16
 id|next_ptr
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 macro_line|#if OLYMPIC_NETWORK_MONITOR
 r_struct
 id|trh_hdr
@@ -6824,18 +6861,15 @@ multiline_comment|/* Is the ASB free ? */
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|readl
+id|readb
 c_func
 (paren
-id|olympic_priv-&gt;olympic_mmio
+id|asb_block
 op_plus
-id|SISR
+l_int|2
 )paren
-op_amp
-id|SISR_ASB_FREE
-)paren
+op_ne
+l_int|0xff
 )paren
 (brace
 id|olympic_priv-&gt;asb_queued
@@ -6945,12 +6979,16 @@ id|ARB_LAN_CHANGE_STATUS
 multiline_comment|/* Lan.change.status */
 id|lan_status
 op_assign
+id|ntohs
+c_func
+(paren
 id|readw
 c_func
 (paren
 id|arb_block
 op_plus
 l_int|6
+)paren
 )paren
 suffix:semicolon
 id|fdx_prot_error
@@ -7129,6 +7167,49 @@ op_plus
 id|LAPWWO
 )paren
 suffix:semicolon
+id|olympic_priv-&gt;rx_status_last_received
+op_increment
+suffix:semicolon
+id|olympic_priv-&gt;rx_status_last_received
+op_and_assign
+id|OLYMPIC_RX_RING_SIZE
+op_minus
+l_int|1
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|OLYMPIC_RX_RING_SIZE
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|olympic_priv-&gt;rx_ring_skb
+(braket
+id|olympic_priv-&gt;rx_status_last_received
+)braket
+)paren
+suffix:semicolon
+id|olympic_priv-&gt;rx_status_last_received
+op_increment
+suffix:semicolon
+id|olympic_priv-&gt;rx_status_last_received
+op_and_assign
+id|OLYMPIC_RX_RING_SIZE
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|free_irq
 c_func
 (paren
@@ -7145,6 +7226,8 @@ l_string|&quot;%s: Adapter has been closed &bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 multiline_comment|/* If serious error */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.30 2000/02/16 07:34:54 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.32 2000/03/15 07:19:28 davem Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
@@ -42,6 +42,38 @@ comma
 r_void
 op_star
 id|from
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|clear_user_page
+c_func
+(paren
+r_void
+op_star
+id|page
+comma
+r_int
+r_int
+id|vaddr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|copy_user_page
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|vaddr
 )paren
 suffix:semicolon
 multiline_comment|/* GROSS, defining this makes gcc pass these types as aggregates,&n; * and thus on the stack, turn this crap off... -DaveM&n; */

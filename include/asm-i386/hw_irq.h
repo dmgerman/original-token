@@ -257,6 +257,14 @@ r_int
 id|eip
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|prof_buffer
+)paren
+r_return
+suffix:semicolon
 multiline_comment|/*&n;&t; * Only measure the CPUs specified by /proc/irq/prof_cpu_mask.&n;&t; * (default is all CPUs.)&n;&t; */
 r_if
 c_cond
@@ -277,12 +285,6 @@ id|prof_cpu_mask
 )paren
 r_return
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|prof_buffer
-)paren
-(brace
 id|eip
 op_sub_assign
 (paren
@@ -296,7 +298,7 @@ id|eip
 op_rshift_assign
 id|prof_shift
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Don&squot;t ignore out-of-bounds EIP values silently,&n;&t;&t; * put them into the last histogram slot, so if&n;&t;&t; * present, they will show up as a sharp peak.&n;&t;&t; */
+multiline_comment|/*&n;&t; * Don&squot;t ignore out-of-bounds EIP values silently,&n;&t; * put them into the last histogram slot, so if&n;&t; * present, they will show up as a sharp peak.&n;&t; */
 r_if
 c_cond
 (paren
@@ -326,7 +328,6 @@ id|eip
 )braket
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#ifdef __SMP__ /*more of this file should probably be ifdefed SMP */
 DECL|function|hw_resend_irq

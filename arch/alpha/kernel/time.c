@@ -36,6 +36,12 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|variable|rtc_lock
+id|spinlock_t
+id|rtc_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/*&n; * Shift amount by which scaled_ticks_per_cycle is scaled.  Shifting&n; * by 48 gives us 16 bits for HZ while keeping the accuracy good even&n; * for large CPU clock rates.&n; */
 DECL|macro|FIX_SHIFT
 mdefine_line|#define FIX_SHIFT&t;48
@@ -417,6 +423,7 @@ DECL|function|common_init_rtc
 id|common_init_rtc
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -1342,6 +1349,14 @@ id|save_control
 comma
 id|save_freq_select
 suffix:semicolon
+multiline_comment|/* irq are locally disabled here */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|rtc_lock
+)paren
+suffix:semicolon
 multiline_comment|/* Tell the clock it&squot;s being set */
 id|save_control
 op_assign
@@ -1546,6 +1561,13 @@ c_func
 id|save_freq_select
 comma
 id|RTC_FREQ_SELECT
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|rtc_lock
 )paren
 suffix:semicolon
 r_return

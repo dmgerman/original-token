@@ -944,7 +944,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|add_wait_queue
+id|add_wait_queue_exclusive
 c_func
 (paren
 op_amp
@@ -961,9 +961,13 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|__set_current_state
+c_func
+(paren
 id|TASK_UNINTERRUPTIBLE
+op_or
+id|TASK_EXCLUSIVE
+)paren
 suffix:semicolon
 id|spin_lock_irqsave
 c_func

@@ -19,6 +19,10 @@ DECL|macro|clear_page
 mdefine_line|#define clear_page(page)&t;memset((void *)(page), 0, PAGE_SIZE)
 DECL|macro|copy_page
 mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
+DECL|macro|clear_user_page
+mdefine_line|#define clear_user_page(page, vaddr)&t;clear_page(page)
+DECL|macro|copy_user_page
+mdefine_line|#define copy_user_page(to, from, vaddr)&t;copy_page(to, from)
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte
 DECL|typedef|pte_t

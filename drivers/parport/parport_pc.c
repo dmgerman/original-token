@@ -11317,6 +11317,12 @@ comma
 op_star
 id|tmp
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_specified
+)paren
 id|pci_unregister_driver
 (paren
 op_amp

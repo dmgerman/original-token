@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.48 2000/02/16 07:34:51 davem Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: page.h,v 1.51 2000/03/15 07:19:25 davem Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PAGE_H
 DECL|macro|_SPARC_PAGE_H
 mdefine_line|#define _SPARC_PAGE_H
@@ -10,8 +10,14 @@ macro_line|#else
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT   12
 macro_line|#endif
+macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/* I have my suspicions... -DaveM */
+DECL|macro|PAGE_SIZE
+mdefine_line|#define PAGE_SIZE    (1UL &lt;&lt; PAGE_SHIFT)
+macro_line|#else
 DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE    (1 &lt;&lt; PAGE_SHIFT)
+macro_line|#endif
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
@@ -26,9 +32,13 @@ mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;
 DECL|macro|PAGE_BUG
 mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;BUG(); &bslash;&n;} while (0)
 DECL|macro|clear_page
-mdefine_line|#define clear_page(page)&t;memset((void *)(page), 0, PAGE_SIZE)
+mdefine_line|#define clear_page(page)&t; memset((void *)(page), 0, PAGE_SIZE)
 DECL|macro|copy_page
-mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
+mdefine_line|#define copy_page(to,from) &t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
+DECL|macro|clear_user_page
+mdefine_line|#define clear_user_page(page, vaddr)&t;clear_page(page)
+DECL|macro|copy_user_page
+mdefine_line|#define copy_user_page(to, from, vaddr)&t;copy_page(to, from)
 multiline_comment|/* The following structure is used to hold the physical&n; * memory configuration of the machine.  This is filled in&n; * probe_memory() and is later used by mem_init() to set up&n; * mem_map[].  We statically allocate SPARC_PHYS_BANKS of&n; * these structs, this is arbitrary.  The entry after the&n; * last valid one has num_bytes==0.&n; */
 DECL|struct|sparc_phys_banks
 r_struct

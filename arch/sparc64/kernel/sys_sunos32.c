@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos32.c,v 1.41 2000/03/13 21:57:31 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
+multiline_comment|/* $Id: sys_sunos32.c,v 1.42 2000/03/15 02:43:35 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -835,90 +835,6 @@ id|strategy
 )braket
 suffix:colon
 l_string|&quot;BOGUS&quot;
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Same as vadvise, and just as bogus, but for a range of virtual&n; * process address space.&n; */
-DECL|macro|MADV_NORMAL
-mdefine_line|#define MADV_NORMAL      0 /* Nothing special... */
-DECL|macro|MADV_RANDOM
-mdefine_line|#define MADV_RANDOM      1 /* I am emacs... */
-DECL|macro|MADV_SEQUENTIAL
-mdefine_line|#define MADV_SEQUENTIAL  2 /* I am researcher code... */
-DECL|macro|MADV_WILLNEED
-mdefine_line|#define MADV_WILLNEED    3 /* Pages in this range will be needed */
-DECL|macro|MADV_DONTNEED
-mdefine_line|#define MADV_DONTNEED    4 /* Pages in this range won&squot;t be needed */
-DECL|variable|mstrings
-r_static
-r_char
-op_star
-id|mstrings
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;MADV_NORMAL&quot;
-comma
-l_string|&quot;MADV_RANDOM&quot;
-comma
-l_string|&quot;MADV_SEQUENTIAL&quot;
-comma
-l_string|&quot;MADV_WILLNEED&quot;
-comma
-l_string|&quot;MADV_DONTNEED&quot;
-comma
-)brace
-suffix:semicolon
-DECL|function|sunos_madvise
-id|asmlinkage
-r_void
-id|sunos_madvise
-c_func
-(paren
-id|u32
-id|address
-comma
-id|u32
-id|len
-comma
-id|u32
-id|strategy
-)paren
-(brace
-multiline_comment|/* I wanna see who uses this... */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Advises us to use %s paging strategy for addr&lt;%08x&gt; len&lt;%08x&gt;&bslash;n&quot;
-comma
-id|current-&gt;comm
-comma
-id|strategy
-op_le
-l_int|4
-ques
-c_cond
-id|mstrings
-(braket
-id|strategy
-)braket
-suffix:colon
-l_string|&quot;BOGUS&quot;
-comma
-id|address
-comma
-id|len
 )paren
 suffix:semicolon
 id|unlock_kernel

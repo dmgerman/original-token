@@ -57,6 +57,10 @@ op_star
 id|from
 )paren
 suffix:semicolon
+DECL|macro|clear_user_page
+mdefine_line|#define clear_user_page(page, vaddr)&t;clear_page(page)
+DECL|macro|copy_user_page
+mdefine_line|#define copy_user_page(to, from, vaddr)&t;copy_page(to, from)
 macro_line|#  ifdef STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte

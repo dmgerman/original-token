@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * Copyright (C) 1999-2000 by David Brownell &lt;david-b@pacbell.net&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2 of the License, or (at your&n; * option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY&n; * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n; * for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-multiline_comment|/*&n; * USB driver for Kodak DC-2XX series digital still cameras&n; *&n; * The protocol here is the same as the one going over a serial line, but&n; * it uses USB for speed.  Set up /dev/kodak, get gphoto (www.gphoto.org),&n; * and have fun!&n; *&n; * This should also work for a number of other digital (non-Kodak) cameras,&n; * by adding the vendor and product IDs to the table below.&n; */
+multiline_comment|/*&n; * USB driver for Kodak DC-2XX series digital still cameras&n; *&n; * The protocol here is the same as the one going over a serial line, but&n; * it uses USB for speed.  Set up /dev/kodak, get gphoto (www.gphoto.org),&n; * and have fun!&n; *&n; * This should also work for a number of other digital (non-Kodak) cameras,&n; * by adding the vendor and product IDs to the table below.  They&squot;ll need&n; * to be the sort using USB just as a fast bulk data channel.&n; */
 multiline_comment|/*&n; * HISTORY&n; *&n; * 26 August, 1999 -- first release (0.1), works with my DC-240.&n; * &t;The DC-280 (2Mpixel) should also work, but isn&squot;t tested.&n; *&t;If you use gphoto, make sure you have the USB updates.&n; *&t;Lives in a 2.3.14 or so Linux kernel, in drivers/usb.&n; * 31 August, 1999 -- minor update to recognize DC-260 and handle&n; *&t;its endpoints being in a different order.  Note that as&n; *&t;of gPhoto 0.36pre, the USB updates are integrated.&n; * 12 Oct, 1999 -- handle DC-280 interface class (0xff not 0x0);&n; *&t;added timeouts to bulk_msg calls.  Minor updates, docs.&n; * 03 Nov, 1999 -- update for 2.3.25 kernel API changes.&n; * 08 Jan, 2000 .. multiple camera support&n; *&n; * Thanks to:  the folk who&squot;ve provided USB product IDs, sent in&n; * patches, and shared their sucesses!&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -98,7 +98,7 @@ l_int|0x0112
 comma
 singleline_comment|// Kodak DC-290
 singleline_comment|//  { 0x03f0, 0xffff },&t;&t;// HP PhotoSmart C500
-multiline_comment|/* Other USB devices may well work here too, so long as they&n;&t; * just stick to half duplex bulk packet exchanges.&n;&t; */
+multiline_comment|/* Other USB devices may well work here too, so long as they&n;&t; * just stick to half duplex bulk packet exchanges.  That&n;&t; * means, among other things, no iso or interrupt endpoints.&n;&t; */
 )brace
 suffix:semicolon
 DECL|struct|camera_state
@@ -319,7 +319,7 @@ l_int|10
 suffix:semicolon
 id|dbg
 (paren
-l_string|&quot;read (%d) - 0x%x %ld&quot;
+l_string|&quot;read (%d) - 0x%x %d&quot;
 comma
 id|len
 comma
@@ -1209,9 +1209,9 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|camera-&gt;dev
+id|camera-&gt;info
 op_assign
-id|dev
+id|camera_info
 suffix:semicolon
 id|camera-&gt;subminor
 op_assign
@@ -1363,12 +1363,8 @@ id|dbg
 l_string|&quot;Bogus endpoints&quot;
 )paren
 suffix:semicolon
-id|camera-&gt;dev
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-l_int|NULL
+r_goto
+id|error
 suffix:semicolon
 )brace
 r_if
@@ -1392,20 +1388,33 @@ id|err
 l_string|&quot;Failed usb_set_configuration&quot;
 )paren
 suffix:semicolon
-id|camera-&gt;dev
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-l_int|NULL
+r_goto
+id|error
 suffix:semicolon
 )brace
-id|camera-&gt;info
+id|camera-&gt;dev
 op_assign
-id|camera_info
+id|dev
 suffix:semicolon
 r_return
 id|camera
+suffix:semicolon
+id|error
+suffix:colon
+id|minor_data
+(braket
+id|camera-&gt;subminor
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+id|kfree
+(paren
+id|camera
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|camera_disconnect

@@ -168,7 +168,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;};&bslash;n#define %sLen %d&bslash;n&quot;
+l_string|&quot;};&bslash;nstatic int %sLen =  %d;&bslash;n&quot;
 comma
 id|varname
 comma

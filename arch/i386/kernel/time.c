@@ -56,6 +56,18 @@ r_extern
 id|rwlock_t
 id|xtime_lock
 suffix:semicolon
+r_extern
+r_volatile
+r_int
+r_int
+id|lost_ticks
+suffix:semicolon
+DECL|variable|rtc_lock
+id|spinlock_t
+id|rtc_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 DECL|function|do_fast_gettimeoffset
 r_static
 r_inline
@@ -126,6 +138,12 @@ suffix:semicolon
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE tick
 macro_line|#ifndef CONFIG_X86_TSC
+DECL|variable|i8253_lock
+id|spinlock_t
+id|i8253_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
 DECL|function|do_slow_gettimeoffset
 r_static
@@ -158,6 +176,14 @@ multiline_comment|/*&n;&t; * cache volatile jiffies temporarily; we have IRQs tu
 r_int
 r_int
 id|jiffies_t
+suffix:semicolon
+multiline_comment|/* gets recalled with irq locally disabled */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|i8253_lock
+)paren
 suffix:semicolon
 multiline_comment|/* timer count may underflow right here */
 id|outb_p
@@ -265,6 +291,13 @@ id|jiffies_p
 op_assign
 id|jiffies_t
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|i8253_lock
+)paren
+suffix:semicolon
 id|count_p
 op_assign
 id|count
@@ -329,12 +362,6 @@ op_star
 id|tv
 )paren
 (brace
-r_extern
-r_volatile
-r_int
-r_int
-id|lost_ticks
-suffix:semicolon
 r_int
 r_int
 id|flags
@@ -452,6 +479,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|tv-&gt;tv_usec
+op_sub_assign
+id|lost_ticks
+op_star
+(paren
+l_int|1000000
+op_div
+id|HZ
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -527,6 +564,14 @@ r_char
 id|save_control
 comma
 id|save_freq_select
+suffix:semicolon
+multiline_comment|/* gets recalled with irq locally disabled */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|rtc_lock
+)paren
 suffix:semicolon
 id|save_control
 op_assign
@@ -730,6 +775,13 @@ c_func
 id|save_freq_select
 comma
 id|RTC_FREQ_SELECT
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|rtc_lock
 )paren
 suffix:semicolon
 r_return
@@ -974,6 +1026,15 @@ c_func
 id|last_tsc_low
 )paren
 suffix:semicolon
+macro_line|#if 0 /*&n;       * SUBTLE: this is not necessary from here because it&squot;s implicit in the&n;       * write xtime_lock.&n;       */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|i8253_lock
+)paren
+suffix:semicolon
+macro_line|#endif
 id|outb_p
 c_func
 (paren
@@ -1002,6 +1063,15 @@ l_int|0x40
 op_lshift
 l_int|8
 suffix:semicolon
+macro_line|#if 0
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|i8253_lock
+)paren
+suffix:semicolon
+macro_line|#endif
 id|count
 op_assign
 (paren

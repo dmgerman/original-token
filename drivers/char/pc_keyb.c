@@ -1401,6 +1401,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* Ignore error bytes */
 r_if
 c_cond
@@ -1416,6 +1417,7 @@ id|KBD_STAT_PERR
 )paren
 )paren
 )paren
+macro_line|#endif
 (brace
 r_if
 c_cond

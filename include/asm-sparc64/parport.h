@@ -1,8 +1,7 @@
-multiline_comment|/* $Id: parport.h,v 1.7 2000/01/28 13:43:14 jj Exp $&n; * parport.h: sparc64 specific parport initialization and dma.&n; *&n; * Copyright (C) 1999  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: parport.h,v 1.8 2000/03/14 04:37:53 davem Exp $&n; * parport.h: sparc64 specific parport initialization and dma.&n; *&n; * Copyright (C) 1999  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _ASM_SPARC64_PARPORT_H
 DECL|macro|_ASM_SPARC64_PARPORT_H
 mdefine_line|#define _ASM_SPARC64_PARPORT_H 1
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#include &lt;asm/ns87303.h&gt;
 DECL|macro|PARPORT_PC_MAX_PORTS

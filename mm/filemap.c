@@ -5013,12 +5013,14 @@ c_cond
 id|new_page
 )paren
 (brace
-id|copy_highpage
+id|copy_user_highpage
 c_func
 (paren
 id|new_page
 comma
 id|old_page
+comma
+id|address
 )paren
 suffix:semicolon
 id|flush_page_to_ram

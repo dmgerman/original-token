@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;&t;/* for in_interrupt() */
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,44)
 macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#endif

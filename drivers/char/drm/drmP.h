@@ -21,7 +21,6 @@ macro_line|#ifdef CONFIG_MTRR
 macro_line|#include &lt;asm/mtrr.h&gt;
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#endif
 macro_line|#include &quot;drm.h&quot;

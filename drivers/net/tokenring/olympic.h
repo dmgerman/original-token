@@ -606,7 +606,7 @@ DECL|member|up_phys_addr
 id|__u8
 id|up_phys_addr
 (braket
-l_int|6
+l_int|4
 )braket
 suffix:semicolon
 DECL|member|poll_addr

@@ -1178,6 +1178,8 @@ id|req
 suffix:semicolon
 r_int
 id|dev
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|nbd_device

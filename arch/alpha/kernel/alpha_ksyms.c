@@ -62,6 +62,10 @@ r_extern
 id|spinlock_t
 id|kernel_flag
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|rtc_lock
+suffix:semicolon
 multiline_comment|/* these are C runtime functions with special calling conventions: */
 r_extern
 r_void
@@ -982,6 +986,13 @@ id|__local_irq_count
 )paren
 suffix:semicolon
 macro_line|#endif /* __SMP__ */
+DECL|variable|rtc_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|rtc_lock
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * The following are special because they&squot;re not called&n; * explicitly (the C compiler or assembler generates them in&n; * response to division operations).  Fortunately, their&n; * interface isn&squot;t gonna change any time soon now, so it&squot;s OK&n; * to leave it out of version control.&n; */
 DECL|macro|memcpy
 macro_line|# undef memcpy
