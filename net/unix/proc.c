@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/ddi.h&gt;
 macro_line|#include &lt;linux/un.h&gt;
-macro_line|#include &lt;sys/param.h&gt;
+macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &quot;unix.h&quot;
 multiline_comment|/* Called from PROCfs. */
 DECL|function|unix_get_info
@@ -162,7 +162,7 @@ op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Check wether buffer _may_ overflow in the next loop.&n;&t;&t; * Since sockets may have very very long paths, we make&n;&t;&t; * MAXPATHLEN+100 the minimum space left for a new line.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Check wether buffer _may_ overflow in the next loop.&n;&t;&t; * Since sockets may have very very long paths, we make&n;&t;&t; * PATH_MAX+100 the minimum space left for a new line.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -174,7 +174,7 @@ id|PAGE_SIZE
 op_minus
 l_int|80
 op_minus
-id|MAXPATHLEN
+id|PATH_MAX
 )paren
 (brace
 id|printk

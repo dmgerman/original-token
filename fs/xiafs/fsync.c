@@ -25,6 +25,7 @@ op_star
 id|inode
 comma
 r_int
+r_int
 op_star
 id|block
 comma
@@ -167,6 +168,7 @@ id|inode
 op_star
 id|inode
 comma
+r_int
 r_int
 op_star
 id|iblock
@@ -436,7 +438,8 @@ id|inode
 comma
 (paren
 (paren
-id|daddr_t
+r_int
+r_int
 op_star
 )paren
 id|ind_bh-&gt;b_data
@@ -559,7 +562,8 @@ id|inode
 comma
 (paren
 (paren
-id|daddr_t
+r_int
+r_int
 op_star
 )paren
 id|dind_bh-&gt;b_data

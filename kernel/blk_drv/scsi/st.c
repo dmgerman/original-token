@@ -13,6 +13,7 @@ DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR 9
 macro_line|#include &quot;../blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
+macro_line|#include &quot;scsi_ioctl.h&quot;
 macro_line|#include &quot;st.h&quot;
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 5
@@ -450,6 +451,7 @@ comma
 r_int
 id|result
 comma
+r_int
 r_char
 op_star
 id|sense

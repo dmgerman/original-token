@@ -227,6 +227,7 @@ r_int
 id|blacklisted
 c_func
 (paren
+r_int
 r_char
 op_star
 id|response_data
@@ -237,6 +238,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+r_int
 r_char
 op_star
 id|pnt
@@ -298,7 +300,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|strncmp
+id|memcmp
 c_func
 (paren
 id|blacklist
@@ -353,7 +355,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|strncmp
+id|memcmp
 c_func
 (paren
 id|blacklist
@@ -657,6 +659,10 @@ l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Mark not busy */
 id|SCmd.use_sg
+op_assign
+l_int|0
+suffix:semicolon
+id|SCmd.old_use_sg
 op_assign
 l_int|0
 suffix:semicolon
@@ -1229,7 +1235,7 @@ multiline_comment|/* These devices need this &quot;key&quot; to unlock the devic
 r_if
 c_cond
 (paren
-id|strncmp
+id|memcmp
 c_func
 (paren
 l_string|&quot;INSITE&quot;
@@ -1246,7 +1252,7 @@ op_eq
 l_int|0
 op_logical_and
 (paren
-id|strncmp
+id|memcmp
 c_func
 (paren
 l_string|&quot;Floptical   F*8I&quot;
@@ -1262,7 +1268,7 @@ l_int|16
 op_eq
 l_int|0
 op_logical_or
-id|strncmp
+id|memcmp
 c_func
 (paren
 l_string|&quot;I325VM&quot;
@@ -1902,6 +1908,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Reset the scatter-gather flag */
+id|SCpnt-&gt;old_use_sg
+op_assign
+l_int|0
+suffix:semicolon
 id|SCpnt-&gt;transfersize
 op_assign
 l_int|0
@@ -2266,6 +2276,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Reset the scatter-gather flag */
+id|SCpnt-&gt;old_use_sg
+op_assign
+l_int|0
+suffix:semicolon
 id|SCpnt-&gt;transfersize
 op_assign
 l_int|0
@@ -2497,9 +2511,6 @@ op_star
 id|SCpnt
 )paren
 (brace
-r_int
-id|old_use_sg
-suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2573,10 +2584,6 @@ r_sizeof
 id|SCpnt-&gt;sense_buffer
 )paren
 suffix:semicolon
-id|old_use_sg
-op_assign
-id|SCpnt-&gt;use_sg
-suffix:semicolon
 id|SCpnt-&gt;use_sg
 op_assign
 l_int|0
@@ -2588,7 +2595,7 @@ id|SCpnt
 suffix:semicolon
 id|SCpnt-&gt;use_sg
 op_assign
-id|old_use_sg
+id|SCpnt-&gt;old_use_sg
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;scsi_do_cmd sends all the commands out to the low-level driver.  It &n;&t;handles the specifics required for each low level driver - ie queued &n;&t;or non queud.  It also prevents conflicts when different high level &n;&t;drivers go for the same host at the same time.&n;*/
@@ -2920,6 +2927,10 @@ suffix:semicolon
 id|SCpnt-&gt;request_bufflen
 op_assign
 id|bufflen
+suffix:semicolon
+id|SCpnt-&gt;old_use_sg
+op_assign
+id|SCpnt-&gt;use_sg
 suffix:semicolon
 multiline_comment|/* Start the timer ticking.  */
 id|SCpnt-&gt;internal_timeout
@@ -3437,7 +3448,7 @@ r_default
 suffix:colon
 id|printk
 (paren
-l_string|&quot;Internal error %s %s &bslash;n&quot;
+l_string|&quot;Internal error %s %d &bslash;n&quot;
 comma
 id|__FILE__
 comma
@@ -3562,7 +3573,7 @@ r_default
 suffix:colon
 id|printk
 (paren
-l_string|&quot;Internal error %s %s &bslash;n&quot;
+l_string|&quot;Internal error %s %d &bslash;n&quot;
 l_string|&quot;status byte = %d &bslash;n&quot;
 comma
 id|__FILE__
@@ -3907,6 +3918,10 @@ id|SCpnt-&gt;request_bufflen
 op_assign
 id|SCpnt-&gt;bufflen
 suffix:semicolon
+id|SCpnt-&gt;use_sg
+op_assign
+id|SCpnt-&gt;old_use_sg
+suffix:semicolon
 id|internal_cmnd
 (paren
 id|SCpnt
@@ -3969,6 +3984,10 @@ l_int|0xff
 op_lshift
 l_int|24
 )paren
+suffix:semicolon
+id|SCpnt-&gt;use_sg
+op_assign
+id|SCpnt-&gt;old_use_sg
 suffix:semicolon
 id|SCpnt-&gt;done
 (paren
@@ -4476,15 +4495,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;These are used to keep track of things. &n;*/
-DECL|variable|time_start
-DECL|variable|time_elapsed
-r_static
-r_int
-id|time_start
-comma
-id|time_elapsed
-suffix:semicolon
 multiline_comment|/*&n;&t;The strategy is to cause the timer code to call scsi_times_out()&n;&t;when the soonest timeout is pending.  &n;&t;The arguments are used when we are queueing a new command, because&n;&t;we do not want to subtract the time used from this time, but when we&n;&t;set the timer, we want to take this value into account.&n;*/
 DECL|function|update_timeout
 r_static
@@ -4733,7 +4743,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 DECL|function|scsi_malloc
-r_char
+r_void
 op_star
 id|scsi_malloc
 c_func
@@ -4938,7 +4948,7 @@ r_int
 id|scsi_free
 c_func
 (paren
-r_char
+r_void
 op_star
 id|obj
 comma
@@ -5426,6 +5436,10 @@ id|SCpnt-&gt;use_sg
 op_assign
 l_int|0
 suffix:semicolon
+id|SCpnt-&gt;old_use_sg
+op_assign
+l_int|0
+suffix:semicolon
 id|SCpnt-&gt;underflow
 op_assign
 l_int|0
@@ -5433,6 +5447,10 @@ suffix:semicolon
 id|SCpnt-&gt;transfersize
 op_assign
 l_int|0
+suffix:semicolon
+id|SCpnt-&gt;host_scribble
+op_assign
+l_int|NULL
 suffix:semicolon
 id|host
 op_assign
@@ -5614,7 +5632,7 @@ id|TYPE_TAPE
 id|dma_sectors
 op_add_assign
 (paren
-id|BLOCK_SIZE
+id|PAGE_SIZE
 op_rshift
 l_int|9
 )paren
@@ -5708,6 +5726,7 @@ multiline_comment|/* Some host adapters require&n;&t;&t;&t;&t;&t;&t;buffers to b
 id|dma_malloc_buffer
 op_assign
 (paren
+r_int
 r_char
 op_star
 )paren

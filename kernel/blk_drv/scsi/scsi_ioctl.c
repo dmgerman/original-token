@@ -69,6 +69,7 @@ id|get_fs_long
 (paren
 (paren
 r_int
+r_int
 op_star
 )paren
 id|buffer
@@ -526,6 +527,7 @@ c_func
 (paren
 (paren
 r_int
+r_int
 op_star
 )paren
 id|buffer
@@ -538,6 +540,7 @@ c_func
 (paren
 (paren
 (paren
+r_int
 r_int
 op_star
 )paren
@@ -616,6 +619,10 @@ id|MAX_BUF
 suffix:semicolon
 id|buf
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|scsi_malloc
 c_func
 (paren
@@ -1073,6 +1080,7 @@ l_int|16
 )paren
 comma
 (paren
+r_int
 r_int
 op_star
 )paren

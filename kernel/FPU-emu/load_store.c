@@ -192,21 +192,23 @@ suffix:semicolon
 r_case
 id|_null_
 suffix:colon
-r_return
 id|Un_impl
 c_func
 (paren
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 macro_line|#ifdef PARANOID
 r_default
 suffix:colon
-r_return
 id|EXCEPTION
 c_func
 (paren
 id|EX_INTERNAL
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 macro_line|#endif PARANOID
 )brace

@@ -237,9 +237,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* We don&squot;t actually probe for anything here, although we might&n;       someday check to see if there&squot;s bi-directional port at&n;       dev-&gt;base_addr. */
 multiline_comment|/* Initialize the device structure. */
-id|dev
-op_member_access_from_pointer
-r_private
+id|dev-&gt;priv
 op_assign
 id|kmalloc
 c_func
@@ -256,9 +254,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|dev
-op_member_access_from_pointer
-r_private
+id|dev-&gt;priv
 comma
 l_int|0
 comma
@@ -276,9 +272,7 @@ r_struct
 id|netstats
 op_star
 )paren
-id|dev
-op_member_access_from_pointer
-r_private
+id|dev-&gt;priv
 suffix:semicolon
 r_for
 c_loop
@@ -651,7 +645,8 @@ c_func
 id|dev
 comma
 (paren
-r_void
+r_int
+r_char
 op_star
 )paren
 (paren
@@ -972,9 +967,7 @@ r_struct
 id|netstats
 op_star
 )paren
-id|dev
-op_member_access_from_pointer
-r_private
+id|dev-&gt;priv
 suffix:semicolon
 multiline_comment|/* Receive the packet here. */
 r_if
@@ -1091,6 +1084,11 @@ id|length
 suffix:semicolon
 id|skb
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|kmalloc
 c_func
 (paren
@@ -1148,7 +1146,8 @@ op_star
 id|buf
 op_assign
 (paren
-r_void
+r_int
+r_char
 op_star
 )paren
 (paren
@@ -1212,7 +1211,8 @@ id|dev_rint
 c_func
 (paren
 (paren
-r_void
+r_int
+r_char
 op_star
 )paren
 id|skb

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 r_static
 r_int
 id|proc_readroot
@@ -218,6 +219,17 @@ l_int|3
 comma
 l_string|&quot;net&quot;
 )brace
+comma
+macro_line|#ifdef CONFIG_DEBUG_MALLOC
+(brace
+l_int|13
+comma
+l_int|6
+comma
+l_string|&quot;malloc&quot;
+)brace
+comma
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY

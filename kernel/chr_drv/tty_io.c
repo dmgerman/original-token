@@ -204,7 +204,7 @@ comma
 r_struct
 id|tty_ldisc
 op_star
-r_new
+id|new_ldisc
 )paren
 (brace
 r_if
@@ -225,7 +225,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-r_new
+id|new_ldisc
 )paren
 (brace
 id|ldiscs
@@ -234,7 +234,7 @@ id|disc
 )braket
 op_assign
 op_star
-r_new
+id|new_ldisc
 suffix:semicolon
 id|ldiscs
 (braket
@@ -290,16 +290,15 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|save_flags
 c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 id|head
@@ -336,16 +335,10 @@ op_assign
 id|head
 suffix:semicolon
 )brace
-id|__asm__
-id|__volatile__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -370,16 +363,15 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|save_flags
 c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -414,16 +406,10 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|__asm__
-id|__volatile__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -471,16 +457,15 @@ id|head
 comma
 id|tail
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|save_flags
 c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 id|tail
@@ -531,16 +516,10 @@ id|tty-&gt;read_q.tail
 op_assign
 id|tail
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -598,6 +577,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|clear_bit
 c_func
 (paren
@@ -668,6 +648,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|clear_bit
 c_func
 (paren
@@ -1177,7 +1158,6 @@ id|tty_fops
 suffix:semicolon
 )brace
 DECL|function|tty_hung_up_p
-r_inline
 r_int
 id|tty_hung_up_p
 c_func
@@ -1835,7 +1815,6 @@ id|tty-&gt;read_q.tail
 suffix:semicolon
 id|special_flag
 op_assign
-op_logical_neg
 id|clear_bit
 c_func
 (paren
@@ -3066,7 +3045,6 @@ op_ge
 id|RQ_THRESHOLD_HW
 )paren
 op_logical_and
-op_logical_neg
 id|clear_bit
 c_func
 (paren
@@ -3102,7 +3080,6 @@ op_ge
 id|SQ_THRESHOLD_HW
 )paren
 op_logical_and
-op_logical_neg
 id|clear_bit
 c_func
 (paren
@@ -3688,7 +3665,6 @@ op_ge
 id|SQ_THRESHOLD_HW
 )paren
 op_logical_and
-op_logical_neg
 id|clear_bit
 c_func
 (paren
@@ -7007,16 +6983,15 @@ id|p
 suffix:semicolon
 DECL|macro|VLEFT
 mdefine_line|#define VLEFT ((tail-head-1)&amp;(TTY_BUF_SIZE-1))
-id|__asm__
-id|__volatile__
+id|save_flags
 c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -7025,16 +7000,10 @@ c_cond
 id|tty-&gt;write_data_cnt
 )paren
 (brace
-id|__asm__
-id|__volatile__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -7104,6 +7073,11 @@ id|count
 suffix:semicolon
 id|tty-&gt;write_data_ptr
 op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
 id|p
 suffix:semicolon
 id|tty-&gt;write_data_callback
@@ -7115,16 +7089,10 @@ op_assign
 id|callarg
 suffix:semicolon
 )brace
-id|__asm__
-id|__volatile__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 id|tty
@@ -7243,7 +7211,6 @@ l_int|1
 r_if
 c_cond
 (paren
-op_logical_neg
 id|clear_bit
 c_func
 (paren

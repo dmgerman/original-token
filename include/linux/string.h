@@ -33,7 +33,9 @@ l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&bslash;n&bslash;t&quot;
 l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&quot;
-op_scope_resolution
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
 l_string|&quot;S&quot;
 (paren
 id|src
@@ -91,7 +93,9 @@ l_string|&quot;jne 1b&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&bslash;n&quot;
 l_string|&quot;2:&quot;
-op_scope_resolution
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
 l_string|&quot;S&quot;
 (paren
 id|src
@@ -151,7 +155,9 @@ l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&bslash;n&bslash;t&quot;
 l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&quot;
-op_scope_resolution
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
 l_string|&quot;S&quot;
 (paren
 id|src
@@ -222,7 +228,9 @@ l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&bslash;n&quot;
 l_string|&quot;2:&bslash;txorl %2,%2&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&quot;
-op_scope_resolution
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
 l_string|&quot;S&quot;
 (paren
 id|src
@@ -1116,7 +1124,9 @@ l_string|&quot;1:&bslash;ttestb $2,%%dl&bslash;n&bslash;t&quot;
 l_string|&quot;je 2f&bslash;n&bslash;t&quot;
 l_string|&quot;movsw&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
-op_scope_resolution
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
 l_string|&quot;d&quot;
 (paren
 id|n
@@ -1187,7 +1197,9 @@ c_func
 l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;movsb&quot;
-op_scope_resolution
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
 l_string|&quot;c&quot;
 (paren
 id|n
@@ -1218,7 +1230,9 @@ l_string|&quot;std&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;movsb&bslash;n&bslash;t&quot;
 l_string|&quot;cld&quot;
-op_scope_resolution
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
 l_string|&quot;c&quot;
 (paren
 id|n
@@ -1434,7 +1448,9 @@ c_func
 l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&quot;
-op_scope_resolution
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
 l_string|&quot;a&quot;
 (paren
 id|c

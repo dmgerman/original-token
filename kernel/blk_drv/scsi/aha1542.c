@@ -1764,6 +1764,24 @@ id|done
 )paren
 suffix:semicolon
 macro_line|#endif
+id|any2scsi
+c_func
+(paren
+id|mb
+(braket
+id|mbo
+)braket
+dot
+id|ccbptr
+comma
+op_amp
+id|ccb
+(braket
+id|mbo
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* This gets trashed for some reason*/
 id|memset
 c_func
 (paren
@@ -1894,6 +1912,11 @@ suffix:semicolon
 multiline_comment|/* SCSI Initiator Command  w/scatter-gather*/
 id|SCpnt-&gt;host_scribble
 op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
 id|scsi_malloc
 c_func
 (paren
@@ -3808,7 +3831,6 @@ suffix:semicolon
 )brace
 DECL|function|aha1542_biosparam
 r_int
-(def_block
 id|aha1542_biosparam
 c_func
 (paren
@@ -3820,24 +3842,24 @@ id|dev
 comma
 r_int
 op_star
-id|info
+id|ip
 )paren
 (brace
-id|info
+id|ip
 (braket
 l_int|0
 )braket
 op_assign
 l_int|64
 suffix:semicolon
-id|info
+id|ip
 (braket
 l_int|1
 )braket
 op_assign
 l_int|32
 suffix:semicolon
-id|info
+id|ip
 (braket
 l_int|2
 )braket
@@ -3846,10 +3868,9 @@ id|size
 op_rshift
 l_int|11
 suffix:semicolon
-multiline_comment|/*  if (info[2] &gt;= 1024) info[2] = 1024; */
+multiline_comment|/*  if (ip[2] &gt;= 1024) ip[2] = 1024; */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-)def_block
 eof

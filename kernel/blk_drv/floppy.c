@@ -113,9 +113,9 @@ mdefine_line|#define MAX_DISK_SIZE 1440
 multiline_comment|/*&n; * Maximum number of sectors in a track buffer. Track buffering is disabled&n; * if tracks are bigger.&n; */
 DECL|macro|MAX_BUFFER_SECTORS
 mdefine_line|#define MAX_BUFFER_SECTORS 18
-multiline_comment|/*&n; * The DMA channel used by the floppy controller cannot access data at&n; * addresses &gt;= 1MB&n; */
+multiline_comment|/*&n; * The DMA channel used by the floppy controller cannot access data at&n; * addresses &gt;= 16MB&n; */
 DECL|macro|LAST_DMA_ADDR
-mdefine_line|#define LAST_DMA_ADDR&t;(0x100000 - BLOCK_SIZE)
+mdefine_line|#define LAST_DMA_ADDR&t;(0x1000000 - BLOCK_SIZE)
 multiline_comment|/*&n; * globals used by &squot;result()&squot;&n; */
 DECL|macro|MAX_REPLIES
 mdefine_line|#define MAX_REPLIES 7
@@ -1532,7 +1532,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|macro|copy_buffer
-mdefine_line|#define copy_buffer(from,to) &bslash;&n;__asm__(&quot;cld ; rep ; movsl&quot; &bslash;&n;&t;::&quot;c&quot; (BLOCK_SIZE/4),&quot;S&quot; ((long)(from)),&quot;D&quot; ((long)(to)) &bslash;&n;&t;:&quot;cx&quot;,&quot;di&quot;,&quot;si&quot;)
+mdefine_line|#define copy_buffer(from,to) &bslash;&n;__asm__(&quot;cld ; rep ; movsl&quot; &bslash;&n;&t;: &bslash;&n;&t;:&quot;c&quot; (BLOCK_SIZE/4),&quot;S&quot; ((long)(from)),&quot;D&quot; ((long)(to)) &bslash;&n;&t;:&quot;cx&quot;,&quot;di&quot;,&quot;si&quot;)
 DECL|function|setup_DMA
 r_static
 r_void
@@ -3924,8 +3924,8 @@ op_logical_neg
 id|recalibrate
 )paren
 (brace
-id|do_floppy
-op_assign
+r_if
+c_cond
 (paren
 id|current_track
 op_logical_and
@@ -3933,10 +3933,13 @@ id|current_track
 op_ne
 id|NO_TRACK
 )paren
-ques
-c_cond
+id|do_floppy
+op_assign
 id|shake_zero
-suffix:colon
+suffix:semicolon
+r_else
+id|do_floppy
+op_assign
 id|shake_one
 suffix:semicolon
 id|output_byte
@@ -4274,10 +4277,6 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Auto-detection */
-r_if
-c_cond
-(paren
-(paren
 id|floppy
 op_assign
 id|current_type
@@ -4286,19 +4285,18 @@ id|device
 op_amp
 l_int|3
 )braket
-)paren
-op_eq
-l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|floppy
 )paren
 (brace
 id|probing
 op_assign
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|floppy
 op_assign
 id|base_type
@@ -4307,9 +4305,12 @@ id|device
 op_amp
 l_int|3
 )braket
-)paren
-op_eq
-l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|floppy
 )paren
 (brace
 id|request_done
@@ -4322,11 +4323,15 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-id|floppy
-op_add_assign
+r_if
+c_cond
+(paren
 id|CURRENT_ERRORS
 op_amp
 l_int|1
+)paren
+id|floppy
+op_increment
 suffix:semicolon
 )brace
 )brace
@@ -4739,7 +4744,7 @@ suffix:semicolon
 r_struct
 id|floppy_struct
 op_star
-id|this
+id|this_floppy
 suffix:semicolon
 r_switch
 c_cond
@@ -4845,7 +4850,7 @@ id|drive
 OG
 l_int|3
 )paren
-id|this
+id|this_floppy
 op_assign
 op_amp
 id|floppy_type
@@ -4860,7 +4865,7 @@ r_if
 c_cond
 (paren
 (paren
-id|this
+id|this_floppy
 op_assign
 id|current_type
 (braket
@@ -4930,7 +4935,7 @@ c_func
 r_char
 op_star
 )paren
-id|this
+id|this_floppy
 )paren
 (braket
 id|cnt
@@ -5234,49 +5239,24 @@ suffix:colon
 r_case
 id|FDDEFPRM
 suffix:colon
-r_for
-c_loop
+id|memcpy_fromfs
+c_func
 (paren
-id|cnt
-op_assign
-l_int|0
-suffix:semicolon
-id|cnt
-OL
+id|user_params
+op_plus
+id|drive
+comma
+(paren
+r_void
+op_star
+)paren
+id|param
+comma
 r_sizeof
 (paren
 r_struct
 id|floppy_struct
 )paren
-suffix:semicolon
-id|cnt
-op_increment
-)paren
-(paren
-(paren
-r_char
-op_star
-)paren
-op_amp
-id|user_params
-(braket
-id|drive
-)braket
-)paren
-(braket
-id|cnt
-)braket
-op_assign
-id|get_fs_byte
-c_func
-(paren
-(paren
-r_char
-op_star
-)paren
-id|param
-op_plus
-id|cnt
 )paren
 suffix:semicolon
 id|current_type
@@ -5387,11 +5367,8 @@ c_func
 l_string|&quot;nop&quot;
 )paren
 suffix:semicolon
-id|keep_data
-(braket
-id|drive
-)braket
-op_assign
+r_if
+c_cond
 (paren
 id|inb
 c_func
@@ -5401,10 +5378,19 @@ id|FD_DIR
 op_amp
 l_int|0x80
 )paren
-ques
-c_cond
+id|keep_data
+(braket
+id|drive
+)braket
+op_assign
 l_int|1
-suffix:colon
+suffix:semicolon
+r_else
+id|keep_data
+(braket
+id|drive
+)braket
+op_assign
 l_int|0
 suffix:semicolon
 id|outb_p

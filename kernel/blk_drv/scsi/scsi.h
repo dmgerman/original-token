@@ -496,7 +496,7 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|ISA_DMA_THRESHOLD
 mdefine_line|#define ISA_DMA_THRESHOLD (0x00ffffff)
-r_char
+r_void
 op_star
 id|scsi_malloc
 c_func
@@ -509,7 +509,7 @@ r_int
 id|scsi_free
 c_func
 (paren
-r_char
+r_void
 op_star
 comma
 r_int
@@ -645,6 +645,12 @@ id|data_cmnd
 l_int|12
 )braket
 suffix:semicolon
+DECL|member|old_use_sg
+r_int
+r_int
+id|old_use_sg
+suffix:semicolon
+multiline_comment|/* We save  use_sg here when requesting&n;&t;&t;&t;&t;       sense info */
 DECL|member|use_sg
 r_int
 r_int

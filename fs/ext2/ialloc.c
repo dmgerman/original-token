@@ -1017,6 +1017,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|clear_bit
 (paren
 id|bit
@@ -1938,6 +1939,10 @@ suffix:semicolon
 id|sb-&gt;s_dirt
 op_assign
 l_int|1
+suffix:semicolon
+id|inode-&gt;i_mode
+op_assign
+id|mode
 suffix:semicolon
 id|inode-&gt;i_sb
 op_assign

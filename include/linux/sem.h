@@ -239,12 +239,6 @@ id|sem_undo
 op_star
 id|id_next
 suffix:semicolon
-DECL|member|id_prev
-r_struct
-id|sem_undo
-op_star
-id|id_prev
-suffix:semicolon
 DECL|member|semid
 r_int
 id|semid

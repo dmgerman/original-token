@@ -18,6 +18,7 @@ op_star
 id|log_wait
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_syslog
 c_func

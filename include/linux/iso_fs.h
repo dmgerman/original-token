@@ -1130,13 +1130,22 @@ DECL|macro|ISOFS_BLOCK_BITS
 mdefine_line|#define ISOFS_BLOCK_BITS 11
 DECL|macro|ISOFS_BLOCK_SIZE
 mdefine_line|#define ISOFS_BLOCK_SIZE 2048
-multiline_comment|/* We use these until the buffer cache supports 2048 */
-DECL|macro|ISOFS_BUFFER_BITS
-mdefine_line|#define ISOFS_BUFFER_BITS 10
 DECL|macro|ISOFS_BUFFER_SIZE
+mdefine_line|#define ISOFS_BUFFER_SIZE(INODE) ((INODE)-&gt;i_sb-&gt;s_blocksize)
+DECL|macro|ISOFS_BUFFER_BITS
+mdefine_line|#define ISOFS_BUFFER_BITS(INODE) ((INODE)-&gt;i_sb-&gt;s_blocksize_bits)
+macro_line|#if 0
+macro_line|#ifdef ISOFS_FIXED_BLOCKSIZE
+multiline_comment|/* We use these until the buffer cache supports 2048 */
+mdefine_line|#define ISOFS_BUFFER_BITS 10
 mdefine_line|#define ISOFS_BUFFER_SIZE 1024
-DECL|macro|ISOFS_BLOCK_NUMBER
 mdefine_line|#define ISOFS_BLOCK_NUMBER(X) (X&lt;&lt;1)
+macro_line|#else
+mdefine_line|#define ISOFS_BUFFER_BITS 11
+mdefine_line|#define ISOFS_BUFFER_SIZE 2048
+mdefine_line|#define ISOFS_BLOCK_NUMBER(X) (X)
+macro_line|#endif
+macro_line|#endif
 DECL|macro|ISOFS_SUPER_MAGIC
 mdefine_line|#define ISOFS_SUPER_MAGIC 0x9660
 DECL|macro|ISOFS_FILE_UNKNOWN
@@ -1389,16 +1398,6 @@ r_extern
 r_struct
 id|inode_operations
 id|isofs_fifo_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|isofs_file_operations
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|isofs_dir_operations
 suffix:semicolon
 DECL|struct|lookup_cache
 r_struct

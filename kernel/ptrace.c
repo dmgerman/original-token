@@ -421,7 +421,7 @@ id|PAGE_PRESENT
 id|do_no_page
 c_func
 (paren
-l_int|0
+id|PAGE_RW
 comma
 id|addr
 comma
@@ -448,7 +448,9 @@ id|PAGE_RW
 id|do_wp_page
 c_func
 (paren
-l_int|0
+id|PAGE_RW
+op_or
+id|PAGE_PRESENT
 comma
 id|addr
 comma
@@ -877,6 +879,8 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_ptrace
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_ptrace
 c_func
@@ -1698,6 +1702,8 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|syscall_trace
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|syscall_trace
 c_func

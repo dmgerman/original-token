@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * Count is not yet used: but we&squot;ll probably support reading several entries&n; * at once in the future. Use count=1 in the library for future expansions.&n; */
 DECL|function|sys_readdir
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_readdir
 c_func
@@ -123,6 +125,8 @@ id|error
 suffix:semicolon
 )brace
 DECL|function|sys_lseek
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_lseek
 c_func
@@ -282,6 +286,8 @@ id|file-&gt;f_pos
 suffix:semicolon
 )brace
 DECL|function|sys_read
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_read
 c_func
@@ -413,6 +419,8 @@ id|count
 suffix:semicolon
 )brace
 DECL|function|sys_write
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_write
 c_func

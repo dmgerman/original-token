@@ -45,10 +45,10 @@ r_extern
 r_int
 id|root_mountflags
 suffix:semicolon
-DECL|variable|super_block
+DECL|variable|super_blocks
 r_struct
 id|super_block
-id|super_block
+id|super_blocks
 (braket
 id|NR_SUPER
 )braket
@@ -233,13 +233,13 @@ c_loop
 (paren
 id|sb
 op_assign
-id|super_block
+id|super_blocks
 op_plus
 l_int|0
 suffix:semicolon
 id|sb
 OL
-id|super_block
+id|super_blocks
 op_plus
 id|NR_SUPER
 suffix:semicolon
@@ -343,7 +343,7 @@ id|s
 op_assign
 l_int|0
 op_plus
-id|super_block
+id|super_blocks
 suffix:semicolon
 r_while
 c_loop
@@ -352,7 +352,7 @@ id|s
 OL
 id|NR_SUPER
 op_plus
-id|super_block
+id|super_blocks
 )paren
 r_if
 c_cond
@@ -382,7 +382,7 @@ id|s
 op_assign
 l_int|0
 op_plus
-id|super_block
+id|super_blocks
 suffix:semicolon
 )brace
 r_else
@@ -608,7 +608,7 @@ id|s
 op_assign
 l_int|0
 op_plus
-id|super_block
+id|super_blocks
 suffix:semicolon
 suffix:semicolon
 id|s
@@ -622,7 +622,7 @@ id|s
 op_ge
 id|NR_SUPER
 op_plus
-id|super_block
+id|super_blocks
 )paren
 r_return
 l_int|NULL
@@ -1049,6 +1049,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Now umount can handle mount points as well as block devices.&n; * This is important for filesystems which use unnamed block devices.&n; *&n; * There is a little kludge here with the dummy_inode.  The current&n; * vfs release functions only use the r_dev field in the inode so&n; * we give them the info they need without using a real inode.&n; * If any other fields are ever needed by any block device release&n; * functions, they should be faked here.  -- jrs&n; */
 DECL|function|sys_umount
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_umount
 c_func
@@ -1704,6 +1706,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Flags is a 16-bit value that allows up to 16 non-fs dependent flags to&n; * be given to the mount() call (ie: read-only, no-dev, no-suid etc).&n; *&n; * data is a (void *) that can point to any structure up to 4095 bytes, which&n; * can contain arbitrary fs-dependent information (or be NULL).&n; *&n; * NOTE! As old versions of mount() didn&squot;t use this setup, the flags has to have&n; * a special 16-bit magic number in the hight word: 0xC0ED. If this magic word&n; * isn&squot;t present, the flags and data info isn&squot;t used, as the syscall assumes we&n; * are talking to an older version that didn&squot;t understand them.&n; */
 DECL|function|sys_mount
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_mount
 c_func
@@ -2254,13 +2258,13 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|super_block
+id|super_blocks
 comma
 l_int|0
 comma
 r_sizeof
 (paren
-id|super_block
+id|super_blocks
 )paren
 )paren
 suffix:semicolon

@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|clear_block
-mdefine_line|#define clear_block(addr) &bslash;&n;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stosl&quot; &bslash;&n;&t;::&quot;a&quot; (0),&quot;c&quot; (BLOCK_SIZE/4),&quot;D&quot; ((long) (addr)):&quot;cx&quot;,&quot;di&quot;)
+mdefine_line|#define clear_block(addr) &bslash;&n;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stosl&quot; &bslash;&n;&t;: &bslash;&n;&t;:&quot;a&quot; (0),&quot;c&quot; (BLOCK_SIZE/4),&quot;D&quot; ((long) (addr)):&quot;cx&quot;,&quot;di&quot;)
 DECL|macro|find_first_zero
 mdefine_line|#define find_first_zero(addr) ({ &bslash;&n;int __res; &bslash;&n;__asm__(&quot;cld&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tlodsl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;notl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bsfl %%eax,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 2f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $32,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl $8192,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jl 1b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xorl %%edx,%%edx&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;taddl %%edx,%%ecx&quot; &bslash;&n;&t;:&quot;=c&quot; (__res):&quot;0&quot; (0),&quot;S&quot; (addr):&quot;ax&quot;,&quot;dx&quot;,&quot;si&quot;); &bslash;&n;__res;})
 DECL|variable|nibblemap
@@ -381,6 +381,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|clear_bit
 c_func
 (paren
@@ -661,6 +662,10 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
+r_int
+r_int
+id|ino
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -758,6 +763,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|ino
+op_assign
+id|inode-&gt;i_ino
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -767,7 +776,7 @@ id|bh
 op_assign
 id|inode-&gt;i_sb-&gt;u.minix_sb.s_imap
 (braket
-id|inode-&gt;i_ino
+id|ino
 op_rshift
 l_int|13
 )braket
@@ -783,13 +792,20 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|clear_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|clear_bit
 c_func
 (paren
-id|inode-&gt;i_ino
+id|ino
 op_amp
 l_int|8191
 comma
@@ -801,18 +817,12 @@ c_func
 (paren
 l_string|&quot;free_inode: bit %d already cleared.&bslash;n&quot;
 comma
-id|inode-&gt;i_ino
+id|ino
 )paren
 suffix:semicolon
 id|bh-&gt;b_dirt
 op_assign
 l_int|1
-suffix:semicolon
-id|clear_inode
-c_func
-(paren
-id|inode
-)paren
 suffix:semicolon
 )brace
 DECL|function|minix_new_inode

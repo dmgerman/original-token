@@ -533,7 +533,7 @@ c_cond
 id|rc
 op_logical_or
 op_logical_neg
-id|inode
+id|dind_bh
 )paren
 r_return
 id|rc

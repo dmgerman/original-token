@@ -1115,6 +1115,7 @@ r_void
 id|fcom_st
 c_func
 (paren
+r_void
 )paren
 (brace
 multiline_comment|/* fcom st(i) */
@@ -1130,6 +1131,7 @@ r_void
 id|fcompst
 c_func
 (paren
+r_void
 )paren
 (brace
 multiline_comment|/* fcomp st(i) */
@@ -1153,6 +1155,7 @@ r_void
 id|fcompp
 c_func
 (paren
+r_void
 )paren
 (brace
 multiline_comment|/* fcompp */
@@ -1163,12 +1166,15 @@ id|FPU_rm
 op_ne
 l_int|1
 )paren
-r_return
+(brace
 id|Un_impl
 c_func
 (paren
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1205,6 +1211,7 @@ r_void
 id|fucom_
 c_func
 (paren
+r_void
 )paren
 (brace
 multiline_comment|/* fucom st(i) */
@@ -1220,6 +1227,7 @@ r_void
 id|fucomp
 c_func
 (paren
+r_void
 )paren
 (brace
 multiline_comment|/* fucomp st(i) */
@@ -1243,6 +1251,7 @@ r_void
 id|fucompp
 c_func
 (paren
+r_void
 )paren
 (brace
 multiline_comment|/* fucompp */

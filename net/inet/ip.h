@@ -4,6 +4,15 @@ DECL|macro|_IP_H
 mdefine_line|#define _IP_H
 macro_line|#include &lt;linux/ip.h&gt;
 r_extern
+r_int
+id|backoff
+c_func
+(paren
+r_int
+id|n
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ip_print
 c_func

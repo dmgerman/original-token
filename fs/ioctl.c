@@ -252,6 +252,8 @@ id|EINVAL
 suffix:semicolon
 )brace
 DECL|function|sys_ioctl
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_ioctl
 c_func

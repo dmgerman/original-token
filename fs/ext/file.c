@@ -80,7 +80,7 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
-l_int|NULL
+id|generic_mmap
 comma
 multiline_comment|/* mmap */
 l_int|NULL

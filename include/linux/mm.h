@@ -30,6 +30,11 @@ r_int
 r_int
 id|vm_end
 suffix:semicolon
+DECL|member|vm_page_prot
+r_int
+r_int
+id|vm_page_prot
+suffix:semicolon
 DECL|member|vm_next
 r_struct
 id|vm_area_struct
@@ -101,6 +106,9 @@ op_star
 id|nopage
 )paren
 (paren
+r_int
+id|error_code
+comma
 r_struct
 id|vm_area_struct
 op_star
@@ -138,12 +146,12 @@ id|share
 r_struct
 id|vm_area_struct
 op_star
-id|old
+id|from
 comma
 r_struct
 id|vm_area_struct
 op_star
-r_new
+id|to
 comma
 r_int
 r_int
@@ -191,6 +199,10 @@ r_int
 id|free_page_ptr
 suffix:semicolon
 multiline_comment|/* used by malloc and tcp/ip. */
+r_extern
+r_int
+id|nr_swap_pages
+suffix:semicolon
 r_extern
 r_int
 id|nr_free_pages
@@ -256,7 +268,10 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;rep ; stosl&quot;
-op_scope_resolution
+suffix:colon
+multiline_comment|/* no outputs */
+"&bslash;"
+suffix:colon
 l_string|&quot;a&quot;
 (paren
 l_int|0
@@ -343,7 +358,7 @@ c_func
 r_struct
 id|task_struct
 op_star
-r_new
+id|to
 )paren
 suffix:semicolon
 r_extern
@@ -354,7 +369,7 @@ c_func
 r_struct
 id|task_struct
 op_star
-r_new
+id|to
 )paren
 suffix:semicolon
 r_extern
@@ -579,12 +594,44 @@ op_star
 id|buf
 )paren
 suffix:semicolon
+multiline_comment|/* mmap.c */
+r_extern
+r_int
+id|do_mmap
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|addr
+comma
+r_int
+r_int
+id|len
+comma
+r_int
+r_int
+id|prot
+comma
+r_int
+r_int
+id|flags
+comma
+r_int
+r_int
+id|off
+)paren
+suffix:semicolon
 DECL|macro|read_swap_page
 mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf))
 DECL|macro|write_swap_page
 mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf))
 DECL|macro|invalidate
-mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;:::&quot;ax&quot;)
+mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
 r_extern
 r_int
 r_int

@@ -642,6 +642,8 @@ macro_line|#endif PARANOID
 DECL|macro|bswapw
 mdefine_line|#define bswapw(x) __asm__(&quot;xchgb %%al,%%ah&quot;:&quot;=a&quot; (x):&quot;0&quot; ((short)x))
 DECL|function|math_emulate
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|math_emulate
 c_func
@@ -1858,7 +1860,8 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;movl %0,%%esp ; ret&quot;
-op_scope_resolution
+suffix:colon
+suffix:colon
 l_string|&quot;g&quot;
 (paren
 (paren
@@ -1885,6 +1888,8 @@ macro_line|#else /* no math emulation */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|function|math_emulate
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|math_emulate
 c_func

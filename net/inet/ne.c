@@ -18,13 +18,13 @@ macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* These should be in &lt;asm/io.h&gt; someday, borrowed from blk_drv/hd.c. */
 DECL|macro|port_read
-mdefine_line|#define port_read(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;insw&quot;::&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
+mdefine_line|#define port_read(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;insw&quot;: :&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
 DECL|macro|port_write
-mdefine_line|#define port_write(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;outsw&quot;::&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;si&quot;)
+mdefine_line|#define port_write(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;outsw&quot;: :&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;si&quot;)
 DECL|macro|port_read_b
-mdefine_line|#define port_read_b(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;insb&quot;::&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
+mdefine_line|#define port_read_b(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;insb&quot;: :&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
 DECL|macro|port_write_b
-mdefine_line|#define port_write_b(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;outsb&quot;::&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;si&quot;)
+mdefine_line|#define port_write_b(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;outsb&quot;: :&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;si&quot;)
 DECL|macro|EN_CMD
 mdefine_line|#define EN_CMD&t; (dev-&gt;base_addr)
 DECL|macro|NE_BASE

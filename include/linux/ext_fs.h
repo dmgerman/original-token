@@ -765,15 +765,5 @@ r_struct
 id|inode_operations
 id|ext_symlink_inode_operations
 suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|ext_file_operations
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|ext_dir_operations
-suffix:semicolon
 macro_line|#endif
 eof

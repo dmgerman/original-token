@@ -166,6 +166,30 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 1
+id|__asm__
+c_func
+(paren
+l_string|&quot;cmpl $0,_intr_count&bslash;n&bslash;t&quot;
+l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
+l_string|&quot;movl _bh_active,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;testl _bh_mask,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;je 1f&bslash;n&bslash;t&quot;
+l_string|&quot;incl _intr_count&bslash;n&bslash;t&quot;
+l_string|&quot;call _do_bottom_half&bslash;n&bslash;t&quot;
+l_string|&quot;decl _intr_count&bslash;n&quot;
+l_string|&quot;1:&quot;
+suffix:colon
+suffix:colon
+suffix:colon
+l_string|&quot;ax&quot;
+comma
+l_string|&quot;dx&quot;
+comma
+l_string|&quot;cx&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

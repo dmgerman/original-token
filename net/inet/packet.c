@@ -77,6 +77,11 @@ id|sk
 suffix:semicolon
 id|sk
 op_assign
+(paren
+r_struct
+id|sock
+op_star
+)paren
 id|pt-&gt;data
 suffix:semicolon
 id|skb-&gt;dev
@@ -336,6 +341,11 @@ id|EINVAL
 suffix:semicolon
 id|skb
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|wmalloc
@@ -624,6 +634,11 @@ id|p
 suffix:semicolon
 id|p
 op_assign
+(paren
+r_struct
+id|packet_type
+op_star
+)paren
 id|kmalloc
 c_func
 (paren

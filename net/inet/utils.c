@@ -268,6 +268,10 @@ r_return
 suffix:semicolon
 id|buff
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|kmalloc
 c_func
 (paren
@@ -374,7 +378,7 @@ id|get_fs_long
 c_func
 (paren
 (paren
-r_void
+r_int
 op_star
 )paren
 id|arg

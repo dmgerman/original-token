@@ -78,7 +78,7 @@ multiline_comment|/* select - default */
 id|ext2_ioctl
 comma
 multiline_comment|/* ioctl - default */
-l_int|NULL
+id|generic_mmap
 comma
 multiline_comment|/* mmap */
 l_int|NULL
@@ -220,7 +220,8 @@ suffix:semicolon
 r_int
 r_int
 id|size
-comma
+suffix:semicolon
+r_int
 id|err
 suffix:semicolon
 r_if
@@ -399,10 +400,14 @@ c_func
 id|inode-&gt;i_dev
 )paren
 )braket
-op_div
-(paren
-id|BLOCK_SIZE
 op_rshift
+(paren
+id|EXT2_BLOCK_SIZE_BITS
+c_func
+(paren
+id|sb
+)paren
+op_minus
 l_int|9
 )paren
 suffix:semicolon

@@ -3980,6 +3980,7 @@ id|t
 suffix:semicolon
 r_int
 r_int
+r_int
 id|ll
 suffix:semicolon
 r_int
@@ -4058,6 +4059,7 @@ id|ll
 op_assign
 op_star
 (paren
+r_int
 r_int
 r_int
 op_star

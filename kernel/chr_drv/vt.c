@@ -21,6 +21,7 @@ id|NR_CONSOLES
 )braket
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_ioperm
 c_func
@@ -408,7 +409,6 @@ c_func
 id|KB_101
 comma
 (paren
-r_int
 r_char
 op_star
 )paren
@@ -821,6 +821,10 @@ op_assign
 id|get_fs_byte
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 op_amp
 id|a-&gt;kb_index
 )paren
@@ -841,6 +845,10 @@ op_assign
 id|get_fs_byte
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 op_amp
 id|a-&gt;kb_table
 )paren
@@ -863,6 +871,10 @@ id|s
 id|i
 )braket
 comma
+(paren
+r_int
+op_star
+)paren
 op_amp
 id|a-&gt;kb_value
 )paren
@@ -924,6 +936,10 @@ op_assign
 id|get_fs_byte
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 op_amp
 id|a-&gt;kb_index
 )paren
@@ -944,6 +960,10 @@ op_assign
 id|get_fs_byte
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 op_amp
 id|a-&gt;kb_table
 )paren
@@ -1099,7 +1119,6 @@ c_func
 id|ucval
 comma
 (paren
-r_int
 r_char
 op_star
 )paren

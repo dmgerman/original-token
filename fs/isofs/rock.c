@@ -14,13 +14,13 @@ DECL|macro|CHECK_SP
 mdefine_line|#define CHECK_SP(FAIL)&t;       &t;&t;&t;&bslash;&n;      if(rr-&gt;u.SP.magic[0] != 0xbe) FAIL;&t;&bslash;&n;      if(rr-&gt;u.SP.magic[1] != 0xef) FAIL;
 multiline_comment|/* We define a series of macros because each function must do exactly the&n;   same thing in certain places.  We use the macros to ensure that everyting&n;   is done correctly */
 DECL|macro|CONTINUE_DECLS
-mdefine_line|#define CONTINUE_DECLS &bslash;&n;  int cont_extent = 0, cont_offset = 0, cont_size = 0;   &bslash;&n;  char * buffer = 0
+mdefine_line|#define CONTINUE_DECLS &bslash;&n;  int cont_extent = 0, cont_offset = 0, cont_size = 0;   &bslash;&n;  void * buffer = 0
 DECL|macro|CHECK_CE
 mdefine_line|#define CHECK_CE&t;       &t;&t;&t;&bslash;&n;      {cont_extent = isonum_733(rr-&gt;u.CE.extent); &bslash;&n;      cont_offset = isonum_733(rr-&gt;u.CE.offset); &bslash;&n;      cont_size = isonum_733(rr-&gt;u.CE.size);}
 DECL|macro|SETUP_ROCK_RIDGE
 mdefine_line|#define SETUP_ROCK_RIDGE(DE,CHR,LEN)&t;      &t;&t;      &t;&bslash;&n;  {LEN= sizeof(struct iso_directory_record) + DE-&gt;name_len[0];&t;&bslash;&n;  if(LEN &amp; 1) LEN++;&t;&t;&t;&t;&t;&t;&bslash;&n;  CHR = ((unsigned char *) DE) + LEN;&t;&t;&t;&t;&bslash;&n;  LEN = *((unsigned char *) DE) - LEN;}
 DECL|macro|MAYBE_CONTINUE
-mdefine_line|#define MAYBE_CONTINUE(LABEL,DEV) &bslash;&n;  {if (buffer) kfree(buffer); &bslash;&n;  if (cont_extent){ &bslash;&n;    int block, offset; &bslash;&n;    struct buffer_head * bh; &bslash;&n;    buffer = kmalloc(cont_size,GFP_KERNEL); &bslash;&n;    block = cont_extent &lt;&lt; 1; &bslash;&n;    offset = cont_offset; &bslash;&n;    if (offset &gt;= 1024) block++; &bslash;&n;    offset &amp;= 1023; &bslash;&n;    bh = bread(DEV, block, 1024); &bslash;&n;    if (bh) { &bslash;&n;      memcpy(buffer, bh-&gt;b_data, cont_size); &bslash;&n;      brelse(bh); &bslash;&n;      chr = buffer; &bslash;&n;      len = cont_size; &bslash;&n;      cont_extent = 0; &bslash;&n;      cont_size = 0; &bslash;&n;      cont_offset = 0; &bslash;&n;      goto LABEL; &bslash;&n;    } &bslash;&n;    printk(&quot;Unable to read rock-ridge descriptor block&bslash;n&quot;); &bslash;&n;  }}
+mdefine_line|#define MAYBE_CONTINUE(LABEL,DEV) &bslash;&n;  {if (buffer) kfree(buffer); &bslash;&n;  if (cont_extent){ &bslash;&n;    int block, offset; &bslash;&n;    struct buffer_head * bh; &bslash;&n;    buffer = kmalloc(cont_size,GFP_KERNEL); &bslash;&n;    block = cont_extent; &bslash;&n;    offset = cont_offset; &bslash;&n;    if(ISOFS_BUFFER_SIZE(DEV) == 1024) {     &bslash;&n;      block &lt;&lt;= 1;    &bslash;&n;      if (offset &gt;= 1024) block++; &bslash;&n;      offset &amp;= 1023; &bslash;&n;    };     &bslash;&n;    bh = bread(DEV-&gt;i_dev, block, ISOFS_BUFFER_SIZE(DEV)); &bslash;&n;    if(bh){       &bslash;&n;      memcpy(buffer, bh-&gt;b_data, cont_size); &bslash;&n;      brelse(bh); &bslash;&n;      chr = (unsigned char *) buffer; &bslash;&n;      len = cont_size; &bslash;&n;      cont_extent = 0; &bslash;&n;      cont_size = 0; &bslash;&n;      cont_offset = 0; &bslash;&n;      goto LABEL; &bslash;&n;    };    &bslash;&n;    printk(&quot;Unable to read rock-ridge attributes&bslash;n&quot;);    &bslash;&n;  }}
 multiline_comment|/* This is the inner layer of the get filename routine, and is called&n;   for each system area and continuation record related to the file */
 DECL|function|find_rock_ridge_relocation
 r_int
@@ -354,7 +354,7 @@ c_func
 (paren
 id|repeat
 comma
-id|inode-&gt;i_dev
+id|inode
 )paren
 suffix:semicolon
 r_return
@@ -753,7 +753,7 @@ c_func
 (paren
 id|repeat
 comma
-id|inode-&gt;i_dev
+id|inode
 )paren
 suffix:semicolon
 r_if
@@ -1435,6 +1435,10 @@ op_lshift
 id|ISOFS_BLOCK_BITS
 op_minus
 id|ISOFS_BUFFER_BITS
+c_func
+(paren
+id|inode
+)paren
 )paren
 suffix:semicolon
 id|reloc
@@ -1447,6 +1451,10 @@ comma
 id|inode-&gt;u.isofs_i.i_first_extent
 op_lshift
 id|ISOFS_BUFFER_BITS
+c_func
+(paren
+id|inode
+)paren
 )paren
 suffix:semicolon
 id|inode-&gt;i_mode
@@ -1506,7 +1514,7 @@ c_func
 (paren
 id|repeat
 comma
-id|inode-&gt;i_dev
+id|inode
 )paren
 suffix:semicolon
 r_return
@@ -1554,11 +1562,12 @@ r_int
 r_char
 op_star
 id|pnt
-comma
+suffix:semicolon
+r_void
 op_star
 id|cpnt
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 r_char
 op_star
@@ -1580,6 +1589,7 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
+r_int
 r_char
 op_star
 id|chr
@@ -1610,6 +1620,10 @@ op_assign
 id|inode-&gt;i_ino
 op_rshift
 id|ISOFS_BUFFER_BITS
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1626,6 +1640,10 @@ comma
 id|block
 comma
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 )paren
 )paren
 )paren
@@ -1639,6 +1657,7 @@ id|pnt
 op_assign
 (paren
 (paren
+r_int
 r_char
 op_star
 )paren
@@ -1650,6 +1669,10 @@ id|inode-&gt;i_ino
 op_amp
 (paren
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 op_minus
 l_int|1
 )paren
@@ -1674,6 +1697,10 @@ id|inode-&gt;i_ino
 op_amp
 (paren
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 op_minus
 l_int|1
 )paren
@@ -1683,6 +1710,10 @@ op_star
 id|pnt
 OG
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 )paren
 (brace
 id|cpnt
@@ -1705,6 +1736,10 @@ comma
 id|bh-&gt;b_data
 comma
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 )paren
 suffix:semicolon
 id|brelse
@@ -1729,6 +1764,10 @@ op_increment
 id|block
 comma
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 )paren
 )paren
 )paren
@@ -1744,16 +1783,25 @@ c_func
 id|cpnt
 op_plus
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 comma
 id|bh-&gt;b_data
 comma
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 )paren
 suffix:semicolon
 id|pnt
 op_assign
 (paren
 (paren
+r_int
 r_char
 op_star
 )paren
@@ -1765,6 +1813,10 @@ id|inode-&gt;i_ino
 op_amp
 (paren
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 op_minus
 l_int|1
 )paren
@@ -2115,7 +2167,7 @@ c_func
 (paren
 id|repeat
 comma
-id|inode-&gt;i_dev
+id|inode
 )paren
 suffix:semicolon
 id|brelse
@@ -2138,7 +2190,7 @@ id|cpnt
 suffix:semicolon
 id|cpnt
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 suffix:semicolon

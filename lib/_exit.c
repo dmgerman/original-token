@@ -19,7 +19,9 @@ c_func
 (paren
 l_string|&quot;movl %1,%%ebx&bslash;n&bslash;t&quot;
 l_string|&quot;int $0x80&quot;
-op_scope_resolution
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
 l_string|&quot;a&quot;
 (paren
 id|__NR_exit

@@ -5,6 +5,7 @@ multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some 
 DECL|macro|HZ
 mdefine_line|#define HZ 100
 macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;0xc0000000
@@ -67,8 +68,7 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
 macro_line|#endif
-DECL|macro|MAX_SHARED_LIBS
-mdefine_line|#define MAX_SHARED_LIBS 16
+macro_line|#ifdef __KERNEL__
 r_extern
 r_void
 id|sched_init
@@ -80,14 +80,6 @@ suffix:semicolon
 r_extern
 r_void
 id|show_state
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|schedule
 c_func
 (paren
 r_void
@@ -112,20 +104,16 @@ op_star
 id|str
 )paren
 suffix:semicolon
-DECL|typedef|fn_ptr
-r_typedef
-r_int
+r_extern
+l_string|&quot;C&quot;
+r_void
+id|schedule
+c_func
 (paren
-op_star
-id|fn_ptr
-)paren
-(paren
+r_void
 )paren
 suffix:semicolon
-DECL|union|i387_union
-r_union
-id|i387_union
-(brace
+macro_line|#endif /* __KERNEL__ */
 DECL|struct|i387_hard_struct
 r_struct
 id|i387_hard_struct
@@ -166,9 +154,7 @@ l_int|20
 )braket
 suffix:semicolon
 multiline_comment|/* 8*10 bytes for each FP-reg = 80 bytes */
-DECL|member|hard
 )brace
-id|hard
 suffix:semicolon
 DECL|struct|i387_soft_struct
 r_struct
@@ -231,8 +217,20 @@ r_int
 r_int
 id|entry_eip
 suffix:semicolon
-DECL|member|soft
 )brace
+suffix:semicolon
+DECL|union|i387_union
+r_union
+id|i387_union
+(brace
+DECL|member|hard
+r_struct
+id|i387_hard_struct
+id|hard
+suffix:semicolon
+DECL|member|soft
+r_struct
+id|i387_soft_struct
 id|soft
 suffix:semicolon
 )brace
@@ -242,44 +240,52 @@ r_struct
 id|tss_struct
 (brace
 DECL|member|back_link
+DECL|member|__blh
 r_int
 r_int
 id|back_link
+comma
+id|__blh
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
 DECL|member|esp0
 r_int
 r_int
 id|esp0
 suffix:semicolon
 DECL|member|ss0
+DECL|member|__ss0h
 r_int
 r_int
 id|ss0
+comma
+id|__ss0h
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
 DECL|member|esp1
 r_int
 r_int
 id|esp1
 suffix:semicolon
 DECL|member|ss1
+DECL|member|__ss1h
 r_int
 r_int
 id|ss1
+comma
+id|__ss1h
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
 DECL|member|esp2
 r_int
 r_int
 id|esp2
 suffix:semicolon
 DECL|member|ss2
+DECL|member|__ss2h
 r_int
 r_int
 id|ss2
+comma
+id|__ss2h
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
 DECL|member|cr3
 r_int
 r_int
@@ -330,60 +336,83 @@ r_int
 id|edi
 suffix:semicolon
 DECL|member|es
+DECL|member|__esh
 r_int
 r_int
 id|es
+comma
+id|__esh
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
 DECL|member|cs
+DECL|member|__csh
 r_int
 r_int
 id|cs
+comma
+id|__csh
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
 DECL|member|ss
+DECL|member|__ssh
 r_int
 r_int
 id|ss
+comma
+id|__ssh
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
 DECL|member|ds
+DECL|member|__dsh
 r_int
 r_int
 id|ds
+comma
+id|__dsh
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
 DECL|member|fs
+DECL|member|__fsh
 r_int
 r_int
 id|fs
+comma
+id|__fsh
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
 DECL|member|gs
+DECL|member|__gsh
 r_int
 r_int
 id|gs
+comma
+id|__gsh
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
 DECL|member|ldt
+DECL|member|__ldth
 r_int
 r_int
 id|ldt
+comma
+id|__ldth
 suffix:semicolon
-multiline_comment|/* 16 high bits zero */
-DECL|member|trace_bitmap
+DECL|member|trace
+DECL|member|bitmap
 r_int
 r_int
-id|trace_bitmap
+id|trace
+comma
+id|bitmap
 suffix:semicolon
-multiline_comment|/* bits: trace 0, bitmap 16-31 */
 DECL|member|io_bitmap
 r_int
 r_int
 id|io_bitmap
 (braket
 id|IO_BITMAP_SIZE
+op_plus
+l_int|1
 )braket
+suffix:semicolon
+DECL|member|tr
+r_int
+r_int
+id|tr
 suffix:semicolon
 DECL|member|i387
 r_union
@@ -432,6 +461,16 @@ r_int
 id|errno
 suffix:semicolon
 multiline_comment|/* various fields */
+DECL|member|next_task
+DECL|member|prev_task
+r_struct
+id|task_struct
+op_star
+id|next_task
+comma
+op_star
+id|prev_task
+suffix:semicolon
 DECL|member|sigaction
 r_struct
 id|sigaction
@@ -457,6 +496,12 @@ id|exit_code
 comma
 id|exit_signal
 suffix:semicolon
+DECL|member|elf_executable
+r_int
+id|elf_executable
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|dumpable
 r_int
 id|dumpable
@@ -474,6 +519,7 @@ DECL|member|end_code
 DECL|member|end_data
 DECL|member|brk
 DECL|member|start_stack
+DECL|member|start_mmap
 r_int
 r_int
 id|start_code
@@ -485,6 +531,8 @@ comma
 id|brk
 comma
 id|start_stack
+comma
+id|start_mmap
 suffix:semicolon
 DECL|member|arg_start
 DECL|member|arg_end
@@ -720,40 +768,6 @@ id|sem_undo
 op_star
 id|semun
 suffix:semicolon
-r_struct
-(brace
-DECL|member|library
-r_struct
-id|inode
-op_star
-id|library
-suffix:semicolon
-DECL|member|start
-r_int
-r_int
-id|start
-suffix:semicolon
-DECL|member|length
-r_int
-r_int
-id|length
-suffix:semicolon
-DECL|member|bss
-r_int
-r_int
-id|bss
-suffix:semicolon
-DECL|member|libraries
-)brace
-id|libraries
-(braket
-id|MAX_SHARED_LIBS
-)braket
-suffix:semicolon
-DECL|member|numlibraries
-r_int
-id|numlibraries
-suffix:semicolon
 DECL|member|filp
 r_struct
 id|file
@@ -801,7 +815,12 @@ DECL|macro|COPYFD
 mdefine_line|#define COPYFD&t;&t;0x00000200&t;/* set if fd&squot;s should be copied, not shared (NI) */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0,0, &bslash;&n;/* argv.. */&t;0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;&t;&t;{ &bslash;&n;/* ldt */&t;&t;{0,0}, &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t; KERNEL_DS,0,0,0,0,(long) &amp;swapper_pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,USER_DS,USER_DS,USER_DS,USER_DS,USER_DS,USER_DS, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* argv.. */&t;0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;&t;&t;{ &bslash;&n;/* ldt */&t;&t;{0,0}, &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,0, &bslash;&n;&t; sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, KERNEL_DS, 0, &bslash;&n;&t; 0,0,0,0,0,0, &bslash;&n;&t; (long) &amp;swapper_pg_dir, &bslash;&n;&t; 0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t; USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t; _LDT(0),0, &bslash;&n;&t; 0, 0x8000, &bslash;&n;/* ioperm */ &t;{0xffffffff, }, &bslash;&n;&t; _TSS(0), &bslash;&n;/* 387 state */&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
+r_extern
+r_struct
+id|task_struct
+id|init_task
+suffix:semicolon
 r_extern
 r_struct
 id|task_struct
@@ -979,7 +998,7 @@ comma
 r_struct
 id|sigaction
 op_star
-r_new
+id|sa
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Entry into gdt where to find first TSS. GDT layout:&n; *   0 - nul&n; *   1 - kernel code segment&n; *   2 - kernel data segment&n; *   3 - user code segment&n; *   4 - user data segment&n; * ...&n; *   8 - TSS #0&n; *   9 - LDT #0&n; *  10 - TSS #1&n; *  11 - LDT #1&n; */
@@ -992,20 +1011,20 @@ mdefine_line|#define _TSS(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_TSS_ENTRY&lt
 DECL|macro|_LDT
 mdefine_line|#define _LDT(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_LDT_ENTRY&lt;&lt;3))
 DECL|macro|load_TR
-mdefine_line|#define load_TR(n) __asm__(&quot;ltr %%ax&quot;::&quot;a&quot; (_TSS(n)))
+mdefine_line|#define load_TR(n) __asm__(&quot;ltr %%ax&quot;: /* no output */ :&quot;a&quot; (_TSS(n)))
 DECL|macro|load_ldt
-mdefine_line|#define load_ldt(n) __asm__(&quot;lldt %%ax&quot;::&quot;a&quot; (_LDT(n)))
+mdefine_line|#define load_ldt(n) __asm__(&quot;lldt %%ax&quot;: /* no output */ :&quot;a&quot; (_LDT(n)))
 DECL|macro|store_TR
 mdefine_line|#define store_TR(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
 multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; * This also clears the TS-flag if the task we switched to has used&n; * tha math co-processor latest.&n; */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(n) {&bslash;&n;struct {long a,b;} __tmp; &bslash;&n;__asm__(&quot;cmpl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%dx,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;::&quot;m&quot; (*&amp;__tmp.a),&quot;m&quot; (*&amp;__tmp.b), &bslash;&n;&t;&quot;d&quot; (_TSS(n)),&quot;c&quot; ((long) task[n]) &bslash;&n;&t;:&quot;cx&quot;); &bslash;&n;}
+mdefine_line|#define switch_to(tsk) &bslash;&n;__asm__(&quot;cmpl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(((char *)&amp;tsk-&gt;tss.tr)-4)), &bslash;&n;&t; &quot;c&quot; (tsk) &bslash;&n;&t;:&quot;cx&quot;)
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(n) (((n)+0xfff)&amp;0xfffff000)
 DECL|macro|_set_base
-mdefine_line|#define _set_base(addr,base) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dh,%2&quot; &bslash;&n;&t;::&quot;m&quot; (*((addr)+2)), &bslash;&n;&t;  &quot;m&quot; (*((addr)+4)), &bslash;&n;&t;  &quot;m&quot; (*((addr)+7)), &bslash;&n;&t;  &quot;d&quot; (base) &bslash;&n;&t;:&quot;dx&quot;)
+mdefine_line|#define _set_base(addr,base) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dh,%2&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*((addr)+2)), &bslash;&n;&t; &quot;m&quot; (*((addr)+4)), &bslash;&n;&t; &quot;m&quot; (*((addr)+7)), &bslash;&n;&t; &quot;d&quot; (base) &bslash;&n;&t;:&quot;dx&quot;)
 DECL|macro|_set_limit
-mdefine_line|#define _set_limit(addr,limit) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %1,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andb $0xf0,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orb %%dh,%%dl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&quot; &bslash;&n;&t;::&quot;m&quot; (*(addr)), &bslash;&n;&t;  &quot;m&quot; (*((addr)+6)), &bslash;&n;&t;  &quot;d&quot; (limit) &bslash;&n;&t;:&quot;dx&quot;)
+mdefine_line|#define _set_limit(addr,limit) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %1,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andb $0xf0,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orb %%dh,%%dl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(addr)), &bslash;&n;&t; &quot;m&quot; (*((addr)+6)), &bslash;&n;&t; &quot;d&quot; (limit) &bslash;&n;&t;:&quot;dx&quot;)
 DECL|macro|set_base
 mdefine_line|#define set_base(ldt,base) _set_base( ((char *)&amp;(ldt)) , base )
 DECL|macro|set_limit
@@ -1070,16 +1089,15 @@ id|wait-&gt;next
 suffix:semicolon
 )brace
 macro_line|#endif
-id|__asm__
-id|__volatile__
+id|save_flags
 c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -1121,16 +1139,10 @@ op_assign
 id|wait
 suffix:semicolon
 )brace
-id|__asm__
-id|__volatile__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1170,16 +1182,15 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-id|__asm__
-id|__volatile__
+id|save_flags
 c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -1260,16 +1271,10 @@ id|wait-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_flags
 c_func
 (paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -1505,8 +1510,8 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|macro|REMOVE_LINKS
-mdefine_line|#define REMOVE_LINKS(p) &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr
+mdefine_line|#define REMOVE_LINKS(p) &bslash;&n;&t;(p)-&gt;next_task-&gt;prev_task = (p)-&gt;prev_task; &bslash;&n;&t;(p)-&gt;prev_task-&gt;next_task = (p)-&gt;next_task; &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr
 DECL|macro|SET_LINKS
-mdefine_line|#define SET_LINKS(p) &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p
+mdefine_line|#define SET_LINKS(p) &bslash;&n;&t;(p)-&gt;next_task = &amp;init_task; &bslash;&n;&t;(p)-&gt;prev_task = init_task.prev_task; &bslash;&n;&t;init_task.prev_task-&gt;next_task = (p); &bslash;&n;&t;init_task.prev_task = (p); &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p
 macro_line|#endif
 eof

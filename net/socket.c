@@ -239,15 +239,6 @@ id|net_debug
 op_assign
 l_int|0
 suffix:semicolon
-r_extern
-r_int
-id|sys_close
-c_func
-(paren
-r_int
-id|fd
-)paren
-suffix:semicolon
 macro_line|#ifdef SOCK_DEBUG
 multiline_comment|/* Module debugging. */
 r_static
@@ -1713,6 +1704,10 @@ c_cond
 id|mysock-&gt;state
 op_ne
 id|SS_CONNECTED
+op_logical_and
+id|mysock-&gt;state
+op_ne
+id|SS_DISCONNECTING
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * if we&squot;re not connected we could have been&n;&t;&t; * 1) interrupted, so we need to remove ourselves&n;&t;&t; *    from the server list&n;&t;&t; * 2) rejected (mysock-&gt;conn == NULL), and have&n;&t;&t; *    already been removed from the list&n;&t;&t; */
@@ -4002,6 +3997,8 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * System call vectors. Since I (RIB) want to rewrite sockets as streams,&n; * we have this level of indirection. Not a lot of overhead, since more of&n; * the work is done via read/write/select directly.&n; */
+r_extern
+l_string|&quot;C&quot;
 r_int
 DECL|function|sys_socketcall
 id|sys_socketcall
@@ -4961,7 +4958,7 @@ id|get_fs_long
 c_func
 (paren
 (paren
-r_void
+r_int
 op_star
 )paren
 id|arg

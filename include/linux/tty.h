@@ -963,7 +963,7 @@ comma
 r_struct
 id|tty_ldisc
 op_star
-r_new
+id|new_ldisc
 )paren
 suffix:semicolon
 r_extern

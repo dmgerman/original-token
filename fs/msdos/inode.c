@@ -267,7 +267,7 @@ id|quiet
 (brace
 r_char
 op_star
-id|this
+id|this_char
 comma
 op_star
 id|value
@@ -320,7 +320,7 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|this
+id|this_char
 op_assign
 id|strtok
 c_func
@@ -330,9 +330,9 @@ comma
 l_string|&quot;,&quot;
 )paren
 suffix:semicolon
-id|this
+id|this_char
 suffix:semicolon
-id|this
+id|this_char
 op_assign
 id|strtok
 c_func
@@ -352,7 +352,7 @@ op_assign
 id|strchr
 c_func
 (paren
-id|this
+id|this_char
 comma
 l_char|&squot;=&squot;
 )paren
@@ -373,7 +373,7 @@ op_logical_neg
 id|strcmp
 c_func
 (paren
-id|this
+id|this_char
 comma
 l_string|&quot;check&quot;
 )paren
@@ -477,7 +477,7 @@ op_logical_neg
 id|strcmp
 c_func
 (paren
-id|this
+id|this_char
 comma
 l_string|&quot;conv&quot;
 )paren
@@ -581,7 +581,7 @@ op_logical_neg
 id|strcmp
 c_func
 (paren
-id|this
+id|this_char
 comma
 l_string|&quot;uid&quot;
 )paren
@@ -632,7 +632,7 @@ op_logical_neg
 id|strcmp
 c_func
 (paren
-id|this
+id|this_char
 comma
 l_string|&quot;gid&quot;
 )paren
@@ -683,7 +683,7 @@ op_logical_neg
 id|strcmp
 c_func
 (paren
-id|this
+id|this_char
 comma
 l_string|&quot;umask&quot;
 )paren
@@ -734,7 +734,7 @@ op_logical_neg
 id|strcmp
 c_func
 (paren
-id|this
+id|this_char
 comma
 l_string|&quot;debug&quot;
 )paren
@@ -762,7 +762,7 @@ op_logical_neg
 id|strcmp
 c_func
 (paren
-id|this
+id|this_char
 comma
 l_string|&quot;fat&quot;
 )paren
@@ -825,7 +825,7 @@ op_logical_neg
 id|strcmp
 c_func
 (paren
-id|this
+id|this_char
 comma
 l_string|&quot;quiet&quot;
 )paren
@@ -1025,6 +1025,11 @@ suffix:semicolon
 id|s-&gt;s_blocksize
 op_assign
 l_int|1024
+suffix:semicolon
+multiline_comment|/* we cannot handle anything else yet */
+id|s-&gt;s_blocksize_bits
+op_assign
+l_int|10
 suffix:semicolon
 multiline_comment|/* we cannot handle anything else yet */
 multiline_comment|/*&n; * The DOS3 partition size limit is *not* 32M as many people think.  &n; * Instead, it is 64K sectors (with the usual sector size being&n; * 512 bytes, leading to a 32M limit).&n; * &n; * DOS 3 partition managers got around this problem by faking a &n; * larger sector size, ie treating multiple physical sectors as &n; * a single logical sector.&n; * &n; * We can accommodate this scheme by adjusting our cluster size,&n; * fat_start, and data_start by an appropriate value.&n; *&n; * (by Drew Eckhardt)&n; */
@@ -1711,7 +1716,7 @@ id|buf
 r_int
 id|free
 comma
-id|this
+id|nr
 suffix:semicolon
 id|put_fs_long
 c_func
@@ -1793,11 +1798,11 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|this
+id|nr
 op_assign
 l_int|2
 suffix:semicolon
-id|this
+id|nr
 OL
 id|MSDOS_SB
 c_func
@@ -1809,7 +1814,7 @@ id|clusters
 op_plus
 l_int|2
 suffix:semicolon
-id|this
+id|nr
 op_increment
 )paren
 r_if
@@ -1821,7 +1826,7 @@ c_func
 (paren
 id|sb
 comma
-id|this
+id|nr
 comma
 op_minus
 l_int|1
@@ -2050,7 +2055,7 @@ op_star
 id|raw_entry
 suffix:semicolon
 r_int
-id|this
+id|nr
 suffix:semicolon
 multiline_comment|/* printk(&quot;read inode %d&bslash;n&quot;,inode-&gt;i_ino); */
 id|MSDOS_I
@@ -2388,7 +2393,7 @@ r_if
 c_cond
 (paren
 (paren
-id|this
+id|nr
 op_assign
 id|CF_LE_W
 c_func
@@ -2402,7 +2407,7 @@ l_int|0
 r_while
 c_loop
 (paren
-id|this
+id|nr
 op_ne
 op_minus
 l_int|1
@@ -2427,14 +2432,14 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|this
+id|nr
 op_assign
 id|fat_access
 c_func
 (paren
 id|inode-&gt;i_sb
 comma
-id|this
+id|nr
 comma
 op_minus
 l_int|1

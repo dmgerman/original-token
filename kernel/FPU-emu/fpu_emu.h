@@ -115,8 +115,9 @@ mdefine_line|#define push()&t;{ top--; FPU_st0_ptr = st_new_ptr; }
 DECL|macro|reg_move
 mdefine_line|#define reg_move(x, y) { &bslash;&n;&t;&t; *(short *)&amp;((y)-&gt;sign) = *(short *)&amp;((x)-&gt;sign); &bslash;&n;&t;&t; *(long *)&amp;((y)-&gt;exp) = *(long *)&amp;((x)-&gt;exp); &bslash;&n;&t;&t; *(long long *)&amp;((y)-&gt;sigl) = *(long long *)&amp;((x)-&gt;sigl); }
 multiline_comment|/*----- Prototypes for functions written in assembler -----*/
-multiline_comment|/* extern void reg_move(FPU_REG *a, FPU_REG *b); */
+multiline_comment|/* extern &quot;C&quot; void reg_move(FPU_REG *a, FPU_REG *b); */
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|mul64
 c_func
@@ -138,6 +139,7 @@ id|result
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|poly_div2
 c_func
@@ -149,6 +151,7 @@ id|x
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|poly_div4
 c_func
@@ -160,6 +163,7 @@ id|x
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|poly_div16
 c_func
@@ -171,6 +175,7 @@ id|x
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|polynomial
 c_func
@@ -199,6 +204,7 @@ id|n
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|normalize
 c_func
@@ -209,6 +215,7 @@ id|x
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|normalize_nuo
 c_func
@@ -219,6 +226,7 @@ id|x
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|reg_div
 c_func
@@ -241,6 +249,7 @@ id|control_w
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|reg_u_sub
 c_func
@@ -263,6 +272,7 @@ id|control_w
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|reg_u_mul
 c_func
@@ -285,6 +295,7 @@ id|control_w
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|reg_u_div
 c_func
@@ -307,6 +318,7 @@ id|control_w
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|reg_u_add
 c_func
@@ -329,6 +341,7 @@ id|control_w
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|wm_sqrt
 c_func
@@ -343,6 +356,7 @@ id|control_w
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_int
 id|shrx
 c_func
@@ -356,6 +370,7 @@ id|x
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_int
 id|shrxs
 c_func
@@ -369,6 +384,7 @@ id|x
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_int
 r_int
 id|div_small
@@ -386,6 +402,7 @@ id|y
 )paren
 suffix:semicolon
 r_extern
+l_string|&quot;C&quot;
 r_void
 id|round_reg
 c_func

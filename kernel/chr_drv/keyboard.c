@@ -320,7 +320,7 @@ suffix:semicolon
 multiline_comment|/* maximum values each key_handler can handle */
 DECL|variable|max_vals
 r_const
-id|u_char
+r_int
 id|max_vals
 (braket
 )braket
@@ -666,6 +666,14 @@ op_logical_or
 id|scancode
 op_eq
 l_int|0xaa
+op_logical_or
+id|scancode
+op_eq
+l_int|0x36
+op_logical_or
+id|scancode
+op_eq
+l_int|0xb6
 )paren
 )paren
 r_goto
@@ -818,9 +826,8 @@ l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif
-id|scancode
-op_assign
-l_int|0
+r_goto
+id|end_kbd_intr
 suffix:semicolon
 )brace
 r_if
@@ -886,6 +893,8 @@ op_ne
 op_minus
 l_int|1
 )paren
+(brace
+macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -894,6 +903,11 @@ comma
 id|scancode
 )paren
 suffix:semicolon
+macro_line|#endif
+r_goto
+id|end_kbd_intr
+suffix:semicolon
+)brace
 )brace
 id|key_code
 op_assign
@@ -925,6 +939,8 @@ suffix:semicolon
 )brace
 id|end_kbd_intr
 suffix:colon
+r_return
+suffix:semicolon
 )brace
 DECL|function|put_queue
 r_static
@@ -1252,9 +1268,9 @@ l_string|&quot; ESP: %04x:%08x&quot;
 comma
 l_int|0xffff
 op_amp
-id|pt_regs-&gt;cs
+id|pt_regs-&gt;ss
 comma
-id|pt_regs-&gt;eip
+id|pt_regs-&gt;esp
 )paren
 suffix:semicolon
 id|printk
@@ -1919,18 +1935,18 @@ l_string|&quot;`&bslash;340bcd&bslash;350fgh&bslash;354jklmn&bslash;362pqrst&bsl
 comma
 multiline_comment|/* accent grave */
 l_string|&quot; &bslash;301BCD&bslash;311FGH&bslash;315JKLMN&bslash;323PQRST&bslash;332VWX&bslash;335Z[&bslash;&bslash;]^_&quot;
-l_string|&quot;`&bslash;341bcd&bslash;351fgh&bslash;355jklmn&bslash;363pqrst&bslash;372vwxyz{|}~&quot;
+l_string|&quot;`&bslash;341bcd&bslash;351fgh&bslash;355jklmn&bslash;363pqrst&bslash;372vwx&bslash;375z{|}~&quot;
 comma
 multiline_comment|/* accent acute */
 l_string|&quot; &bslash;302BCD&bslash;312FGH&bslash;316JKLMN&bslash;324PQRST&bslash;333VWXYZ[&bslash;&bslash;]^_&quot;
 l_string|&quot;`&bslash;342bcd&bslash;352fgh&bslash;356jklmn&bslash;364pqrst&bslash;373vwxyz{|}~&quot;
 comma
 multiline_comment|/* circumflex */
-l_string|&quot; &bslash;303BCDEFGHIJKLMN&bslash;325PQRSTUVWXYZ[&bslash;&bslash;]^_&quot;
+l_string|&quot; &bslash;303BCDEFGHIJKLM&bslash;321&bslash;325PQRSTUVWXYZ[&bslash;&bslash;]^_&quot;
 l_string|&quot;`&bslash;343bcdefghijklm&bslash;361&bslash;365pqrstuvwxyz{|}~&quot;
 comma
 multiline_comment|/* tilde */
-l_string|&quot; &bslash;304BCD&bslash;313FGH&bslash;316JKLMN&bslash;326PQRST&bslash;334VWXYZ[&bslash;&bslash;]^_&quot;
+l_string|&quot; &bslash;304BCD&bslash;313FGH&bslash;317JKLMN&bslash;326PQRST&bslash;334VWXYZ[&bslash;&bslash;]^_&quot;
 l_string|&quot;`&bslash;344bcd&bslash;353fgh&bslash;357jklmn&bslash;366pqrst&bslash;374vwx&bslash;377z{|}~&quot;
 multiline_comment|/* dieresis */
 )brace
@@ -1939,6 +1955,8 @@ r_int
 id|d
 op_assign
 id|diacr
+comma
+id|e
 suffix:semicolon
 r_if
 c_cond
@@ -1973,13 +1991,16 @@ r_if
 c_cond
 (paren
 id|ch
-template_param
+op_ge
+l_int|64
+op_logical_and
+id|ch
+op_le
 l_int|122
 )paren
-r_return
-id|ch
-suffix:semicolon
-r_return
+(brace
+id|e
+op_assign
 id|accent_table
 (braket
 id|d
@@ -1989,6 +2010,29 @@ id|ch
 op_minus
 l_int|64
 )braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|e
+op_ne
+id|ch
+)paren
+r_return
+id|e
+suffix:semicolon
+)brace
+id|put_queue
+c_func
+(paren
+id|ret_diacr
+(braket
+id|d
+)braket
+)paren
+suffix:semicolon
+r_return
+id|ch
 suffix:semicolon
 )brace
 DECL|function|do_cons
@@ -2164,9 +2208,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|kbd_flags
 op_amp
 id|ALT_KEYS
+)paren
+op_logical_and
+id|value
+OL
+l_int|12
 )paren
 (brace
 id|want_console
@@ -3578,15 +3628,18 @@ c_cond
 (paren
 id|resend
 )paren
-r_goto
-id|repeat
+r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|resend
+)paren
 r_return
 l_int|0
 suffix:semicolon
-id|repeat
-suffix:colon
 )brace
 r_while
 c_loop
@@ -3618,8 +3671,7 @@ r_int
 r_char
 id|old_leds
 op_assign
-op_minus
-l_int|1
+l_int|0xff
 suffix:semicolon
 r_int
 r_char
@@ -3855,7 +3907,6 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;&bslash;tlidt _no_idt&quot;
-op_scope_resolution
 )paren
 suffix:semicolon
 )brace

@@ -30,11 +30,11 @@ mdefine_line|#define TCP_TIMEOUT_LEN&t;720000&t;/* should be about 2 hrs&t;&t;*/
 DECL|macro|TCP_TIMEWAIT_LEN
 mdefine_line|#define TCP_TIMEWAIT_LEN 1000&t;/* how long to wait to sucessfully &n;&t;&t;&t;&t; * close the socket, about 60 seconds&t;*/
 DECL|macro|TCP_ACK_TIME
-mdefine_line|#define TCP_ACK_TIME&t;30000&t;/* time to delay before sending an ACK&t;*/
+mdefine_line|#define TCP_ACK_TIME&t;3000&t;/* time to delay before sending an ACK&t;*/
 DECL|macro|TCP_DONE_TIME
 mdefine_line|#define TCP_DONE_TIME&t;250&t;/* maximum time to wait before actually&n;&t;&t;&t;&t; * destroying a socket&t;&t;&t;*/
 DECL|macro|TCP_WRITE_TIME
-mdefine_line|#define TCP_WRITE_TIME&t;30000&t;/* initial time to wait for an ACK,&n;&t;&t;&t;         * after last transmit&t;&t;&t;*/
+mdefine_line|#define TCP_WRITE_TIME&t;3000&t;/* initial time to wait for an ACK,&n;&t;&t;&t;         * after last transmit&t;&t;&t;*/
 DECL|macro|TCP_CONNECT_TIME
 mdefine_line|#define TCP_CONNECT_TIME 2000&t;/* time to retransmit first SYN&t;&t;*/
 DECL|macro|TCP_SYN_RETRIES

@@ -226,7 +226,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|ei_status
-mdefine_line|#define ei_status (*(struct ei_device *)(dev-&gt;private))
+mdefine_line|#define ei_status (*(struct ei_device *)(dev-&gt;priv))
 multiline_comment|/* Some generic ethernet register configurations. */
 DECL|macro|E8390_TX_IRQ_MASK
 mdefine_line|#define E8390_TX_IRQ_MASK 0xa&t;/* For register EN0_ISR */

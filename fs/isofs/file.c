@@ -62,6 +62,9 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
+id|generic_mmap
+comma
+multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open is needed */
@@ -266,6 +269,10 @@ comma
 id|block
 comma
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 )paren
 )paren
 )paren
@@ -273,6 +280,7 @@ id|ISOFS_BUFFER_SIZE
 id|pnt
 op_assign
 (paren
+r_int
 r_char
 op_star
 )paren
@@ -295,11 +303,19 @@ OL
 id|inode-&gt;i_size
 OL
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 ques
 c_cond
 id|inode-&gt;i_size
 suffix:colon
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 )paren
 suffix:semicolon
 id|i
@@ -581,6 +597,10 @@ op_assign
 id|filp-&gt;f_pos
 op_rshift
 id|ISOFS_BUFFER_BITS
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 id|offset
 op_assign
@@ -588,6 +608,10 @@ id|filp-&gt;f_pos
 op_amp
 (paren
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 op_minus
 l_int|1
 )paren
@@ -600,11 +624,19 @@ op_plus
 id|offset
 op_plus
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 op_minus
 l_int|1
 )paren
 op_div
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 id|bhb
 op_assign
@@ -683,6 +715,10 @@ op_increment
 )paren
 comma
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 )paren
 suffix:semicolon
 id|uptodate
@@ -835,6 +871,10 @@ op_increment
 )paren
 comma
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -987,6 +1027,10 @@ c_cond
 id|left
 OL
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 op_minus
 id|offset
 )paren
@@ -998,6 +1042,10 @@ r_else
 id|chars
 op_assign
 id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|inode
+)paren
 op_minus
 id|offset
 suffix:semicolon

@@ -1766,6 +1766,11 @@ r_int
 op_star
 id|board
 op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
 id|xfer_start
 suffix:semicolon
 id|printk
@@ -1854,7 +1859,8 @@ op_star
 id|shmem
 op_assign
 (paren
-r_void
+r_int
+r_char
 op_star
 )paren
 id|dev-&gt;mem_start

@@ -8,18 +8,21 @@ id|xiafs_inode_info
 (brace
 multiline_comment|/* for data zone pointers */
 DECL|member|i_zone
-id|daddr_t
+r_int
+r_int
 id|i_zone
 (braket
 l_int|8
 )braket
 suffix:semicolon
 DECL|member|i_ind_zone
-id|daddr_t
+r_int
+r_int
 id|i_ind_zone
 suffix:semicolon
 DECL|member|i_dind_zone
-id|daddr_t
+r_int
+r_int
 id|i_dind_zone
 suffix:semicolon
 )brace

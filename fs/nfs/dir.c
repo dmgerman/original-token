@@ -1737,6 +1737,9 @@ id|sattr.gid
 op_assign
 id|sattr.size
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -1744,6 +1747,9 @@ id|sattr.atime.seconds
 op_assign
 id|sattr.mtime.seconds
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -1948,6 +1954,9 @@ id|sattr.uid
 op_assign
 id|sattr.gid
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -1974,6 +1983,9 @@ multiline_comment|/* get out your barf bag */
 r_else
 id|sattr.size
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -1981,6 +1993,9 @@ id|sattr.atime.seconds
 op_assign
 id|sattr.mtime.seconds
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -2141,6 +2156,9 @@ id|sattr.gid
 op_assign
 id|sattr.size
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -2148,6 +2166,9 @@ id|sattr.atime.seconds
 op_assign
 id|sattr.mtime.seconds
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -2566,6 +2587,9 @@ id|sattr.gid
 op_assign
 id|sattr.size
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -2573,6 +2597,9 @@ id|sattr.atime.seconds
 op_assign
 id|sattr.mtime.seconds
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon

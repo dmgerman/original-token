@@ -61,6 +61,13 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* easy for intr handling&t;*/
+DECL|member|slcomp
+r_struct
+id|slcompress
+op_star
+id|slcomp
+suffix:semicolon
+multiline_comment|/* for header compression &t;*/
 multiline_comment|/* These are pointers to the malloc()ed frame buffers. */
 DECL|member|rbuff
 r_int
@@ -76,6 +83,13 @@ op_star
 id|xbuff
 suffix:semicolon
 multiline_comment|/* transmitter buffer&t;&t;*/
+DECL|member|cbuff
+r_int
+r_char
+op_star
+id|cbuff
+suffix:semicolon
+multiline_comment|/* compression buffer&t;&t;*/
 multiline_comment|/* These are the various pointers into the buffers. */
 DECL|member|rhead
 r_int

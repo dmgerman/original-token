@@ -3,21 +3,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-r_extern
-r_struct
-id|file_operations
-id|read_pipe_fops
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|write_pipe_fops
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|rdwr_pipe_fops
-suffix:semicolon
 DECL|function|fifo_open
 r_static
 r_int
@@ -57,7 +42,7 @@ multiline_comment|/*&n;&t; *  O_RDONLY&n;&t; *  POSIX.1 says that O_NONBLOCK mea
 id|filp-&gt;f_op
 op_assign
 op_amp
-id|read_pipe_fops
+id|connecting_pipe_fops
 suffix:semicolon
 r_if
 c_cond
@@ -122,27 +107,6 @@ id|inode
 )paren
 )paren
 (brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|PIPE_HEAD
-c_func
-(paren
-op_star
-id|inode
-)paren
-op_ne
-id|PIPE_TAIL
-c_func
-(paren
-op_star
-id|inode
-)paren
-)paren
-r_break
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -219,6 +183,21 @@ op_star
 id|inode
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PIPE_WRITERS
+c_func
+(paren
+op_star
+id|inode
+)paren
+)paren
+id|filp-&gt;f_op
+op_assign
+op_amp
+id|read_pipe_fops
 suffix:semicolon
 r_if
 c_cond

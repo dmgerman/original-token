@@ -489,13 +489,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|data
-(braket
-id|len
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
 id|p
 op_add_assign
 (paren
@@ -4335,6 +4328,11 @@ r_char
 op_star
 id|sys
 op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
 id|system_utsname.nodename
 suffix:semicolon
 r_if
@@ -4478,6 +4476,10 @@ c_func
 (paren
 id|p
 comma
+(paren
+r_char
+op_star
+)paren
 id|sys
 )paren
 suffix:semicolon

@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/un.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;sys/param.h&gt;
+macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &quot;inet.h&quot;
 macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;dev.h&quot;

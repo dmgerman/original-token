@@ -993,6 +993,8 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; EX_INTERNAL is always given with a code which indicates where the&n; error was detected.&n;&n; Internal error types:&n;       0x14   in e14.c&n;       0x1nn  in a *.c file:&n;              0x101  in reg_add_sub.c&n;              0x102  in reg_mul.c&n;              0x103  in poly_sin.c&n;              0x104  in poly_tan.c&n;              0x105  in reg_mul.c&n;&t;      0x106  in reg_mov.c&n;              0x107  in fpu_trig.c&n;&t;      0x108  in reg_compare.c&n;&t;      0x109  in reg_compare.c&n;&t;      0x110  in reg_add_sub.c&n;&t;      0x111  in interface.c&n;&t;      0x112  in fpu_trig.c&n;&t;      0x113  in reg_add_sub.c&n;&t;      0x114  in reg_ld_str.c&n;&t;      0x115  in fpu_trig.c&n;&t;      0x116  in fpu_trig.c&n;&t;      0x117  in fpu_trig.c&n;&t;      0x118  in fpu_trig.c&n;&t;      0x119  in fpu_trig.c&n;&t;      0x120  in poly_atan.c&n;&t;      0x121  in reg_compare.c&n;&t;      0x122  in reg_compare.c&n;&t;      0x123  in reg_compare.c&n;       0x2nn  in an *.s file:&n;              0x201  in reg_u_add.S&n;              0x202  in reg_u_div.S&n;              0x203  in reg_u_div.S&n;              0x204  in reg_u_div.S&n;              0x205  in reg_u_mul.S&n;              0x206  in reg_u_sub.S&n;              0x207  in wm_sqrt.S&n;&t;      0x208  in reg_div.S&n;              0x209  in reg_u_sub.S&n;              0x210  in reg_u_sub.S&n;              0x211  in reg_u_sub.S&n;              0x212  in reg_u_sub.S&n;&t;      0x213  in wm_sqrt.S&n;&t;      0x214  in wm_sqrt.S&n;&t;      0x215  in wm_sqrt.S&n;&t;      0x216  in reg_round.S&n;&t;      0x217  in reg_round.S&n;&t;      0x218  in reg_round.S&n; */
 DECL|function|exception
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|exception
 c_func
@@ -1255,6 +1257,8 @@ macro_line|#endif __DEBUG__
 )brace
 multiline_comment|/* Real operation attempted on two operands, one a NaN */
 DECL|function|real_2op_NaN
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|real_2op_NaN
 c_func
@@ -1486,6 +1490,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Invalid arith operation on Valid registers */
 DECL|function|arith_invalid
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|arith_invalid
 c_func
@@ -1525,6 +1531,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Divide a finite number by zero */
 DECL|function|divide_by_zero
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|divide_by_zero
 c_func
@@ -1575,6 +1583,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* This may be called often, so keep it lean */
 DECL|function|set_precision_flag_up
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|set_precision_flag_up
 c_func
@@ -1610,6 +1620,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* This may be called often, so keep it lean */
 DECL|function|set_precision_flag_down
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|set_precision_flag_down
 c_func
@@ -1645,6 +1657,8 @@ id|EX_Precision
 suffix:semicolon
 )brace
 DECL|function|denormal_operand
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|denormal_operand
 c_func
@@ -1683,6 +1697,8 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|arith_overflow
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|arith_overflow
 c_func
@@ -1754,6 +1770,8 @@ r_return
 suffix:semicolon
 )brace
 DECL|function|arith_underflow
+r_extern
+l_string|&quot;C&quot;
 r_void
 id|arith_underflow
 c_func

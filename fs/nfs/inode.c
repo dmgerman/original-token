@@ -322,6 +322,10 @@ op_assign
 l_int|1024
 suffix:semicolon
 multiline_comment|/* XXX */
+id|sb-&gt;s_blocksize_bits
+op_assign
+l_int|10
+suffix:semicolon
 id|sb-&gt;s_magic
 op_assign
 id|NFS_SUPER_MAGIC
@@ -854,6 +858,9 @@ suffix:semicolon
 r_else
 id|sattr.mode
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -879,6 +886,9 @@ id|sattr.uid
 op_assign
 id|sattr.gid
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -906,6 +916,9 @@ suffix:semicolon
 r_else
 id|sattr.size
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -940,6 +953,9 @@ id|sattr.mtime.seconds
 op_assign
 id|sattr.mtime.useconds
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -947,6 +963,9 @@ id|sattr.atime.seconds
 op_assign
 id|sattr.atime.useconds
 op_assign
+(paren
+r_int
+)paren
 op_minus
 l_int|1
 suffix:semicolon

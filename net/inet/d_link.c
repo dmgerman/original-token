@@ -1056,9 +1056,7 @@ r_struct
 id|netstats
 op_star
 )paren
-id|dev
-op_member_access_from_pointer
-r_private
+id|dev-&gt;priv
 suffix:semicolon
 id|interrupts
 op_assign
@@ -1386,6 +1384,11 @@ c_cond
 (paren
 id|skb
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|kmalloc
 c_func
 (paren
@@ -1517,7 +1520,8 @@ id|dev_rint
 c_func
 (paren
 (paren
-r_void
+r_int
+r_char
 op_star
 )paren
 id|skb
@@ -1750,9 +1754,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the device structure. */
-id|dev
-op_member_access_from_pointer
-r_private
+id|dev-&gt;priv
 op_assign
 id|kmalloc
 c_func
@@ -1769,9 +1771,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|dev
-op_member_access_from_pointer
-r_private
+id|dev-&gt;priv
 comma
 l_int|0
 comma

@@ -333,7 +333,7 @@ id|inode
 r_int
 id|count
 comma
-id|this
+id|nr
 comma
 id|limit
 comma
@@ -395,7 +395,7 @@ id|inode-&gt;i_sb
 op_member_access_from_pointer
 id|clusters
 suffix:semicolon
-id|this
+id|nr
 op_assign
 id|limit
 suffix:semicolon
@@ -415,7 +415,7 @@ id|count
 op_increment
 )paren
 (brace
-id|this
+id|nr
 op_assign
 (paren
 (paren
@@ -443,7 +443,7 @@ c_func
 (paren
 id|inode-&gt;i_sb
 comma
-id|this
+id|nr
 comma
 op_minus
 l_int|1
@@ -460,7 +460,7 @@ c_func
 (paren
 l_string|&quot;free cluster: %d&bslash;n&quot;
 comma
-id|this
+id|nr
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -522,7 +522,7 @@ c_func
 (paren
 id|inode-&gt;i_sb
 comma
-id|this
+id|nr
 comma
 id|MSDOS_SB
 c_func
@@ -580,7 +580,7 @@ c_func
 (paren
 id|inode-&gt;i_sb
 comma
-id|this
+id|nr
 comma
 op_minus
 l_int|1
@@ -692,7 +692,7 @@ id|inode-&gt;i_sb
 comma
 id|last
 comma
-id|this
+id|nr
 )paren
 suffix:semicolon
 r_else
@@ -705,7 +705,7 @@ id|inode
 op_member_access_from_pointer
 id|i_start
 op_assign
-id|this
+id|nr
 suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
@@ -768,7 +768,7 @@ op_member_access_from_pointer
 id|data_start
 op_plus
 (paren
-id|this
+id|nr
 op_minus
 l_int|2
 )paren
@@ -2216,7 +2216,7 @@ id|current
 comma
 id|prev
 comma
-id|this
+id|nr
 suffix:semicolon
 r_if
 c_cond
@@ -2312,7 +2312,7 @@ c_cond
 op_logical_neg
 id|current
 )paren
-id|this
+id|nr
 op_assign
 id|MSDOS_ROOT_INO
 suffix:semicolon
@@ -2381,7 +2381,7 @@ op_amp
 id|current
 comma
 op_amp
-id|this
+id|nr
 comma
 l_int|NULL
 comma
@@ -2420,7 +2420,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
-id|this
+id|nr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * msdos_subdirs counts the number of sub-directories of dir. It can be run&n; * on directories being created.&n; */

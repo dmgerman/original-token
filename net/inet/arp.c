@@ -170,11 +170,11 @@ l_int|NULL
 suffix:semicolon
 DECL|macro|ARP_MAX_TYPE
 mdefine_line|#define&t;ARP_MAX_TYPE&t;(sizeof(arp_types) / sizeof(arp_types[0]))
-DECL|variable|arp_table
+DECL|variable|arp_tables
 r_struct
 id|arp_table
 op_star
-id|arp_table
+id|arp_tables
 (braket
 id|ARP_TABLE_SIZE
 )braket
@@ -905,6 +905,11 @@ suffix:semicolon
 multiline_comment|/* Get some mem and initialize it for the return trip. */
 id|skb
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|kmalloc
 c_func
 (paren
@@ -1363,7 +1368,7 @@ c_func
 suffix:semicolon
 id|apt
 op_assign
-id|arp_table
+id|arp_tables
 (braket
 id|hash
 )braket
@@ -1503,7 +1508,7 @@ suffix:semicolon
 id|lapt
 op_assign
 op_amp
-id|arp_table
+id|arp_tables
 (braket
 id|hash
 )braket
@@ -1648,6 +1653,11 @@ id|htype
 suffix:semicolon
 id|apt
 op_assign
+(paren
+r_struct
+id|arp_table
+op_star
+)paren
 id|kmalloc
 c_func
 (paren
@@ -1735,12 +1745,12 @@ c_func
 suffix:semicolon
 id|apt-&gt;next
 op_assign
-id|arp_table
+id|arp_tables
 (braket
 id|hash
 )braket
 suffix:semicolon
-id|arp_table
+id|arp_tables
 (braket
 id|hash
 )braket
@@ -2267,6 +2277,11 @@ id|saddr
 suffix:semicolon
 id|skb
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|kmalloc
 c_func
 (paren
@@ -3170,7 +3185,7 @@ c_func
 suffix:semicolon
 id|apt
 op_assign
-id|arp_table
+id|arp_tables
 (braket
 id|i
 )braket
@@ -3445,6 +3460,11 @@ c_func
 (paren
 id|si-&gt;sin_addr.s_addr
 comma
+(paren
+r_int
+r_char
+op_star
+)paren
 id|r.arp_ha.sa_data
 comma
 id|hlen

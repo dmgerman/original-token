@@ -647,15 +647,5 @@ r_struct
 id|inode_operations
 id|xiafs_symlink_inode_operations
 suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|xiafs_file_operations
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|xiafs_dir_operations
-suffix:semicolon
 macro_line|#endif  /* _XIA_FS_H */
 eof

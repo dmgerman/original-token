@@ -48,5 +48,18 @@ id|vt_cons
 id|NR_CONSOLES
 )braket
 suffix:semicolon
+r_void
+id|kd_mksound
+c_func
+(paren
+r_int
+r_int
+id|count
+comma
+r_int
+r_int
+id|ticks
+)paren
+suffix:semicolon
 macro_line|#endif /* _VT_KERN_H */
 eof

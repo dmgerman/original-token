@@ -405,6 +405,11 @@ suffix:semicolon
 multiline_comment|/* Allocate an entry. */
 id|rt
 op_assign
+(paren
+r_struct
+id|rtable
+op_star
+)paren
 id|kmalloc
 c_func
 (paren

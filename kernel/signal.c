@@ -25,6 +25,8 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|do_signal
 c_func
@@ -40,6 +42,8 @@ id|regs
 )paren
 suffix:semicolon
 DECL|function|sys_sgetmask
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_sgetmask
 c_func
@@ -52,6 +56,8 @@ id|current-&gt;blocked
 suffix:semicolon
 )brace
 DECL|function|sys_ssetmask
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_ssetmask
 c_func
@@ -76,6 +82,8 @@ id|old
 suffix:semicolon
 )brace
 DECL|function|sys_sigpending
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_sigpending
 c_func
@@ -128,6 +136,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * atomically swap in the new signal mask, and wait for a signal.&n; */
 DECL|function|sys_sigsuspend
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_sigsuspend
 c_func
@@ -300,6 +310,8 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|sys_signal
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_signal
 c_func
@@ -406,6 +418,8 @@ id|handler
 suffix:semicolon
 )brace
 DECL|function|sys_sigaction
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_sigaction
 c_func
@@ -427,7 +441,7 @@ id|oldaction
 (brace
 r_struct
 id|sigaction
-r_new
+id|new_sa
 comma
 op_star
 id|p
@@ -468,7 +482,7 @@ id|memcpy_fromfs
 c_func
 (paren
 op_amp
-r_new
+id|new_sa
 comma
 id|action
 comma
@@ -482,23 +496,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-r_new
-dot
-id|sa_flags
+id|new_sa.sa_flags
 op_amp
 id|SA_NOMASK
 )paren
-r_new
-dot
-id|sa_mask
+id|new_sa.sa_mask
 op_assign
 l_int|0
 suffix:semicolon
 r_else
 (brace
-r_new
-dot
-id|sa_mask
+id|new_sa.sa_mask
 op_or_assign
 id|_S
 c_func
@@ -506,9 +514,7 @@ c_func
 id|signum
 )paren
 suffix:semicolon
-r_new
-dot
-id|sa_mask
+id|new_sa.sa_mask
 op_and_assign
 id|_BLOCKABLE
 suffix:semicolon
@@ -522,9 +528,7 @@ op_le
 r_int
 r_int
 )paren
-r_new
-dot
-id|sa_handler
+id|new_sa.sa_handler
 )paren
 r_return
 op_minus
@@ -579,7 +583,7 @@ id|action
 op_star
 id|p
 op_assign
-r_new
+id|new_sa
 suffix:semicolon
 id|check_pending
 c_func
@@ -593,6 +597,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_waitpid
 c_func
@@ -611,6 +616,8 @@ id|options
 suffix:semicolon
 multiline_comment|/*&n; * This sets regs-&gt;esp even though we don&squot;t actually use sigstacks yet..&n; */
 DECL|function|sys_sigreturn
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_sigreturn
 c_func
@@ -703,7 +710,7 @@ suffix:semicolon
 DECL|macro|__CODE
 mdefine_line|#define __CODE ((unsigned long)(frame+24))
 DECL|macro|CODE
-mdefine_line|#define CODE(x) ((void *) ((x)+__CODE))
+mdefine_line|#define CODE(x) ((unsigned long *) ((x)+__CODE))
 id|frame
 op_assign
 op_star
@@ -1094,6 +1101,8 @@ macro_line|#undef CODE
 )brace
 multiline_comment|/*&n; * Note that &squot;init&squot; is a special process: it doesn&squot;t get signals it doesn&squot;t&n; * want to handle. Thus you cannot kill init even with a SIGKILL even by&n; * mistake.&n; *&n; * Note that we go through the signals twice: once to check the signals that&n; * the kernel can handle, and then we build all the user-level signal handling&n; * stack-frames in one go after that.&n; */
 DECL|function|do_signal
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|do_signal
 c_func
@@ -1640,7 +1649,8 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;testb $0,%%fs:%0&quot;
-op_scope_resolution
+suffix:colon
+suffix:colon
 l_string|&quot;m&quot;
 (paren
 op_star

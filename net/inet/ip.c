@@ -21,6 +21,21 @@ macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;icmp.h&quot;
+r_extern
+r_int
+id|last_retran
+suffix:semicolon
+r_extern
+r_void
+id|sort_send
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+suffix:semicolon
 r_void
 DECL|function|ip_print
 id|ip_print
@@ -856,6 +871,21 @@ op_assign
 id|saddr
 suffix:semicolon
 multiline_comment|/* Now build the IP header. */
+multiline_comment|/* If we are using IPPROTO_RAW, then we don&squot;t need an IP header, since&n;     one is being supplied to us by the user */
+r_if
+c_cond
+(paren
+id|type
+op_eq
+id|IPPROTO_RAW
+)paren
+(brace
+r_return
+(paren
+id|tmp
+)paren
+suffix:semicolon
+)brace
 id|iph
 op_assign
 (paren
@@ -1924,7 +1954,6 @@ l_int|0xffff
 suffix:semicolon
 )brace
 multiline_comment|/* Check the header of an incoming IP datagram. */
-r_static
 r_int
 DECL|function|ip_csum
 id|ip_csum
@@ -2306,6 +2335,11 @@ id|IFF_UP
 (brace
 id|skb2
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|kmalloc
 c_func
 (paren
@@ -2815,6 +2849,11 @@ id|ipprot-&gt;copy
 (brace
 id|skb2
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|kmalloc
 (paren
 id|skb-&gt;mem_len
@@ -2852,7 +2891,8 @@ suffix:semicolon
 id|skb2-&gt;h.raw
 op_assign
 (paren
-r_void
+r_int
+r_char
 op_star
 )paren
 (paren
@@ -3157,18 +3197,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_extern
-r_void
-id|sort_send
-c_func
-(paren
-r_volatile
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -3201,9 +3229,19 @@ c_func
 suffix:semicolon
 id|sk-&gt;time_wait.len
 op_assign
+id|backoff
+c_func
+(paren
+id|sk-&gt;backoff
+)paren
+op_star
+(paren
+l_int|2
+op_star
+id|sk-&gt;mdev
+op_plus
 id|sk-&gt;rtt
-op_lshift
-l_int|1
+)paren
 suffix:semicolon
 id|sk-&gt;timeout
 op_assign
@@ -3475,13 +3513,24 @@ id|skb-&gt;link3
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Double the RTT time every time we retransmit. &n;   * This will cause exponential back off on how hard we try to&n;   * get through again.  Once we get through, the rtt will settle&n;   * back down reasonably quickly.&n;   */
-id|sk-&gt;rtt
-op_mul_assign
-l_int|2
+id|sk-&gt;backoff
+op_increment
 suffix:semicolon
 id|sk-&gt;time_wait.len
 op_assign
+id|backoff
+c_func
+(paren
+id|sk-&gt;backoff
+)paren
+op_star
+(paren
+l_int|2
+op_star
+id|sk-&gt;mdev
+op_plus
 id|sk-&gt;rtt
+)paren
 suffix:semicolon
 id|sk-&gt;timeout
 op_assign
@@ -3499,5 +3548,39 @@ op_amp
 id|sk-&gt;time_wait
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/* Backoff function - the subject of much research */
+DECL|function|backoff
+r_int
+id|backoff
+c_func
+(paren
+r_int
+id|n
+)paren
+(brace
+multiline_comment|/* Use binary exponential up to retry #4, and quadratic after that&n;&t; * This yields the sequence&n;&t; * 1, 2, 4, 8, 16, 25, 36, 49, 64, 81, 100 ...&n;&t; */
+r_if
+c_cond
+(paren
+id|n
+op_le
+l_int|4
+)paren
+(brace
+r_return
+l_int|1
+op_lshift
+id|n
+suffix:semicolon
+)brace
+multiline_comment|/* Binary exponential back off */
+r_else
+r_return
+id|n
+op_star
+id|n
+suffix:semicolon
+multiline_comment|/* Quadratic back off */
 )brace
 eof

@@ -672,7 +672,8 @@ suffix:colon
 id|ecbptr
 op_assign
 (paren
-r_void
+r_struct
+id|ecb
 op_star
 )paren
 (paren
@@ -1372,6 +1373,11 @@ suffix:semicolon
 multiline_comment|/* SCSI Initiator Command  w/scatter-gather*/
 id|SCpnt-&gt;host_scribble
 op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
 id|scsi_malloc
 c_func
 (paren
@@ -2091,12 +2097,14 @@ id|hostnum
 id|memset
 c_func
 (paren
+op_amp
 id|ecb
 comma
 l_int|0
 comma
 r_sizeof
 (paren
+r_struct
 id|ecb
 )paren
 )paren
@@ -2309,7 +2317,7 @@ id|dev
 comma
 r_int
 op_star
-id|info
+id|ip
 )paren
 (brace
 id|DEB
@@ -2322,21 +2330,21 @@ l_string|&quot;aha1740_biosparam&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|info
+id|ip
 (braket
 l_int|0
 )braket
 op_assign
 l_int|64
 suffix:semicolon
-id|info
+id|ip
 (braket
 l_int|1
 )braket
 op_assign
 l_int|32
 suffix:semicolon
-id|info
+id|ip
 (braket
 l_int|2
 )braket
@@ -2345,7 +2353,7 @@ id|size
 op_rshift
 l_int|11
 suffix:semicolon
-multiline_comment|/*  if (info[2] &gt;= 1024) info[2] = 1024; */
+multiline_comment|/*  if (ip[2] &gt;= 1024) ip[2] = 1024; */
 r_return
 l_int|0
 suffix:semicolon

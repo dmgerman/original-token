@@ -69,7 +69,7 @@ multiline_comment|/*&n; * Macro-instructions used to manage fragments&n; */
 DECL|macro|EXT2_MIN_FRAG_SIZE
 mdefine_line|#define EXT2_MIN_FRAG_SIZE&t;&t;1024
 DECL|macro|EXT2_MAX_FRAG_SIZE
-mdefine_line|#define&t;EXT2_MAX_FRAG_SIZE&t;&t;1024
+mdefine_line|#define&t;EXT2_MAX_FRAG_SIZE&t;&t;4096
 DECL|macro|EXT2_MIN_FRAG_LOG_SIZE
 mdefine_line|#define EXT2_MIN_FRAG_LOG_SIZE&t;&t;  10
 macro_line|#ifdef __KERNEL__
@@ -1176,21 +1176,11 @@ r_struct
 id|inode_operations
 id|ext2_dir_inode_operations
 suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|ext2_dir_operations
-suffix:semicolon
 multiline_comment|/* file.c */
 r_extern
 r_struct
 id|inode_operations
 id|ext2_file_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|ext2_file_operations
 suffix:semicolon
 multiline_comment|/* symlink.c */
 r_extern

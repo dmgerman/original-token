@@ -6,24 +6,9 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;../blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
+macro_line|#include &quot;scsi_ioctl.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
-r_extern
-r_int
-id|scsi_ioctl
-(paren
-id|Scsi_Device
-op_star
-id|dev
-comma
-r_int
-id|cmd
-comma
-r_void
-op_star
-id|arg
-)paren
-suffix:semicolon
 r_extern
 r_int
 id|revalidate_scsidisk
@@ -80,7 +65,8 @@ op_star
 id|loc
 op_assign
 (paren
-r_void
+r_struct
+id|hd_geometry
 op_star
 )paren
 id|arg

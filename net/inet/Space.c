@@ -486,18 +486,16 @@ op_assign
 l_string|&quot;lo&quot;
 comma
 multiline_comment|/* Software Loopback interface&t;&t;*/
-op_minus
-l_int|1
+l_int|0x0
 comma
 multiline_comment|/* recv memory end&t;&t;&t;*/
 l_int|0x0
 comma
 multiline_comment|/* recv memory start&t;&t;&t;*/
-op_minus
-l_int|1
+l_int|0x0
 comma
 multiline_comment|/* memory end&t;&t;&t;&t;*/
-l_int|0
+l_int|0x0
 comma
 multiline_comment|/* memory start&t;&t;&t;&t;*/
 l_int|0

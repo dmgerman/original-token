@@ -144,10 +144,10 @@ r_int
 id|hard_header_len
 suffix:semicolon
 multiline_comment|/* hardware hdr length&t;*/
-DECL|member|private
+DECL|member|priv
 r_void
 op_star
-r_private
+id|priv
 suffix:semicolon
 multiline_comment|/* pointer to private data&t;*/
 multiline_comment|/* Interface address info. */

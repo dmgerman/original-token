@@ -1453,6 +1453,11 @@ suffix:semicolon
 macro_line|#endif
 id|SCpnt-&gt;host_scribble
 op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
 id|scsi_malloc
 c_func
 (paren
@@ -2469,25 +2474,25 @@ id|dev
 comma
 r_int
 op_star
-id|info
+id|ip
 )paren
 multiline_comment|/*&n; *  This is borrowed directly from aha1542.c, but my disks are organized&n; *   this way, so I think it will work OK.&n; */
 (brace
-id|info
+id|ip
 (braket
 l_int|0
 )braket
 op_assign
 l_int|64
 suffix:semicolon
-id|info
+id|ip
 (braket
 l_int|1
 )braket
 op_assign
 l_int|32
 suffix:semicolon
-id|info
+id|ip
 (braket
 l_int|2
 )braket
@@ -2500,7 +2505,7 @@ l_int|2047
 op_rshift
 l_int|11
 suffix:semicolon
-multiline_comment|/*  if (info[2] &gt;= 1024) info[2] = 1024; */
+multiline_comment|/*  if (ip[2] &gt;= 1024) ip[2] = 1024; */
 r_return
 l_int|0
 suffix:semicolon

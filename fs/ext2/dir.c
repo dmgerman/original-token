@@ -346,8 +346,6 @@ r_int
 id|offset
 comma
 id|i
-comma
-id|err
 suffix:semicolon
 r_struct
 id|buffer_head
@@ -363,6 +361,9 @@ r_struct
 id|super_block
 op_star
 id|sb
+suffix:semicolon
+r_int
+id|err
 suffix:semicolon
 r_if
 c_cond

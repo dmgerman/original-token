@@ -165,7 +165,7 @@ id|u_long
 id|offset
 suffix:semicolon
 DECL|member|string
-id|u_char
+r_char
 op_star
 id|string
 suffix:semicolon
@@ -193,7 +193,7 @@ id|drive
 )paren
 suffix:semicolon
 DECL|member|name
-id|u_char
+r_char
 op_star
 id|name
 suffix:semicolon
@@ -340,7 +340,7 @@ comma
 id|u_char
 id|drive
 comma
-id|u_char
+r_char
 op_star
 id|buffer
 comma

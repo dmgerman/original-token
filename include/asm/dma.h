@@ -193,7 +193,7 @@ id|DMA2_MASK_REG
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Clear the &squot;DMA Pointer Flip Flop&squot;.&n; * Write 0 for LSB/MSB, 1 for MSB/LSB access.&n; * Use this once to initialize the FF to a know state.&n; * After that, keep track of it. :-)&n; * --- In order to do that, the DMA routines below should ---&n; * --- only be used while interrupts are disbled! ---&n; */
+multiline_comment|/* Clear the &squot;DMA Pointer Flip Flop&squot;.&n; * Write 0 for LSB/MSB, 1 for MSB/LSB access.&n; * Use this once to initialize the FF to a known state.&n; * After that, keep track of it. :-)&n; * --- In order to do that, the DMA routines below should ---&n; * --- only be used while interrupts are disabled! ---&n; */
 DECL|function|clear_dma_ff
 r_static
 id|__inline__

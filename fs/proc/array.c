@@ -10,6 +10,17 @@ DECL|macro|LOAD_INT
 mdefine_line|#define LOAD_INT(x) ((x) &gt;&gt; FSHIFT)
 DECL|macro|LOAD_FRAC
 mdefine_line|#define LOAD_FRAC(x) LOAD_INT(((x) &amp; (FIXED_1-1)) * 100)
+macro_line|#ifdef CONFIG_DEBUG_MALLOC
+r_int
+id|get_malloc
+c_func
+(paren
+r_char
+op_star
+id|buffer
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|get_loadavg
 r_static
 r_int
@@ -1477,7 +1488,8 @@ id|TASK_ZOMBIE
 id|pagedir
 op_assign
 (paren
-r_void
+r_int
+r_int
 op_star
 )paren
 (paren
@@ -1540,7 +1552,8 @@ suffix:semicolon
 id|buf
 op_assign
 (paren
-r_void
+r_int
+r_int
 op_star
 )paren
 (paren
@@ -1893,6 +1906,21 @@ id|page
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEBUG_MALLOC
+r_case
+l_int|13
+suffix:colon
+id|length
+op_assign
+id|get_malloc
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|free_page

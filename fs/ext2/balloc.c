@@ -1113,6 +1113,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|clear_bit
 (paren
 id|bit

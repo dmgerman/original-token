@@ -160,6 +160,14 @@ c_func
 id|s
 )paren
 suffix:semicolon
+id|set_blocksize
+c_func
+(paren
+id|dev
+comma
+id|BLOCK_SIZE
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -211,6 +219,10 @@ suffix:semicolon
 id|s-&gt;s_blocksize
 op_assign
 l_int|1024
+suffix:semicolon
+id|s-&gt;s_blocksize_bits
+op_assign
+l_int|10
 suffix:semicolon
 id|s-&gt;u.ext_sb.s_ninodes
 op_assign

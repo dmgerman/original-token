@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -51,6 +52,29 @@ r_int
 id|priv
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SELECTION
+r_extern
+r_int
+id|set_selection
+c_func
+(paren
+r_const
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|paste_selection
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_SELECTION */
 DECL|function|flush
 r_static
 r_void
@@ -1107,7 +1131,7 @@ op_amp
 id|IXON
 )paren
 op_logical_and
-op_complement
+op_logical_neg
 (paren
 id|tty-&gt;termios-&gt;c_iflag
 op_amp
@@ -1127,15 +1151,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_complement
 (paren
-id|tmp_termio.c_iflag
+id|tty-&gt;termios-&gt;c_iflag
 op_amp
 id|IXON
 )paren
 op_logical_and
+op_logical_neg
 (paren
-id|tty-&gt;termios-&gt;c_iflag
+id|tmp_termio.c_iflag
 op_amp
 id|IXON
 )paren
@@ -2458,6 +2482,28 @@ c_func
 id|arg
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SELECTION
+r_case
+l_int|2
+suffix:colon
+r_return
+id|set_selection
+c_func
+(paren
+id|arg
+)paren
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+r_return
+id|paste_selection
+c_func
+(paren
+id|tty
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_SELECTION */
 r_default
 suffix:colon
 r_return

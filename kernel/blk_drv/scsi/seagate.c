@@ -154,12 +154,6 @@ comma
 r_char
 op_star
 )paren
-l_int|0xce000
-comma
-(paren
-r_char
-op_star
-)paren
 l_int|0xdc000
 comma
 (paren
@@ -1073,6 +1067,11 @@ id|SCpnt-&gt;cmnd
 suffix:semicolon
 id|current_data
 op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
 id|SCpnt-&gt;request_buffer
 suffix:semicolon
 id|current_bufflen
@@ -2618,7 +2617,8 @@ suffix:semicolon
 "&quot;"
 macro_line|#endif
 l_string|&quot;&t;loop 1b;&quot;
-op_scope_resolution
+suffix:colon
+suffix:colon
 multiline_comment|/* input */
 l_string|&quot;r&quot;
 (paren
@@ -3014,7 +3014,8 @@ suffix:semicolon
 "&quot;"
 macro_line|#endif
 l_string|&quot;&t;loop 1b;&quot;
-op_scope_resolution
+suffix:colon
+suffix:colon
 multiline_comment|/* input */
 l_string|&quot;r&quot;
 (paren
@@ -3310,6 +3311,7 @@ id|status_read
 op_amp
 id|STAT_REQ
 )paren
+(brace
 id|DATA
 op_assign
 op_star
@@ -3319,8 +3321,19 @@ r_char
 op_star
 )paren
 id|cmnd
-op_increment
 suffix:semicolon
+id|cmnd
+op_assign
+l_int|1
+op_plus
+(paren
+r_int
+r_char
+op_star
+)paren
+id|cmnd
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -3991,22 +4004,6 @@ macro_line|#ifdef CONFIG_BLK_DEV_SD
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
-r_extern
-r_int
-id|scsi_ioctl
-(paren
-id|Scsi_Device
-op_star
-id|dev
-comma
-r_int
-id|cmd
-comma
-r_void
-op_star
-id|arg
-)paren
-suffix:semicolon
 DECL|function|seagate_st0x_biosparam
 r_int
 id|seagate_st0x_biosparam
@@ -4020,7 +4017,7 @@ id|dev
 comma
 r_int
 op_star
-id|info
+id|ip
 )paren
 (brace
 r_int
@@ -4446,21 +4443,21 @@ l_int|1
 suffix:semicolon
 r_else
 (brace
-id|info
+id|ip
 (braket
 l_int|0
 )braket
 op_assign
 id|heads
 suffix:semicolon
-id|info
+id|ip
 (braket
 l_int|1
 )braket
 op_assign
 id|sectors
 suffix:semicolon
-id|info
+id|ip
 (braket
 l_int|2
 )braket

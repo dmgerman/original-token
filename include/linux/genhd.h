@@ -137,7 +137,7 @@ r_int
 op_star
 id|sizes
 suffix:semicolon
-multiline_comment|/* block sizes */
+multiline_comment|/* size of device in blocks */
 DECL|member|nr_real
 r_int
 id|nr_real

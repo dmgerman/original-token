@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
+macro_line|#include &lt;linux/tpqic02.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -605,17 +606,16 @@ id|off
 r_if
 c_cond
 (paren
-id|len
-OG
-id|high_memory
+id|off
+op_amp
+l_int|0xfff
 op_logical_or
 id|off
-OG
-id|high_memory
-op_minus
+op_plus
 id|len
+OL
+id|off
 )paren
-multiline_comment|/* avoid overflow */
 r_return
 op_minus
 id|ENXIO
@@ -1110,7 +1110,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
 multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|mem_fops
@@ -1141,7 +1144,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
 multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|kmem_fops
@@ -1172,7 +1178,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
 multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|null_fops
@@ -1204,7 +1213,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
 multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|port_fops
@@ -1236,7 +1248,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
 multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|zero_fops
@@ -1299,7 +1314,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
 multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|function|memory_open
@@ -1460,7 +1478,10 @@ id|memory_open
 comma
 multiline_comment|/* just a selector for the real open */
 l_int|NULL
+comma
 multiline_comment|/* release */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|function|chr_dev_init
@@ -1527,6 +1548,16 @@ c_func
 id|mem_start
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_TAPE_QIC02
+id|mem_start
+op_assign
+id|tape_qic02_init
+c_func
+(paren
+id|mem_start
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|mem_start
 suffix:semicolon

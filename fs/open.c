@@ -27,6 +27,8 @@ op_star
 )paren
 suffix:semicolon
 DECL|function|sys_ustat
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_ustat
 c_func
@@ -46,6 +48,8 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_statfs
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_statfs
 c_func
@@ -151,6 +155,8 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_fstatfs
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_fstatfs
 c_func
@@ -262,6 +268,8 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_truncate
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_truncate
 c_func
@@ -404,6 +412,8 @@ id|error
 suffix:semicolon
 )brace
 DECL|function|sys_ftruncate
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_ftruncate
 c_func
@@ -523,6 +533,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* If times==NULL, set access and modification to current time,&n; * must be owner or have write permission.&n; * Else, update from *times, must be owner or super user.&n; */
 DECL|function|sys_utime
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_utime
 c_func
@@ -731,6 +743,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * XXX we should use the real ids for checking _all_ components of the&n; * path.  Now we only use them for the final compenent of the path.&n; */
 DECL|function|sys_access
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_access
 c_func
@@ -883,6 +897,8 @@ id|EACCES
 suffix:semicolon
 )brace
 DECL|function|sys_chdir
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_chdir
 c_func
@@ -983,6 +999,8 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_chroot
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_chroot
 c_func
@@ -1080,6 +1098,8 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_fchmod
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_fchmod
 c_func
@@ -1224,6 +1244,8 @@ id|inode
 suffix:semicolon
 )brace
 DECL|function|sys_chmod
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_chmod
 c_func
@@ -1377,6 +1399,8 @@ id|error
 suffix:semicolon
 )brace
 DECL|function|sys_fchown
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_fchown
 c_func
@@ -1543,6 +1567,8 @@ id|EPERM
 suffix:semicolon
 )brace
 DECL|function|sys_chown
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_chown
 c_func
@@ -1717,6 +1743,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note that while the flag value (low two bits) for sys_open means:&n; *&t;00 - read-only&n; *&t;01 - write-only&n; *&t;10 - read-write&n; *&t;11 - special&n; * it is changed into&n; *&t;00 - no permissions needed&n; *&t;01 - read-permission&n; *&t;10 - write-permission&n; *&t;11 - read-write&n; * for the internal routines (ie open_namei()/follow_link() etc). 00 is&n; * used by symlinks.&n; */
 DECL|function|sys_open
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_open
 c_func
@@ -2084,6 +2112,8 @@ id|fd
 suffix:semicolon
 )brace
 DECL|function|sys_creat
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_creat
 c_func
@@ -2220,6 +2250,8 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_close
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_close
 c_func
@@ -2289,6 +2321,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine simulates a hangup on the tty, to arrange that users&n; * are given clean terminals at login time.&n; */
 DECL|function|sys_vhangup
+r_extern
+l_string|&quot;C&quot;
 r_int
 id|sys_vhangup
 c_func

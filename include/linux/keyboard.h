@@ -370,7 +370,6 @@ suffix:semicolon
 r_extern
 r_const
 r_int
-r_char
 id|max_vals
 (braket
 )braket

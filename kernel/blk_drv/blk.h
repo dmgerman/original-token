@@ -1,7 +1,7 @@
 macro_line|#ifndef _BLK_H
 DECL|macro|_BLK_H
 mdefine_line|#define _BLK_H
-macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; *&n; * 32 seems to be a reasonable number: enough to get some benefit&n; * from the elevator-mechanism, but not so much as to lock a lot of&n; * buffers when they are in the queue. 64 seems to be too many (easily&n; * long pauses in reading when heavy writing/syncing is going on)&n; */
 DECL|macro|NR_REQUEST
@@ -110,11 +110,11 @@ id|block_size_bits
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * These will have to be changed to be aware of different buffer&n; * sizes etc..&n; */
+multiline_comment|/*&n; * These will have to be changed to be aware of different buffer&n; * sizes etc.. It actually needs a major cleanup.&n; */
 DECL|macro|SECTOR_MASK
-mdefine_line|#define SECTOR_MASK ((1 &lt;&lt; (BLOCK_SIZE_BITS - 9)) -1)
+mdefine_line|#define SECTOR_MASK (blksize_size[MAJOR_NR] &amp;&amp;     &bslash;&n;&t;blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;dev)] ? &bslash;&n;&t;((blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;dev)] &gt;&gt; 9) - 1) :  &bslash;&n;&t;((BLOCK_SIZE &gt;&gt; 9)  -  1))
 DECL|macro|SUBSECTOR
-mdefine_line|#define SUBSECTOR(block) ((block) &amp; SECTOR_MASK)
+mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
 r_extern
 r_struct
 id|sec_size
@@ -147,9 +147,31 @@ op_star
 id|wait_for_request
 suffix:semicolon
 r_extern
+r_void
+id|resetup_one_dev
+c_func
+(paren
+r_struct
+id|gendisk
+op_star
+id|dev
+comma
+r_int
+id|drive
+)paren
+suffix:semicolon
+r_extern
 r_int
 op_star
 id|blk_size
+(braket
+id|MAX_BLKDEV
+)braket
+suffix:semicolon
+r_extern
+r_int
+op_star
+id|blksize_size
 (braket
 id|MAX_BLKDEV
 )braket

@@ -288,15 +288,15 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;pushfl ; popl %0; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
+id|save_flags
+c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 id|result
@@ -320,15 +320,10 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
+id|restore_flags
+c_func
 (paren
 id|flags
-)paren
 )paren
 suffix:semicolon
 r_return

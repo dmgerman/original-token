@@ -837,6 +837,10 @@ id|offset
 suffix:semicolon
 id|to
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|data
 op_plus
 (paren

@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_BITOPS_H
 multiline_comment|/*&n; * Copyright 1992, Linus Torvalds.&n; */
 macro_line|#ifdef i386
-multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. Both set_bit and clear_bit return 0&n; * if the bit-setting went ok, != 0 if the bit already was set/cleared.&n; *&n; * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).&n; */
+multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. All bitoperations return 0 if the bit&n; * was cleared before the operation and != 0 if it was not.&n; *&n; * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).&n; */
 multiline_comment|/*&n; * Some hacks to defeat gcc over-optimizations..&n; */
 DECL|struct|__dummy
 DECL|member|a
@@ -35,18 +35,17 @@ id|addr
 )paren
 (brace
 r_int
-r_char
-id|ok
+id|oldbit
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;btsl %2,%1&bslash;n&bslash;tsetb %0&quot;
+l_string|&quot;btsl %2,%1&bslash;n&bslash;tsbbl %0,%0&quot;
 suffix:colon
-l_string|&quot;=q&quot;
+l_string|&quot;=r&quot;
 (paren
-id|ok
+id|oldbit
 )paren
 comma
 l_string|&quot;=m&quot;
@@ -61,7 +60,7 @@ id|nr
 )paren
 suffix:semicolon
 r_return
-id|ok
+id|oldbit
 suffix:semicolon
 )brace
 DECL|function|clear_bit
@@ -80,18 +79,17 @@ id|addr
 )paren
 (brace
 r_int
-r_char
-id|ok
+id|oldbit
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;btrl %2,%1&bslash;n&bslash;tsetnb %0&quot;
+l_string|&quot;btrl %2,%1&bslash;n&bslash;tsbbl %0,%0&quot;
 suffix:colon
-l_string|&quot;=q&quot;
+l_string|&quot;=r&quot;
 (paren
-id|ok
+id|oldbit
 )paren
 comma
 l_string|&quot;=m&quot;
@@ -106,7 +104,7 @@ id|nr
 )paren
 suffix:semicolon
 r_return
-id|ok
+id|oldbit
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine doesn&squot;t need to be atomic, but it&squot;s faster to code it&n; * this way.&n; */
@@ -126,18 +124,17 @@ id|addr
 )paren
 (brace
 r_int
-r_char
-id|ok
+id|oldbit
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;btl %2,%1&bslash;n&bslash;tsetb %0&quot;
+l_string|&quot;btl %2,%1&bslash;n&bslash;tsbbl %0,%0&quot;
 suffix:colon
-l_string|&quot;=q&quot;
+l_string|&quot;=r&quot;
 (paren
-id|ok
+id|oldbit
 )paren
 suffix:colon
 l_string|&quot;m&quot;
@@ -152,7 +149,7 @@ id|nr
 )paren
 suffix:semicolon
 r_return
-id|ok
+id|oldbit
 suffix:semicolon
 )brace
 macro_line|#else

@@ -540,7 +540,7 @@ op_star
 id|sb
 comma
 r_int
-id|this
+id|nr
 comma
 r_int
 id|new_value
@@ -907,20 +907,10 @@ suffix:semicolon
 multiline_comment|/* dir.c */
 r_extern
 r_struct
-id|file_operations
-id|msdos_dir_operations
-suffix:semicolon
-r_extern
-r_struct
 id|inode_operations
 id|msdos_dir_inode_operations
 suffix:semicolon
 multiline_comment|/* file.c */
-r_extern
-r_struct
-id|file_operations
-id|msdos_file_operations
-suffix:semicolon
 r_extern
 r_struct
 id|inode_operations
