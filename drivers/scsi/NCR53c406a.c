@@ -20,10 +20,7 @@ multiline_comment|/* Set this to 0 if you encounter kernel lockups while transfe
 DECL|macro|USE_FAST_PIO
 mdefine_line|#define USE_FAST_PIO 1
 multiline_comment|/* ============= End of user configurable parameters ============= */
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

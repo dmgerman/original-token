@@ -451,6 +451,11 @@ id|B
 (paren
 id|OPT_MPU401
 )paren
+op_or
+id|B
+(paren
+id|OPT_MAUI
+)paren
 comma
 l_int|0
 comma
@@ -671,6 +676,13 @@ comma
 l_int|0
 )brace
 )brace
+suffix:semicolon
+DECL|variable|oldconf
+r_char
+op_star
+id|oldconf
+op_assign
+l_string|&quot;/etc/soundconf&quot;
 suffix:semicolon
 DECL|variable|old_config_used
 r_int
@@ -2088,6 +2100,12 @@ id|sb_base
 op_assign
 l_int|0
 suffix:semicolon
+r_char
+id|old_config_file
+(braket
+l_int|200
+)braket
+suffix:semicolon
 id|fprintf
 (paren
 id|stderr
@@ -2095,6 +2113,51 @@ comma
 l_string|&quot;&bslash;nConfiguring the sound support&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|getuid
+(paren
+)paren
+op_ne
+l_int|0
+)paren
+multiline_comment|/* Not root */
+(brace
+r_char
+op_star
+id|home
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|home
+op_assign
+id|getenv
+(paren
+l_string|&quot;HOME&quot;
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+id|sprintf
+(paren
+id|old_config_file
+comma
+l_string|&quot;%s/.soundconf&quot;
+comma
+id|home
+)paren
+suffix:semicolon
+id|oldconf
+op_assign
+id|old_config_file
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -2106,12 +2169,21 @@ l_int|1
 r_if
 c_cond
 (paren
-id|use_old_config
+id|strcmp
 (paren
 id|argv
 (braket
 l_int|1
 )braket
+comma
+l_string|&quot;-o&quot;
+)paren
+op_eq
+l_int|0
+op_logical_and
+id|use_old_config
+(paren
+id|oldconf
 )paren
 )paren
 m_exit
@@ -2120,13 +2192,12 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_else
 r_if
 c_cond
 (paren
 id|access
 (paren
-l_string|&quot;/etc/soundconf&quot;
+id|oldconf
 comma
 id|R_OK
 )paren
@@ -2138,7 +2209,9 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;Old configuration exists in /etc/soundconf. Use it (y/n) ? &quot;
+l_string|&quot;Old configuration exists in %s. Use it (y/n) ? &quot;
+comma
+id|oldconf
 )paren
 suffix:semicolon
 r_if
@@ -2146,7 +2219,7 @@ c_cond
 (paren
 id|think_positively
 (paren
-l_int|0
+l_int|1
 )paren
 )paren
 r_if
@@ -2154,7 +2227,7 @@ c_cond
 (paren
 id|use_old_config
 (paren
-l_string|&quot;/etc/soundconf&quot;
+id|oldconf
 )paren
 )paren
 m_exit
@@ -7028,7 +7101,9 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;Save this configuration to /etc/soundconf (y/n)&quot;
+l_string|&quot;Save copy of this configuration to %s (y/n)&quot;
+comma
+id|oldconf
 )paren
 suffix:semicolon
 r_if
@@ -7040,6 +7115,21 @@ l_int|1
 )paren
 )paren
 (brace
+r_char
+id|cmd
+(braket
+l_int|200
+)braket
+suffix:semicolon
+id|sprintf
+(paren
+id|cmd
+comma
+l_string|&quot;cp local.h %s&quot;
+comma
+id|oldconf
+)paren
+suffix:semicolon
 id|fclose
 (paren
 id|stdout
@@ -7050,14 +7140,14 @@ c_cond
 (paren
 id|system
 (paren
-l_string|&quot;cp local.h /etc/soundconf&quot;
+id|cmd
 )paren
 op_ne
 l_int|0
 )paren
 id|perror
 (paren
-l_string|&quot;&squot;cp local.h /etc/soundconf&squot;&quot;
+id|cmd
 )paren
 suffix:semicolon
 )brace

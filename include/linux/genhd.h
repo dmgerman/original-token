@@ -8,6 +8,10 @@ macro_line|#ifdef __alpha__
 DECL|macro|CONFIG_OSF_PARTITION
 mdefine_line|#define CONFIG_OSF_PARTITION 1
 macro_line|#endif
+macro_line|#ifdef __sparc__
+DECL|macro|CONFIG_SUN_PARTITION
+mdefine_line|#define CONFIG_SUN_PARTITION 1
+macro_line|#endif
 multiline_comment|/* These two have identical behaviour; use the second one if DOS fdisk gets&n;   confused about extended/logical partitions starting past cylinder 1023. */
 DECL|macro|DOS_EXTENDED_PARTITION
 mdefine_line|#define DOS_EXTENDED_PARTITION 5

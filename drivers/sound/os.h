@@ -1,16 +1,12 @@
 DECL|macro|ALLOW_SELECT
 mdefine_line|#define ALLOW_SELECT
 DECL|macro|ALLOW_BUFFER_MAPPING
-mdefine_line|#define ALLOW_BUFFER_MAPPING
+macro_line|#undef ALLOW_BUFFER_MAPPING
 DECL|macro|NO_INLINE_ASM
 macro_line|#undef NO_INLINE_ASM
 DECL|macro|SHORT_BANNERS
 macro_line|#undef SHORT_BANNERS
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -49,12 +45,8 @@ r_struct
 id|snd_wait
 (brace
 DECL|member|mode
-DECL|member|aborting
 r_int
 id|mode
-suffix:semicolon
-r_int
-id|aborting
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -115,8 +107,6 @@ r_extern
 r_int
 id|sound_num_blocks
 suffix:semicolon
-DECL|macro|SND_SA_INTERRUPT
-mdefine_line|#define SND_SA_INTERRUPT
 DECL|typedef|sound_os_info
 r_typedef
 r_int

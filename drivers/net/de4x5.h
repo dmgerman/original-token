@@ -815,6 +815,8 @@ DECL|macro|BNC_AUI
 mdefine_line|#define BNC_AUI    0x0010          /* BNC/AUI on DC21040 indistinguishable */
 DECL|macro|ANS
 mdefine_line|#define ANS        0x0020          /* Intermediate AutoNegotiation State */
+DECL|macro|EXT_SIA
+mdefine_line|#define EXT_SIA    0x0400&t;    /* external SIA (as on DEC MULTIA) */
 DECL|macro|_10Mb
 mdefine_line|#define _10Mb      0x0040          /* 10Mb/s Ethernet */
 DECL|macro|_100Mb

@@ -627,7 +627,7 @@ DECL|variable|root_mountflags
 r_int
 id|root_mountflags
 op_assign
-l_int|0
+id|MS_RDONLY
 suffix:semicolon
 DECL|variable|argv_init
 r_static
@@ -1401,7 +1401,7 @@ id|lps_precision
 op_assign
 id|LPS_PREC
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 id|loops_per_sec
 op_assign
 (paren
@@ -2004,7 +2004,7 @@ r_int
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 multiline_comment|/*&n; *&t;Activate a secondary processor.&n; */
 DECL|function|start_secondary
 id|asmlinkage
@@ -2170,7 +2170,7 @@ op_star
 id|command_line
 suffix:semicolon
 multiline_comment|/*&n; *&t;This little check will move.&n; */
-macro_line|#ifdef CONFIG_SMP&t;
+macro_line|#ifdef __SMP__
 r_static
 r_int
 id|first_cpu
@@ -2446,7 +2446,7 @@ c_func
 id|linux_banner
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP&t;
+macro_line|#ifdef __SMP__
 id|smp_init
 c_func
 (paren
@@ -2683,7 +2683,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP&t;
+macro_line|#ifdef __SMP__
 multiline_comment|/*&n;&t; *&t;With the devices probed and setup we can&n;&t; *&t;now enter SMP mode.&n;&t; */
 id|smp_begin
 c_func

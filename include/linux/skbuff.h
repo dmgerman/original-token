@@ -303,6 +303,20 @@ op_star
 id|end
 suffix:semicolon
 multiline_comment|/* End pointer&t;&t;&t;&t;&t;*/
+DECL|member|destructor
+r_void
+(paren
+op_star
+id|destructor
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+id|this
+)paren
+suffix:semicolon
+multiline_comment|/* Destruct function&t;&t;*/
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_SKB_LARGE

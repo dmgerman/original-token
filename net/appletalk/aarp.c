@@ -1216,6 +1216,11 @@ r_int
 id|aarp_device_event
 c_func
 (paren
+r_struct
+id|notifier_block
+op_star
+id|this
+comma
 r_int
 r_int
 id|event

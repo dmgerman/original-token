@@ -2,7 +2,6 @@ multiline_comment|/*&n; * Architecture specific parts of the Floppy driver&n; *&
 macro_line|#ifndef __ASM_MIPS_FLOPPY_H
 DECL|macro|__ASM_MIPS_FLOPPY_H
 mdefine_line|#define __ASM_MIPS_FLOPPY_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/jazzdma.h&gt;

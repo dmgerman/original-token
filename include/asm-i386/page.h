@@ -9,9 +9,9 @@ mdefine_line|#define PAGE_SIZE&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
-DECL|macro|CONFIG_STRICT_MM_TYPECHECKS
-mdefine_line|#define CONFIG_STRICT_MM_TYPECHECKS
-macro_line|#ifdef CONFIG_STRICT_MM_TYPECHECKS
+DECL|macro|STRICT_MM_TYPECHECKS
+mdefine_line|#define STRICT_MM_TYPECHECKS
+macro_line|#ifdef STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte
 DECL|typedef|pte_t
@@ -121,7 +121,7 @@ DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif
 multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current task TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_task(task) invalidates the specified tasks TLB&squot;s&n; *  - invalidate_page(task, vmaddr) invalidates one page&n; *&n; * ..but the i386 has somewhat limited invalidation capabilities.&n; */
-macro_line|#ifndef CONFIG_SMP
+macro_line|#ifndef __SMP__
 DECL|macro|invalidate
 mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
 DECL|macro|invalidate_all

@@ -3,6 +3,9 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/compile.h&gt;
+multiline_comment|/* make the &quot;checkconfig&quot; script happy: we really need to include config.h */
+macro_line|#ifdef CONFIG_BOGUS
+macro_line|#endif
 DECL|variable|system_utsname
 r_struct
 id|new_utsname

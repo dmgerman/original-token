@@ -658,7 +658,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;set %s [expr $%s|16];&quot;
+l_string|&quot;set %s [ expr $%s | 16 ];&quot;
 comma
 id|item-&gt;optionname
 comma

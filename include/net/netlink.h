@@ -1,6 +1,7 @@
 macro_line|#ifndef __NET_NETLINK_H
 DECL|macro|__NET_NETLINK_H
 mdefine_line|#define __NET_NETLINK_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|NET_MAJOR
 mdefine_line|#define NET_MAJOR 18&t;&t;/* Major 18 is reserved for networking &t;&t;*/
 DECL|macro|MAX_LINKS

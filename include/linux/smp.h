@@ -2,7 +2,7 @@ macro_line|#ifndef __LINUX_SMP_H
 DECL|macro|__LINUX_SMP_H
 mdefine_line|#define __LINUX_SMP_H
 multiline_comment|/*&n; *&t;Generic SMP support&n; *&t;&t;Alan Cox. &lt;alan@cymru.net&gt;&n; */
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 macro_line|#include &lt;asm/smp.h&gt;
 r_extern
 r_void

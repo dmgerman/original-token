@@ -52,7 +52,7 @@ DECL|macro|FAST_IRQ_NAME
 mdefine_line|#define FAST_IRQ_NAME(nr) IRQ_NAME2(fast_IRQ##nr)
 DECL|macro|BAD_IRQ_NAME
 mdefine_line|#define BAD_IRQ_NAME(nr) IRQ_NAME2(bad_IRQ##nr)
-macro_line|#ifdef&t;CONFIG_SMP
+macro_line|#ifdef&t;___SMP__
 DECL|macro|GET_PROCESSOR_ID
 mdefine_line|#define GET_PROCESSOR_ID &bslash;&n;&t;&quot;movl &quot;SYMBOL_NAME_STR(apic_reg)&quot;, %edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl 32(%edx), %eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $24,%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andb $0x0F,%al&bslash;n&quot;
 DECL|macro|ENTER_KERNEL

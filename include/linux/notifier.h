@@ -14,6 +14,11 @@ op_star
 id|notifier_call
 )paren
 (paren
+r_struct
+id|notifier_block
+op_star
+id|this
+comma
 r_int
 r_int
 comma
@@ -229,6 +234,8 @@ op_member_access_from_pointer
 id|notifier_call
 c_func
 (paren
+id|nb
+comma
 id|val
 comma
 id|v

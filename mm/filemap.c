@@ -1257,7 +1257,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This handles partial area unmaps..&n; */
+multiline_comment|/*&n; * This handles (potentially partial) area unmaps..&n; */
 DECL|function|filemap_unmap
 r_static
 r_void
@@ -1290,34 +1290,6 @@ id|MS_ASYNC
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This handles complete area closes..&n; */
-DECL|function|filemap_close
-r_static
-r_void
-id|filemap_close
-c_func
-(paren
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-)paren
-(brace
-id|filemap_sync
-c_func
-(paren
-id|vma
-comma
-id|vma-&gt;vm_start
-comma
-id|vma-&gt;vm_end
-op_minus
-id|vma-&gt;vm_start
-comma
-id|MS_ASYNC
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Shared mappings need to be able to do the right thing at&n; * close/unmap/sync. They will also use the private file as&n; * backing-store for swapping..&n; */
 DECL|variable|file_shared_mmap
 r_static
@@ -1328,16 +1300,16 @@ op_assign
 (brace
 l_int|NULL
 comma
-multiline_comment|/* open */
-id|filemap_close
-comma
-multiline_comment|/* close */
-id|filemap_unmap
-comma
-multiline_comment|/* unmap */
+multiline_comment|/* no special open */
 l_int|NULL
 comma
-multiline_comment|/* protect */
+multiline_comment|/* no special close */
+id|filemap_unmap
+comma
+multiline_comment|/* unmap - we need to sync the pages */
+l_int|NULL
+comma
+multiline_comment|/* no special protect */
 id|filemap_sync
 comma
 multiline_comment|/* sync */

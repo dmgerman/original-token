@@ -438,6 +438,16 @@ op_star
 id|hw_config
 )paren
 (brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;unload_gus(%x)&bslash;n&quot;
+comma
+id|hw_config-&gt;io_base
+)paren
+)paren
+suffix:semicolon
 id|gus_wave_unload
 (paren
 )paren

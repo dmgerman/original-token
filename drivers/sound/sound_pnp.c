@@ -373,6 +373,10 @@ id|hw_config.osp
 op_assign
 l_int|NULL
 suffix:semicolon
+id|hw_config.card_subtype
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -445,6 +449,10 @@ suffix:semicolon
 id|hw_config.osp
 op_assign
 l_int|NULL
+suffix:semicolon
+id|hw_config.card_subtype
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond

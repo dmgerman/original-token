@@ -4,7 +4,6 @@ macro_line|#ifndef MODULE
 macro_line|#error This file must be compiled as a module.
 macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;endian.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3498,14 +3497,6 @@ multiline_comment|/* decomp_stat */
 )brace
 suffix:semicolon
 multiline_comment|/*************************************************************&n; * Module support routines&n; *************************************************************/
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 r_int
 DECL|function|init_module
 id|init_module

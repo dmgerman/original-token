@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/fork.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; *  &squot;fork.c&squot; contains the help-routines for the &squot;fork&squot; system call&n; * (see also system_call.s).&n; * Fork is rather simple, once you get the hang of it, but the memory&n; * management can be a bitch. See &squot;mm/mm.c&squot;: &squot;copy_page_tables()&squot;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1077,7 +1076,7 @@ id|p-&gt;cstime
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 id|p-&gt;processor
 op_assign
 id|NO_PROC_ID

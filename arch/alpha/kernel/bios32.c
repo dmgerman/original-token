@@ -1937,6 +1937,8 @@ suffix:semicolon
 r_int
 r_char
 id|pin
+comma
+id|level_bits
 suffix:semicolon
 r_int
 id|pirq
@@ -1959,54 +1961,11 @@ comma
 id|route_tab
 )paren
 suffix:semicolon
-multiline_comment|/* ensure irq 9, 10, 11, and 15 are level sensitive: */
-id|outb
-c_func
-(paren
-(paren
-l_int|1
-op_lshift
-(paren
-l_int|9
-op_minus
-l_int|8
-)paren
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-(paren
-l_int|10
-op_minus
-l_int|8
-)paren
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-(paren
-l_int|11
-op_minus
-l_int|8
-)paren
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-(paren
-l_int|15
-op_minus
-l_int|8
-)paren
-)paren
-comma
-l_int|0x4d1
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Go through all devices, fixing up irqs as we see fit:&n;&t; */
+id|level_bits
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2119,6 +2078,24 @@ l_int|0
 r_continue
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|16
+)paren
+op_eq
+id|PCI_BASE_CLASS_DISPLAY
+)paren
+(brace
+r_continue
+suffix:semicolon
+multiline_comment|/* for now, displays get no IRQ */
+)brace
 id|dev-&gt;irq
 op_assign
 (paren
@@ -2132,6 +2109,28 @@ id|pirq
 )paren
 op_amp
 l_int|0xff
+suffix:semicolon
+multiline_comment|/* must set the PCI IRQs to level triggered */
+multiline_comment|/* assume they are all &gt;= 8 */
+id|level_bits
+op_or_assign
+(paren
+l_int|1
+op_lshift
+(paren
+id|dev-&gt;irq
+op_minus
+l_int|8
+)paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|level_bits
+comma
+l_int|0x4d1
+)paren
 suffix:semicolon
 macro_line|#if PCI_MODIFY
 multiline_comment|/* tell the device: */
@@ -2215,6 +2214,16 @@ l_int|0x26e
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_TGA_CONSOLE
+r_extern
+r_void
+id|tga_console_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_TGA_CONSOLE */
 DECL|function|pcibios_fixup
 r_int
 r_int
@@ -2274,6 +2283,13 @@ suffix:semicolon
 macro_line|#else
 macro_line|#&t;error You must tell me what kind of platform you want.
 macro_line|#endif
+macro_line|#ifdef CONFIG_TGA_CONSOLE
+id|tga_console_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_TGA_CONSOLE */
 r_return
 id|mem_start
 suffix:semicolon

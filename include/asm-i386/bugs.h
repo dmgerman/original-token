@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  include/asm-i386/bugs.h&n; *&n; *  Copyright (C) 1994  Linus Torvalds&n; */
 multiline_comment|/*&n; * This is included by init/main.c to check for architecture-dependent bugs.&n; *&n; * Needs:&n; *&t;void check_bugs(void);&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|CONFIG_BUGi386
 mdefine_line|#define CONFIG_BUGi386
 DECL|function|no_halt

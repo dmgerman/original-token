@@ -24,12 +24,12 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* Some defines that people can play with if so inclined. */
 multiline_comment|/* Do we support clones that don&squot;t adhere to 14,15 of the SAprom ? */
-DECL|macro|CONFIG_NE_BAD_CLONES
-mdefine_line|#define CONFIG_NE_BAD_CLONES
+DECL|macro|SUPPORT_NE_BAD_CLONES
+mdefine_line|#define SUPPORT_NE_BAD_CLONES
 multiline_comment|/* Do we perform extra sanity checks on stuff ? */
-multiline_comment|/* #define CONFIG_NE_SANITY */
+multiline_comment|/* #define NE_SANITY_CHECK */
 multiline_comment|/* Do we implement the read before write bugfix ? */
-multiline_comment|/* #define CONFIG_NE_RW_BUGFIX */
+multiline_comment|/* #define NE_RW_BUGFIX */
 multiline_comment|/* ---- No user-serviceable parts below ---- */
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
 DECL|variable|netcard_portlist
@@ -54,7 +54,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_NE_BAD_CLONES
+macro_line|#ifdef SUPPORT_NE_BAD_CLONES
 multiline_comment|/* A list of bad clones that we none-the-less recognize. */
 DECL|member|name8
 DECL|member|name16
@@ -1131,7 +1131,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef CONFIG_NE_BAD_CLONES
+macro_line|#ifdef SUPPORT_NE_BAD_CLONES
 multiline_comment|/* Ack!  Well, there might be a *bad* NE*000 clone there.&n;&t;   Check for total bogus addresses. */
 r_for
 c_loop
@@ -1915,7 +1915,7 @@ r_int
 id|ring_offset
 )paren
 (brace
-macro_line|#ifdef CONFIG_NE_SANITY
+macro_line|#ifdef NE_SANITY_CHECK
 r_int
 id|xfer_count
 op_assign
@@ -2079,7 +2079,7 @@ op_plus
 id|NE_DATAPORT
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NE_SANITY
+macro_line|#ifdef NE_SANITY_CHECK
 id|xfer_count
 op_increment
 suffix:semicolon
@@ -2101,7 +2101,7 @@ id|count
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_NE_SANITY
+macro_line|#ifdef NE_SANITY_CHECK
 multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       been encountering problems so it is still here.  If you see&n;       this message you either 1) have a slightly incompatible clone&n;       or 2) have noise/speed problems with your bus. */
 r_if
 c_cond
@@ -2256,7 +2256,7 @@ r_int
 r_int
 id|dma_start
 suffix:semicolon
-macro_line|#ifdef CONFIG_NE_SANITY
+macro_line|#ifdef NE_SANITY_CHECK
 r_int
 id|retries
 op_assign
@@ -2322,7 +2322,7 @@ op_plus
 id|NE_CMD
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NE_SANITY
+macro_line|#ifdef NE_SANITY_CHECK
 id|retry
 suffix:colon
 macro_line|#endif
@@ -2495,7 +2495,7 @@ id|dma_start
 op_assign
 id|jiffies
 suffix:semicolon
-macro_line|#ifdef CONFIG_NE_SANITY
+macro_line|#ifdef NE_SANITY_CHECK
 multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       been encountering problems so it is still here. */
 r_if
 c_cond

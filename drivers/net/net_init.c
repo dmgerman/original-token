@@ -1,5 +1,5 @@
 multiline_comment|/* netdrv_init.c: Initialization for network devices. */
-multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov or&n;&t;C/O Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This file contains the initialization for the &quot;pl14+&quot; style ethernet&n;&t;drivers.  It should eventually replace most of drivers/net/Space.c.&n;&t;It&squot;s primary advantage is that it&squot;s able to allocate low-memory buffers.&n;&t;A secondary advantage is that the dangerous NE*000 netcards can reserve&n;&t;their I/O port region before the SCSI probes start.&n;&n;&t;Modifications/additions by Bjorn Ekwall &lt;bj0rn@blox.se&gt;:&n;&t;&t;ethdev_index[MAX_ETH_CARDS]&n;&t;&t;register_netdev() / unregister_netdev()&n;&t;&t;&n;&t;Modifications by Wolfgang Walter&n;&t;&t;Use dev_close cleanly so we always shut things down tidily.&n;*/
+multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov or&n;&t;C/O Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This file contains the initialization for the &quot;pl14+&quot; style ethernet&n;&t;drivers.  It should eventually replace most of drivers/net/Space.c.&n;&t;It&squot;s primary advantage is that it&squot;s able to allocate low-memory buffers.&n;&t;A secondary advantage is that the dangerous NE*000 netcards can reserve&n;&t;their I/O port region before the SCSI probes start.&n;&n;&t;Modifications/additions by Bjorn Ekwall &lt;bj0rn@blox.se&gt;:&n;&t;&t;ethdev_index[MAX_ETH_CARDS]&n;&t;&t;register_netdev() / unregister_netdev()&n;&t;&t;&n;&t;Modifications by Wolfgang Walter&n;&t;&t;Use dev_close cleanly so we always shut things down tidily.&n;&t;&t;&n;&t;Changed 29/10/95, Alan Cox to pass sockaddr&squot;s around for mac addresses.&n;*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -420,23 +420,12 @@ id|device
 op_star
 id|dev
 comma
-r_void
+r_struct
+id|sockaddr
 op_star
 id|addr
 )paren
 (brace
-r_struct
-id|ifreq
-op_star
-id|ifr
-op_assign
-(paren
-r_struct
-id|ifreq
-op_star
-)paren
-id|addr
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -453,9 +442,9 @@ c_func
 (paren
 id|dev-&gt;dev_addr
 comma
-id|ifr-&gt;ifr_hwaddr.sa_data
+id|addr-&gt;sa_data
 comma
-id|dev-&gt;hard_header_len
+id|dev-&gt;addr_len
 )paren
 suffix:semicolon
 r_return
@@ -1004,6 +993,14 @@ comma
 l_string|&quot;eth%d&quot;
 comma
 id|i
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;loading device &squot;%s&squot;...&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|ethdev_index

@@ -1,9 +1,5 @@
 multiline_comment|/*&n; * AT&amp;T GIS (nee NCR) WaveLAN card:&n; *&t;An Ethernet-like radio transceiver&n; *&t;controlled by an Intel 82586 coprocessor.&n; */
-macro_line|#include&t;&lt;linux/config.h&gt;
-macro_line|#if&t;defined(MODULE)
 macro_line|#include&t;&lt;linux/module.h&gt;
-macro_line|#include&t;&lt;linux/version.h&gt;
-macro_line|#endif&t;/* defined(MODULE) */
 macro_line|#include&t;&lt;linux/kernel.h&gt;
 macro_line|#include&t;&lt;linux/sched.h&gt;
 macro_line|#include&t;&lt;linux/types.h&gt;
@@ -9217,14 +9213,6 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#if&t;defined(MODULE)
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|devicename
 r_static
 r_char

@@ -1,4 +1,4 @@
-macro_line|#ifdef CONFIG_MODVERSIONS /* CONFIG_MODVERSIONS */
+macro_line|#ifdef MODVERSIONS /* MODVERSIONS */
 DECL|macro|_set_ver
 macro_line|#undef _set_ver
 macro_line|#if defined(MODULE) &amp;&amp; !defined(__GENKSYMS__)
@@ -8,7 +8,7 @@ macro_line|#else
 DECL|macro|_set_ver
 mdefine_line|#define _set_ver(a,b) a
 macro_line|#endif
-macro_line|#endif /* CONFIG_MODVERSIONS */
+macro_line|#endif /* MODVERSIONS */
 DECL|macro|X
 macro_line|#undef X
 DECL|macro|EMPTY

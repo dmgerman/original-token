@@ -14,6 +14,11 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+multiline_comment|/*&n; * The SMP kernel can&squot;t handle the 4MB page table optimizations yet&n; */
+macro_line|#ifdef __SMP__
+DECL|macro|USE_PENTIUM_MM
+macro_line|#undef USE_PENTIUM_MM
+macro_line|#endif
 r_extern
 r_void
 id|scsi_mem_init
@@ -391,7 +396,7 @@ id|PAGE_SIZE
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 id|smp_scan_config
 c_func
 (paren
@@ -425,7 +430,7 @@ multiline_comment|/* Scan the 64K of bios */
 multiline_comment|/*&n;&t; *&t;If it is an SMP machine we should know now, unless the configuration&n;&t; *&t;is in an EISA/MCA bus machine with an extended bios data area. I don&squot;t&n;&t; *&t;have such a machine so someone else can fill in the check of the EBDA&n;&t; *&t;here.&n;&t; */
 multiline_comment|/*&t;smp_alloc_memory(8192); */
 macro_line|#endif
-macro_line|#ifdef CONFIG_TEST_VERIFY_AREA
+macro_line|#ifdef TEST_VERIFY_AREA
 id|wp_works_ok
 op_assign
 l_int|0
@@ -455,8 +460,7 @@ OL
 id|end_mem
 )paren
 (brace
-macro_line|#ifdef CONFIG_PENTIUM_MM
-macro_line|#ifndef CONFIG_SMP
+macro_line|#ifdef USE_PENTIUM_MM
 r_if
 c_cond
 (paren
@@ -552,7 +556,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/* map the memory at virtual addr 0xC0000000 */
 id|pg_table
@@ -770,7 +773,7 @@ c_func
 id|start_low_mem
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 multiline_comment|/*&n;&t; * But first pinch a few for the stack/trampoline stuff&n;&t; */
 id|start_low_mem
 op_add_assign

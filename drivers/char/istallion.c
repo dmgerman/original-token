@@ -1,11 +1,7 @@
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;istallion.c  -- stallion intelligent multiport serial driver.&n; *&n; *&t;Copyright (C) 1994,1995  Greg Ungerer (gerg@stallion.oz.au).&n; *&n; *&t;This code is loosely based on the Linux serial driver, written by&n; *&t;Linus Torvalds, Theodore T&squot;so and others.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/*****************************************************************************/
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -2195,15 +2191,6 @@ mdefine_line|#define&t;STLI_TIMEOUT&t;(jiffies + 1)
 macro_line|#endif
 multiline_comment|/*****************************************************************************/
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; *&t;Include kernel version number for modules.&n; */
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module

@@ -64,19 +64,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|pf
-op_ne
-id|PF_INET
-)paren
-(brace
-r_return
-op_minus
-id|ENOPROTOOPT
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Don&squot;t allow two people to adjust at once.&n;&t; */
 r_while
 c_loop
@@ -197,19 +184,6 @@ id|NPROTO
 r_return
 op_minus
 id|EINVAL
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|pf
-op_ne
-id|PF_INET
-)paren
-(brace
-r_return
-op_minus
-id|ENOPROTOOPT
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Don&squot;t allow two people to adjust at once.&n;&t; */

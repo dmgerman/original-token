@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix.&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Changed buffer format.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix.&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Changed buffer format.&n; *&t;&t;Alan Cox&t;:&t;destructor hook for AF_UNIX etc.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Note: There are a load of cli()/sti() pairs protecting the net_memory type&n; *&t;variables. Without them for some reason the ++/-- operators do not come out&n; *&t;atomic. Also with gcc 2.4.5 these counts can come out wrong anyway - use 2.5.8!!&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1673,6 +1673,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|skb-&gt;destructor
+)paren
+(brace
+id|skb
+op_member_access_from_pointer
+id|destructor
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|skb-&gt;sk
 )paren
 (brace
@@ -2059,6 +2074,10 @@ suffix:semicolon
 id|skb-&gt;len
 op_assign
 l_int|0
+suffix:semicolon
+id|skb-&gt;destructor
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 id|skb

@@ -9,8 +9,6 @@ id|version
 op_assign
 l_string|&quot;seeq8005.c:v1.00 8/07/95 Hamish Coleman (hamish@zot.apana.org.au)&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/* Always include &squot;config.h&squot; first in case the user wants to turn on&n;   or override something. */
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Sources:&n;  &t;SEEQ 8005 databook&n;  &t;&n;  Version history:&n;  &t;1.00&t;Public release. cosmetic changes (no warnings now)&n;  &t;0.68&t;Turning per- packet,interrupt debug messages off - testing for release.&n;  &t;0.67&t;timing problems/bad buffer reads seem to be fixed now&n;  &t;0.63&t;*!@$ protocol=eth_type_trans -- now packets flow&n;  &t;0.56&t;Send working&n;  &t;0.48&t;Receive working&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -241,6 +241,16 @@ c_func
 (paren
 id|DEC
 comma
+id|DEC_TGA
+comma
+l_string|&quot;DC21030&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|DEC
+comma
 id|DEC_TULIP_FAST
 comma
 l_string|&quot;DC21140&quot;

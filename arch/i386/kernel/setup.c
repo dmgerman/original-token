@@ -647,7 +647,7 @@ id|mask
 l_int|2
 )braket
 suffix:semicolon
-macro_line|#ifndef CONFIG_SMP&t;
+macro_line|#ifndef __SMP__&t;
 id|mask
 (braket
 l_int|0

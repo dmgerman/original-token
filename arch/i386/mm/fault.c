@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/arch/i386/mm/fault.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -270,7 +269,7 @@ op_amp
 l_int|1
 )paren
 (brace
-macro_line|#ifdef CONFIG_TEST_VERIFY_AREA
+macro_line|#ifdef TEST_VERIFY_AREA
 r_if
 c_cond
 (paren

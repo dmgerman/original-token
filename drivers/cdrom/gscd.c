@@ -3451,7 +3451,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef FUTURE_WOTK
+macro_line|#ifdef FUTURE_WORK
 DECL|function|gscd_msf2hsg
 r_static
 r_int

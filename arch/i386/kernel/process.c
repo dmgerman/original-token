@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/i386/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -85,7 +84,7 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 multiline_comment|/*&n;&t; *&t;SMP locking sanity checker&n;&t; */
 r_if
 c_cond
@@ -193,7 +192,7 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 r_if
 c_cond
 (paren

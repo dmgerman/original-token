@@ -169,73 +169,59 @@ DECL|macro|EILSEQ
 mdefine_line|#define&t;EILSEQ&t;&t;116&t;/* Illegal byte sequence */
 multiline_comment|/* The following are just random noise.. */
 DECL|macro|ECHRNG
-mdefine_line|#define&t;ECHRNG&t;&t;44&t;/* Channel number out of range */
+mdefine_line|#define&t;ECHRNG&t;&t;88&t;/* Channel number out of range */
 DECL|macro|EL2NSYNC
-mdefine_line|#define&t;EL2NSYNC&t;45&t;/* Level 2 not synchronized */
+mdefine_line|#define&t;EL2NSYNC&t;89&t;/* Level 2 not synchronized */
 DECL|macro|EL3HLT
-mdefine_line|#define&t;EL3HLT&t;&t;46&t;/* Level 3 halted */
+mdefine_line|#define&t;EL3HLT&t;&t;90&t;/* Level 3 halted */
 DECL|macro|EL3RST
-mdefine_line|#define&t;EL3RST&t;&t;47&t;/* Level 3 reset */
+mdefine_line|#define&t;EL3RST&t;&t;91&t;/* Level 3 reset */
 DECL|macro|ELNRNG
-mdefine_line|#define&t;ELNRNG&t;&t;48&t;/* Link number out of range */
+mdefine_line|#define&t;ELNRNG&t;&t;93&t;/* Link number out of range */
 DECL|macro|EUNATCH
-mdefine_line|#define&t;EUNATCH&t;&t;49&t;/* Protocol driver not attached */
+mdefine_line|#define&t;EUNATCH&t;&t;94&t;/* Protocol driver not attached */
 DECL|macro|ENOCSI
-mdefine_line|#define&t;ENOCSI&t;&t;50&t;/* No CSI structure available */
+mdefine_line|#define&t;ENOCSI&t;&t;95&t;/* No CSI structure available */
 DECL|macro|EL2HLT
-mdefine_line|#define&t;EL2HLT&t;&t;51&t;/* Level 2 halted */
+mdefine_line|#define&t;EL2HLT&t;&t;96&t;/* Level 2 halted */
 DECL|macro|EBADE
-mdefine_line|#define&t;EBADE&t;&t;52&t;/* Invalid exchange */
+mdefine_line|#define&t;EBADE&t;&t;97&t;/* Invalid exchange */
 DECL|macro|EBADR
-mdefine_line|#define&t;EBADR&t;&t;53&t;/* Invalid request descriptor */
+mdefine_line|#define&t;EBADR&t;&t;98&t;/* Invalid request descriptor */
 DECL|macro|EXFULL
-mdefine_line|#define&t;EXFULL&t;&t;54&t;/* Exchange full */
+mdefine_line|#define&t;EXFULL&t;&t;99&t;/* Exchange full */
 DECL|macro|ENOANO
-mdefine_line|#define&t;ENOANO&t;&t;55&t;/* No anode */
+mdefine_line|#define&t;ENOANO&t;&t;100&t;/* No anode */
 DECL|macro|EBADRQC
-mdefine_line|#define&t;EBADRQC&t;&t;56&t;/* Invalid request code */
+mdefine_line|#define&t;EBADRQC&t;&t;101&t;/* Invalid request code */
 DECL|macro|EBADSLT
-mdefine_line|#define&t;EBADSLT&t;&t;57&t;/* Invalid slot */
+mdefine_line|#define&t;EBADSLT&t;&t;102&t;/* Invalid slot */
 DECL|macro|EDEADLOCK
-mdefine_line|#define&t;EDEADLOCK&t;58&t;/* File locking deadlock error */
+mdefine_line|#define&t;EDEADLOCK&t;103&t;/* File locking deadlock error */
 DECL|macro|EBFONT
-mdefine_line|#define&t;EBFONT&t;&t;59&t;/* Bad font file format */
+mdefine_line|#define&t;EBFONT&t;&t;104&t;/* Bad font file format */
 DECL|macro|ENONET
-mdefine_line|#define&t;ENONET&t;&t;64&t;/* Machine is not on the network */
+mdefine_line|#define&t;ENONET&t;&t;105&t;/* Machine is not on the network */
 DECL|macro|ENOLINK
-mdefine_line|#define&t;ENOLINK&t;&t;67&t;/* Link has been severed */
+mdefine_line|#define&t;ENOLINK&t;&t;106&t;/* Link has been severed */
 DECL|macro|EADV
-mdefine_line|#define&t;EADV&t;&t;68&t;/* Advertise error */
+mdefine_line|#define&t;EADV&t;&t;107&t;/* Advertise error */
 DECL|macro|ESRMNT
-mdefine_line|#define&t;ESRMNT&t;&t;69&t;/* Srmount error */
+mdefine_line|#define&t;ESRMNT&t;&t;108&t;/* Srmount error */
 DECL|macro|ECOMM
-mdefine_line|#define&t;ECOMM&t;&t;70&t;/* Communication error on send */
+mdefine_line|#define&t;ECOMM&t;&t;109&t;/* Communication error on send */
 DECL|macro|EMULTIHOP
-mdefine_line|#define&t;EMULTIHOP&t;72&t;/* Multihop attempted */
+mdefine_line|#define&t;EMULTIHOP&t;110&t;/* Multihop attempted */
 DECL|macro|EDOTDOT
-mdefine_line|#define&t;EDOTDOT&t;&t;73&t;/* RFS specific error */
+mdefine_line|#define&t;EDOTDOT&t;&t;111&t;/* RFS specific error */
 DECL|macro|EOVERFLOW
-mdefine_line|#define&t;EOVERFLOW&t;75&t;/* Value too large for defined data type */
+mdefine_line|#define&t;EOVERFLOW&t;112&t;/* Value too large for defined data type */
 DECL|macro|ENOTUNIQ
-mdefine_line|#define&t;ENOTUNIQ&t;76&t;/* Name not unique on network */
+mdefine_line|#define&t;ENOTUNIQ&t;113&t;/* Name not unique on network */
 DECL|macro|EBADFD
-mdefine_line|#define&t;EBADFD&t;&t;77&t;/* File descriptor in bad state */
+mdefine_line|#define&t;EBADFD&t;&t;114&t;/* File descriptor in bad state */
 DECL|macro|EREMCHG
-mdefine_line|#define&t;EREMCHG&t;&t;78&t;/* Remote address changed */
-DECL|macro|ELIBACC
-mdefine_line|#define&t;ELIBACC&t;&t;79&t;/* Can not access a needed shared library */
-DECL|macro|ELIBBAD
-mdefine_line|#define&t;ELIBBAD&t;&t;80&t;/* Accessing a corrupted shared library */
-DECL|macro|ELIBSCN
-mdefine_line|#define&t;ELIBSCN&t;&t;81&t;/* .lib section in a.out corrupted */
-DECL|macro|ELIBMAX
-mdefine_line|#define&t;ELIBMAX&t;&t;82&t;/* Attempting to link in too many shared libraries */
-DECL|macro|ELIBEXEC
-mdefine_line|#define&t;ELIBEXEC&t;83&t;/* Cannot exec a shared library directly */
-DECL|macro|ERESTART
-mdefine_line|#define&t;ERESTART&t;85&t;/* Interrupted system call should be restarted */
-DECL|macro|ESTRPIPE
-mdefine_line|#define&t;ESTRPIPE&t;86&t;/* Streams pipe error */
+mdefine_line|#define&t;EREMCHG&t;&t;115&t;/* Remote address changed */
 DECL|macro|EUCLEAN
 mdefine_line|#define&t;EUCLEAN&t;&t;117&t;/* Structure needs cleaning */
 DECL|macro|ENOTNAM
@@ -246,5 +232,19 @@ DECL|macro|EISNAM
 mdefine_line|#define&t;EISNAM&t;&t;120&t;/* Is a named type file */
 DECL|macro|EREMOTEIO
 mdefine_line|#define&t;EREMOTEIO&t;121&t;/* Remote I/O error */
+DECL|macro|ELIBACC
+mdefine_line|#define&t;ELIBACC&t;&t;122&t;/* Can not access a needed shared library */
+DECL|macro|ELIBBAD
+mdefine_line|#define&t;ELIBBAD&t;&t;123&t;/* Accessing a corrupted shared library */
+DECL|macro|ELIBSCN
+mdefine_line|#define&t;ELIBSCN&t;&t;124&t;/* .lib section in a.out corrupted */
+DECL|macro|ELIBMAX
+mdefine_line|#define&t;ELIBMAX&t;&t;125&t;/* Attempting to link in too many shared libraries */
+DECL|macro|ELIBEXEC
+mdefine_line|#define&t;ELIBEXEC&t;126&t;/* Cannot exec a shared library directly */
+DECL|macro|ERESTART
+mdefine_line|#define&t;ERESTART&t;127&t;/* Interrupted system call should be restarted */
+DECL|macro|ESTRPIPE
+mdefine_line|#define&t;ESTRPIPE&t;128&t;/* Streams pipe error */
 macro_line|#endif
 eof

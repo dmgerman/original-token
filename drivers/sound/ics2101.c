@@ -6,6 +6,11 @@ macro_line|#include &quot;gus_hw.h&quot;
 DECL|macro|MIX_DEVS
 mdefine_line|#define MIX_DEVS&t;(SOUND_MASK_MIC|SOUND_MASK_LINE| &bslash;&n;&t;&t;&t; SOUND_MASK_SYNTH| &bslash;&n;  &t;&t;&t; SOUND_MASK_CD | SOUND_MASK_VOLUME)
 r_extern
+id|sound_os_info
+op_star
+id|gus_osp
+suffix:semicolon
+r_extern
 r_int
 id|gus_base
 suffix:semicolon

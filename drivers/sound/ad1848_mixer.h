@@ -716,7 +716,7 @@ multiline_comment|/* Line1 */
 l_int|0x4040
 comma
 multiline_comment|/* Line2 */
-l_int|0x2020
+l_int|0x1515
 multiline_comment|/* Line3 (usually line in)*/
 )brace
 suffix:semicolon

@@ -3,6 +3,10 @@ macro_line|#ifndef _DEV_TABLE_H_
 DECL|macro|_DEV_TABLE_H_
 mdefine_line|#define _DEV_TABLE_H_
 multiline_comment|/*&n; *&t;NOTE! &t;NOTE!&t;NOTE!&t;NOTE!&n; *&n; *&t;If you modify this file, please check the dev_table.c also.&n; *&n; *&t;NOTE! &t;NOTE!&t;NOTE!&t;NOTE!&n; */
+r_extern
+r_int
+id|sound_started
+suffix:semicolon
 DECL|struct|driver_info
 r_struct
 id|driver_info
@@ -12,6 +16,11 @@ r_char
 op_star
 id|driver_id
 suffix:semicolon
+DECL|member|card_subtype
+r_int
+id|card_subtype
+suffix:semicolon
+multiline_comment|/* Driver spesific. Usually 0 */
 DECL|member|card_type
 r_int
 id|card_type
@@ -1527,6 +1536,8 @@ macro_line|#ifndef EXCLUDE_PSS
 (brace
 l_string|&quot;PSSECHO&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_PSS
 comma
 l_string|&quot;Echo Personal Sound System PSS (ESC614)&quot;
@@ -1541,6 +1552,8 @@ comma
 (brace
 l_string|&quot;PSSMPU&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_PSS_MPU
 comma
 l_string|&quot;PSS-MPU&quot;
@@ -1554,6 +1567,8 @@ id|unload_pss_mpu
 comma
 (brace
 l_string|&quot;PSSMSS&quot;
+comma
+l_int|0
 comma
 id|SNDCARD_PSS_MSS
 comma
@@ -1571,6 +1586,8 @@ macro_line|#ifndef EXCLUDE_MSS
 (brace
 l_string|&quot;MSS&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_MSS
 comma
 l_string|&quot;MS Sound System&quot;
@@ -1582,10 +1599,13 @@ comma
 id|unload_ms_sound
 )brace
 comma
+multiline_comment|/* MSS without IRQ/DMA config registers (for DEC Alphas) */
 (brace
 l_string|&quot;PCXBJ&quot;
 comma
-id|SNDCARD_MSS
+l_int|1
+comma
+id|SNDCARD_PSEUDO_MSS
 comma
 l_string|&quot;MS Sound System&quot;
 comma
@@ -1601,6 +1621,8 @@ macro_line|#ifndef EXCLUDE_MAD16
 (brace
 l_string|&quot;MAD16&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_MAD16
 comma
 l_string|&quot;MAD16/Mozart (MSS)&quot;
@@ -1614,6 +1636,8 @@ id|unload_mad16
 comma
 (brace
 l_string|&quot;MAD16MPU&quot;
+comma
+l_int|0
 comma
 id|SNDCARD_MAD16_MPU
 comma
@@ -1631,6 +1655,8 @@ macro_line|#ifndef EXCLUDE_CS4232
 (brace
 l_string|&quot;CS4232&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_CS4232
 comma
 l_string|&quot;CS4232&quot;
@@ -1644,6 +1670,8 @@ id|unload_cs4232
 comma
 (brace
 l_string|&quot;CS4232MPU&quot;
+comma
+l_int|0
 comma
 id|SNDCARD_CS4232_MPU
 comma
@@ -1661,6 +1689,8 @@ macro_line|#ifndef EXCLUDE_YM3812
 (brace
 l_string|&quot;OPL3&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_ADLIB
 comma
 l_string|&quot;OPL-2/OPL-3 FM&quot;
@@ -1676,6 +1706,8 @@ macro_line|#endif
 macro_line|#ifndef EXCLUDE_PAS
 (brace
 l_string|&quot;PAS16&quot;
+comma
+l_int|0
 comma
 id|SNDCARD_PAS
 comma
@@ -1693,6 +1725,8 @@ macro_line|#if !defined(EXCLUDE_MPU401) &amp;&amp; !defined(EXCLUDE_MIDI)
 (brace
 l_string|&quot;MPU401&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_MPU401
 comma
 l_string|&quot;Roland MPU-401&quot;
@@ -1708,6 +1742,8 @@ macro_line|#endif
 macro_line|#if !defined(EXCLUDE_MAUI)
 (brace
 l_string|&quot;MAUI&quot;
+comma
+l_int|0
 comma
 id|SNDCARD_MAUI
 comma
@@ -1725,6 +1761,8 @@ macro_line|#if !defined(EXCLUDE_UART6850) &amp;&amp; !defined(EXCLUDE_MIDI)
 (brace
 l_string|&quot;MIDI6850&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_UART6850
 comma
 l_string|&quot;6860 UART Midi&quot;
@@ -1740,6 +1778,8 @@ macro_line|#endif
 macro_line|#ifndef EXCLUDE_SB
 (brace
 l_string|&quot;SBLAST&quot;
+comma
+l_int|0
 comma
 id|SNDCARD_SB
 comma
@@ -1758,6 +1798,8 @@ macro_line|#ifndef EXCLUDE_AUDIO
 (brace
 l_string|&quot;SB16&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_SB16
 comma
 l_string|&quot;SoundBlaster16&quot;
@@ -1773,6 +1815,8 @@ macro_line|#endif
 macro_line|#ifndef EXCLUDE_MIDI
 (brace
 l_string|&quot;SB16MIDI&quot;
+comma
+l_int|0
 comma
 id|SNDCARD_SB16MIDI
 comma
@@ -1791,6 +1835,8 @@ macro_line|#ifndef EXCLUDE_GUS16
 (brace
 l_string|&quot;GUS16&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_GUS16
 comma
 l_string|&quot;Ultrasound 16-bit opt.&quot;
@@ -1806,6 +1852,8 @@ macro_line|#endif
 macro_line|#ifndef EXCLUDE_GUS
 (brace
 l_string|&quot;GUS&quot;
+comma
+l_int|0
 comma
 id|SNDCARD_GUS
 comma
@@ -1823,6 +1871,8 @@ macro_line|#ifndef EXCLUDE_SSCAPE
 (brace
 l_string|&quot;SSCAPE&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_SSCAPE
 comma
 l_string|&quot;Ensoniq Soundscape&quot;
@@ -1835,7 +1885,9 @@ id|unload_sscape
 )brace
 comma
 (brace
-l_string|&quot;SCAPEMSS&quot;
+l_string|&quot;SSCAPEMSS&quot;
+comma
+l_int|0
 comma
 id|SNDCARD_SSCAPE_MSS
 comma
@@ -1853,6 +1905,8 @@ macro_line|#ifndef EXCLUDE_TRIX
 (brace
 l_string|&quot;TRXPRO&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_TRXPRO
 comma
 l_string|&quot;MediaTriX AudioTriX Pro&quot;
@@ -1867,6 +1921,8 @@ comma
 (brace
 l_string|&quot;TRXPROSB&quot;
 comma
+l_int|0
+comma
 id|SNDCARD_TRXPRO_SB
 comma
 l_string|&quot;AudioTriX (SB mode)&quot;
@@ -1880,6 +1936,8 @@ id|unload_trix_sb
 comma
 (brace
 l_string|&quot;TRXPROMPU&quot;
+comma
+l_int|0
 comma
 id|SNDCARD_TRXPRO_MPU
 comma
@@ -1897,7 +1955,9 @@ macro_line|#ifndef EXCLUDE_PNP
 (brace
 l_string|&quot;AD1848&quot;
 comma
-l_int|1000
+l_int|0
+comma
+l_int|500
 comma
 l_string|&quot;PnP MSS&quot;
 comma
@@ -1914,6 +1974,8 @@ l_int|NULL
 comma
 l_int|0
 comma
+l_int|0
+comma
 l_string|&quot;*?*&quot;
 comma
 l_int|NULL
@@ -1923,6 +1985,36 @@ comma
 l_int|NULL
 )brace
 )brace
+suffix:semicolon
+DECL|variable|num_sound_drivers
+r_int
+id|num_sound_drivers
+op_assign
+r_sizeof
+(paren
+id|sound_drivers
+)paren
+op_div
+r_sizeof
+(paren
+r_struct
+id|driver_info
+)paren
+suffix:semicolon
+DECL|variable|max_sound_drivers
+r_int
+id|max_sound_drivers
+op_assign
+r_sizeof
+(paren
+id|sound_drivers
+)paren
+op_div
+r_sizeof
+(paren
+r_struct
+id|driver_info
+)paren
 suffix:semicolon
 macro_line|#ifndef FULL_SOUND
 multiline_comment|/*&n; *&t;List of devices actually configured in the system.&n; *&n; *&t;Note! The detection order is significant. Don&squot;t change it.&n; */
@@ -2159,6 +2251,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifndef EXCLUDE_MSS
+macro_line|#&t;ifdef PSEUDO_MSS
 (brace
 id|SNDCARD_MSS
 comma
@@ -2176,6 +2269,25 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
+macro_line|#&t;else
+(brace
+id|SNDCARD_PSEUDO_MSS
+comma
+(brace
+id|MSS_BASE
+comma
+id|MSS_IRQ
+comma
+id|MSS_DMA
+comma
+op_minus
+l_int|1
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#&t;endif
 macro_line|#&t;ifdef MSS2_BASE
 (brace
 id|SNDCARD_MSS
@@ -2539,21 +2651,6 @@ op_assign
 l_int|20
 suffix:semicolon
 macro_line|#endif
-DECL|variable|num_sound_drivers
-r_int
-id|num_sound_drivers
-op_assign
-r_sizeof
-(paren
-id|sound_drivers
-)paren
-op_div
-r_sizeof
-(paren
-r_struct
-id|driver_info
-)paren
-suffix:semicolon
 macro_line|#else
 DECL|variable|num_audiodevs
 r_extern
@@ -2615,9 +2712,7 @@ id|sound_timer_operations
 op_star
 id|sound_timer_devs
 (braket
-id|MAX_SYNTH_DEV
-op_plus
-id|MAX_MIDI_DEV
+id|MAX_TIMER_DEV
 )braket
 suffix:semicolon
 r_extern
@@ -2634,6 +2729,10 @@ suffix:semicolon
 r_extern
 r_int
 id|num_sound_drivers
+suffix:semicolon
+r_extern
+r_int
+id|max_sound_drivers
 suffix:semicolon
 r_extern
 r_struct
@@ -2704,6 +2803,14 @@ id|sound_unload_drivers
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_void
+id|sound_unload_driver
+c_func
+(paren
+r_int
+id|type
 )paren
 suffix:semicolon
 r_int
@@ -2816,6 +2923,49 @@ comma
 r_char
 op_star
 id|name
+)paren
+suffix:semicolon
+r_int
+id|sound_start_dma
+(paren
+r_int
+id|dev
+comma
+r_struct
+id|dma_buffparms
+op_star
+id|dmap
+comma
+r_int
+id|chan
+comma
+r_int
+r_int
+id|physaddr
+comma
+r_int
+id|count
+comma
+r_int
+id|dma_mode
+comma
+r_int
+id|autoinit
+)paren
+suffix:semicolon
+r_void
+id|sound_dma_intr
+(paren
+r_int
+id|dev
+comma
+r_struct
+id|dma_buffparms
+op_star
+id|dmap
+comma
+r_int
+id|chan
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _DEV_TABLE_C_ */

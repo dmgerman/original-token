@@ -1,7 +1,7 @@
 macro_line|#ifndef __ASM_SMP_H
 DECL|macro|__ASM_SMP_H
 mdefine_line|#define __ASM_SMP_H
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 macro_line|#ifndef ASSEMBLY
 macro_line|#include &lt;asm/i82489.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;

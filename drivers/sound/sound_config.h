@@ -106,11 +106,13 @@ r_int
 id|mode
 suffix:semicolon
 multiline_comment|/* Open mode */
-DECL|member|filp
-r_struct
-id|file
-op_star
-id|filp
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|member|dummy
+r_int
+id|dummy
 suffix:semicolon
 multiline_comment|/* Reference to file-flags. OS-dependent. */
 )brace
@@ -161,6 +163,11 @@ op_star
 id|osp
 suffix:semicolon
 multiline_comment|/* OS spesific info */
+DECL|member|card_subtype
+r_int
+id|card_subtype
+suffix:semicolon
+multiline_comment|/* Driver spesific. Usually 0 */
 )brace
 suffix:semicolon
 DECL|macro|SYNTH_MAX_VOICES

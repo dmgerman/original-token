@@ -65,7 +65,7 @@ r_static
 r_int
 id|trigger_bits
 op_assign
-l_int|0x7fffffff
+l_int|0
 suffix:semicolon
 DECL|variable|dsp_count
 r_static
@@ -931,7 +931,7 @@ l_int|1
 suffix:semicolon
 id|trigger_bits
 op_assign
-id|irq_mode
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -1664,6 +1664,16 @@ id|dsp_cleanup
 (paren
 )paren
 suffix:semicolon
+id|sb_dsp_command
+(paren
+l_int|0xd0
+)paren
+suffix:semicolon
+multiline_comment|/* Halt DMA until trigger() is called */
+id|trigger_bits
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1705,6 +1715,16 @@ id|dsp_cleanup
 (paren
 )paren
 suffix:semicolon
+id|sb_dsp_command
+(paren
+l_int|0xd0
+)paren
+suffix:semicolon
+multiline_comment|/* Halt DMA until trigger() is called */
+id|trigger_bits
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1721,6 +1741,17 @@ r_int
 id|bits
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|bits
+op_ne
+l_int|0
+)paren
+id|bits
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2275,7 +2306,7 @@ id|inb
 id|DSP_DATA_AVL16
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Interrupt acknowledge&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Interrupt acknowledge&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren

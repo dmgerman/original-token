@@ -128,6 +128,8 @@ DECL|macro|VIDEO_TYPE_EGAC
 mdefine_line|#define VIDEO_TYPE_EGAC&t;&t;0x21&t;/* EGA in Color Mode&t;&t;*/
 DECL|macro|VIDEO_TYPE_VGAC
 mdefine_line|#define VIDEO_TYPE_VGAC&t;&t;0x22&t;/* VGA+ in Color Mode&t;&t;*/
+DECL|macro|VIDEO_TYPE_TGAC
+mdefine_line|#define VIDEO_TYPE_TGAC&t;&t;0x40&t;/* DEC TGA */
 multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR has no character etc)&n; */
 DECL|macro|__DISABLED_CHAR
 mdefine_line|#define __DISABLED_CHAR &squot;&bslash;0&squot;
@@ -696,7 +698,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_CYCLADES
 r_extern
 r_int
 id|cy_init
@@ -705,8 +706,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_STALLION
 r_extern
 r_int
 id|stl_init
@@ -715,8 +714,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISTALLION
 r_extern
 r_int
 id|stli_init
@@ -725,7 +722,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
 r_extern
 r_int
 id|tty_paranoia_check

@@ -2,7 +2,7 @@ macro_line|#ifndef _LINUX_TASKS_H
 DECL|macro|_LINUX_TASKS_H
 mdefine_line|#define _LINUX_TASKS_H
 multiline_comment|/*&n; * This is the maximum nr of tasks - change it if you need to&n; */
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 DECL|macro|NR_CPUS
 mdefine_line|#define NR_CPUS&t;32&t;&t;/* Max processors that can be running in SMP */
 macro_line|#else

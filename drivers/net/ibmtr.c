@@ -50,7 +50,6 @@ id|mcchannelid
 op_assign
 initialization_block
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -108,33 +107,19 @@ id|type
 )paren
 (brace
 r_case
-l_char|&squot;f&squot;
-suffix:colon
-r_case
-l_char|&squot;F&squot;
+l_int|0xF
 suffix:colon
 r_return
 l_string|&quot;Adapter/A&quot;
 suffix:semicolon
 r_case
-l_char|&squot;e&squot;
-suffix:colon
-r_case
-l_char|&squot;E&squot;
+l_int|0xE
 suffix:colon
 r_return
 l_string|&quot;16/4 Adapter/II&quot;
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;Unknow adapter %c&bslash;n&quot;
-comma
-id|type
-)paren
-suffix:semicolon
 r_return
 l_string|&quot;adapter&quot;
 suffix:semicolon
@@ -4848,12 +4833,14 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
 l_string|&quot;now opening the board...&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 op_star
 (paren
 r_int

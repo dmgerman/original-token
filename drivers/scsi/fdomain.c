@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PCI */
 DECL|variable|proc_scsi_fdomain
 r_struct
 id|proc_dir_entry

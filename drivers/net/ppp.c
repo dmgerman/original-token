@@ -22,7 +22,6 @@ macro_line|#endif
 multiline_comment|/* $Id: ppp.c,v 1.5 1995/06/12 11:36:53 paulus Exp $&n; * Added dynamic allocation of channels to eliminate&n; *   compiled-in limits on the number of channels.&n; *&n; * Dynamic channel allocation code Copyright 1995 Caldera, Inc.,&n; *   released under the GNU General Public License Version 2.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/version.h&gt;
 DECL|macro|STATIC
 mdefine_line|#define  STATIC
 macro_line|#else

@@ -2974,12 +2974,11 @@ id|res
 suffix:semicolon
 id|regs.r0
 op_assign
-id|tmp
+l_int|0
 suffix:semicolon
-multiline_comment|/* special return */
+multiline_comment|/* special return: no errors */
 r_return
-op_minus
-l_int|255
+id|tmp
 suffix:semicolon
 )brace
 multiline_comment|/* read register number ADDR. */
@@ -2988,14 +2987,9 @@ id|PTRACE_PEEKUSR
 suffix:colon
 id|regs.r0
 op_assign
-id|get_reg
-c_func
-(paren
-id|child
-comma
-id|addr
-)paren
+l_int|0
 suffix:semicolon
+multiline_comment|/* special return: no errors */
 id|DBG
 c_func
 (paren
@@ -3011,10 +3005,14 @@ id|regs.r0
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|255
+id|get_reg
+c_func
+(paren
+id|child
+comma
+id|addr
+)paren
 suffix:semicolon
-multiline_comment|/* special return */
 multiline_comment|/* when I and D space are separate, this will have to be fixed. */
 r_case
 id|PTRACE_POKETEXT

@@ -3174,12 +3174,6 @@ op_star
 id|regs
 )paren
 (brace
-r_static
-r_int
-id|n
-op_assign
-l_int|0
-suffix:semicolon
 r_int
 id|i
 op_assign
@@ -3188,7 +3182,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&t;if(n++&lt;NR_CPUS)&n;&t;&t;printk(&quot;IPI %d-&gt;%d(%d,%ld)&bslash;n&quot;,smp_src_cpu,i,smp_msg_id,smp_msg_data);*/
+multiline_comment|/*&t;static int n=0;&n;&t;if(n++&lt;NR_CPUS)&n;&t;&t;printk(&quot;IPI %d-&gt;%d(%d,%ld)&bslash;n&quot;,smp_src_cpu,i,smp_msg_id,smp_msg_data);*/
 r_switch
 c_cond
 (paren

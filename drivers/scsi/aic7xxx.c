@@ -18,7 +18,8 @@ macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;aic7xxx.h&quot;
-macro_line|#include&lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PCI */
 DECL|variable|proc_scsi_aic7xxx
 r_struct
 id|proc_dir_entry
@@ -12245,7 +12246,7 @@ c_func
 (paren
 id|PCI_VENDOR_ID_ADAPTEC
 comma
-id|PCI_DEVICE_ID_ADAPTEC_294x
+id|PCI_DEVICE_ID_ADAPTEC_7870
 comma
 id|index
 comma
@@ -12264,7 +12265,7 @@ c_func
 (paren
 id|PCI_VENDOR_ID_ADAPTEC
 comma
-id|PCI_DEVICE_ID_ADAPTEC_2940
+id|PCI_DEVICE_ID_ADAPTEC_7871
 comma
 id|index
 comma

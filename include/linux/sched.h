@@ -1,7 +1,6 @@
 macro_line|#ifndef _LINUX_SCHED_H
 DECL|macro|_LINUX_SCHED_H
 mdefine_line|#define _LINUX_SCHED_H
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some extra&n; * debugging code. It&squot;s not normally used, but might catch some&n; * wait-queue coding errors.&n; *&n; *  #define DEBUG&n; */
 macro_line|#include &lt;asm/param.h&gt;&t;/* for HZ */
 r_extern
@@ -662,7 +661,7 @@ id|signal_struct
 op_star
 id|sig
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 DECL|member|processor
 r_int
 id|processor

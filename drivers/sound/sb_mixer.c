@@ -101,7 +101,7 @@ comma
 id|MIXER_ADDR
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Select register&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;   * Select register&n;&t;&t;&t;&t;&t;&t;&t; */
 id|tenmicrosec
 (paren
 )paren
@@ -171,7 +171,7 @@ comma
 id|MIXER_ADDR
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Select register&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;   * Select register&n;&t;&t;&t;&t;&t;&t;&t; */
 id|tenmicrosec
 (paren
 )paren
@@ -1997,12 +1997,6 @@ id|iomap
 op_assign
 op_amp
 id|sgnxpro_mix
-(braket
-l_int|0
-)braket
-(braket
-l_int|0
-)braket
 suffix:semicolon
 )brace
 r_else

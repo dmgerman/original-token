@@ -41,6 +41,22 @@ DECL|macro|PIO
 mdefine_line|#define PIO             0xfe
 DECL|macro|EATA_SIGNATURE
 mdefine_line|#define EATA_SIGNATURE&t;0x45415441     /* BIG ENDIAN coded &quot;EATA&quot; sig.&t; */
+DECL|macro|DPT_ID1
+mdefine_line|#define DPT_ID1         0x12
+DECL|macro|DPT_ID2
+mdefine_line|#define DPT_ID2         0x14
+DECL|macro|ATT_ID1
+mdefine_line|#define ATT_ID1         0x06
+DECL|macro|ATT_ID2
+mdefine_line|#define ATT_ID2         0x94
+DECL|macro|ATT_ID3
+mdefine_line|#define ATT_ID3         0x0
+DECL|macro|NEC_ID1
+mdefine_line|#define NEC_ID1         0x38
+DECL|macro|NEC_ID2
+mdefine_line|#define NEC_ID2         0xa3
+DECL|macro|NEC_ID3
+mdefine_line|#define NEC_ID3         0x82
 DECL|macro|EATA_CP_SIZE
 mdefine_line|#define EATA_CP_SIZE&t;44
 DECL|macro|MAX_PCI_DEVICES
@@ -114,20 +130,20 @@ DECL|macro|EATA_CMD_DMA_SEND_CP
 mdefine_line|#define EATA_CMD_DMA_SEND_CP&t; 0xff
 DECL|macro|ECS_EMULATE_SENSE
 mdefine_line|#define ECS_EMULATE_SENSE&t; 0xd4
-DECL|macro|GENERIC_ABORT
-mdefine_line|#define GENERIC_ABORT  0x00 
-DECL|macro|SPECIFIC_RESET
-mdefine_line|#define SPECIFIC_RESET 0x01
-DECL|macro|BUS_RESET
-mdefine_line|#define BUS_RESET      0x02
-DECL|macro|SPECIFIC_ABORT
-mdefine_line|#define SPECIFIC_ABORT 0x03
-DECL|macro|QUIET_INTR
-mdefine_line|#define QUIET_INTR     0x04
-DECL|macro|COLD_BOOT_HBA
-mdefine_line|#define COLD_BOOT_HBA  0x06&t;   /* Only as a last resort&t;*/
-DECL|macro|FORCE_IO
-mdefine_line|#define FORCE_IO       0x07
+DECL|macro|EATA_GENERIC_ABORT
+mdefine_line|#define EATA_GENERIC_ABORT       0x00 
+DECL|macro|EATA_SPECIFIC_RESET
+mdefine_line|#define EATA_SPECIFIC_RESET      0x01
+DECL|macro|EATA_BUS_RESET
+mdefine_line|#define EATA_BUS_RESET           0x02
+DECL|macro|EATA_SPECIFIC_ABORT
+mdefine_line|#define EATA_SPECIFIC_ABORT      0x03
+DECL|macro|EATA_QUIET_INTR
+mdefine_line|#define EATA_QUIET_INTR          0x04
+DECL|macro|EATA_COLD_BOOT_HBA
+mdefine_line|#define EATA_COLD_BOOT_HBA       0x06&t;   /* Only as a last resort&t;*/
+DECL|macro|EATA_FORCE_IO
+mdefine_line|#define EATA_FORCE_IO            0x07
 DECL|macro|HA_WCOMMAND
 mdefine_line|#define HA_WCOMMAND    0x07&t;   /* command register offset&t;*/
 DECL|macro|HA_WCOMMAND2

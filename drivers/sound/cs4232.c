@@ -567,6 +567,10 @@ id|hw_config2.driver_use_2
 op_assign
 l_int|0
 suffix:semicolon
+id|hw_config2.card_subtype
+op_assign
+l_int|0
+suffix:semicolon
 id|hw_config2.osp
 op_assign
 id|hw_config-&gt;osp
@@ -716,6 +720,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|hw_config2.driver_use_2
+op_assign
+l_int|0
+suffix:semicolon
+id|hw_config2.card_subtype
 op_assign
 l_int|0
 suffix:semicolon

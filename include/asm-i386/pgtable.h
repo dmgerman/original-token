@@ -1,9 +1,9 @@
 macro_line|#ifndef _I386_PGTABLE_H
 DECL|macro|_I386_PGTABLE_H
 mdefine_line|#define _I386_PGTABLE_H
-multiline_comment|/*&n; * Define CONFIG_PENTIUM_MM if you want the 4MB page table optimizations.&n; * This works only on a intel Pentium.&n; */
-DECL|macro|CONFIG_PENTIUM_MM
-mdefine_line|#define CONFIG_PENTIUM_MM 1
+multiline_comment|/*&n; * Define USE_PENTIUM_MM if you want the 4MB page table optimizations.&n; * This works only on a intel Pentium.&n; */
+DECL|macro|USE_PENTIUM_MM
+mdefine_line|#define USE_PENTIUM_MM 1
 multiline_comment|/*&n; * The Linux memory management assumes a three-level page table setup. On&n; * the i386, we use that, but &quot;fold&quot; the mid level into the top-level page&n; * table, so that we physically have the same two-level page table as the&n; * i386 mmu expects.&n; *&n; * This file contains the functions and defines necessary to modify and use&n; * the i386 page table tree.&n; */
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
@@ -98,8 +98,8 @@ mdefine_line|#define __S110&t;PAGE_SHARED
 DECL|macro|__S111
 mdefine_line|#define __S111&t;PAGE_SHARED
 multiline_comment|/*&n; * Define this if things work differently on a i386 and a i486:&n; * it will (on a i486) warn about kernel memory accesses that are&n; * done without a &squot;verify_area(VERIFY_WRITE,..)&squot;&n; */
-DECL|macro|CONFIG_TEST_VERIFY_AREA
-macro_line|#undef CONFIG_TEST_VERIFY_AREA
+DECL|macro|TEST_VERIFY_AREA
+macro_line|#undef TEST_VERIFY_AREA
 multiline_comment|/* page table for 0-4MB for everybody */
 r_extern
 r_int
@@ -374,7 +374,7 @@ op_amp
 id|_PAGE_PRESENT
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PENTIUM_MM
+macro_line|#ifdef USE_PENTIUM_MM
 DECL|function|pmd_inuse
 r_extern
 r_inline

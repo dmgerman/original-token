@@ -6798,6 +6798,26 @@ id|hw_config
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|hw_config-&gt;card_subtype
+op_eq
+l_int|1
+)paren
+multiline_comment|/* Has IRQ/DMA registers */
+r_return
+id|ad1848_detect
+(paren
+id|hw_config-&gt;io_base
+op_plus
+l_int|4
+comma
+l_int|NULL
+comma
+id|hw_config-&gt;osp
+)paren
+suffix:semicolon
 multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (AudioTriX Pro for example)&n;     * return 0x00 or 0x0f.&n;   */
 r_if
 c_cond

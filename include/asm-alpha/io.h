@@ -143,6 +143,16 @@ id|addr
 )paren
 suffix:semicolon
 multiline_comment|/* cached version */
+macro_line|#endif /* !__KERNEL__ */
+multiline_comment|/*&n; * There are different version of the Alpha PC motherboards:&n; */
+macro_line|#if defined(CONFIG_ALPHA_LCA)
+macro_line|# include &lt;asm/lca.h&gt;&t;&t;/* get chip-specific definitions */
+macro_line|#elif defined(CONFIG_ALPHA_APECS)
+macro_line|# include &lt;asm/apecs.h&gt;&t;&t;/* get chip-specific definitions */
+macro_line|#else
+macro_line|# include &lt;asm/jensen.h&gt;
+macro_line|#endif
+multiline_comment|/*&n; * The convention used for inb/outb etc. is that names starting with&n; * two underscores are the inline versions, names starting with a&n; * single underscore are proper functions, and names starting with a&n; * letter are macros that map in some way to inline or proper function&n; * versions.  Not all that pretty, but before you change it, be sure&n; * to convince yourself that it won&squot;t break anything (in particular&n; * module support).&n; */
 r_extern
 r_int
 r_int
@@ -212,28 +222,113 @@ r_int
 id|port
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|_readb
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|_readw
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_writeb
+c_func
+(paren
+r_int
+r_char
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_writew
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * The platform header files may define some of these macros to use&n; * the inlined versions where appropriate.  These macros may also be&n; * redefined by userlevel programs.&n; */
 macro_line|#ifndef inb
 DECL|macro|inb
-macro_line|# define inb(p) _inb((p))
-DECL|macro|inw
-macro_line|# define inw(p) _inw((p))
-DECL|macro|inl
-macro_line|# define inl(p) _inl((p))
-DECL|macro|outb
-macro_line|# define outb(b,p) _outb((b),(p))
-DECL|macro|outw
-macro_line|# define outw(w,p) _outw((w),(p))
-DECL|macro|outl
-macro_line|# define outl(l,p) _outl((l),(p))
+macro_line|# define inb(p)&t;&t;_inb((p))
 macro_line|#endif
-macro_line|#endif /* !__KERNEL__ */
-multiline_comment|/*&n; * There are different version of the alpha motherboards: the&n; * &quot;interesting&quot; (read: slightly braindead) Jensen type hardware&n; * and the PCI version&n; */
-macro_line|#if defined(CONFIG_ALPHA_LCA)
-macro_line|# include &lt;asm/lca.h&gt;&t;&t;/* get chip-specific definitions */
-macro_line|#elif defined(CONFIG_ALPHA_APECS)
-macro_line|# include &lt;asm/apecs.h&gt;&t;&t;/* get chip-specific definitions */
-macro_line|#else
-macro_line|# include &lt;asm/jensen.h&gt;
+macro_line|#ifndef inw
+DECL|macro|inw
+macro_line|# define inw(p)&t;&t;_inw((p))
+macro_line|#endif
+macro_line|#ifndef inl
+DECL|macro|inl
+macro_line|# define inl(p)&t;&t;_inl((p))
+macro_line|#endif
+macro_line|#ifndef outb
+DECL|macro|outb
+macro_line|# define outb(b,p)&t;_outb((b),(p))
+macro_line|#endif
+macro_line|#ifndef outw
+DECL|macro|outw
+macro_line|# define outw(w,p)&t;_outw((w),(p))
+macro_line|#endif
+macro_line|#ifndef outl
+DECL|macro|outl
+macro_line|# define outl(l,p)&t;_outl((l),(p))
+macro_line|#endif
+macro_line|#ifndef inb_p
+DECL|macro|inb_p
+macro_line|# define inb_p&t;&t;inb
+macro_line|#endif
+macro_line|#ifndef outb_p
+DECL|macro|outb_p
+macro_line|# define outb_p&t;&t;outb
+macro_line|#endif
+multiline_comment|/*&n; * The &quot;address&quot; in IO memory space is not clearly either a integer or a&n; * pointer. We will accept both, thus the casts.&n; */
+macro_line|#ifndef readb
+DECL|macro|readb
+macro_line|# define readb(a)&t;_readb((unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef readw
+DECL|macro|readw
+macro_line|# define readw(a)&t;_readw((unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef readl
+DECL|macro|readl
+macro_line|# define readl(a)&t;_readl((unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef writeb
+DECL|macro|writeb
+macro_line|# define writeb(v,a)&t;_writeb((v),(unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef writew
+DECL|macro|writew
+macro_line|# define writew(v,a)&t;_writew((v),(unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef writel
+DECL|macro|writel
+macro_line|# define writel(v,a)&t;_writel((v),(unsigned long)(a))
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * String version of IO memory access ops:&n; */
@@ -384,25 +479,6 @@ r_int
 id|count
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * The &quot;address&quot; in IO memory space is not clearly either a integer or a&n; * pointer. We will accept both, thus the casts.&n; */
-DECL|macro|readb
-mdefine_line|#define readb(addr) ((unsigned char) (readb)((unsigned long)(addr)))
-DECL|macro|readw
-mdefine_line|#define readw(addr) ((unsigned short) (readw)((unsigned long)(addr)))
-DECL|macro|readl
-mdefine_line|#define readl(addr) ((unsigned int) (readl)((unsigned long)(addr)))
-DECL|macro|writeb
-mdefine_line|#define writeb(b,addr) (writeb)((b),(unsigned long)(addr))
-DECL|macro|writew
-mdefine_line|#define writew(w,addr) (writew)((w),(unsigned long)(addr))
-DECL|macro|writel
-mdefine_line|#define writel(l,addr) (writel)((l),(unsigned long)(addr))
-DECL|macro|memset_io
-mdefine_line|#define memset_io(addr,c,len)&t;&t;(memset_io)((unsigned long)(addr),(c),(len))
-DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(to,from,len)&t;(memcpy_fromio)((to),(unsigned long)(from),(len))
-DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(to,from,len)&t;(memcpy_toio)((unsigned long)(to),(from),(len))
 multiline_comment|/*&n; * XXX - We don&squot;t have csum_partial_copy_fromio() yet, so we cheat here and &n; * just copy it. The net code will then do the checksum later. Presently &n; * only used by some shared memory 8390 ethernet cards anyway.&n; */
 DECL|macro|eth_io_copy_and_sum
 mdefine_line|#define eth_io_copy_and_sum(skb,src,len,unused)&t;memcpy_fromio((skb)-&gt;data,(src),(len))

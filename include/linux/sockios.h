@@ -46,8 +46,6 @@ DECL|macro|SIOCGIFMTU
 mdefine_line|#define SIOCGIFMTU&t;0x8921&t;&t;/* get MTU size&t;&t;&t;*/
 DECL|macro|SIOCSIFMTU
 mdefine_line|#define SIOCSIFMTU&t;0x8922&t;&t;/* set MTU size&t;&t;&t;*/
-DECL|macro|OLD_SIOCGIFHWADDR
-mdefine_line|#define&t;OLD_SIOCGIFHWADDR&t;0x8923&t;&t;/* get hardware address&t;&t;*/
 DECL|macro|SIOCSIFHWADDR
 mdefine_line|#define&t;SIOCSIFHWADDR&t;0x8924&t;&t;/* set hardware address (NI)&t;*/
 DECL|macro|SIOCGIFENCAP
@@ -66,11 +64,6 @@ mdefine_line|#define SIOCADDMULTI  0x8931
 DECL|macro|SIOCDELMULTI
 mdefine_line|#define SIOCDELMULTI  0x8932
 multiline_comment|/* end multicast support change */
-multiline_comment|/* Routing table calls (oldrtent - don&squot;t use) */
-DECL|macro|SIOCADDRTOLD
-mdefine_line|#define SIOCADDRTOLD&t;0x8940&t;&t;/* add routing table entry&t;*/
-DECL|macro|SIOCDELRTOLD
-mdefine_line|#define SIOCDELRTOLD&t;0x8941&t;&t;/* delete routing table entry&t;*/
 multiline_comment|/* ARP cache control calls. */
 DECL|macro|SIOCDARP
 mdefine_line|#define SIOCDARP&t;0x8950&t;&t;/* delete ARP table entry&t;*/

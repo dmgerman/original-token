@@ -49,6 +49,11 @@ id|dsp_count
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|trigger_bits
+r_static
+r_int
+id|trigger_bits
+suffix:semicolon
 multiline_comment|/*&n; * The DSP channel can be used either for input or output. Variable&n; * &squot;sb_irq_mode&squot; will be set when the program calls read or write first time&n; * after open. Current version doesn&squot;t support mode changes without closing&n; * and reopening the device. Support for this feature may be implemented in a&n; * future version of this driver.&n; */
 DECL|variable|sb_dsp_ok
 r_int
@@ -1499,6 +1504,15 @@ id|bits
 r_if
 c_cond
 (paren
+id|bits
+op_eq
+id|trigger_bits
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|bits
 )paren
@@ -1522,6 +1536,10 @@ l_int|0xd4
 )paren
 suffix:semicolon
 multiline_comment|/* Continue DMA */
+id|trigger_bits
+op_assign
+id|bits
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -1637,6 +1655,16 @@ id|dsp_current_speed
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t; * Speed must be recalculated if&n;&t;&t;&t;&t;&t; * #channels * changes&n;&t;&t;&t;&t;&t; */
 )brace
+id|trigger_bits
+op_assign
+l_int|0
+suffix:semicolon
+id|sb_dsp_command
+(paren
+l_int|0xd0
+)paren
+suffix:semicolon
+multiline_comment|/* Halt DMA */
 r_return
 l_int|0
 suffix:semicolon
@@ -1745,6 +1773,16 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t; * Speed must be recalculated if&n;&t;&t;&t;&t;&t; * #channels * changes&n;&t;&t;&t;&t;&t; */
 )brace
 macro_line|#endif
+id|trigger_bits
+op_assign
+l_int|0
+suffix:semicolon
+id|sb_dsp_command
+(paren
+l_int|0xd0
+)paren
+suffix:semicolon
+multiline_comment|/* Halt DMA */
 r_return
 l_int|0
 suffix:semicolon
@@ -2004,6 +2042,7 @@ id|sb_free_irq
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* sb_dsp_command (0xd4); */
 id|dsp_cleanup
 (paren
 )paren
@@ -2482,14 +2521,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef JAZZ16
 multiline_comment|/*&n; * Initialization of a Media Vision ProSonic 16 Soundcard.&n; * The function initializes a ProSonic 16 like PROS.EXE does for DOS. It sets&n; * the base address, the DMA-channels, interrupts and enables the joystickport.&n; *&n; * Also used by Jazz 16 (same card, different name)&n; *&n; * written 1994 by Rainer Vranken&n; * E-Mail: rvranken@polaris.informatik.uni-essen.de&n; */
-macro_line|#ifndef MPU_BASE&t;&t;/* take default values if not specified */
-DECL|macro|MPU_BASE
-mdefine_line|#define MPU_BASE 0
-macro_line|#endif
-macro_line|#ifndef MPU_IRQ
-DECL|macro|MPU_IRQ
-mdefine_line|#define MPU_IRQ 0
-macro_line|#endif
 r_int
 r_int
 DECL|function|get_sb_byte
@@ -2675,34 +2706,37 @@ r_return
 id|val
 suffix:semicolon
 )brace
-r_static
-r_int
-DECL|function|initialize_smw
-id|initialize_smw
-(paren
-r_void
-)paren
-(brace
 macro_line|#ifdef SMW_MIDI0001_INCLUDED
 macro_line|#include &quot;smw-midi0001.h&quot;
 macro_line|#else
+DECL|variable|smw_ucode
 r_int
 r_char
+op_star
 id|smw_ucode
-(braket
-l_int|1
-)braket
+op_assign
+l_int|NULL
 suffix:semicolon
+DECL|variable|smw_ucodeLen
 r_int
 id|smw_ucodeLen
 op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+r_static
+r_int
+DECL|function|initialize_smw
+id|initialize_smw
+(paren
+r_int
+id|mpu_base
+)paren
+(brace
 r_int
 id|mp_base
 op_assign
-id|MPU_BASE
+id|mpu_base
 op_plus
 l_int|4
 suffix:semicolon
@@ -2719,7 +2753,7 @@ id|control
 op_assign
 id|inb
 (paren
-id|MPU_BASE
+id|mpu_base
 op_plus
 l_int|7
 )paren
@@ -2730,7 +2764,7 @@ id|control
 op_or
 l_int|3
 comma
-id|MPU_BASE
+id|mpu_base
 op_plus
 l_int|7
 )paren
@@ -2746,7 +2780,7 @@ l_int|0xfe
 op_or
 l_int|2
 comma
-id|MPU_BASE
+id|mpu_base
 op_plus
 l_int|7
 )paren
@@ -2777,7 +2811,7 @@ id|control
 op_amp
 l_int|0xfc
 comma
-id|MPU_BASE
+id|mpu_base
 op_plus
 l_int|7
 )paren
@@ -2853,7 +2887,14 @@ suffix:semicolon
 multiline_comment|/* No RAM */
 )brace
 multiline_comment|/*&n;     *  There is RAM so assume it&squot;s really a SM Wave&n;   */
-macro_line|#ifdef SMW_MIDI0001_INCLUDED
+r_if
+c_cond
+(paren
+id|smw_ucodeLen
+OG
+l_int|0
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -2871,7 +2912,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *  Download microcode&n;   */
+multiline_comment|/*&n;         *  Download microcode&n;       */
 r_for
 c_loop
 (paren
@@ -2898,7 +2939,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     *  Verify microcode&n;   */
+multiline_comment|/*&n;         *  Verify microcode&n;       */
 r_for
 c_loop
 (paren
@@ -2938,7 +2979,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
+)brace
 id|control
 op_assign
 l_int|0
@@ -3013,7 +3054,7 @@ id|control
 op_or
 l_int|0x03
 comma
-id|MPU_BASE
+id|mpu_base
 op_plus
 l_int|7
 )paren
@@ -3100,6 +3141,47 @@ comma
 l_int|4
 )brace
 suffix:semicolon
+r_struct
+id|address_info
+op_star
+id|mpu_config
+suffix:semicolon
+r_int
+id|mpu_base
+comma
+id|mpu_irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|mpu_config
+op_assign
+id|sound_getconf
+(paren
+id|SNDCARD_MPU401
+)paren
+)paren
+)paren
+(brace
+id|mpu_base
+op_assign
+id|mpu_config-&gt;io_base
+suffix:semicolon
+id|mpu_irq
+op_assign
+id|mpu_config-&gt;irq
+suffix:semicolon
+)brace
+r_else
+(brace
+id|mpu_base
+op_assign
+id|mpu_irq
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|outb
 (paren
 l_int|0xAF
@@ -3144,7 +3226,7 @@ l_int|0x70
 op_or
 (paren
 (paren
-id|MPU_BASE
+id|mpu_base
 op_amp
 l_int|0x30
 )paren
@@ -3211,7 +3293,7 @@ l_int|4
 op_or
 id|dma_translat
 (braket
-id|SBC_DMA
+id|dma8
 )braket
 )paren
 op_logical_and
@@ -3220,7 +3302,7 @@ id|sb_dsp_command
 (paren
 id|int_translat
 (braket
-id|MPU_IRQ
+id|mpu_irq
 )braket
 op_lshift
 l_int|4
@@ -3237,12 +3319,32 @@ id|Jazz16_detected
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mpu_base
+op_eq
+l_int|0
+)paren
+id|printk
+(paren
+l_string|&quot;Jazz16: No MPU401 devices configured - MIDI port not initialized&bslash;n&quot;
+)paren
+suffix:semicolon
 macro_line|#ifdef SM_WAVE
+r_if
+c_cond
+(paren
+id|mpu_base
+op_ne
+l_int|0
+)paren
 r_if
 c_cond
 (paren
 id|initialize_smw
 (paren
+id|mpu_base
 )paren
 )paren
 id|Jazz16_detected
@@ -3704,38 +3806,6 @@ l_int|3
 id|printk
 (paren
 l_string|&quot;&bslash;n&bslash;n&bslash;n&bslash;nNOTE! SB Pro support is required with your soundcard!&bslash;n&bslash;n&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef EXCLUDE_YM3812
-r_if
-c_cond
-(paren
-id|sbc_major
-OG
-l_int|3
-op_logical_or
-(paren
-id|sbc_major
-op_eq
-l_int|3
-op_logical_and
-id|inb
-(paren
-l_int|0x388
-)paren
-op_eq
-l_int|0x00
-)paren
-)paren
-multiline_comment|/* Should be 0x06 if not OPL-3 */
-id|enable_opl3_mode
-(paren
-id|OPL3_LEFT
-comma
-id|OPL3_RIGHT
-comma
-id|OPL3_BOTH
 )paren
 suffix:semicolon
 macro_line|#endif

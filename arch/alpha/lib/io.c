@@ -3,12 +3,10 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/* &n; * Jensen has a separate &quot;local&quot; and &quot;bus&quot; IO space for&n; * byte-wide IO.&n; */
 macro_line|#ifdef __is_local
-DECL|macro|__bus_inb
-macro_line|#undef __bus_inb
-DECL|function|__bus_inb
+DECL|function|_bus_inb
 r_int
 r_int
-id|__bus_inb
+id|_bus_inb
 c_func
 (paren
 r_int
@@ -17,18 +15,16 @@ id|addr
 )paren
 (brace
 r_return
-id|___bus_inb
+id|__bus_inb
 c_func
 (paren
 id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|__bus_outb
-macro_line|#undef __bus_outb
-DECL|function|__bus_outb
+DECL|function|_bus_outb
 r_void
-id|__bus_outb
+id|_bus_outb
 c_func
 (paren
 r_int
@@ -40,7 +36,7 @@ r_int
 id|addr
 )paren
 (brace
-id|___bus_outb
+id|__bus_outb
 c_func
 (paren
 id|b
@@ -50,12 +46,10 @@ id|addr
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|macro|inb
-macro_line|#undef inb
-DECL|function|inb
+DECL|function|_inb
 r_int
 r_int
-id|inb
+id|_inb
 c_func
 (paren
 r_int
@@ -71,12 +65,10 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|inw
-macro_line|#undef inw
-DECL|function|inw
+DECL|function|_inw
 r_int
 r_int
-id|inw
+id|_inw
 c_func
 (paren
 r_int
@@ -92,12 +84,10 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|inl
-macro_line|#undef inl
-DECL|function|inl
+DECL|function|_inl
 r_int
 r_int
-id|inl
+id|_inl
 c_func
 (paren
 r_int
@@ -113,11 +103,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|outb
-macro_line|#undef outb
-DECL|function|outb
+DECL|function|_outb
 r_void
-id|outb
+id|_outb
 c_func
 (paren
 r_int
@@ -138,11 +126,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|outw
-macro_line|#undef outw
-DECL|function|outw
+DECL|function|_outw
 r_void
-id|outw
+id|_outw
 c_func
 (paren
 r_int
@@ -163,11 +149,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|outl
-macro_line|#undef outl
-DECL|function|outl
+DECL|function|_outl
 r_void
-id|outl
+id|_outl
 c_func
 (paren
 r_int
@@ -188,12 +172,10 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|readb
-macro_line|#undef readb
-DECL|function|readb
+DECL|function|_readb
 r_int
 r_int
-id|readb
+id|_readb
 c_func
 (paren
 r_int
@@ -209,12 +191,10 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|readw
-macro_line|#undef readw
-DECL|function|readw
+DECL|function|_readw
 r_int
 r_int
-id|readw
+id|_readw
 c_func
 (paren
 r_int
@@ -230,12 +210,10 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|readl
-macro_line|#undef readl
-DECL|function|readl
+DECL|function|_readl
 r_int
 r_int
-id|readl
+id|_readl
 c_func
 (paren
 r_int
@@ -251,11 +229,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|writeb
-macro_line|#undef writeb
-DECL|function|writeb
+DECL|function|_writeb
 r_void
-id|writeb
+id|_writeb
 c_func
 (paren
 r_int
@@ -276,11 +252,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|writew
-macro_line|#undef writew
-DECL|function|writew
+DECL|function|_writew
 r_void
-id|writew
+id|_writew
 c_func
 (paren
 r_int
@@ -301,11 +275,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|macro|writel
-macro_line|#undef writel
-DECL|function|writel
+DECL|function|_writel
 r_void
-id|writel
+id|_writel
 c_func
 (paren
 r_int
@@ -327,8 +299,6 @@ id|addr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read COUNT 8-bit bytes from port PORT into memory starting at&n; * SRC.&n; */
-DECL|macro|insb
-macro_line|#undef insb
 DECL|function|insb
 r_void
 id|insb
@@ -507,8 +477,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Read COUNT 16-bit words from port PORT into memory starting at&n; * SRC.  SRC must be at least short aligned.  This is used by the&n; * IDE driver to read disk sectors.  Performance is important, but&n; * the interfaces seems to be slow: just using the inlined version&n; * of the inw() breaks things.&n; */
-DECL|macro|insw
-macro_line|#undef insw
 DECL|function|insw
 r_void
 id|insw
@@ -675,8 +643,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Read COUNT 32-bit words from port PORT into memory starting at&n; * SRC.  SRC must be at least word aligned.  This is used by the&n; * IDE driver to read disk sectors.  Performance is important, but&n; * the interfaces seems to be slow: just using the inlined version&n; * of the inw() breaks things.&n; */
-DECL|macro|insl
-macro_line|#undef insl
 DECL|function|insl
 r_void
 id|insl
@@ -751,8 +717,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Like insb but in the opposite direction.&n; * Don&squot;t worry as much about doing aligned memory transfers:&n; * doing byte reads the &quot;slow&quot; way isn&squot;t nearly as slow as&n; * doing byte writes the slow way (no r-m-w cycle).&n; */
-DECL|macro|outsb
-macro_line|#undef outsb
 DECL|function|outsb
 r_void
 id|outsb
@@ -805,8 +769,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Like insw but in the opposite direction.  This is used by the IDE&n; * driver to write disk sectors.  Performance is important, but the&n; * interfaces seems to be slow: just using the inlined version of the&n; * outw() breaks things.&n; */
-DECL|macro|outsw
-macro_line|#undef outsw
 DECL|function|outsw
 r_void
 id|outsw
@@ -967,8 +929,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Like insl but in the opposite direction.  This is used by the IDE&n; * driver to write disk sectors.  Performance is important, but the&n; * interfaces seems to be slow: just using the inlined version of the&n; * outw() breaks things.&n; */
-DECL|macro|outsw
-macro_line|#undef outsw
 DECL|function|outsl
 r_void
 id|outsl
@@ -1043,8 +1003,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Copy data from IO memory space to &quot;real&quot; memory space.&n; * This needs to be optimized.&n; */
-DECL|macro|memcpy_fromio
-macro_line|#undef memcpy_fromio
 DECL|function|memcpy_fromio
 r_void
 id|memcpy_fromio
@@ -1100,8 +1058,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Copy data from &quot;real&quot; memory space to IO memory space.&n; * This needs to be optimized.&n; */
-DECL|macro|memcpy_toio
-macro_line|#undef memcpy_toio
 DECL|function|memcpy_toio
 r_void
 id|memcpy_toio
@@ -1157,8 +1113,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * &quot;memset&quot; on IO memory space.&n; * This needs to be optimized.&n; */
-DECL|macro|memset_io
-macro_line|#undef memset_io
 DECL|function|memset_io
 r_void
 id|memset_io

@@ -30,6 +30,12 @@ comma
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Ugh. Gcc uses &quot;bcopy()&quot; internally for structure assignments.&n; */
+DECL|macro|__HAVE_ARCH_BCOPY
+mdefine_line|#define __HAVE_ARCH_BCOPY
+multiline_comment|/*&n; * Define &quot;memcpy()&quot; to something else, otherwise gcc will&n; * corrupt that too into a &quot;bcopy&quot;.  Also, some day we might&n; * want to do a separate inlined constant-size memcpy (for 8&n; * and 16 byte user&lt;-&gt;kernel structure copying).&n; */
+DECL|macro|__HAVE_ARCH_MEMCPY
+mdefine_line|#define __HAVE_ARCH_MEMCPY
 r_extern
 r_void
 op_star
@@ -46,6 +52,8 @@ comma
 r_int
 )paren
 suffix:semicolon
+DECL|macro|memcpy
+mdefine_line|#define memcpy __memcpy
 DECL|macro|__HAVE_ARCH_MEMSET
 mdefine_line|#define __HAVE_ARCH_MEMSET
 DECL|macro|memset

@@ -8,16 +8,7 @@ id|version
 op_assign
 l_string|&quot;de4x5.c:v0.32 6/26/95 davies@wanton.lkg.dec.com&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif /* MODULE */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -7963,6 +7954,60 @@ id|AUTO
 (brace
 id|lp-&gt;media
 op_assign
+id|EXT_SIA
+suffix:semicolon
+id|dc21040_autoconf
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|EXT_SIA
+suffix:colon
+id|reset_init_sia
+c_func
+(paren
+id|dev
+comma
+l_int|0x3041
+comma
+l_int|0x0000
+comma
+l_int|0x0006
+)paren
+suffix:semicolon
+id|dce_ms_delay
+c_func
+(paren
+l_int|500
+)paren
+suffix:semicolon
+id|linkBad
+op_assign
+id|ping_media
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|linkBad
+op_logical_and
+(paren
+id|lp-&gt;autosense
+op_eq
+id|AUTO
+)paren
+)paren
+(brace
+id|lp-&gt;media
+op_assign
 id|NC
 suffix:semicolon
 id|dc21040_autoconf
@@ -7977,7 +8022,7 @@ suffix:semicolon
 r_case
 id|NC
 suffix:colon
-macro_line|#ifdef i386
+macro_line|#ifndef __alpha__
 id|reset_init_sia
 c_func
 (paren
@@ -13042,14 +13087,6 @@ id|status
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|devicename
 r_static
 r_char

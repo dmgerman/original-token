@@ -9,12 +9,7 @@ id|version
 op_assign
 l_string|&quot;eepro.c: v0.07a 6/5/95 Bao C. Ha (bao@saigon.async.com)&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/* Always include &squot;config.h&squot; first in case the user wants to turn on&n;   or override something. */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 multiline_comment|/*&n;  Sources:&n;&n;&t;This driver wouldn&squot;t have been written without the availability &n;&t;of the Crynwr&squot;s Lan595 driver source code.  It helps me to &n;&t;familiarize with the 82595 chipset while waiting for the Intel &n;&t;documentation.  I also learned how to detect the 82595 using &n;&t;the packet driver&squot;s technique.&n;&n;&t;This driver is written by cutting and pasting the skeleton.c driver&n;&t;provided by Donald Becker.  I also borrowed the EEPROM routine from&n;&t;Donald Becker&squot;s 82586 driver.&n;&n;&t;Datasheet for the Intel 82595. It provides just enough info that &n;&t;the casual reader might think that it documents the i82595.&n;&n;&t;The User Manual for the 82595.  It provides a lot of the missing&n;&t;information.&n;&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -4833,14 +4828,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|devicename
 r_static
 r_char

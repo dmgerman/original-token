@@ -1,9 +1,6 @@
-multiline_comment|/************************************************************&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *&t;&t;    Linux EATA SCSI driver&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,&t;    *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  The driver currently:&t;&t;&t;&t;    *&n; *&t;-supports all ISA based EATA-DMA boards&t;&t;    *&n; *&t;-supports all EISA based EATA-DMA boards&t;    *&n; *&t;-supports all PCI based EATA-DMA boards&t;&t;    *&n; *&t;-supports multiple HBAs with &amp; without IRQ sharing  *&n; *&t;-supports all SCSI channels on multi channel boards *&n; *&t;-needs identical IDs on all channels of a HBA&t;    * &n; *&t;-can be loaded as module&t;&t;&t;    *&n; *&t;-displays statistical and hardware information&t;    *&n; *&t; in /proc/scsi/eata_dma&t;&t;&t;&t;    *&n; *      -provides rudimentary latency measurement           * &n; *       possibilities via /proc/scsi/eata_dma/&lt;hostnum&gt;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  (c)1993,94,95 Michael Neuffer&t;&t;&t;    *&n; *&t;&t;  neuffer@goofy.zdv.uni-mainz.de&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General&t;    *&n; *  Public License as published by the Free Software&t;    *&n; *  Foundation; either version 2 of the License, or&t;    *&n; *  (at your option) any later version.&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the&t;    *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.&t; See the GNU General Public License *&n; *  for more details.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  You should have received a copy of the GNU General&t;    *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,&t;    *&n; *  Cambridge, MA 02139, USA.&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * I have to thank DPT for their excellent support. I took  *&n; * me almost a year and a stopover at their HQ, on my first *&n; * trip to the USA, to get it, but since then they&squot;ve been  *&n; * very helpful and tried to give me all the infos and&t;    *&n; * support I need.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * Thanks also to Greg Hosler who did a lot of testing and  *&n; * found quite a number of bugs during the development.&t;    *&n; ************************************************************&n; *  last change: 95/09/17                 OS: Linux 1.3.28  *&n; ************************************************************/
+multiline_comment|/************************************************************&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *&t;&t;    Linux EATA SCSI driver&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,&t;    *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  The driver currently:&t;&t;&t;&t;    *&n; *&t;-supports all ISA based EATA-DMA boards&t;&t;    *&n; *&t;-supports all EISA based EATA-DMA boards&t;    *&n; *&t;-supports all PCI based EATA-DMA boards&t;&t;    *&n; *&t;-supports multiple HBAs with &amp; without IRQ sharing  *&n; *&t;-supports all SCSI channels on multi channel boards *&n; *&t;-needs identical IDs on all channels of a HBA&t;    * &n; *&t;-can be loaded as module&t;&t;&t;    *&n; *&t;-displays statistical and hardware information&t;    *&n; *&t; in /proc/scsi/eata_dma&t;&t;&t;&t;    *&n; *      -provides rudimentary latency measurement           * &n; *       possibilities via /proc/scsi/eata_dma/&lt;hostnum&gt;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  (c)1993,94,95 Michael Neuffer&t;&t;&t;    *&n; *&t;&t;  neuffer@goofy.zdv.uni-mainz.de&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General&t;    *&n; *  Public License as published by the Free Software&t;    *&n; *  Foundation; either version 2 of the License, or&t;    *&n; *  (at your option) any later version.&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the&t;    *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.&t; See the GNU General Public License *&n; *  for more details.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  You should have received a copy of the GNU General&t;    *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,&t;    *&n; *  Cambridge, MA 02139, USA.&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * I have to thank DPT for their excellent support. I took  *&n; * me almost a year and a stopover at their HQ, on my first *&n; * trip to the USA, to get it, but since then they&squot;ve been  *&n; * very helpful and tried to give me all the infos and&t;    *&n; * support I need.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * Thanks also to Greg Hosler who did a lot of testing and  *&n; * found quite a number of bugs during the development.&t;    *&n; ************************************************************&n; *  last change: 95/11/03                 OS: Linux 1.3.37  *&n; ************************************************************/
 multiline_comment|/* Look in eata_dma.h for configuration and revision information */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -24,7 +21,8 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;linux/scsicam.h&gt;
 macro_line|#include &quot;eata_dma.h&quot;
 macro_line|#include &quot;eata_dma_proc.h&quot; 
-macro_line|#include&lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PCI */
 DECL|variable|proc_scsi_eata_dma
 r_struct
 id|proc_dir_entry
@@ -487,7 +485,7 @@ c_cond
 (paren
 id|sh-&gt;dma_channel
 op_ne
-l_int|0xff
+id|BUSMASTER
 )paren
 id|free_dma
 c_func
@@ -656,11 +654,51 @@ id|sh
 op_member_access_from_pointer
 id|sp
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|cp
 op_assign
 id|sp-&gt;ccb
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|eata_stat
+op_assign
+id|inb
+c_func
+(paren
+id|base
+op_plus
+id|HA_RSTATUS
+)paren
 suffix:semicolon
-multiline_comment|/* Has been passed thru, no conversion needed */
+id|printk
+c_func
+(paren
+l_string|&quot;eata_dma: Board: %x Spurious IRQ %lx &quot;
+l_string|&quot;received. CCB pointer not set.&bslash;n&quot;
+comma
+id|base
+comma
+(paren
+r_int
+)paren
+id|cp
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|cmd
 op_assign
 id|cp-&gt;cmd
@@ -1936,7 +1974,7 @@ id|printk
 c_func
 (paren
 id|KERN_EMERG
-l_string|&quot;List of free queueslots:&quot;
+l_string|&quot;Status of queueslots:&quot;
 )paren
 suffix:semicolon
 r_for
@@ -2705,7 +2743,7 @@ id|cp-&gt;cp_viraddr
 op_assign
 id|cp
 suffix:semicolon
-multiline_comment|/* This will be passed thru, so we don&squot;t need to convert it */
+multiline_comment|/* This will be passed thru, so we don&squot;t need to &n;                          * convert it */
 id|cp-&gt;cmd
 op_assign
 id|cmd
@@ -2750,14 +2788,23 @@ id|DID_BUS_BUSY
 op_lshift
 l_int|16
 suffix:semicolon
+id|DBG
+c_func
+(paren
+id|DBG_QUEUE
+op_logical_and
+id|DBG_ABNORM
+comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_queue target %d, pid %ld, HBA busy, returning DID_BUS_BUSY&bslash;n&quot;
+l_string|&quot;eata_queue target %d, pid %ld, HBA busy, &quot;
+l_string|&quot;returning DID_BUS_BUSY&bslash;n&quot;
 comma
 id|cmd-&gt;target
 comma
 id|cmd-&gt;pid
+)paren
 )paren
 suffix:semicolon
 id|done
@@ -2770,7 +2817,6 @@ id|cp-&gt;status
 op_assign
 id|FREE
 suffix:semicolon
-multiline_comment|/* Hmmm..... */
 id|restore_flags
 c_func
 (paren
@@ -6049,7 +6095,7 @@ id|sh-&gt;cmd_per_lun
 op_assign
 l_int|8
 suffix:semicolon
-multiline_comment|/* We artificially limit this to conserve memory, &n;&t;&t;&t;&t;  * which would be needed for ISA bounce buffers */
+multiline_comment|/* We artificially limit this to conserve &n;&t;&t;&t;&t;  * memory, which would be needed for ISA &n;&t;&t;&t;&t;  * bounce buffers */
 )brace
 r_else
 id|sh-&gt;cmd_per_lun
@@ -6379,13 +6425,13 @@ c_cond
 (paren
 id|pal1
 op_eq
-l_int|0x12
+id|DPT_ID1
 )paren
 op_logical_and
 (paren
 id|pal2
 op_eq
-l_int|0x14
+id|DPT_ID2
 )paren
 )paren
 op_logical_or
@@ -6393,19 +6439,19 @@ op_logical_or
 (paren
 id|pal1
 op_eq
-l_int|0x38
+id|NEC_ID1
 )paren
 op_logical_and
 (paren
 id|pal2
 op_eq
-l_int|0xa3
+id|NEC_ID2
 )paren
 op_logical_and
 (paren
 id|pal3
 op_eq
-l_int|0x82
+id|NEC_ID3
 )paren
 )paren
 op_logical_or
@@ -6413,19 +6459,19 @@ op_logical_or
 (paren
 id|pal1
 op_eq
-l_int|0x06
+id|ATT_ID1
 )paren
 op_logical_and
 (paren
 id|pal2
 op_eq
-l_int|0x94
+id|ATT_ID2
 )paren
 op_logical_and
 (paren
 id|pal3
 op_eq
-l_int|0x24
+id|ATT_ID3
 )paren
 )paren
 )paren
@@ -6526,7 +6572,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;HBA is in BLINK state. Consult your HBAs &quot;
-l_string|&quot; Manual to correct this.&bslash;n&quot;
+l_string|&quot;Manual to correct this.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -7013,13 +7059,13 @@ c_cond
 (paren
 id|pal1
 op_eq
-l_int|0x12
+id|DPT_ID1
 )paren
 op_logical_and
 (paren
 id|pal2
 op_eq
-l_int|0x14
+id|DPT_ID2
 )paren
 )paren
 op_logical_or
@@ -7027,19 +7073,19 @@ op_logical_or
 (paren
 id|pal1
 op_eq
-l_int|0x38
+id|NEC_ID1
 )paren
 op_logical_and
 (paren
 id|pal2
 op_eq
-l_int|0xa3
+id|NEC_ID2
 )paren
 op_logical_and
 (paren
 id|pal3
 op_eq
-l_int|0x82
+id|NEC_ID3
 )paren
 )paren
 op_logical_or
@@ -7047,19 +7093,19 @@ op_logical_or
 (paren
 id|pal1
 op_eq
-l_int|0x06
+id|ATT_ID1
 )paren
 op_logical_and
 (paren
 id|pal2
 op_eq
-l_int|0x94
+id|ATT_ID2
 )paren
 op_logical_and
 (paren
 id|pal3
 op_eq
-l_int|0x24
+id|ATT_ID3
 )paren
 )paren
 )paren

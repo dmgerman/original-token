@@ -803,7 +803,7 @@ comma
 id|MASTER_DECODE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Talk to first board&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Talk to first board&n;&t;&t;&t;&t; */
 id|outb
 (paren
 id|hw_config-&gt;io_base
@@ -813,7 +813,7 @@ comma
 id|MASTER_DECODE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Set base address&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;   * Set base address&n;&t;&t;&t;&t;&t;&t;&t; */
 id|translat_code
 op_assign
 id|PAS_DEFAULT_BASE
@@ -983,17 +983,6 @@ id|sb_dsp_disable_midi
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t; * The SB emulation don&squot;t support *&n;&t;&t;&t;&t;&t; * midi&n;&t;&t;&t;&t;&t; */
-macro_line|#endif
-macro_line|#ifndef EXCLUDE_YM3812
-id|enable_opl3_mode
-(paren
-l_int|0x388
-comma
-l_int|0x38a
-comma
-l_int|0
-)paren
-suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef EXCLUDE_MIDI
 id|mem_start

@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *  linux/kernel/exit.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 DECL|macro|DEBUG_PROC_TREE
 macro_line|#undef DEBUG_PROC_TREE
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;

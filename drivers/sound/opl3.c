@@ -788,7 +788,7 @@ id|inb
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Read status after timers have expired&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Read status after timers have expired&n;&t;&t;&t;&t; */
 multiline_comment|/*&n;   * Stop the timers&n;   */
 multiline_comment|/* Reset timers 1 and 2 */
 id|opl3_command
@@ -3820,10 +3820,6 @@ comma
 op_amp
 (paren
 (paren
-(paren
-r_char
-op_star
-)paren
 id|addr
 )paren
 (braket

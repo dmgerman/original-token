@@ -23,7 +23,6 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
-macro_line|#ifdef CONFIG_IP_MROUTE
 multiline_comment|/*&n; *&t;Multicast router conrol variables&n; */
 DECL|variable|vif_table
 r_static
@@ -2398,6 +2397,11 @@ r_int
 id|ipmr_device_event
 c_func
 (paren
+r_struct
+id|notifier_block
+op_star
+id|this
+comma
 r_int
 r_int
 id|event
@@ -3474,5 +3478,4 @@ id|ipmr_mfc_info
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

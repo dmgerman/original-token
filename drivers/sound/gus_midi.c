@@ -206,7 +206,7 @@ comma
 id|u_MidiControl
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Enable&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * Enable&n;&t;&t;&t;&t;&t;&t; */
 id|midi_busy
 op_assign
 l_int|1

@@ -332,14 +332,22 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-(paren
 id|num_sound_drivers
-op_minus
-l_int|1
-)paren
 suffix:semicolon
 id|i
 op_increment
+)paren
+r_if
+c_cond
+(paren
+id|sound_drivers
+(braket
+id|i
+)braket
+dot
+id|card_type
+op_ne
+l_int|0
 )paren
 (brace
 r_if
@@ -430,14 +438,22 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-(paren
 id|num_sound_cards
-op_minus
-l_int|1
-)paren
 suffix:semicolon
 id|i
 op_increment
+)paren
+r_if
+c_cond
+(paren
+id|snd_installed_cards
+(braket
+id|i
+)braket
+dot
+id|card_type
+op_ne
+l_int|0
 )paren
 (brace
 r_int
@@ -467,7 +483,7 @@ l_string|&quot;(&quot;
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;       * if (!put_status_int(snd_installed_cards[i].card_type, 10)) return;&n;       * if (!put_status (&quot;: &quot;)) return;&n;       */
+multiline_comment|/*&n;&t; * if (!put_status_int(snd_installed_cards[i].card_type, 10)) return;&n;&t; * if (!put_status (&quot;: &quot;)) return;&n;&t; */
 r_if
 c_cond
 (paren
@@ -697,6 +713,21 @@ id|put_status
 l_string|&quot;&bslash;n&quot;
 )paren
 )paren
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sound_started
+)paren
+(brace
+id|put_status
+(paren
+l_string|&quot;&bslash;n&bslash;n***** Sound driver not started *****&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1288,6 +1319,7 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifndef EXCLUDE_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -1311,6 +1343,8 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef EXCLUDE_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -1331,6 +1365,7 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef EXCLUDE_MIDI
 r_case
 id|SND_DEV_MIDIN
@@ -1404,6 +1439,7 @@ op_amp
 l_int|0x0f
 )paren
 (brace
+macro_line|#ifndef EXCLUDE_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -1424,6 +1460,8 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef EXCLUDE_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -1447,6 +1485,7 @@ id|count
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef EXCLUDE_MIDI
 r_case
 id|SND_DEV_MIDIN
@@ -1604,6 +1643,7 @@ l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifndef EXCLUDE_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -1631,6 +1671,7 @@ id|retval
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef EXCLUDE_MIDI
 r_case
 id|SND_DEV_MIDIN
@@ -1657,6 +1698,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef EXCLUDE_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -1687,6 +1729,7 @@ id|retval
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|printk
@@ -1775,6 +1818,7 @@ id|SND_DEV_CTL
 suffix:colon
 r_break
 suffix:semicolon
+macro_line|#ifndef EXCLUDE_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -1790,6 +1834,7 @@ id|file
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef EXCLUDE_MIDI
 r_case
 id|SND_DEV_MIDIN
@@ -1804,6 +1849,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef EXCLUDE_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -1822,6 +1868,7 @@ id|file
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|printk
@@ -1926,6 +1973,7 @@ c_cond
 id|dtype
 )paren
 (brace
+macro_line|#ifndef EXCLUDE_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -1978,6 +2026,7 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 r_return
@@ -2052,6 +2101,7 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifndef EXCLUDE_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -2072,6 +2122,8 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef EXCLUDE_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -2095,6 +2147,7 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef EXCLUDE_MIDI
 r_case
 id|SND_DEV_MIDIN

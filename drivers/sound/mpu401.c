@@ -16,6 +16,7 @@ l_int|20
 )braket
 suffix:semicolon
 multiline_comment|/* NOTE! pos 0 = len, start pos 1. */
+macro_line|#ifndef EXCLUDE_SEQUENCER
 DECL|variable|timer_mode
 DECL|variable|timer_caps
 r_static
@@ -28,6 +29,7 @@ id|timer_caps
 op_assign
 id|TMR_INTERNAL
 suffix:semicolon
+macro_line|#endif
 DECL|struct|mpu_config
 r_struct
 id|mpu_config
@@ -414,8 +416,13 @@ l_int|0
 multiline_comment|/* Fx */
 )brace
 suffix:semicolon
+macro_line|#ifdef EXCLUDE_SEQUENCER
+DECL|macro|STORE
+mdefine_line|#define STORE(cmd)
+macro_line|#else
 DECL|macro|STORE
 mdefine_line|#define STORE(cmd) &bslash;&n;{ &bslash;&n;  int len; &bslash;&n;  unsigned char obuf[8]; &bslash;&n;  cmd; &bslash;&n;  seq_input_event(obuf, len); &bslash;&n;}
+macro_line|#endif
 DECL|macro|_seqbuf
 mdefine_line|#define _seqbuf obuf
 DECL|macro|_seqbufptr

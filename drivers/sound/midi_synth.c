@@ -57,8 +57,13 @@ id|prev_out_status
 id|MAX_MIDI_DEV
 )braket
 suffix:semicolon
+macro_line|#ifdef EXCLUDE_SEQUENCER
+DECL|macro|STORE
+mdefine_line|#define STORE(cmd)
+macro_line|#else
 DECL|macro|STORE
 mdefine_line|#define STORE(cmd) &bslash;&n;{ &bslash;&n;  int len; &bslash;&n;  unsigned char obuf[8]; &bslash;&n;  cmd; &bslash;&n;  seq_input_event(obuf, len); &bslash;&n;}
+macro_line|#endif
 DECL|macro|_seqbuf
 mdefine_line|#define _seqbuf obuf
 DECL|macro|_seqbufptr
@@ -2015,16 +2020,9 @@ id|src_offs
 op_assign
 l_int|0
 suffix:semicolon
-(brace
-id|sysex_sleep_flag.aborting
-op_assign
-l_int|0
-suffix:semicolon
 id|sysex_sleep_flag.mode
 op_assign
 id|WK_NONE
-suffix:semicolon
-)brace
 suffix:semicolon
 r_for
 c_loop
@@ -2039,12 +2037,10 @@ id|left
 op_logical_and
 op_logical_neg
 (paren
-(paren
 id|current-&gt;signal
 op_amp
 op_complement
 id|current-&gt;blocked
-)paren
 )paren
 suffix:semicolon
 id|i
@@ -2151,12 +2147,10 @@ l_int|0xff
 op_logical_and
 op_logical_neg
 (paren
-(paren
 id|current-&gt;signal
 op_amp
 op_complement
 id|current-&gt;blocked
-)paren
 )paren
 )paren
 (brace
@@ -2169,9 +2163,9 @@ c_cond
 (paren
 l_int|1
 )paren
-id|tl
-op_assign
 id|current-&gt;timeout
+op_assign
+id|tl
 op_assign
 id|jiffies
 op_plus
@@ -2205,19 +2199,6 @@ id|WK_WAKEUP
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
-)paren
-id|sysex_sleep_flag.aborting
-op_assign
-l_int|1
-suffix:semicolon
-r_else
 r_if
 c_cond
 (paren

@@ -43,9 +43,9 @@ id|sp_banks
 id|SPARC_PHYS_BANKS
 )braket
 suffix:semicolon
-DECL|macro|CONFIG_STRICT_MM_TYPECHECKS
-mdefine_line|#define CONFIG_STRICT_MM_TYPECHECKS
-macro_line|#ifdef CONFIG_STRICT_MM_TYPECHECKS
+DECL|macro|STRICT_MM_TYPECHECKS
+mdefine_line|#define STRICT_MM_TYPECHECKS
+macro_line|#ifdef STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte
 DECL|typedef|pte_t

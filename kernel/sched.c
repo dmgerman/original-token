@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid(), which just extracts a field from&n; * current-task&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -625,7 +624,7 @@ id|this_cpu
 r_int
 id|weight
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP&t;
+macro_line|#ifdef __SMP__&t;
 multiline_comment|/* We are not permitted to run a task someone else is running */
 r_if
 c_cond
@@ -650,7 +649,7 @@ c_cond
 id|weight
 )paren
 (brace
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 multiline_comment|/* Give a largish advantage to the same processor...   */
 multiline_comment|/* (this is equivalent to penalizing other processors) */
 r_if
@@ -825,7 +824,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 multiline_comment|/*&n;&t; *&t;This is safe as we do not permit re-entry of schedule()&n;&t; */
 id|current-&gt;processor
 op_assign
@@ -908,7 +907,7 @@ op_plus
 id|p-&gt;priority
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SMP&t;
+macro_line|#ifdef __SMP__&t;
 multiline_comment|/*&n;&t; *&t;Context switching between two idle threads is pointless.&n;&t; */
 r_if
 c_cond
@@ -1902,7 +1901,7 @@ id|nr
 op_add_assign
 id|FIXED_1
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
+macro_line|#ifdef __SMP__
 id|nr
 op_sub_assign
 (paren
@@ -3853,7 +3852,7 @@ op_assign
 op_amp
 id|init_task
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP&t;
+macro_line|#ifdef __SMP__&t;
 id|init_task.processor
 op_assign
 id|cpu

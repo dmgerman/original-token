@@ -1,5 +1,3 @@
-macro_line|#include &lt;linux/autoconf.h&gt;&t;/* fastest method */
-macro_line|#ifdef CONFIG_SCC
 DECL|macro|RCS_ID
 mdefine_line|#define RCS_ID &quot;$Id: scc.c,v 1.26 1995/09/07 14:46:19 jreuter Exp jreuter $&quot;
 DECL|macro|BANNER
@@ -18,7 +16,6 @@ macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -9684,5 +9681,4 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

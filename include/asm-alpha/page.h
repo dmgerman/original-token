@@ -9,9 +9,9 @@ mdefine_line|#define PAGE_SIZE&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
-DECL|macro|CONFIG_STRICT_MM_TYPECHECKS
-mdefine_line|#define CONFIG_STRICT_MM_TYPECHECKS
-macro_line|#ifdef CONFIG_STRICT_MM_TYPECHECKS
+DECL|macro|STRICT_MM_TYPECHECKS
+mdefine_line|#define STRICT_MM_TYPECHECKS
+macro_line|#ifdef STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte
 DECL|typedef|pte_t

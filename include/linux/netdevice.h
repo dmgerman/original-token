@@ -5,6 +5,7 @@ mdefine_line|#define _LINUX_NETDEVICE_H
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* for future expansion when we will have different priorities. */
 DECL|macro|DEV_NUMBUFFS
 mdefine_line|#define DEV_NUMBUFFS&t;3
@@ -475,7 +476,8 @@ id|device
 op_star
 id|dev
 comma
-r_void
+r_struct
+id|sockaddr
 op_star
 id|addr
 )paren
@@ -607,7 +609,8 @@ DECL|macro|IN_SKBUFF
 mdefine_line|#define IN_SKBUFF&t;1
 r_extern
 r_volatile
-r_char
+r_int
+r_int
 id|in_bh
 suffix:semicolon
 r_extern

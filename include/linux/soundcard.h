@@ -55,6 +55,8 @@ DECL|macro|SNDCARD_CS4232_MPU
 mdefine_line|#define SNDCARD_CS4232_MPU&t;22
 DECL|macro|SNDCARD_MAUI
 mdefine_line|#define SNDCARD_MAUI&t;&t;23
+DECL|macro|SNDCARD_PSEUDO_MSS
+mdefine_line|#define SNDCARD_PSEUDO_MSS&t;24
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
 macro_line|#ifndef _IOWR
 multiline_comment|/*&t;@(#)ioctlp.h */

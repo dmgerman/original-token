@@ -3527,7 +3527,7 @@ comma
 id|u_Mixer
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Turn mixer channels on&n;&t;&t;&t;&t; * Note! Mic in is left off.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Turn mixer channels on&n;&t;&t;&t;&t;   * Note! Mic in is left off.&n;&t;&t;&t;&t; */
 id|gus_select_voice
 (paren
 l_int|0
@@ -6354,16 +6354,9 @@ id|gus_no_dma
 op_assign
 l_int|0
 suffix:semicolon
-(brace
-id|dram_sleep_flag.aborting
-op_assign
-l_int|0
-suffix:semicolon
 id|dram_sleep_flag.mode
 op_assign
 id|WK_NONE
-suffix:semicolon
-)brace
 suffix:semicolon
 id|gus_busy
 op_assign
@@ -7242,9 +7235,9 @@ c_cond
 (paren
 id|HZ
 )paren
-id|tl
-op_assign
 id|current-&gt;timeout
+op_assign
+id|tl
 op_assign
 id|jiffies
 op_plus
@@ -7278,19 +7271,6 @@ id|WK_WAKEUP
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
-)paren
-id|dram_sleep_flag.aborting
-op_assign
-l_int|1
-suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
@@ -10194,17 +10174,13 @@ r_int
 id|in_left
 op_assign
 id|useroffs
-op_div
-l_int|2
 suffix:semicolon
 r_int
 id|in_right
 op_assign
 id|useroffs
-op_div
-l_int|2
 op_plus
-l_int|1
+l_int|2
 suffix:semicolon
 r_int
 op_star
@@ -10270,10 +10246,6 @@ id|get_fs_word
 op_amp
 (paren
 (paren
-(paren
-r_int
-op_star
-)paren
 id|userbuf
 )paren
 (braket
@@ -10284,7 +10256,7 @@ id|in_left
 suffix:semicolon
 id|in_left
 op_add_assign
-l_int|2
+l_int|4
 suffix:semicolon
 op_star
 id|out_right
@@ -10295,10 +10267,6 @@ id|get_fs_word
 op_amp
 (paren
 (paren
-(paren
-r_int
-op_star
-)paren
 id|userbuf
 )paren
 (braket
@@ -10309,7 +10277,7 @@ id|in_right
 suffix:semicolon
 id|in_right
 op_add_assign
-l_int|2
+l_int|4
 suffix:semicolon
 )brace
 )brace

@@ -3,7 +3,6 @@ DECL|macro|_SPARC_ASI_H
 mdefine_line|#define _SPARC_ASI_H
 multiline_comment|/* asi.h:  Address Space Identifier values for the sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Pioneer work for sun4m: Paul Hatchman (paul@sfe.com.au)&n; * Joint edition for sun4c+sun4m: Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;&n; */
 multiline_comment|/* These are sun4c, beware on other architectures. Although things should&n; * be similar under regular sun4&squot;s.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|ASI_NULL1
 mdefine_line|#define ASI_NULL1        0x0
 DECL|macro|ASI_NULL2

@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
-multiline_comment|/*&n; *&t;A lot of these includes will be going walkies very soon &n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -1435,7 +1434,8 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n; *&t;This is a single non-reentrant routine which takes the received packet&n; *&t;queue and throws it at the networking layers in the hope that something&n; *&t;useful will emerge.&n; */
 DECL|variable|in_bh
 r_volatile
-r_char
+r_int
+r_int
 id|in_bh
 op_assign
 l_int|0
@@ -2761,6 +2761,34 @@ r_case
 id|SIOCGIFADDR
 suffix:colon
 multiline_comment|/* Get interface address (and family) */
+r_if
+c_cond
+(paren
+id|ifr.ifr_addr.sa_family
+op_eq
+id|AF_UNSPEC
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+id|ifr.ifr_hwaddr.sa_data
+comma
+id|dev-&gt;dev_addr
+comma
+id|MAX_ADDR_LEN
+)paren
+suffix:semicolon
+id|ifr.ifr_hwaddr.sa_family
+op_assign
+id|dev-&gt;type
+suffix:semicolon
+r_goto
+id|rarok
+suffix:semicolon
+)brace
+r_else
+(brace
 (paren
 r_struct
 id|sockaddr_in
@@ -2791,6 +2819,7 @@ id|ifr.ifr_addr.sin_port
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_goto
 id|rarok
 suffix:semicolon
@@ -2798,6 +2827,44 @@ r_case
 id|SIOCSIFADDR
 suffix:colon
 multiline_comment|/* Set interface address (and family) */
+multiline_comment|/*&n;&t;&t;&t; *&t;BSDism. SIOCSIFADDR family=AF_UNSPEC sets the&n;&t;&t;&t; *&t;physical address. We can cope with this now.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|ifr.ifr_addr.sa_family
+op_eq
+id|AF_UNSPEC
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev-&gt;set_mac_address
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|EOPNOTSUPP
+suffix:semicolon
+)brace
+id|ret
+op_assign
+id|dev
+op_member_access_from_pointer
+id|set_mac_address
+c_func
+(paren
+id|dev
+comma
+op_amp
+id|ifr.ifr_addr
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|dev-&gt;pa_addr
 op_assign
 (paren
@@ -2813,7 +2880,7 @@ op_assign
 id|ifr.ifr_addr.sa_family
 suffix:semicolon
 macro_line|#ifdef CONFIG_INET&t;
-multiline_comment|/* This is naughty. When net-032e comes out It wants moving into the net032&n;&t;&t;&t;   code not the kernel. Till then it can sit here (SIGH) */
+multiline_comment|/* This is naughty. When net-032e comes out It wants moving into the net032&n;&t;&t;&t;&t;   code not the kernel. Till then it can sit here (SIGH) */
 id|dev-&gt;pa_mask
 op_assign
 id|ip_get_mask
@@ -2834,6 +2901,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -3121,23 +3189,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|OLD_SIOCGIFHWADDR
-suffix:colon
-multiline_comment|/* Get the hardware address. This will change and SIFHWADDR will be added */
-id|memcpy
-c_func
-(paren
-id|ifr.old_ifr_hwaddr
-comma
-id|dev-&gt;dev_addr
-comma
-id|MAX_ADDR_LEN
-)paren
-suffix:semicolon
-r_goto
-id|rarok
-suffix:semicolon
-r_case
 id|SIOCGIFHWADDR
 suffix:colon
 id|memcpy
@@ -3195,7 +3246,8 @@ c_func
 (paren
 id|dev
 comma
-id|ifr.ifr_hwaddr.sa_data
+op_amp
+id|ifr.ifr_hwaddr
 )paren
 suffix:semicolon
 r_break
@@ -3518,9 +3570,6 @@ id|SIOCGIFHWADDR
 suffix:colon
 r_case
 id|SIOCSIFHWADDR
-suffix:colon
-r_case
-id|OLD_SIOCGIFHWADDR
 suffix:colon
 r_case
 id|SIOCGIFSLAVE

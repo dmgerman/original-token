@@ -14,17 +14,16 @@ multiline_comment|/* 1994/9/17 -- Koen Holtman -- added logging of physical flop
 multiline_comment|/*&n; * 1995/8/26 -- Andreas Busse -- added Mips support.&n; */
 multiline_comment|/* 1995/4/24 -- Dan Fandrich -- added support for Commodore 1581 3.5&quot; disks&n; * by defining bit 1 of the &quot;stretch&quot; parameter to mean put sectors on the&n; * opposite side of the disk, leaving the sector IDs alone (i.e. Commodore&squot;s&n; * drives are &quot;upside-down&quot;).&n; */
 multiline_comment|/*&n; * 1995/18/10 -- Ralf Baechle -- Portability cleanup; move machine dependend&n; * features to asm/floppy.h.&n; */
-DECL|macro|CONFIG_FLOPPY_SANITY
-mdefine_line|#define CONFIG_FLOPPY_SANITY
-DECL|macro|CONFIG_FLOPPY_SILENT_DCL_CLEAR
-macro_line|#undef  CONFIG_FLOPPY_SILENT_DCL_CLEAR
+DECL|macro|FLOPPY_SANITY_CHECK
+mdefine_line|#define FLOPPY_SANITY_CHECK
+DECL|macro|FLOPPY_SILENT_DCL_CLEAR
+macro_line|#undef  FLOPPY_SILENT_DCL_CLEAR
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
 DECL|macro|DEBUGT
 mdefine_line|#define DEBUGT 2
 DECL|macro|DCL_DEBUG
 mdefine_line|#define DCL_DEBUG /* debug disk change line */
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* do print messages for unexpected interrupts */
 DECL|variable|print_unex
 r_static
@@ -33,20 +32,10 @@ id|print_unex
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#ifdef MODULE
 DECL|macro|FD_MODULE
 mdefine_line|#define FD_MODULE
-macro_line|#include &lt;linux/module.h&gt;
-multiline_comment|/*&n; * NB. we must include the kernel identification string to install the module.&n; */
-macro_line|#include &lt;linux/version.h&gt;
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|FLOPPY_IRQ
 r_int
 id|FLOPPY_IRQ
@@ -2452,7 +2441,7 @@ r_char
 op_star
 id|timeout_message
 suffix:semicolon
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 DECL|function|is_alive
 r_static
 r_void
@@ -2490,7 +2479,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 DECL|macro|OLOGSIZE
 mdefine_line|#define OLOGSIZE 20
 DECL|variable|lasthandler
@@ -2694,7 +2683,7 @@ c_func
 id|drive
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
@@ -4283,7 +4272,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
@@ -4662,7 +4651,7 @@ comma
 id|FD_DATA
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 id|output_log
 (braket
 id|output_log_pos
@@ -4822,7 +4811,7 @@ op_eq
 id|STATUS_READY
 )paren
 (brace
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 id|resultjiffies
 op_assign
 id|jiffies
@@ -7314,7 +7303,7 @@ comma
 id|lasthandler
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 id|printk
 c_func
 (paren
@@ -9399,7 +9388,7 @@ id|floppy-&gt;sect
 op_mod
 id|ssize
 suffix:semicolon
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
@@ -9943,7 +9932,7 @@ id|current_count_sectors
 op_lshift
 l_int|9
 suffix:semicolon
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
@@ -10080,7 +10069,7 @@ id|size
 op_assign
 id|remaining
 suffix:semicolon
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
@@ -10269,7 +10258,7 @@ id|bh
 op_assign
 id|bh-&gt;b_reqnext
 suffix:semicolon
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
@@ -10296,7 +10285,7 @@ op_assign
 id|bh-&gt;b_data
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
@@ -11260,7 +11249,7 @@ id|FD_WRITE
 )paren
 (brace
 multiline_comment|/* copy write buffer to track buffer.&n;&t;&t; * if we get here, we know that the write&n;&t;&t; * is either aligned or the data already in the buffer&n;&t;&t; * (buffer will be overwritten) */
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
@@ -11351,7 +11340,7 @@ id|raw_cmd-&gt;length
 op_lshift_assign
 l_int|9
 suffix:semicolon
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
@@ -17831,7 +17820,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_int
 id|drive
 suffix:semicolon
@@ -17968,7 +17957,7 @@ id|tmpsize
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FLOPPY_SANITY
+macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_for
 c_loop
 (paren

@@ -2,18 +2,7 @@ multiline_comment|/*&n;* Sony CDU-31A CDROM interface device driver.&n;*&n;* Cor
 multiline_comment|/*&n; *&n; * Setting up the Sony CDU31A/CDU33A drive interface card.  If&n; * You have another card, you are on your own.&n; * &n; *      +----------+-----------------+----------------------+&n; *      |  JP1     |  34 Pin Conn    |                      |&n; *      |  JP2     +-----------------+                      |&n; *      |  JP3                                              |&n; *      |  JP4                                              |&n; *      |                                                   +--+&n; *      |                                                   |  +-+&n; *      |                                                   |  | |  External&n; *      |                                                   |  | |  Connector&n; *      |                                                   |  | |&n; *      |                                                   |  +-+&n; *      |                                                   +--+&n; *      |                                                   |&n; *      |                                          +--------+&n; *      |                                          |&n; *      +------------------------------------------+&n; * &n; *    JP1 sets the Base Address, using the following settings:&n; * &n; *      Address         Pin 1           Pin 2&n; *      -------         -----           -----&n; *      0x320           Short           Short&n; *      0x330           Short           Open&n; *      0x340           Open            Short&n; *      0x360           Open            Open&n; * &n; *    JP2 and JP3 configure the DMA channel; they must be set the same.&n; * &n; *      DMA             Pin 1           Pin 2           Pin 3&n; *      ---             -----           -----           -----&n; *      1               On              Off             On&n; *      2               Off             On              Off&n; *      3               Off             Off             On&n; * &n; *    JP4 Configures the IRQ:&n; * &n; *      IRQ     Pin 1           Pin 2           Pin 3           Pin 4&n; *      ---     -----           -----           -----           -----&n; *      3       Off             Off             On              Off&n; *      4       Off             Off*            Off             On&n; *      5       On              Off             Off             Off&n; *      6       Off             On              Off             Off&n; * &n; *              * The documentation states to set this for interrupt&n; *                4, but I think that is a mistake.&n; *&n; *  It probably a little late to be adding a history, but I guess I&n; *  will start.&n; *&n; *  10/24/95 - Added support for disabling the eject button when the&n; *             drive is open.  Note that there is a small problem&n; *             still here, if the eject button is pushed while the&n; *             drive light is flashing, the drive will return a bad&n; *             status and be reset.  It recovers, though.&n; */
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
-macro_line|# include &lt;linux/module.h&gt;
-macro_line|# include &lt;linux/version.h&gt;
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

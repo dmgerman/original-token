@@ -2,7 +2,7 @@ multiline_comment|/*&n; * Dynamic loading of modules into the kernel.&n; *&n; * 
 macro_line|#ifndef _LINUX_MODULE_H
 DECL|macro|_LINUX_MODULE_H
 mdefine_line|#define _LINUX_MODULE_H
-macro_line|#ifdef CONFIG_MODVERSIONS
+macro_line|#ifdef MODVERSIONS
 macro_line|# ifndef __GENKSYMS__
 macro_line|#  ifdef MODULE
 DECL|macro|_set_ver
@@ -18,8 +18,8 @@ macro_line|#  endif /* MODULE */
 macro_line|# else /* __GENKSYMS__ */
 DECL|macro|_set_ver
 macro_line|#  define _set_ver(sym,vers) sym
-macro_line|#  endif /* __GENKSYMS__ */
-macro_line|#endif /* CONFIG_MODVERSIONS */
+macro_line|# endif /* __GENKSYMS__ */
+macro_line|#endif /* MODVERSIONS */
 multiline_comment|/* values of module.state */
 DECL|macro|MOD_UNINITIALIZED
 mdefine_line|#define MOD_UNINITIALIZED 0
@@ -241,13 +241,6 @@ multiline_comment|/*&n; * The first word of the module contains the use count.&n
 DECL|macro|GET_USE_COUNT
 mdefine_line|#define GET_USE_COUNT(module)&t;(* (long *) (module)-&gt;addr)
 multiline_comment|/*&n; * define the count variable, and usage macros.&n; */
-macro_line|#if defined(CONFIG_MODVERSIONS) &amp;&amp; defined(MODULE) &amp;&amp; !defined(__GENKSYMS__)
-DECL|variable|Using_Versions
-r_int
-id|Using_Versions
-suffix:semicolon
-multiline_comment|/* gcc will handle this global (used as a flag) correctly */
-macro_line|#endif
 macro_line|#ifdef MODULE
 r_extern
 r_int
@@ -259,6 +252,24 @@ DECL|macro|MOD_DEC_USE_COUNT
 mdefine_line|#define MOD_DEC_USE_COUNT      mod_use_count_--
 DECL|macro|MOD_IN_USE
 mdefine_line|#define MOD_IN_USE&t;       (mod_use_count_ != 0)
+macro_line|#ifndef __NO_VERSION__
+macro_line|#include &lt;linux/version.h&gt;
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(MODVERSIONS) &amp;&amp; !defined(__GENKSYMS__)
+DECL|variable|Using_Versions
+r_int
+id|Using_Versions
+suffix:semicolon
+multiline_comment|/* gcc will handle this global (used as a flag) correctly */
+macro_line|#endif
 macro_line|#else
 DECL|macro|MOD_INC_USE_COUNT
 mdefine_line|#define MOD_INC_USE_COUNT&t;do { } while (0)

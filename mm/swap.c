@@ -3585,6 +3585,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|order
+op_ge
+id|NR_MEM_LISTS
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|intr_count
 op_logical_and
 id|priority
